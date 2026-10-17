@@ -150,6 +150,7 @@ header.top{flex:none}
 .brand h1{font-size:clamp(34px,9vw,48px)}
 .hero{flex:none;display:flex;align-items:flex-end;justify-content:space-between;gap:6px;position:relative}
 .hero .mascot{height:clamp(96px,17dvh,190px);width:auto;flex:none}
+.hero .mascot.macaco{height:clamp(76px,13.5dvh,150px)}
 .hero .say{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding-bottom:10px;min-width:0}
 .hero .bubble-say{max-width:none;text-align:center;font-size:clamp(17px,4.6vw,26px);line-height:1.05}
 .hero .bubble-say.l::after{left:18px;right:auto}
@@ -181,7 +182,7 @@ header.top{flex:none}
 }
 @media (min-width:760px) and (min-height:600px){.game .pic{max-width:150px}}
 @media (max-height:700px){.game p{display:none}.game h3{margin-top:2px}}
-@media (max-height:700px){.hero .mascot{height:88px}.hero .tagline{display:none}.hero .bubble-say{font-size:16px}.game h3{font-size:20px}.game p{font-size:11px}.games{gap:8px}}
+@media (max-height:700px){.hero .mascot{height:88px}.hero .mascot.macaco{height:68px}.hero .tagline{display:none}.hero .bubble-say{font-size:16px}.game h3{font-size:20px}.game p{font-size:11px}.games{gap:8px}}
 @media (max-width:380px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:29px}#installBtn{padding:4px 8px}}
 /* cartões em grelha: título em cima; etiqueta e desenho lado a lado em baixo, nunca um por cima do outro */
 .game{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto 1fr auto;column-gap:6px;row-gap:4px}
@@ -230,13 +231,8 @@ header.top{flex:none}
 <path d="M46 232l46-8M46 242l46-8M116 224l46 8M116 234l46 8" stroke-width="2.5" stroke="#8a8a8a"/>
 </g></svg>
     <div class="say"><div class="bubble-say">Joga com a malta, cada um no seu telemóvel!</div><p class="tagline">Grátis · sem conta · sem publicidade</p></div>
-    <svg class="mascot macaco" viewBox="0 0 230 270" role="img" aria-label="Macaco de camisola às riscas a beber uma imperial">
-<defs><clipPath id="mcShirt"><path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z"/></clipPath></defs>
+    <svg class="mascot macaco" viewBox="22 30 192 140" role="img" aria-label="Macaco com uma imperial">
 <g stroke="#151515" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
-<path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z" fill="#fffdf8"/>
-<g clip-path="url(#mcShirt)" stroke-width="0" fill="#1f5fc0"><rect x="40" y="170" width="22" height="110"/><rect x="84" y="170" width="22" height="110"/><rect x="128" y="170" width="22" height="110"/><rect x="172" y="170" width="22" height="110"/></g>
-<path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z" fill="none"/>
-<path d="M92 184l20 22l20-22" fill="#fffdf8"/>
 <circle cx="50" cy="104" r="22" fill="#5a3a24"/><circle cx="50" cy="104" r="11" fill="#d9a77c" stroke-width="3"/>
 <circle cx="172" cy="104" r="22" fill="#5a3a24"/><circle cx="172" cy="104" r="11" fill="#d9a77c" stroke-width="3"/>
 <circle cx="111" cy="100" r="64" fill="#5a3a24"/>
@@ -248,11 +244,9 @@ header.top{flex:none}
 <ellipse cx="111" cy="130" rx="34" ry="22" fill="#e8bc91"/>
 <path d="M104 118q3 3 0 6M118 118q-3 3 0 6" fill="none" stroke-width="3.5"/>
 <path d="M90 136q21 14 42-2" fill="none" stroke-width="4.5"/><path d="M128 132l6-2" stroke-width="4"/>
-<path d="M176 196C192 176 192 150 186 132" fill="none" stroke-width="22" stroke="#151515"/><path d="M176 196C192 176 192 150 186 132" fill="none" stroke-width="13" stroke="#5a3a24"/>
 <path d="M166 58l40 0l-4 52q-2 14-16 16q-14-2-16-16z" fill="#f5a623"/>
 <path d="M170 76h32" stroke="#fff3c4" stroke-width="3" opacity=".8"/>
 <path d="M162 60q2-14 14-10q6-10 16-4q12-4 16 8q-2 6-46 6z" fill="#fffdf8"/>
-<path d="M186 126v16M174 148h24" stroke-width="5"/>
 <ellipse cx="184" cy="122" rx="14" ry="9" fill="#5a3a24"/>
 <path d="M176 100q4 6 0 14" fill="none" stroke="#fff3c4" stroke-width="3" opacity=".7"/>
 </g></svg>
@@ -262,13 +256,8 @@ header.top{flex:none}
     <a class="game peta" href="peta/"><h3>Peta</h3><p>Inventa mentiras e engana os amigos.</p><span class="tag">2-8 · bluff</span><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M6 6h34a5 5 0 0 1 5 5v15a5 5 0 0 1-5 5H20l-8 7v-7H6a5 5 0 0 1-5-5V11a5 5 0 0 1 5-5z" fill="#fff" stroke="#151515" stroke-width="2.4" stroke-linejoin="round"/><text x="23" y="24" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="15" fill="#151515">?!</text><path d="M34 20h24a4 4 0 0 1 4 4v11a4 4 0 0 1-4 4h-3v6l-7-6H34a4 4 0 0 1-4-4V24a4 4 0 0 1 4-4z" fill="#d23a6e" stroke="#151515" stroke-width="2.4" stroke-linejoin="round"/><circle cx="40" cy="30" r="2" fill="#fff"/><circle cx="46" cy="30" r="2" fill="#fff"/><circle cx="52" cy="30" r="2" fill="#fff"/></svg></div></a>
     <a class="game tasca" href="tasca/"><h3>Conversa de Tasca</h3><p>A resposta mais parva ganha.</p><span class="tag">3-8 · família/+18</span><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="6" y="6" width="26" height="36" rx="4" fill="#1f2a28" stroke="#151515" stroke-width="2.4" transform="rotate(-8 19 24)"/><rect x="11" y="18" width="14" height="3" rx="1.5" fill="#fffaf1" transform="rotate(-8 19 24)"/><rect x="30" y="8" width="26" height="36" rx="4" fill="#fff" stroke="#151515" stroke-width="2.4" transform="rotate(9 43 26)"/><text x="44" y="32" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="12" fill="#4f7f23" transform="rotate(9 43 26)">AH!</text></svg></div></a>
     <a class="game branco" href="branco/"><h3>Senhor Branco</h3><p>Descobre o impostor pelas pistas.</p><span class="tag">3-10 · dedução</span><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="8" y="10" width="22" height="30" rx="4" fill="#2f5fb3" stroke="#151515" stroke-width="2.4" transform="rotate(-10 19 25)"/><rect x="21" y="5" width="22" height="30" rx="4" fill="#2f5fb3" stroke="#151515" stroke-width="2.4"/><rect x="34" y="10" width="22" height="30" rx="4" fill="#fff" stroke="#151515" stroke-width="2.4" transform="rotate(10 45 25)"/><text x="45" y="32" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="18" fill="#2f5fb3" transform="rotate(10 45 25)">?</text></svg></div></a>
-    <a class="game maisuma" href="maisuma/"><h3>Mais Uma!</h3><p>Eu nunca, verdades e desafios.</p><span class="tag">2-12 · +18</span><div class="pic" aria-hidden="true"><svg class="macaco-mini" viewBox="0 0 230 270" role="img" aria-label="Macaco de camisola às riscas a beber uma imperial">
-<defs><clipPath id="mcShirt2"><path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z"/></clipPath></defs>
+    <a class="game maisuma" href="maisuma/"><h3>Mais Uma!</h3><p>Eu nunca, verdades e desafios.</p><span class="tag">2-12 · +18</span><div class="pic" aria-hidden="true"><svg class="macaco-mini" viewBox="22 30 192 140" role="img" aria-label="Macaco com uma imperial">
 <g stroke="#151515" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
-<path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z" fill="#fffdf8"/>
-<g clip-path="url(#mcShirt2)" stroke-width="0" fill="#1f5fc0"><rect x="40" y="170" width="22" height="110"/><rect x="84" y="170" width="22" height="110"/><rect x="128" y="170" width="22" height="110"/><rect x="172" y="170" width="22" height="110"/></g>
-<path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z" fill="none"/>
-<path d="M92 184l20 22l20-22" fill="#fffdf8"/>
 <circle cx="50" cy="104" r="22" fill="#5a3a24"/><circle cx="50" cy="104" r="11" fill="#d9a77c" stroke-width="3"/>
 <circle cx="172" cy="104" r="22" fill="#5a3a24"/><circle cx="172" cy="104" r="11" fill="#d9a77c" stroke-width="3"/>
 <circle cx="111" cy="100" r="64" fill="#5a3a24"/>
@@ -280,11 +269,9 @@ header.top{flex:none}
 <ellipse cx="111" cy="130" rx="34" ry="22" fill="#e8bc91"/>
 <path d="M104 118q3 3 0 6M118 118q-3 3 0 6" fill="none" stroke-width="3.5"/>
 <path d="M90 136q21 14 42-2" fill="none" stroke-width="4.5"/><path d="M128 132l6-2" stroke-width="4"/>
-<path d="M176 196C192 176 192 150 186 132" fill="none" stroke-width="22" stroke="#151515"/><path d="M176 196C192 176 192 150 186 132" fill="none" stroke-width="13" stroke="#5a3a24"/>
 <path d="M166 58l40 0l-4 52q-2 14-16 16q-14-2-16-16z" fill="#f5a623"/>
 <path d="M170 76h32" stroke="#fff3c4" stroke-width="3" opacity=".8"/>
 <path d="M162 60q2-14 14-10q6-10 16-4q12-4 16 8q-2 6-46 6z" fill="#fffdf8"/>
-<path d="M186 126v16M174 148h24" stroke-width="5"/>
 <ellipse cx="184" cy="122" rx="14" ry="9" fill="#5a3a24"/>
 <path d="M176 100q4 6 0 14" fill="none" stroke="#fff3c4" stroke-width="3" opacity=".7"/>
 </g></svg></div></a>
