@@ -95,6 +95,18 @@
      "type": "image/png"
     }
    ]
+  },
+  {
+   "name": "Cobrinha",
+   "short_name": "Cobrinha",
+   "url": "cobra/",
+   "icons": [
+    {
+     "src": "cobra/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
   }
  ]
 }

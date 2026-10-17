@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cobrinha</title>
+<meta name="description" content="A cobrinha dos telemóveis antigos: come, cresce e não batas na própria cauda. Grátis, sem conta e sem publicidade.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_PT">
+<meta property="og:site_name" content="Jogatina">
+<meta property="og:title" content="Cobrinha: o jogo dos telemóveis antigos">
+<meta property="og:description" content="Come, cresce e não batas na própria cauda. Bates o meu recorde?">
+<meta property="og:url" content="https://jogatina-pt.github.io/cobra/">
+<meta property="og:image" content="https://jogatina-pt.github.io/cobra/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Cobrinha">
+<meta name="theme-color" content="#f4eee3">
+<link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
+<script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
+<style>
+/* ipgames: base comum (mesma família visual da Panela de Pressão) */
+@font-face{font-family:"Bowlby One";font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/bowlby-one.woff2) format("woff2")}
+@font-face{font-family:"Figtree";font-style:normal;font-weight:300 900;font-display:swap;src:url(../fonts/figtree.woff2) format("woff2")}
+[hidden]{display:none!important}
+:root{
+  --bg:#13201f; --surface:#1b2d2b; --surface-2:#223835; --line:#2f4744;
+  --ink:#eef2ea; --muted:#9fb5af; --title:#f1ece2; --enamel:#f1ece2; --card-ink:#1b2422;
+  --accent:#ff8a3d; --accent-ink:#1d130b; --steam:#8fd3c8; --danger:#ff5a4f; --good:#5fd08a;
+  --display:"Bowlby One", Impact, "Arial Black", sans-serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme:dark;
+}
+:root[data-pp-theme="light"]{
+  --bg:#f4eee3; --surface:#fffaf1; --surface-2:#ebe1cf; --line:#d8cab2;
+  --ink:#1f2a28; --muted:#5b6965; --title:#1f2a28; --enamel:#fffdf8; --card-ink:#1b2422;
+  --accent:#e8731f; --steam:#1d7a6e; --danger:#c8352b; --good:#1f8a4c;
+  color-scheme:light;
+}
+html,body{margin:0}
+html{height:100%}
+html,body{background:var(--bg);color:var(--ink)}
+body{min-height:100%;box-sizing:border-box;overflow-x:hidden;font-family:var(--body);font-size:15px;line-height:1.45;padding:max(8px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column}
+.wrap{width:100%;max-width:820px;margin:0 auto;flex:1;display:flex;flex-direction:column;gap:12px}
+h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:.01em;text-wrap:balance;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid var(--steam);outline-offset:2px}
+a{color:inherit}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:11px 20px;font-weight:800;font-size:15px;text-decoration:none;line-height:1.1}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn.ico{min-width:36px;padding-inline:9px;font-size:15px;line-height:1}
+.btn.ico[aria-pressed="false"]{opacity:.45;filter:grayscale(1)}
+#exitBtn{border-color:var(--danger);color:var(--danger)}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;flex:none}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.brand h1{font-size:clamp(24px,6vw,34px);line-height:1;color:var(--title)}
+.brand h1 span{color:var(--accent)}
+.brand a.home{font-size:13px;color:var(--muted);text-decoration:none;font-weight:700;white-space:nowrap}
+.tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+input{font:inherit;font-size:16px;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;box-sizing:border-box;min-width:0}
+input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shadow:inset 0 0 0 1.5px var(--steam)}
+.setup{display:flex;flex-direction:column;gap:16px;align-items:flex-start;flex:1;padding-block:12px 24px}
+.setup h2{font-size:clamp(34px,10vw,60px);line-height:.95;color:var(--title)}
+.setup h2 span{color:var(--accent);display:block}
+.setup p{max-width:58ch;color:var(--muted);margin:0}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:6px;width:100%;max-width:360px}
+.mode{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;width:100%;max-width:440px;box-sizing:border-box}
+.join{display:flex;gap:8px}
+.join input{text-transform:uppercase;letter-spacing:.2em;font-weight:800;flex:1}
+.join.fromlink input{border-color:var(--accent)}
+.note{font-size:13.5px;color:var(--steam);margin:0;min-height:1.2em}
+.note.bad{color:var(--danger);font-weight:700}
+.nopeer-msg{display:none;color:var(--muted)}
+.mode.nopeer .nopeer-msg{display:block}
+.mode.nopeer .choices,.mode.nopeer .join{display:none}
+.lobby .code{font-size:clamp(44px,14vw,80px);letter-spacing:.12em;color:var(--accent)}
+.roster{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;width:100%;max-width:420px}
+.roster li{display:flex;align-items:center;gap:10px;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;min-height:24px}
+.roster li.free{border-style:dashed;background:transparent;color:var(--muted)}
+.roster .rn{font-weight:800;flex:1;min-width:0;overflow-wrap:anywhere}
+.roster .rn em{font-style:normal;font-weight:600;color:var(--muted)}
+.roster .rk{font-size:12px;color:var(--muted)}
+.roster li.free .rn{font-weight:400}
+.linkbtn{background:none;border:0;padding:4px 2px;color:var(--muted);font-size:13px;text-decoration:underline;text-underline-offset:3px}
+.foot{font-size:13px;color:var(--muted);margin:4px 0 0}
+.modal{position:fixed;inset:0;background:rgba(8,14,13,.72);display:grid;place-items:center;padding:16px;z-index:33;box-sizing:border-box}
+.sheet{box-sizing:border-box;background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:20px;max-width:460px;width:100%;max-height:calc(100dvh - 32px);overflow:auto;display:flex;flex-direction:column;gap:14px}
+.sheet h3{font-size:24px;color:var(--title)}
+.sheet .body{color:var(--muted)}
+.sheet .actions{display:flex;gap:8px;flex-wrap:wrap}
+.sheet ul{padding-left:18px;margin:0;display:flex;flex-direction:column;gap:6px}
+.sheet li b{color:var(--ink)}
+.alert{position:fixed;left:50%;top:max(12px,env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:40;max-width:min(92vw,520px);width:max-content;box-sizing:border-box;background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:15px;padding:12px 16px;border-radius:14px;box-shadow:0 12px 28px rgba(0,0,0,.3);text-align:center;pointer-events:none}
+.alert.show{animation:alertin .35s cubic-bezier(.2,1.5,.4,1)}
+@keyframes alertin{from{transform:translate(-50%,-20px) scale(.9);opacity:0}to{transform:translateX(-50%);opacity:1}}
+.bubble{position:fixed;transform:translate(-50%,-100%);font-size:30px;pointer-events:none;animation:bub 2.6s ease forwards;z-index:26}
+@keyframes bub{0%{opacity:0;transform:translate(-50%,-80%) scale(.6)}12%{opacity:1;transform:translate(-50%,-100%) scale(1.1)}20%{transform:translate(-50%,-100%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-150%)}}
+.reacts{position:fixed;z-index:35;display:grid;grid-template-columns:repeat(3,auto);gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:8px;box-shadow:0 12px 28px rgba(0,0,0,.3)}
+.reacts button{font-size:24px;background:var(--surface-2);border:0;border-radius:10px;padding:4px 9px}
+@media (prefers-reduced-motion:reduce){.alert.show,.bubble{animation:none}}
+.roster li.free.more{border:0!important;background:transparent;padding:2px 6px;min-height:0;font-size:13px}
+
+/* ===== Estilo banda desenhada (comum a todos os jogos) ===== */
+@font-face{font-family:"Bangers";font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/bangers.woff2) format("woff2")}
+:root{--display:"Bangers","Bowlby One",Impact,sans-serif;--stroke:#151515;--pop:#ffd23f;--pop-ink:#151515;
+  --dots:radial-gradient(rgba(21,21,21,.09) 1.3px,transparent 1.6px)}
+:root:not([data-pp-theme="light"]){--stroke:#050807;--dots:radial-gradient(rgba(255,255,255,.06) 1.3px,transparent 1.6px)}
+body{background-image:var(--dots);background-size:13px 13px}
+h1,h2,h3{font-family:var(--display);letter-spacing:.03em;font-weight:400}
+.brand h1{font-size:clamp(30px,8vw,42px);-webkit-text-stroke:1.5px var(--stroke);text-shadow:3px 3px 0 var(--stroke);color:var(--title)}
+.brand h1 span{color:var(--accent)}
+.setup h2{font-size:clamp(40px,12vw,72px);line-height:.92;text-shadow:3px 3px 0 color-mix(in srgb,var(--stroke) 25%,transparent)}
+.btn{border:3px solid var(--stroke)!important;box-shadow:3px 3px 0 var(--stroke);font-family:var(--display);font-size:19px;letter-spacing:.06em;font-weight:400;padding:9px 20px;transition:transform .08s,box-shadow .08s}
+.btn.sm{font-size:15px;padding:4px 11px;box-shadow:2px 2px 0 var(--stroke)}
+.btn.ico{font-family:var(--body)}
+.btn:not(:disabled):active{transform:translate(3px,3px);box-shadow:0 0 0 var(--stroke)}
+.btn.ghost{background:var(--surface)}
+input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
+.mode,.roster li,.sheet,.qcard,.bcard,.wordcard,.mucard,.rstep,.board li,.opt,.sub,.wcard,.sent,.jbox,.yourturn,.outbox,.words p,.roles li,.others li,.tally li,.drink,.yn2 p,.rulebar,.vol li,.chips li,.seg button,.age,.foreheads li{border:3px solid var(--stroke)!important;box-shadow:4px 4px 0 var(--stroke)}
+.roster li.free{box-shadow:none;border-style:dashed!important}
+.chips li,.seg button,.vol li{box-shadow:2px 2px 0 var(--stroke)}
+.qcard,.bcard,.wordcard,.mucard{border-radius:18px;box-shadow:6px 6px 0 var(--stroke)}
+.opt:not(:disabled):active,.sub:not(:disabled):active,.wcard:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--stroke)}
+.lobby .code{-webkit-text-stroke:2px var(--stroke);text-shadow:4px 4px 0 var(--stroke);letter-spacing:.14em}
+.win h2,.winbox h2,.outbox h2{-webkit-text-stroke:1.5px var(--stroke);text-shadow:3px 3px 0 var(--stroke)}
+.eyebrow{letter-spacing:.12em}
+.alert{border:3px solid var(--stroke);box-shadow:5px 5px 0 var(--stroke);font-family:var(--display);font-size:20px;letter-spacing:.05em}
+.setup .mascot{width:min(42vw,170px);height:auto;align-self:flex-end;margin:-8px 0 -18px;filter:drop-shadow(4px 4px 0 rgba(0,0,0,.12))}
+.hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;width:100%}
+.bubble-say{position:relative;background:#fff;color:#151515;border:3px solid #151515;border-radius:18px;padding:8px 12px;font-family:var(--display);font-size:20px;letter-spacing:.04em;box-shadow:3px 3px 0 #151515;max-width:16ch}
+.bubble-say::after{content:"";position:absolute;bottom:-14px;right:22px;border:8px solid transparent;border-top:12px solid #151515}
+
+.macaco-mini{width:100%;height:auto;display:block}
+
+:root,:root[data-pp-theme="light"]{--accent:#4f7f23;--accent-ink:#fff}
+:root:not([data-pp-theme="light"]){--accent:#9ccc65;--accent-ink:#10200a}
+:root{--lcd:#a8c27c;--lcd-2:#9db574;--ink-lcd:#22341a;--body:#2b2f36;--body-2:#3a404a}
+html,body{height:100%}
+body{padding-bottom:max(8px,env(safe-area-inset-bottom,0px));overflow:hidden}
+.wrap{max-width:460px;gap:8px;min-height:0;flex:1;display:flex;flex-direction:column}
+header.top{flex:none}
+.phone{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px;background:linear-gradient(160deg,var(--body-2),var(--body));border:3px solid var(--stroke);box-shadow:6px 6px 0 var(--stroke);border-radius:34px 34px 46px 46px;padding:16px 14px 14px}
+.screen{flex:1;min-height:150px;position:relative;background:var(--lcd);border:3px solid #151515;border-radius:12px;box-shadow:inset 0 0 0 4px var(--lcd-2),inset 3px 3px 10px rgba(0,0,0,.25);overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--ink-lcd);font-family:ui-monospace,"Courier New",monospace;font-weight:700;text-align:center;padding:12px;background:var(--lcd)}
+.ov[hidden]{display:none}
+.ov h2{margin:0;font-family:ui-monospace,"Courier New",monospace;font-size:clamp(26px,8vw,40px);letter-spacing:.12em;font-weight:900;color:var(--ink-lcd);text-shadow:none;line-height:1}
+.ov p{margin:0;font-size:14px}
+.ov .rows{display:flex;flex-direction:column;gap:6px;width:100%;max-width:260px}
+.ov .row{display:flex;align-items:center;justify-content:space-between;gap:8px;border:2px solid var(--ink-lcd);padding:4px 6px;font-size:15px}
+.ov .row button{background:transparent;border:2px solid var(--ink-lcd);color:var(--ink-lcd);font:inherit;width:34px;height:30px;padding:0;cursor:pointer}
+.ov .row b{min-width:62px;text-align:center}
+.ov .go{background:var(--ink-lcd);color:var(--lcd);border:0;font:inherit;font-size:17px;letter-spacing:.08em;padding:9px 18px;cursor:pointer}
+.ov .big{font-size:clamp(30px,10vw,46px);font-weight:900}
+.ov.dim{background:rgba(168,194,124,.82)}
+.keys{flex:none;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;height:clamp(150px,30dvh,250px)}
+.key{border:3px solid #151515;border-radius:16px 16px 22px 22px;background:linear-gradient(#e9e4d8,#cfc8b8);color:#151515;box-shadow:0 4px 0 #151515;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;font-family:var(--display);font-size:24px;line-height:1;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.key small{font-family:var(--body,sans-serif);font-size:12px;font-weight:800;opacity:.7}
+.key.dir{background:linear-gradient(#fff3c4,#ffd23f)}
+.key.mid{background:linear-gradient(#d9f0c0,#9ccc65)}
+.key:active,.key.on{transform:translateY(3px);box-shadow:0 1px 0 #151515}
+.key.blank{background:linear-gradient(#ddd6c7,#c4bcab);opacity:.75}
+.foot{flex:none;margin:0;text-align:center;font-size:12px}
+@media (max-width:380px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:26px}.brand a.home{font-size:0}.brand a.home::before{content:"← menu";font-size:12px}.tools{gap:5px}.tools .btn.sm{padding:4px 8px}}
+@media (max-height:640px){.keys{height:132px;gap:6px}.key{font-size:20px}.phone{padding:12px 12px 12px;gap:8px}}
+@media (prefers-reduced-motion:reduce){.key{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><h1>Cobri<span>nha</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="tools">
+      <button class="btn ghost sm ico" id="mute" type="button" aria-pressed="true" aria-label="Som" title="Som">🔊</button>
+      <button class="btn ghost sm ico" id="themeBtn" type="button" aria-label="Tema escuro" title="Tema escuro">☾</button>
+    </div>
+  </header>
+  <main class="phone" aria-label="Jogo da cobrinha">
+    <div class="screen" id="screen">
+      <canvas id="cv" aria-label="Ecrã do jogo"></canvas>
+      <div class="ov" id="ov"></div>
+    </div>
+    <div class="keys" id="keys">
+      <button class="key blank" type="button" data-k="1" tabindex="-1">1</button>
+      <button class="key dir" type="button" data-k="2" aria-label="Cima">2<small>▲</small></button>
+      <button class="key blank" type="button" data-k="3" tabindex="-1">3</button>
+      <button class="key dir" type="button" data-k="4" aria-label="Esquerda">4<small>◀</small></button>
+      <button class="key mid" type="button" data-k="5" aria-label="Jogar ou pausa">5<small>▶ ❚❚</small></button>
+      <button class="key dir" type="button" data-k="6" aria-label="Direita">6<small>▶</small></button>
+      <button class="key blank" type="button" data-k="7" tabindex="-1">7</button>
+      <button class="key dir" type="button" data-k="8" aria-label="Baixo">8<small>▼</small></button>
+      <button class="key blank" type="button" data-k="9" tabindex="-1">9</button>
+    </div>
+  </main>
+  <p class="foot">Também dá para deslizar o dedo no ecrã ou usar as setas do teclado.</p>
+</div>
+<script>
+/* ================= COBRINHA =================
+   A cobra dos telemóveis antigos. Teclas 2/4/6/8 (ou setas, ou deslizar) para virar, 5 para jogar/pausa.
+   Cada comida vale tantos pontos quanto o nível. A cada 5 comidas aparece um bicho bónus por pouco tempo. */
+const $=id=>document.getElementById(id);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const cv=$("cv"),ctx=cv.getContext("2d"),ov=$("ov"),screenEl=$("screen");
+const INK="#22341a",LCD="#a8c27c",GHOST="rgba(34,52,26,.045)";
+const DIRS={2:[0,-1],8:[0,1],4:[-1,0],6:[1,0]};
+let level=Math.min(9,Math.max(1,+store.get("cobra-nivel")||5)),walls=store.get("cobra-paredes")!=="0";
+const recKey=()=>"cobra-rec-"+(walls?"paredes":"livre");
+let S=null; /* estado do jogo */
+let state="menu"; /* menu | play | pause | dead | over */
+
+/* ---------- som (bipes de telemóvel antigo) ---------- */
+let AC=null,muted=store.get("pp-mute")==="1";
+function unlock(){try{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=="running")AC.resume()}catch(e){}}
+function beep(f,d,at=0,v=.06){if(muted||!AC||AC.state!=="running")return;const t=AC.currentTime+at,o=AC.createOscillator(),g=AC.createGain();o.type="square";o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(v,t);g.gain.setValueAtTime(0,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.01)}
+const SFX={eat:()=>beep(1300,.04),bonus:()=>{beep(1500,.05);beep(1900,.07,.06)},spawn:()=>beep(900,.03),die:()=>{[700,520,380,260].forEach((f,i)=>beep(f,.12,i*.13,.07))},start:()=>{beep(988,.06);beep(1319,.09,.08)},rec:()=>[1047,1319,1568,2093].forEach((f,i)=>beep(f,.09,i*.1))};
+const sfx=k=>{try{SFX[k]()}catch(e){}};
+const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
+function setMute(m){muted=m;store.set("pp-mute",m?"1":"0");$("mute").textContent=m?"🔇":"🔊";$("mute").setAttribute("aria-pressed",String(!m))}
+function setTheme(t,save){if(t==="light")document.documentElement.dataset.ppTheme="light";else delete document.documentElement.dataset.ppTheme;if(save)store.set("pp-tema",t);const tb=$("themeBtn");tb.textContent=t==="light"?"☾":"☀";tb.title=t==="light"?"Tema escuro":"Tema claro"}
+
+/* ---------- ecrã ligado durante o jogo ---------- */
+let WL=null;
+async function keepAwake(on){try{if(on&&!WL&&navigator.wakeLock&&!document.hidden){WL=await navigator.wakeLock.request("screen");WL.addEventListener("release",()=>{WL=null})}else if(!on&&WL){const w=WL;WL=null;await w.release()}}catch(e){}}
+
+/* ---------- grelha e desenho ---------- */
+let G={cols:20,rows:24,cell:16,ox:0,oy:0,bar:0,dpr:1};
+function layout(){
+  const r=screenEl.getBoundingClientRect(),dpr=Math.min(3,window.devicePixelRatio||1);
+  cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr);
+  G.dpr=dpr;
+  const W=r.width,H=r.height,pad=10,bar=24;
+  if(!S){ /* a grelha só muda entre jogos */
+    const cell=Math.max(11,Math.floor(Math.min((W-pad*2)/17,(H-pad*2-bar)/13)));
+    G.cols=Math.max(12,Math.floor((W-pad*2)/cell));G.rows=Math.max(10,Math.floor((H-pad*2-bar)/cell));
+  }
+  G.cell=Math.min((W-pad*2)/G.cols,(H-pad*2-bar)/G.rows);
+  G.bar=bar;G.ox=(W-G.cell*G.cols)/2;G.oy=bar+(H-bar-G.cell*G.rows)/2;
+  draw();
+}
+function px(x,y,w,h){ctx.fillRect(Math.round(x*G.dpr),Math.round(y*G.dpr),Math.max(1,Math.round(w*G.dpr)),Math.max(1,Math.round(h*G.dpr)))}
+function cellRect(cx,cy,inset){const c=G.cell,i=inset*c;px(G.ox+cx*c+i,G.oy+cy*c+i,c-2*i,c-2*i)}
+/* bicho bónus: desenho de 5x5 pixéis */
+const BUG=["01010","11111","10101","11111","01010"];
+const FOOD=["010","101","010"];
+function sprite(cx,cy,pat){const c=G.cell,n=pat.length,s=c*.84/n,o=c*.08;for(let j=0;j<n;j++)for(let i=0;i<pat[j].length;i++)if(pat[j][i]==="1")px(G.ox+cx*c+o+i*s,G.oy+cy*c+o+j*s,s+.4,s+.4)}
+function draw(){
+  const W=cv.width/G.dpr,H=cv.height/G.dpr;
+  ctx.fillStyle=LCD;ctx.fillRect(0,0,cv.width,cv.height);
+  /* pixéis apagados, como num LCD */
+  ctx.fillStyle=GHOST;for(let y=0;y<G.rows;y++)for(let x=0;x<G.cols;x++)cellRect(x,y,.1);
+  ctx.fillStyle=INK;
+  /* barra de cima: pontos e bónus */
+  ctx.font=`900 ${Math.round(16*G.dpr)}px ui-monospace,"Courier New",monospace`;ctx.textBaseline="middle";
+  const sc=S?S.score:0;ctx.textAlign="left";ctx.fillText(String(sc).padStart(4,"0"),G.ox*G.dpr,(G.bar/2+2)*G.dpr);
+  ctx.textAlign="right";
+  if(S&&S.bonus){ctx.fillText(String(S.bonus.left).padStart(2,"0"),(W-G.ox)*G.dpr,(G.bar/2+2)*G.dpr);sprite((W-G.ox-46-G.ox)/G.cell,(2-G.oy)/G.cell,BUG)}
+  else ctx.fillText("N"+level+(walls?"":" ∞"),(W-G.ox)*G.dpr,(G.bar/2+2)*G.dpr);
+  px(G.ox,G.bar-1,G.cell*G.cols,2);
+  /* moldura (com paredes: linha cheia; sem paredes: tracejada) */
+  if(walls){px(G.ox-3,G.oy-3,G.cell*G.cols+6,2);px(G.ox-3,G.oy+G.cell*G.rows+1,G.cell*G.cols+6,2);px(G.ox-3,G.oy-3,2,G.cell*G.rows+6);px(G.ox+G.cell*G.cols+1,G.oy-3,2,G.cell*G.rows+6)}
+  else{for(let x=0;x<G.cols;x+=2){px(G.ox+x*G.cell,G.oy-3,G.cell,2);px(G.ox+x*G.cell,G.oy+G.cell*G.rows+1,G.cell,2)}for(let y=0;y<G.rows;y+=2){px(G.ox-3,G.oy+y*G.cell,2,G.cell);px(G.ox+G.cell*G.cols+1,G.oy+y*G.cell,2,G.cell)}}
+  if(!S)return;
+  if(S.food)sprite(S.food.x,S.food.y,FOOD);
+  if(S.bonus&&(S.bonus.left>5||S.tick%2===0))sprite(S.bonus.x,S.bonus.y,BUG);
+  if(S.dead&&S.blink%2===1)return;
+  S.body.forEach((p,i)=>{
+    if(i===0){cellRect(p.x,p.y,.04);/* olho */ctx.fillStyle=LCD;const c=G.cell,d=S.dir,ex=G.ox+p.x*c+c*(.5+d[0]*.18-d[1]*.2),ey=G.oy+p.y*c+c*(.5+d[1]*.18+d[0]*.2);px(ex-c*.1,ey-c*.1,c*.2,c*.2);ctx.fillStyle=INK}
+    else{ /* segmentos ligados ao anterior, como no original */
+      const q=S.body[i-1],c=G.cell,g=c*.12;
+      const x0=Math.min(p.x,q.x),y0=Math.min(p.y,q.y),wrap=Math.abs(p.x-q.x)>1||Math.abs(p.y-q.y)>1;
+      cellRect(p.x,p.y,.12);
+      if(!wrap){if(p.x!==q.x)px(G.ox+x0*c+c-g,G.oy+p.y*c+g,2*g,c-2*g);else px(G.ox+p.x*c+g,G.oy+y0*c+c-g,c-2*g,2*g)}
+      if(S.fat&&S.fat.has(p.x+","+p.y))cellRect(p.x,p.y,-.02);
+    }
+  });
+}
+
+/* ---------- jogo ---------- */
+const speed=()=>Math.round(330-level*31); /* nível 1 = 300 ms … nível 9 = 51 ms */
+function freeCell(){
+  const occ=new Set(S.body.map(p=>p.x+","+p.y));if(S.food)occ.add(S.food.x+","+S.food.y);if(S.bonus)occ.add(S.bonus.x+","+S.bonus.y);
+  const free=[];for(let y=0;y<G.rows;y++)for(let x=0;x<G.cols;x++)if(!occ.has(x+","+y))free.push({x,y});
+  return free.length?free[Math.floor(Math.random()*free.length)]:null;
+}
+function start(){
+  unlock();S=null;layout();
+  const cy=Math.floor(G.rows/2),cx=Math.floor(G.cols/2)-2;
+  S={body:[{x:cx,y:cy},{x:cx-1,y:cy},{x:cx-2,y:cy},{x:cx-3,y:cy}],dir:[1,0],queue:[],grow:0,score:0,eaten:0,food:null,bonus:null,tick:0,dead:false,blink:0,fat:new Set(),rec:+store.get(recKey())||0};
+  S.food=freeCell();
+  state="play";ov.hidden=true;sfx("start");keepAwake(true);
+  schedule();draw();
+}
+let timer=0;
+function schedule(){clearTimeout(timer);timer=setTimeout(step,speed()/(window.__fast?8:1))}
+function turn(k){
+  const d=DIRS[k];if(!d)return;
+  if(state!=="play")return;
+  const last=S.queue.length?S.queue[S.queue.length-1]:S.dir;
+  if(d[0]===-last[0]&&d[1]===-last[1])return; /* não dá para voltar para trás */
+  if(d[0]===last[0]&&d[1]===last[1])return;
+  if(S.queue.length<3)S.queue.push(d);
+}
+function step(){
+  if(state!=="play"||!S)return;
+  S.tick++;
+  if(S.queue.length)S.dir=S.queue.shift();
+  const h=S.body[0];let nx=h.x+S.dir[0],ny=h.y+S.dir[1];
+  if(!walls){nx=(nx+G.cols)%G.cols;ny=(ny+G.rows)%G.rows}
+  const hit=nx<0||ny<0||nx>=G.cols||ny>=G.rows||S.body.some((p,i)=>p.x===nx&&p.y===ny&&!(i===S.body.length-1&&S.grow===0));
+  if(hit){die();return}
+  S.body.unshift({x:nx,y:ny});
+  if(S.grow>0)S.grow--;else{const t=S.body.pop();S.fat.delete(t.x+","+t.y)}
+  if(S.food&&nx===S.food.x&&ny===S.food.y){
+    S.score+=level;S.eaten++;S.grow+=1;S.fat.add(nx+","+ny);sfx("eat");buzz(15);
+    S.food=freeCell();
+    if(S.eaten%5===0&&!S.bonus){const c=freeCell();if(c){S.bonus={x:c.x,y:c.y,left:20};sfx("spawn")}}
+  }
+  if(S.bonus&&nx===S.bonus.x&&ny===S.bonus.y){
+    const pts=level*(5+S.bonus.left);S.score+=pts;S.grow+=2;S.fat.add(nx+","+ny);S.bonus=null;sfx("bonus");buzz([20,30,20]);
+  }else if(S.bonus&&S.tick%2===0){S.bonus.left--;if(S.bonus.left<=0)S.bonus=null}
+  if(!S.food&&!S.bonus){win();return}
+  draw();schedule();
+}
+function die(){
+  state="dead";S.dead=true;sfx("die");buzz([60,40,120]);keepAwake(false);
+  let n=0;const fl=()=>{S.blink=++n;draw();if(n<7)timer=setTimeout(fl,160);else over()};fl();
+}
+function win(){S.score+=level*50;draw();die()}
+function over(){
+  state="over";
+  const rec=S.score>S.rec;if(rec){store.set(recKey(),String(S.score));sfx("rec")}
+  showOv(`<h2>FIM</h2><p class="big">${S.score}</p><p>${rec?"★ NOVO RECORDE! ★":"Recorde: "+Math.max(S.rec,S.score)}</p><p>Tamanho: ${S.body.length}</p>
+    <button class="go" type="button" data-a="go">5 · OUTRA VEZ</button><button class="go" type="button" data-a="menu" style="background:transparent;color:var(--ink-lcd);border:2px solid var(--ink-lcd)">MENU</button>`);
+}
+function pause(){if(state!=="play")return;state="pause";clearTimeout(timer);keepAwake(false);showOv(`<h2>PAUSA</h2><p>Pontos: ${S.score}</p><button class="go" type="button" data-a="resume">5 · CONTINUAR</button><button class="go" type="button" data-a="menu" style="background:transparent;color:var(--ink-lcd);border:2px solid var(--ink-lcd)">SAIR</button>`,true)}
+function resume(){if(state!=="pause")return;state="play";ov.hidden=true;keepAwake(true);schedule()}
+function showOv(html,dim){ov.innerHTML=html;ov.className="ov"+(dim?" dim":"");ov.hidden=false}
+function menu(){
+  clearTimeout(timer);state="menu";S=null;keepAwake(false);layout();
+  showOv(`<h2>COBRINHA</h2>
+    <div class="rows">
+      <div class="row"><button type="button" data-a="lv-" aria-label="Menos rápido">◀</button><span>NÍVEL <b>${level}</b></span><button type="button" data-a="lv+" aria-label="Mais rápido">▶</button></div>
+      <div class="row"><button type="button" data-a="wl" aria-label="Mudar paredes">◀</button><span>PAREDES <b>${walls?"SIM":"NÃO"}</b></span><button type="button" data-a="wl" aria-label="Mudar paredes">▶</button></div>
+    </div>
+    <p>Recorde: ${+store.get(recKey())||0}</p>
+    <button class="go" type="button" data-a="go">5 · JOGAR</button>`);
+}
+ov.addEventListener("click",e=>{
+  const b=e.target.closest("[data-a]");if(!b)return;unlock();const a=b.dataset.a;
+  if(a==="go")start();else if(a==="resume")resume();else if(a==="menu")menu();
+  else if(a==="lv-"||a==="lv+"){level=Math.min(9,Math.max(1,level+(a==="lv+"?1:-1)));store.set("cobra-nivel",String(level));beep(1100,.03);menu()}
+  else if(a==="wl"){walls=!walls;store.set("cobra-paredes",walls?"1":"0");beep(1100,.03);menu()}
+});
+function key5(){unlock();if(state==="play")pause();else if(state==="pause")resume();else if(state==="menu"||state==="over")start()}
+
+/* ---------- comandos ---------- */
+const keysEl=$("keys");
+keysEl.addEventListener("pointerdown",e=>{
+  const b=e.target.closest(".key");if(!b)return;e.preventDefault();unlock();
+  b.classList.add("on");setTimeout(()=>b.classList.remove("on"),110);
+  const k=+b.dataset.k;
+  if(k===5)key5();
+  else if(DIRS[k])turn(k);
+  else beep(800,.02);
+  buzz(8);
+});
+keysEl.addEventListener("click",e=>e.preventDefault());
+const KMAP={ArrowUp:2,ArrowDown:8,ArrowLeft:4,ArrowRight:6,w:2,s:8,a:4,d:6,W:2,S:8,A:4,D:6,2:2,8:8,4:4,6:6};
+document.addEventListener("keydown",e=>{
+  if(e.target&&e.target.tagName==="INPUT")return;
+  if(KMAP[e.key]){e.preventDefault();turn(KMAP[e.key]);return}
+  if(e.key===" "||e.key==="5"||e.key==="Enter"||e.key==="p"||e.key==="P"){e.preventDefault();key5()}
+  if(e.key==="Escape"&&state==="play")pause();
+});
+/* deslizar o dedo no ecrã */
+let sw=null;
+screenEl.addEventListener("pointerdown",e=>{if(e.target.closest("button"))return;sw={x:e.clientX,y:e.clientY,id:e.pointerId,moved:false}});
+screenEl.addEventListener("pointermove",e=>{
+  if(!sw||e.pointerId!==sw.id||state!=="play")return;
+  const dx=e.clientX-sw.x,dy=e.clientY-sw.y;
+  if(Math.max(Math.abs(dx),Math.abs(dy))<22)return;
+  turn(Math.abs(dx)>Math.abs(dy)?(dx>0?6:4):(dy>0?8:2));sw={x:e.clientX,y:e.clientY,id:e.pointerId,moved:true};
+});
+screenEl.addEventListener("pointerup",e=>{if(sw&&!sw.moved&&state==="play"&&!e.target.closest("button")){/* toque simples: nada */}sw=null});
+screenEl.addEventListener("pointercancel",()=>{sw=null});
+document.addEventListener("visibilitychange",()=>{if(document.hidden)pause()});
+window.addEventListener("resize",()=>{clearTimeout(window.__rz);window.__rz=setTimeout(layout,80)});
+$("mute").addEventListener("click",()=>{setMute(!muted);unlock()});
+$("themeBtn").addEventListener("click",()=>setTheme(document.documentElement.dataset.ppTheme==="light"?"dark":"light",true));
+setTheme(document.documentElement.dataset.ppTheme==="light"?"light":"dark");setMute(muted);
+menu();
+
+</script>
+<script>/* ===== Ecrã completo (menu e todos os jogos) =====
+   O navegador sai do ecrã completo sempre que muda de página. Para não sair ao andar entre jogos,
+   quando se está em ecrã completo os links do site abrem por cima, numa moldura (iframe) que ocupa o ecrã todo:
+   a página de fora nunca muda e o ecrã completo mantém-se. O endereço e o botão "voltar" continuam a funcionar.
+   A escolha fica guardada; se mesmo assim se mudar de página, volta a entrar no primeiro toque. */
+(function(){
+  const TOP=(()=>{try{return window.top!==window&&window.top.JFS&&window.top.JFS.shell?window.top:null}catch(e){return null}})();
+  const D=TOP?TOP.document:document,de=D.documentElement;
+  const can=!!(D.fullscreenEnabled||D.webkitFullscreenEnabled);
+  const isFs=()=>!!(D.fullscreenElement||D.webkitFullscreenElement);
+  const get=()=>{try{return localStorage.getItem("pp-fs")==="1"}catch(e){return false}};
+  const set=v=>{try{localStorage.setItem("pp-fs",v?"1":"0")}catch(e){}};
+  const enter=()=>{try{const p=(de.requestFullscreen||de.webkitRequestFullscreen).call(de,{navigationUI:"hide"});if(p&&p.catch)return p.catch(()=>{});return Promise.resolve()}catch(e){return Promise.resolve()}};
+  const leave=()=>{try{if(!isFs())return;const p=(D.exitFullscreen||D.webkitExitFullscreen).call(D);if(p&&p.catch)p.catch(()=>{})}catch(e){}};
+  const JFS={can,isFs,wanted:get,enter,leave,framed:!!TOP};
+  window.JFS=JFS;
+  /* rodar o ecrã: dentro da moldura tem de ser a página de fora a pedir */
+  JFS.lockOr=o=>{const sc=(TOP||window).screen;return sc.orientation&&sc.orientation.lock?sc.orientation.lock(o):Promise.reject()};
+  JFS.unlockOr=()=>{try{const sc=(TOP||window).screen;sc.orientation&&sc.orientation.unlock&&sc.orientation.unlock()}catch(e){}};
+  /* ir para o menu (passa pela moldura se for caso disso) */
+  JFS.home=()=>{const a=document.createElement("a");a.href=new URL("../",location.href).href;a.style.display="none";document.body.appendChild(a);a.click();a.remove()};
+
+  /* ---- links do site ---- */
+  const sameSite=a=>{
+    if(!a||a.target&&a.target!=="_self"||a.hasAttribute("download"))return null;
+    let u;try{u=new URL(a.href,location.href)}catch(e){return null}
+    if(u.origin!==location.origin)return null;
+    if(u.href.split("#")[0]===location.href.split("#")[0])return null; /* só muda o # */
+    return u.href;
+  };
+  if(TOP){
+    /* dentro da moldura: os links vão para a página de fora tratar */
+    addEventListener("click",e=>{if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey)return;const a=e.target.closest&&e.target.closest("a[href]");const h=sameSite(a);if(!h)return;e.preventDefault();TOP.JFS.go(h)},false);
+  }else{
+    JFS.shell=true;
+    const HOME=location.href.split("#")[0],baseTitle=document.title;let fr=null,bk=null,syncT=0;
+    /* a zona da câmara e da barra de baixo fica com a mesma cor e padrão do jogo que está aberto */
+    const meta=document.querySelector('meta[name="theme-color"]');
+    const sync=()=>{try{const d=fr.contentDocument;if(!d||!d.body)return;const pl=d.getElementById("play");const el=pl&&!pl.hidden?pl:d.body;const cs=getComputedStyle(el);let bg=cs.backgroundColor;if(el===d.body&&(bg==="rgba(0, 0, 0, 0)"||bg==="transparent"))bg=getComputedStyle(d.documentElement).backgroundColor;
+      bk.style.backgroundColor=bg;bk.style.backgroundImage=cs.backgroundImage;bk.style.backgroundSize=cs.backgroundSize;if(meta)meta.content=bg}catch(e){}};
+    const close=()=>{if(!fr)return;clearInterval(syncT);fr.remove();fr=null;if(bk){bk.remove();bk=null}document.documentElement.style.overflow="";document.title=baseTitle};
+    const show=href=>{
+      if(href.split("#")[0]===HOME){close();return}
+      if(!fr){
+        fr=document.createElement("iframe");fr.id="jfsFrame";fr.title="Jogo";
+        fr.allow="fullscreen; web-share; clipboard-write; accelerometer; gyroscope; autoplay; screen-wake-lock";fr.setAttribute("allowfullscreen","");
+        /* dentro de uma moldura o env(safe-area-inset-*) vale 0, por isso é a moldura que fica fora da câmara e dos cantos */fr.style.cssText="position:absolute;top:env(safe-area-inset-top,0px);right:env(safe-area-inset-right,0px);bottom:env(safe-area-inset-bottom,0px);left:env(safe-area-inset-left,0px);width:calc(100% - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));height:calc(100% - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));border:0;background:var(--bg,#f4eee3)";bk=document.createElement("div");bk.style.cssText="position:fixed;inset:0;z-index:2147483000;background:var(--bg,#f4eee3)";document.body.appendChild(bk);
+        fr.src=href;bk.appendChild(fr);document.documentElement.style.overflow="hidden";
+        fr.addEventListener("load",()=>{try{document.title=fr.contentDocument.title}catch(e){}sync()});syncT=setInterval(sync,300);
+      }else{try{fr.contentWindow.location.replace(href)}catch(e){fr.src=href}}
+    };
+    JFS.go=href=>{
+      const st=history.state&&history.state.jf?history.state:null;
+      if(href.split("#")[0]===HOME){if(st&&st.i>0)history.go(-st.i);else close();return}
+      const i=(st?st.i:0)+1;
+      history.pushState({jf:href,i},"",href);show(href);
+    };
+    addEventListener("popstate",e=>{const s=e.state;if(s&&s.jf)show(s.jf);else close()});
+    if(history.state&&history.state.jf)history.replaceState(null,"",HOME);
+    /* jogo aberto diretamente (atalho, link de convite): o botão "voltar" do telemóvel leva ao menu em vez de sair do site */
+    if(!document.querySelector("nav.games")&&document.querySelector('a[href="../"]')){
+      const HUB=new URL("../",location.href).href,ref=(document.referrer||"").split("#")[0];
+      if(ref!==HUB&&!(history.state&&history.state.jg)){const here=location.href;try{history.replaceState({jhub:1},"",HUB);history.pushState({jg:1},"",here)}catch(e){}}
+      addEventListener("popstate",e=>{if(e.state&&e.state.jhub)location.replace(HUB)});
+    }
+    /* em ecrã completo, os links do site abrem na moldura */
+    addEventListener("click",e=>{if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey)return;if(!isFs()&&!fr&&!get())return;const a=e.target.closest&&e.target.closest("a[href]");const h=sameSite(a);if(!h)return;e.preventDefault();JFS.go(h)},false);
+  }
+  if(!can)return;
+
+  /* ---- botão ---- */
+  const IN='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg>';
+  const OUT='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"/></svg>';
+  let btn=document.getElementById("fsBtn");
+  if(btn){const c=btn.cloneNode(false);c.removeAttribute("aria-pressed");btn.replaceWith(c);btn=c} /* a Panela tinha o seu; passa a usar este */
+  else{
+    const tools=document.querySelector("header .tools");if(!tools)return;
+    btn=document.createElement("button");btn.className="btn ghost sm ico";btn.id="fsBtn";btn.type="button";
+    const tb=document.getElementById("themeBtn");tools.insertBefore(btn,tb||null);
+  }
+  const st=document.createElement("style");
+  st.textContent="#fsBtn{display:inline-grid;place-items:center}#fsBtn[hidden]{display:none}#fsBtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;display:block}";
+  document.head.appendChild(st);
+  const upd=()=>{const f=isFs();btn.innerHTML=f?OUT:IN;btn.title=f?"Sair do ecrã completo":"Ecrã completo";btn.setAttribute("aria-label",btn.title);if(window.dispatchEvent)setTimeout(()=>dispatchEvent(new Event("resize")),250)};
+  upd();D.addEventListener("fullscreenchange",upd);D.addEventListener("webkitfullscreenchange",upd);
+  btn.hidden=false;
+  btn.addEventListener("click",()=>{const f=isFs();set(!f);f?leave():enter()});
+  if(TOP)return;
+  /* guardar a escolha */
+  let leaving=false;addEventListener("pagehide",()=>{leaving=true});
+  const onChange=()=>{if(!isFs()&&!leaving&&document.visibilityState==="visible")set(false)};
+  document.addEventListener("fullscreenchange",onChange);document.addEventListener("webkitfullscreenchange",onChange);
+  /* se mesmo assim mudou de página: volta a entrar no primeiro toque */
+  if(get()&&!isFs()){
+    const off=()=>{removeEventListener("click",once,true);removeEventListener("touchend",once,true)};
+    const once=e=>{if(e.target&&e.target.closest&&e.target.closest("#fsBtn"))return;off();if(!isFs())enter()};
+    addEventListener("click",once,true);addEventListener("touchend",once,true);
+  }
+})();
+</script><script>if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("../sw.js",{scope:"../"}).catch(()=>{}))</script></body>
+</html>
