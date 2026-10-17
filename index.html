@@ -9,7 +9,7 @@
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
 <meta property="og:title" content="Jogatina: jogos para jogar com amigos">
-<meta property="og:description" content="Panela de Pressão, Peta, Conversa de Tasca, Senhor Branco e Mais Uma!. Grátis, sem conta, cada um no seu telemóvel.">
+<meta property="og:description" content="Panela de Pressão, Peta, Conversa de Tasca, Senhor Branco, Mais Uma! e Adivinha na Testa. Grátis, sem conta, cada um no seu telemóvel.">
 <meta property="og:url" content="https://jogatina-pt.github.io/">
 <meta property="og:image" content="https://jogatina-pt.github.io/og.jpg">
 <meta property="og:image:width" content="1200">
@@ -17,6 +17,10 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Jogatina">
 <meta name="theme-color" content="#f4eee3">
 <link rel="preload" href="fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
@@ -160,16 +164,17 @@ header.top{flex:none}
 .game h3{position:relative;font-size:clamp(21px,5.6vw,30px);line-height:.95;color:#151515;-webkit-text-stroke:0;text-shadow:2px 2px 0 rgba(255,255,255,.6)}
 .game p{position:relative;margin:0;font-size:clamp(11.5px,3vw,14px);line-height:1.25;font-weight:700;max-width:64%;color:#1b1b1b}
 .game .tag{position:relative;z-index:1;align-self:flex-start;white-space:nowrap;background:#151515;color:#fff;font-family:var(--display);letter-spacing:.06em;font-size:13px;border-radius:999px;padding:2px 9px}
-.game.panela{--gc:#ffb26b}.game.peta{--gc:#ff9ec0}.game.tasca{--gc:#b9e07f}.game.branco{--gc:#9cc3ff}.game.maisuma{--gc:#ffd23f}
-.game.maisuma{grid-column:1/-1}
-.game.maisuma .pic{width:36%;max-width:190px;right:10px;bottom:-26px}
-.game.maisuma p{max-width:58%}
+.game.panela{--gc:#ffb26b}.game.peta{--gc:#ff9ec0}.game.tasca{--gc:#b9e07f}.game.branco{--gc:#9cc3ff}.game.maisuma{--gc:#ffd23f}.game.testa{--gc:#c9b3ff}
+.game.maisuma .pic{width:46%;max-width:150px;right:2px;bottom:-24px}
 :root:not([data-pp-theme="light"]) .game{filter:saturate(.9) brightness(.95)}
 .foot{flex:none;margin:0;text-align:center;font-size:12px}
+.tools{display:flex;gap:8px;align-items:center}
+.isheet{position:fixed;inset:0;z-index:80;background:rgba(10,10,10,.55);display:grid;place-items:end center;padding:16px}
+.isheet[hidden]{display:none}
+.isheet .box{background:var(--surface);color:var(--ink);border:3px solid var(--stroke);box-shadow:6px 6px 0 var(--stroke);border-radius:20px;padding:16px 18px;max-width:420px;width:100%;display:flex;flex-direction:column;gap:10px}
+.isheet h3{margin:0;font-size:28px}.isheet ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-weight:700}
 @media (min-width:760px){
-  .games{grid-template-columns:repeat(6,1fr);grid-template-rows:1fr 1fr}
-  .game{grid-column:span 2}
-  .game.branco,.game.maisuma{grid-column:span 3}
+  .games{grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr}
   .game .pic{max-width:140px}
 }
 @media (min-width:760px) and (min-height:600px){.game .pic{max-width:150px}}
@@ -181,7 +186,7 @@ header.top{flex:none}
 <div class="wrap">
   <header class="top">
     <div class="brand"><h1>Joga<span>tina</span></h1></div>
-    <div class="tools"><button class="btn ghost sm ico" id="themeBtn" type="button" aria-label="Tema escuro" title="Tema escuro">☾</button></div>
+    <div class="tools"><button class="btn sm" id="installBtn" type="button" hidden>📲 Instalar app</button><button class="btn ghost sm ico" id="themeBtn" type="button" aria-label="Tema escuro" title="Tema escuro">☾</button></div>
   </header>
   <section class="hero" aria-label="Boas-vindas">
     <svg class="mascot girafa" viewBox="0 0 200 270" role="img" aria-label="Girafa de óculos a ler um livro">
@@ -240,7 +245,7 @@ header.top{flex:none}
     <a class="game peta" href="peta/"><h3>Peta</h3><p>Inventa mentiras e engana os amigos.</p><span class="tag">2-8 · bluff</span><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M6 6h34a5 5 0 0 1 5 5v15a5 5 0 0 1-5 5H20l-8 7v-7H6a5 5 0 0 1-5-5V11a5 5 0 0 1 5-5z" fill="#fff" stroke="#151515" stroke-width="2.4" stroke-linejoin="round"/><text x="23" y="24" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="15" fill="#151515">?!</text><path d="M34 20h24a4 4 0 0 1 4 4v11a4 4 0 0 1-4 4h-3v6l-7-6H34a4 4 0 0 1-4-4V24a4 4 0 0 1 4-4z" fill="#d23a6e" stroke="#151515" stroke-width="2.4" stroke-linejoin="round"/><circle cx="40" cy="30" r="2" fill="#fff"/><circle cx="46" cy="30" r="2" fill="#fff"/><circle cx="52" cy="30" r="2" fill="#fff"/></svg></div></a>
     <a class="game tasca" href="tasca/"><h3>Conversa de Tasca</h3><p>A resposta mais parva ganha.</p><span class="tag">3-8 · família ou +18</span><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="6" y="6" width="26" height="36" rx="4" fill="#1f2a28" stroke="#151515" stroke-width="2.4" transform="rotate(-8 19 24)"/><rect x="11" y="18" width="14" height="3" rx="1.5" fill="#fffaf1" transform="rotate(-8 19 24)"/><rect x="30" y="8" width="26" height="36" rx="4" fill="#fff" stroke="#151515" stroke-width="2.4" transform="rotate(9 43 26)"/><text x="44" y="32" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="12" fill="#4f7f23" transform="rotate(9 43 26)">AH!</text></svg></div></a>
     <a class="game branco" href="branco/"><h3>Senhor Branco</h3><p>Descobre o impostor pelas pistas.</p><span class="tag">3-10 · dedução</span><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="8" y="10" width="22" height="30" rx="4" fill="#2f5fb3" stroke="#151515" stroke-width="2.4" transform="rotate(-10 19 25)"/><rect x="21" y="5" width="22" height="30" rx="4" fill="#2f5fb3" stroke="#151515" stroke-width="2.4"/><rect x="34" y="10" width="22" height="30" rx="4" fill="#fff" stroke="#151515" stroke-width="2.4" transform="rotate(10 45 25)"/><text x="45" y="32" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="18" fill="#2f5fb3" transform="rotate(10 45 25)">?</text></svg></div></a>
-    <a class="game maisuma" href="maisuma/"><h3>Mais Uma!</h3><p>Eu nunca, quem é mais provável, verdades e desafios. Bebe com juízo.</p><span class="tag">3-12 · +18</span><div class="pic" aria-hidden="true"><svg class="macaco-mini" viewBox="0 0 230 270" role="img" aria-label="Macaco de camisola às riscas a beber uma imperial">
+    <a class="game maisuma" href="maisuma/"><h3>Mais Uma!</h3><p>Eu nunca, verdades e desafios.</p><span class="tag">3-12 · +18</span><div class="pic" aria-hidden="true"><svg class="macaco-mini" viewBox="0 0 230 270" role="img" aria-label="Macaco de camisola às riscas a beber uma imperial">
 <defs><clipPath id="mcShirt2"><path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z"/></clipPath></defs>
 <g stroke="#151515" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
 <path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z" fill="#fffdf8"/>
@@ -266,14 +271,33 @@ header.top{flex:none}
 <ellipse cx="184" cy="122" rx="14" ry="9" fill="#5a3a24"/>
 <path d="M176 100q4 6 0 14" fill="none" stroke="#fff3c4" stroke-width="3" opacity=".7"/>
 </g></svg></div></a>
+    <a class="game testa" href="testa/"><h3>Adivinha na Testa</h3><p>Telemóvel na testa, os amigos dão pistas.</p><span class="tag">2+ · 1 telemóvel</span><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M5 9l5 4M59 9l-5 4M3 25h6M61 25h-6" stroke="#151515" stroke-width="2.6" stroke-linecap="round"/><g transform="rotate(-12 32 25)"><rect x="12" y="11" width="40" height="27" rx="5" fill="#151515"/><rect x="16" y="14.5" width="32" height="20" rx="2" fill="#fff"/><text x="32" y="29.5" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="14" fill="#6d3fd6">GALO</text></g></svg></div></a>
   </nav>
   <p class="foot">Feito em Portugal. As salas usam o Firebase (Google) e apagam-se quando acabam.</p>
 </div>
+<div class="isheet" id="iosSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-label="Instalar no iPhone"><h3>Instalar no iPhone</h3><ol><li>Abre este site no Safari.</li><li>Toca no botão Partilhar (o quadrado com a seta para cima).</li><li>Escolhe «Adicionar ao ecrã principal».</li></ol><p class="note" style="margin:0">Fica com um ícone como as outras apps. Também podes fazer isto dentro de cada jogo para teres um atalho direto.</p><button class="btn" type="button">Percebi</button></div></div>
 <script>
 const tb=document.getElementById("themeBtn");
 function setTheme(t,save){if(t==="light")document.documentElement.dataset.ppTheme="light";else delete document.documentElement.dataset.ppTheme;if(save)try{localStorage.setItem("pp-tema",t)}catch(e){}tb.textContent=t==="light"?"☾":"☀";tb.title=t==="light"?"Tema escuro":"Tema claro";tb.setAttribute("aria-label",tb.title);const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==="light"?"#f4eee3":"#13201f"}
 setTheme(document.documentElement.dataset.ppTheme==="light"?"light":"dark");
 tb.addEventListener("click",()=>setTheme(document.documentElement.dataset.ppTheme==="light"?"dark":"light",true));
+/* Botão "Instalar app" no menu */
+(function(){
+  const btn=document.getElementById("installBtn"),sheet=document.getElementById("iosSheet");
+  const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+  const ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+  let ev=null;
+  if(standalone)return;
+  window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();ev=e;btn.hidden=false});
+  window.addEventListener("appinstalled",()=>{btn.hidden=true;ev=null});
+  if(ios)btn.hidden=false;
+  btn.addEventListener("click",async()=>{
+    if(ev){ev.prompt();try{await ev.userChoice}catch(e){}ev=null;btn.hidden=true;return}
+    sheet.hidden=false;
+  });
+  sheet.addEventListener("click",e=>{if(e.target===sheet||e.target.closest("button"))sheet.hidden=true});
+})();
+
 </script>
-</body>
+<script>if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js",{scope:""}).catch(()=>{}))</script></body>
 </html>

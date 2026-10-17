@@ -1,0 +1,100 @@
+{
+ "name": "Jogatina",
+ "short_name": "Jogatina",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#f4eee3",
+ "theme_color": "#f4eee3",
+ "lang": "pt-PT",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ],
+ "id": "./",
+ "description": "Jogos para jogar com amigos, cada um no seu telemóvel.",
+ "shortcuts": [
+  {
+   "name": "Panela de Pressão",
+   "short_name": "Panela",
+   "url": "panela/",
+   "icons": [
+    {
+     "src": "panela/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "Peta",
+   "short_name": "Peta",
+   "url": "peta/",
+   "icons": [
+    {
+     "src": "peta/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "Conversa de Tasca",
+   "short_name": "Conversa",
+   "url": "tasca/",
+   "icons": [
+    {
+     "src": "tasca/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "Senhor Branco",
+   "short_name": "Senhor",
+   "url": "branco/",
+   "icons": [
+    {
+     "src": "branco/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "Mais Uma!",
+   "short_name": "Mais Uma!",
+   "url": "maisuma/",
+   "icons": [
+    {
+     "src": "maisuma/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "Adivinha na Testa",
+   "short_name": "Adivinha",
+   "url": "testa/",
+   "icons": [
+    {
+     "src": "testa/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  }
+ ]
+}
