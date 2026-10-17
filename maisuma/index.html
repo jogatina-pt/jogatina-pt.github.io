@@ -1122,5 +1122,45 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   if(row){const b=document.createElement("button");b.className="btn ghost";b.type="button";b.id="qrBtn";b.textContent="QR code";b.addEventListener("click",show);row.appendChild(b)}
   window.showRoomQR=show;
 })();
+</script><script>/* ===== Ecrã completo (menu e todos os jogos) =====
+   Botão no cabeçalho. A escolha fica guardada: ao mudar de página o navegador sai do ecrã completo,
+   por isso a página seguinte volta a entrar no primeiro toque. */
+(function(){
+  const de=document.documentElement;
+  const can=!!(document.fullscreenEnabled||document.webkitFullscreenEnabled);
+  const isFs=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);
+  const get=()=>{try{return localStorage.getItem("pp-fs")==="1"}catch(e){return false}};
+  const set=v=>{try{localStorage.setItem("pp-fs",v?"1":"0")}catch(e){}};
+  const enter=()=>{try{const p=(de.requestFullscreen||de.webkitRequestFullscreen).call(de,{navigationUI:"hide"});if(p&&p.catch)p.catch(()=>{})}catch(e){}};
+  const leave=()=>{try{const p=(document.exitFullscreen||document.webkitExitFullscreen).call(document);if(p&&p.catch)p.catch(()=>{})}catch(e){}};
+  window.JFS={can,isFs,wanted:get,enter,leave};
+  if(!can)return;
+  const IN='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg>';
+  const OUT='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"/></svg>';
+  let btn=document.getElementById("fsBtn"),own=false;
+  if(!btn){
+    const tools=document.querySelector("header .tools");if(!tools)return;
+    btn=document.createElement("button");btn.className="btn ghost sm ico";btn.id="fsBtn";btn.type="button";own=true;
+    const st=document.createElement("style");
+    st.textContent="#fsBtn{display:inline-grid;place-items:center}#fsBtn[hidden]{display:none}#fsBtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;display:block}";
+    document.head.appendChild(st);
+    const tb=document.getElementById("themeBtn");tools.insertBefore(btn,tb||null);
+    const upd=()=>{const f=isFs();btn.innerHTML=f?OUT:IN;btn.title=f?"Sair do ecrã completo":"Ecrã completo";btn.setAttribute("aria-label",btn.title)};
+    upd();document.addEventListener("fullscreenchange",upd);document.addEventListener("webkitfullscreenchange",upd);
+    btn.addEventListener("click",()=>{isFs()?leave():enter()});
+  }
+  btn.hidden=false;
+  /* guardar a escolha: o clique no botão decide (a Panela tem o seu próprio botão; isto só junta a memória) */
+  btn.addEventListener("click",()=>set(!isFs()),true);
+  let leaving=false;addEventListener("pagehide",()=>{leaving=true});
+  const onChange=()=>{if(!isFs()&&!leaving&&document.visibilityState==="visible"&&!window.__fsKeep)set(false)};
+  document.addEventListener("fullscreenchange",onChange);document.addEventListener("webkitfullscreenchange",onChange);
+  /* voltar a entrar no primeiro toque */
+  if(get()&&!isFs()){
+    const once=e=>{if(e.target&&e.target.closest&&e.target.closest("#fsBtn"))return;off();if(!isFs())enter()};
+    const off=()=>{removeEventListener("click",once,true);removeEventListener("touchend",once,true)};
+    addEventListener("click",once,true);addEventListener("touchend",once,true);
+  }
+})();
 </script><script>if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("../sw.js",{scope:"../"}).catch(()=>{}))</script></body>
 </html>
