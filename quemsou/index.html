@@ -110,6 +110,7 @@ input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shado
 .reacts{position:fixed;z-index:35;display:grid;grid-template-columns:repeat(3,auto);gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:8px;box-shadow:0 12px 28px rgba(0,0,0,.3)}
 .reacts button{font-size:24px;background:var(--surface-2);border:0;border-radius:10px;padding:4px 9px}
 @media (prefers-reduced-motion:reduce){.alert.show,.bubble{animation:none}}
+.roster li.free.more{border:0!important;background:transparent;padding:2px 6px;min-height:0;font-size:13px}
 
 /* comum aos jogos de rondas: barra, jogadores, quadro de pontos, vencedor */
 .game{display:flex;flex-direction:column;gap:12px;flex:1;padding-bottom:8px}
@@ -230,6 +231,7 @@ input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shado
 .lastans{border:3px solid var(--stroke);box-shadow:4px 4px 0 var(--stroke);border-radius:16px;padding:10px 14px;font-family:var(--display);font-size:24px;letter-spacing:.04em;text-align:center;color:#151515;animation:pop .4s cubic-bezier(.2,1.6,.4,1)}
 .lastans.sim{background:#c8f2d8}.lastans.nao{background:#ffd3cf}
 .lastans b{font-weight:400;font-size:30px}
+.lastans .streak{display:inline-block;font-size:16px;background:#151515;color:#fff;border-radius:999px;padding:2px 10px;vertical-align:middle;transform:rotate(-3deg)}
 .log li span{font-size:12px}
 .answers .opt.picked{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 18%,var(--surface))}
 .tally{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
@@ -651,7 +653,8 @@ function renderLobby(){
   const G=ROOM.game,host=ROOM.role==="host";
   $("lbCode").textContent=L.code;
   $("roster").innerHTML=L.seats.map((s,i)=>`<li><span class="rn">${esc(s.name)}${i===L.you?' <em>(tu)</em>':""}</span><span class="rk">${i===0?"criou a sala":s.kind==="bot"?"computador":"amigo"}</span>${host&&i>0?`<button class="btn ghost sm" type="button" data-rm="${i}" aria-label="Tirar ${esc(s.name)}">Tirar</button>`:""}</li>`).join("")
-    +Array.from({length:Math.max(0,Math.min(G.maxp,Math.max(4,L.seats.length+1))-L.seats.length)},()=>`<li class="free"><span class="rn">Lugar livre</span></li>`).join("");
+    +Array.from({length:Math.max(0,Math.min(G.maxp,Math.max(4,L.seats.length+1))-L.seats.length)},()=>`<li class="free"><span class="rn">Lugar livre</span></li>`).join("")
+    +(G.maxp>4?`<li class="free more"><span class="rn">${L.seats.length} de ${G.maxp} lugares ocupados</span></li>`:"");
   $("hostCtl").hidden=!host;
   $("addBot").disabled=L.seats.length>=G.maxp||L.seats.filter(s=>s.kind==="bot").length>=G.maxBots;
   $("startBtn").disabled=L.seats.length<G.minp;
@@ -838,7 +841,7 @@ function newRound(){
 }
 const active=i=>G.r.done[i]===null;
 function nextTurn(){
-  const R=G.r;R.judge=null;R.phase="play";
+  const R=G.r;R.judge=null;R.phase="play";R.streak=0;
   const left=G.seats.map((s,i)=>i).filter(active);
   if(left.length<=1||!left.some(isOn)){endRound();return}
   for(let k=0;k<R.order.length;k++){
@@ -892,7 +895,7 @@ function viewFor(i){
     turn,qn:R.qn||0,tkey:turn!=null?(R.qn||0)+":"+turn:null,
     judge:R.judge?{i:R.judge.i,name:nm(R.judge.i),text:R.judge.text,word:R.judge.i===i?null:R.words[R.judge.i],my:R.judge.votes[i]||null,
       n:Object.keys(R.judge.votes).length,of:judges().length}:null,
-    log:R.log.slice(-LOGN).reverse().map(e=>({k:e.k,name:nm(e.i),me:e.i===i,by:e.by!=null?nm(e.by):null,byMe:e.by===i,a:e.a||null,text:e.text||null,w:e.k==="ok"||e.k==="give"?e.w:null,pts:e.pts||0})),
+    log:R.log.slice(-LOGN).reverse().map(e=>({k:e.k,name:nm(e.i),me:e.i===i,by:e.by!=null?nm(e.by):null,byMe:e.by===i,a:e.a||null,n:e.n||0,text:e.text||null,w:e.k==="ok"||e.k==="give"?e.w:null,pts:e.pts||0})),
     left:G.deadline&&R.phase==="play"?Math.max(0,G.deadline-Date.now()):0,timed:g.opts.tempo!=="0"};
 }
 function broadcast(){if(!G)return;G.seats.forEach((s,i)=>{if(s.kind!=="bot")ROOM.sendTo(s,viewFor(i))})}
@@ -900,7 +903,8 @@ function qsMsg(seat,d){
   if(!G||!d)return;
   const i=G.seats.indexOf(seat),R=G.r;if(i<0)return;
   const turn=R.order[R.pos];
-  if(d.t==="ans"&&R.phase==="play"&&i!==turn&&ANSL[d.a]&&d.turn===(R.qn||0)+":"+turn){R.qn=(R.qn||0)+1;addLog({k:"ans",i:turn,by:i,a:d.a});if(d.a==="sim")broadcast();else nextTurn();return}
+  if(d.t==="ans"&&R.phase==="play"&&i!==turn&&ANSL[d.a]&&d.turn===(R.qn||0)+":"+turn){R.qn=(R.qn||0)+1;R.streak=d.a==="sim"?(R.streak||0)+1:0;addLog({k:"ans",i:turn,by:i,a:d.a,n:R.streak});if(d.a==="sim")broadcast();else nextTurn();return}
+  if(d.t==="ans"){ROOM.sendTo(seat,viewFor(i));return}
   if(d.t==="pass"&&R.phase==="play"&&i===turn){addLog({k:"pass",i});nextTurn();return}
   if(d.t==="give"&&R.phase==="play"&&i===turn){finish(i,"give");addLog({k:"give",i,w:R.words[i]});nextTurn();return}
   if(d.t==="guess"&&R.phase==="play"&&i===turn){
@@ -975,7 +979,7 @@ function render(v){
     return;
   }
   const meDone=v.players[v.me].done,L=v.log[0];
-  const last=fresh?(L&&L.k==="ans"?`<div class="lastans ${L.a}">${L.me?"A tua pergunta":esc(L.name)}: <b>${ANSL[L.a].toUpperCase()}</b><small style="display:block;font-size:15px">${L.a==="sim"?(L.me?"Continua, faz outra pergunta!":"Continua a perguntar"):(L.me?"Passou a vez":"A vez passou")}</small></div>`:""):(UI.last||"");
+  const last=fresh?(L&&L.k==="ans"?`<div class="lastans ${L.a}">${L.me?"A tua pergunta":esc(L.name)}: <b>${ANSL[L.a].toUpperCase()}</b>${L.a==="sim"&&L.n>1?` <span class="streak">${L.n}.º sim seguido</span>`:""}<small style="display:block;font-size:15px">${L.a==="sim"?(L.me?"Continua, faz outra pergunta!":"Continua a perguntar"):(L.me?"Passou a vez":"A vez passou")}</small></div>`:""):(UI.last||"");
   UI.last=last;
   if(myTurn){
     if(fresh){UI.guessing=false;playSfx("vote");try{navigator.vibrate&&navigator.vibrate(150)}catch(e){}}
@@ -996,7 +1000,7 @@ function render(v){
     <p class="lead">Vez de <b>${esc(tp.name)}</b>. A palavra é <b>${esc(tp.word||"")}</b>.</p>
     <p class="wait" style="margin:0">Ouve a pergunta e responde. Basta um responder. Sim: continua a perguntar. Não: passa a vez.</p>
     <div class="opts answers" id="ansList">${ANS.map(([k,l])=>`<button type="button" class="opt ${k}" data-a="${k}">${l}</button>`).join("")}</div>${logHTML(v)}`;
-  $("ansList").addEventListener("click",e=>{const b=e.target.closest(".opt");if(!b||$("ansList").classList.contains("locked"))return;unlockAudio();ROOM.send({t:"ans",a:b.dataset.a,turn:v.tkey});$("ansList").classList.add("locked");b.classList.add("picked");playSfx("send")});
+  $("ansList").addEventListener("click",e=>{const b=e.target.closest(".opt");if(!b||$("ansList").classList.contains("locked"))return;unlockAudio();const L_=$("ansList");L_.classList.add("locked");b.classList.add("picked");ROOM.send({t:"ans",a:b.dataset.a,turn:v.tkey});playSfx("send");clearTimeout(UI.unlockT);UI.unlockT=setTimeout(()=>{if(L_.isConnected){L_.classList.remove("locked");b.classList.remove("picked")}},3000)});
   if(fresh&&prev&&prev.log.length&&v.log[0]&&v.log[0].k==="ok"&&prev.log[0]!==v.log[0])playSfx("truth");
 }
 function drawOver(v){

@@ -110,6 +110,7 @@ input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shado
 .reacts{position:fixed;z-index:35;display:grid;grid-template-columns:repeat(3,auto);gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:8px;box-shadow:0 12px 28px rgba(0,0,0,.3)}
 .reacts button{font-size:24px;background:var(--surface-2);border:0;border-radius:10px;padding:4px 9px}
 @media (prefers-reduced-motion:reduce){.alert.show,.bubble{animation:none}}
+.roster li.free.more{border:0!important;background:transparent;padding:2px 6px;min-height:0;font-size:13px}
 
 /* comum aos jogos de rondas: barra, jogadores, quadro de pontos, vencedor */
 .game{display:flex;flex-direction:column;gap:12px;flex:1;padding-bottom:8px}
@@ -597,7 +598,8 @@ function renderLobby(){
   const G=ROOM.game,host=ROOM.role==="host";
   $("lbCode").textContent=L.code;
   $("roster").innerHTML=L.seats.map((s,i)=>`<li><span class="rn">${esc(s.name)}${i===L.you?' <em>(tu)</em>':""}</span><span class="rk">${i===0?"criou a sala":s.kind==="bot"?"computador":"amigo"}</span>${host&&i>0?`<button class="btn ghost sm" type="button" data-rm="${i}" aria-label="Tirar ${esc(s.name)}">Tirar</button>`:""}</li>`).join("")
-    +Array.from({length:Math.max(0,Math.min(G.maxp,Math.max(4,L.seats.length+1))-L.seats.length)},()=>`<li class="free"><span class="rn">Lugar livre</span></li>`).join("");
+    +Array.from({length:Math.max(0,Math.min(G.maxp,Math.max(4,L.seats.length+1))-L.seats.length)},()=>`<li class="free"><span class="rn">Lugar livre</span></li>`).join("")
+    +(G.maxp>4?`<li class="free more"><span class="rn">${L.seats.length} de ${G.maxp} lugares ocupados</span></li>`:"");
   $("hostCtl").hidden=!host;
   $("addBot").disabled=L.seats.length>=G.maxp||L.seats.filter(s=>s.kind==="bot").length>=G.maxBots;
   $("startBtn").disabled=L.seats.length<G.minp;
