@@ -1,6 +1,6 @@
 # Jogatina
 
-Jogos grátis para jogar com amigos, cada um no seu telemóvel: Panela de Pressão, Peta, Conversa de Tasca e Senhor Branco.
+Jogos grátis para jogar com amigos, cada um no seu telemóvel: Panela de Pressão, Peta, Conversa de Tasca, Senhor Branco e Mais Uma!.
 
 Site: https://jogatina-pt.github.io/
 

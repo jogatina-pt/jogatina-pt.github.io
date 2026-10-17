@@ -1,0 +1,1036 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mais Uma!</title>
+<meta name="description" content="Jogo para beber com amigos, cada um no seu telemóvel: Eu nunca, Quem é mais provável, verdades, desafios e regras. Só para maiores de 18.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_PT">
+<meta property="og:site_name" content="Jogatina">
+<meta property="og:title" content="Mais Uma! O jogo para beber com os amigos">
+<meta property="og:description" content="Eu nunca, Quem é mais provável, verdades e desafios, cada um no seu telemóvel. Só para maiores de 18.">
+<meta property="og:url" content="https://jogatina-pt.github.io/maisuma/">
+<meta property="og:image" content="https://jogatina-pt.github.io/maisuma/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Mais Uma!, jogo para beber">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mais Uma!">
+<meta name="theme-color" content="#f4eee3">
+<link rel="preload" href="../fonts/bowlby-one.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
+<script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
+<style>
+/* ipgames: base comum (mesma família visual da Panela de Pressão) */
+@font-face{font-family:"Bowlby One";font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/bowlby-one.woff2) format("woff2")}
+@font-face{font-family:"Figtree";font-style:normal;font-weight:300 900;font-display:swap;src:url(../fonts/figtree.woff2) format("woff2")}
+[hidden]{display:none!important}
+:root{
+  --bg:#13201f; --surface:#1b2d2b; --surface-2:#223835; --line:#2f4744;
+  --ink:#eef2ea; --muted:#9fb5af; --title:#f1ece2; --enamel:#f1ece2; --card-ink:#1b2422;
+  --accent:#ff8a3d; --accent-ink:#1d130b; --steam:#8fd3c8; --danger:#ff5a4f; --good:#5fd08a;
+  --display:"Bowlby One", Impact, "Arial Black", sans-serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme:dark;
+}
+:root[data-pp-theme="light"]{
+  --bg:#f4eee3; --surface:#fffaf1; --surface-2:#ebe1cf; --line:#d8cab2;
+  --ink:#1f2a28; --muted:#5b6965; --title:#1f2a28; --enamel:#fffdf8; --card-ink:#1b2422;
+  --accent:#e8731f; --steam:#1d7a6e; --danger:#c8352b; --good:#1f8a4c;
+  color-scheme:light;
+}
+html,body{margin:0}
+html{height:100%}
+html,body{background:var(--bg);color:var(--ink)}
+body{min-height:100%;box-sizing:border-box;overflow-x:hidden;font-family:var(--body);font-size:15px;line-height:1.45;padding:max(8px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column}
+.wrap{width:100%;max-width:820px;margin:0 auto;flex:1;display:flex;flex-direction:column;gap:12px}
+h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:.01em;text-wrap:balance;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid var(--steam);outline-offset:2px}
+a{color:inherit}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:11px 20px;font-weight:800;font-size:15px;text-decoration:none;line-height:1.1}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn.ico{min-width:36px;padding-inline:9px;font-size:15px;line-height:1}
+.btn.ico[aria-pressed="false"]{opacity:.45;filter:grayscale(1)}
+#exitBtn{border-color:var(--danger);color:var(--danger)}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;flex:none}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.brand h1{font-size:clamp(24px,6vw,34px);line-height:1;color:var(--title)}
+.brand h1 span{color:var(--accent)}
+.brand a.home{font-size:13px;color:var(--muted);text-decoration:none;font-weight:700;white-space:nowrap}
+.tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+input{font:inherit;font-size:16px;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;box-sizing:border-box;min-width:0}
+input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shadow:inset 0 0 0 1.5px var(--steam)}
+.setup{display:flex;flex-direction:column;gap:16px;align-items:flex-start;flex:1;padding-block:12px 24px}
+.setup h2{font-size:clamp(34px,10vw,60px);line-height:.95;color:var(--title)}
+.setup h2 span{color:var(--accent);display:block}
+.setup p{max-width:58ch;color:var(--muted);margin:0}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:6px;width:100%;max-width:360px}
+.mode{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;width:100%;max-width:440px;box-sizing:border-box}
+.join{display:flex;gap:8px}
+.join input{text-transform:uppercase;letter-spacing:.2em;font-weight:800;flex:1}
+.join.fromlink input{border-color:var(--accent)}
+.note{font-size:13.5px;color:var(--steam);margin:0;min-height:1.2em}
+.note.bad{color:var(--danger);font-weight:700}
+.nopeer-msg{display:none;color:var(--muted)}
+.mode.nopeer .nopeer-msg{display:block}
+.mode.nopeer .choices,.mode.nopeer .join{display:none}
+.lobby .code{font-size:clamp(44px,14vw,80px);letter-spacing:.12em;color:var(--accent)}
+.roster{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;width:100%;max-width:420px}
+.roster li{display:flex;align-items:center;gap:10px;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;min-height:24px}
+.roster li.free{border-style:dashed;background:transparent;color:var(--muted)}
+.roster .rn{font-weight:800;flex:1;min-width:0;overflow-wrap:anywhere}
+.roster .rn em{font-style:normal;font-weight:600;color:var(--muted)}
+.roster .rk{font-size:12px;color:var(--muted)}
+.roster li.free .rn{font-weight:400}
+.linkbtn{background:none;border:0;padding:4px 2px;color:var(--muted);font-size:13px;text-decoration:underline;text-underline-offset:3px}
+.foot{font-size:13px;color:var(--muted);margin:4px 0 0}
+.modal{position:fixed;inset:0;background:rgba(8,14,13,.72);display:grid;place-items:center;padding:16px;z-index:33;box-sizing:border-box}
+.sheet{box-sizing:border-box;background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:20px;max-width:460px;width:100%;max-height:calc(100dvh - 32px);overflow:auto;display:flex;flex-direction:column;gap:14px}
+.sheet h3{font-size:24px;color:var(--title)}
+.sheet .body{color:var(--muted)}
+.sheet .actions{display:flex;gap:8px;flex-wrap:wrap}
+.sheet ul{padding-left:18px;margin:0;display:flex;flex-direction:column;gap:6px}
+.sheet li b{color:var(--ink)}
+.alert{position:fixed;left:50%;top:max(12px,env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:40;max-width:min(92vw,520px);width:max-content;box-sizing:border-box;background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:15px;padding:12px 16px;border-radius:14px;box-shadow:0 12px 28px rgba(0,0,0,.3);text-align:center;pointer-events:none}
+.alert.show{animation:alertin .35s cubic-bezier(.2,1.5,.4,1)}
+@keyframes alertin{from{transform:translate(-50%,-20px) scale(.9);opacity:0}to{transform:translateX(-50%);opacity:1}}
+.bubble{position:fixed;transform:translate(-50%,-100%);font-size:30px;pointer-events:none;animation:bub 2.6s ease forwards;z-index:26}
+@keyframes bub{0%{opacity:0;transform:translate(-50%,-80%) scale(.6)}12%{opacity:1;transform:translate(-50%,-100%) scale(1.1)}20%{transform:translate(-50%,-100%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-150%)}}
+.reacts{position:fixed;z-index:35;display:grid;grid-template-columns:repeat(3,auto);gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:8px;box-shadow:0 12px 28px rgba(0,0,0,.3)}
+.reacts button{font-size:24px;background:var(--surface-2);border:0;border-radius:10px;padding:4px 9px}
+@media (prefers-reduced-motion:reduce){.alert.show,.bubble{animation:none}}
+
+/* comum aos jogos de rondas: barra, jogadores, quadro de pontos, vencedor */
+.game{display:flex;flex-direction:column;gap:12px;flex:1;padding-bottom:8px}
+.gbar{display:flex;justify-content:space-between;align-items:center;gap:10px}
+#gTimer{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums;color:var(--ink);min-width:3ch;text-align:right}
+#gTimer.low{color:var(--danger)}
+.chips{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.chips li{display:flex;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:4px 10px;font-size:13px;min-width:0}
+.chips li.me{border-color:var(--accent)}
+.chips li.off{opacity:.5}
+.chips li .cn{font-weight:700;max-width:10ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chips li b{font-variant-numeric:tabular-nums}
+.chips li i{font-style:normal;color:var(--muted);font-weight:800}
+.chips li.done i{color:var(--good)}
+.chips .think{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:think 1s ease-in-out infinite}
+@keyframes think{50%{opacity:.25}}
+.lost{margin:0;color:var(--danger);font-weight:700}
+.panel{display:flex;flex-direction:column;gap:10px}
+.wait{margin:0;color:var(--muted);font-size:14px;min-height:1.3em}
+.mine{margin:0;color:var(--muted);font-size:13px}
+@keyframes pop{from{transform:scale(.4) rotate(-6deg);opacity:0}to{transform:none;opacity:1}}
+.board{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.board li{display:flex;align-items:center;gap:10px;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:9px 14px}
+.board li.me{border-color:var(--accent)}
+.board .cn{flex:1;font-weight:800;min-width:0;overflow-wrap:anywhere}
+.board em{font-style:normal;color:var(--good);font-weight:800}
+.board b{font-family:var(--display);font-weight:400;font-size:20px;font-variant-numeric:tabular-nums;min-width:2ch;text-align:right}
+.board .pos{font-family:var(--display);color:var(--muted);width:1.4em}
+.board.final li:first-child{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.win{display:flex;flex-direction:column;gap:2px}
+.win h2{font-size:clamp(34px,10vw,56px);line-height:1;color:var(--accent);animation:pop .6s cubic-bezier(.2,1.6,.4,1)}
+.awards{display:flex;flex-direction:column;gap:6px}
+.awards p{margin:0;font-weight:700}
+.awards span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.rstep,.rverdict b,.win h2,.blank.fill{animation:none}}
+/* Mais Uma!: âmbar de cerveja, cartas coloridas por tipo */
+:root{--accent:#ffb627;--accent-ink:#241600;--k-mp:#ff8a3d;--k-nunca:#ff6f9c;--k-verdade:#7fb2ff;--k-desafio:#ff5a4f;--k-regra:#ffd166;--k-todos:#9ccc65;--k-rapido:#c792ea;--k-brinde:#ffb627;--k-agua:#4fc3f7}
+:root[data-pp-theme="light"]{--accent:#c27c00;--accent-ink:#fff;--k-mp:#e8731f;--k-nunca:#d23a6e;--k-verdade:#2f5fb3;--k-desafio:#c8352b;--k-regra:#b88a00;--k-todos:#4f7f23;--k-rapido:#7b4fb3;--k-brinde:#c27c00;--k-agua:#1a86b8}
+.opts-lobby{display:flex;flex-direction:column;gap:10px;width:100%;max-width:440px}
+.optrow{display:flex;flex-direction:column;gap:6px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:8px 14px;font-weight:800;font-size:14px;color:var(--ink)}
+.seg button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.seg button:disabled{cursor:default}
+.seg button:disabled:not(.on){opacity:.55}
+.age{display:flex;align-items:center;gap:10px;font-weight:800;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:10px 14px}
+.age input{width:22px;height:22px;accent-color:var(--accent)}
+.drinkwarn{font-weight:700}
+.chips li.turnnow{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.rulebar{background:color-mix(in srgb,var(--k-regra) 22%,var(--surface));border:1.5px solid var(--k-regra);border-radius:12px;padding:8px 12px;display:flex;flex-direction:column;gap:2px}
+.rulebar span{font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--muted)}
+.rulebar b{font-size:14px}
+.mucard{--kc:var(--accent);background:var(--surface);border:2px solid var(--kc);border-radius:20px;padding:18px 20px;display:flex;flex-direction:column;gap:10px;box-shadow:0 6px 0 color-mix(in srgb,var(--kc) 35%,var(--surface-2));animation:cardin .4s cubic-bezier(.2,1.4,.4,1)}
+@keyframes cardin{from{transform:translateY(14px) rotate(-1.5deg);opacity:0}to{transform:none;opacity:1}}
+.mucard .eyebrow{color:var(--kc);font-size:12px}
+.mucard p{margin:0;font-size:clamp(21px,6vw,30px);line-height:1.25;font-weight:800;color:var(--title);text-wrap:pretty}
+.mucard .who{font-family:var(--display);font-size:20px;color:var(--kc)}
+.mucard .who:empty{display:none}
+.k-mp{--kc:var(--k-mp)}.k-nunca{--kc:var(--k-nunca)}.k-verdade{--kc:var(--k-verdade)}.k-desafio{--kc:var(--k-desafio)}.k-regra{--kc:var(--k-regra)}.k-todos{--kc:var(--k-todos)}.k-rapido{--kc:var(--k-rapido)}.k-brinde{--kc:var(--k-brinde)}.k-agua{--kc:var(--k-agua)}
+.lead{margin:0;font-size:17px;font-weight:700}
+.lead b{color:var(--accent)}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.opt{text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:13px 16px;font-size:17px;font-weight:800;color:var(--ink);overflow-wrap:anywhere}
+.opt:hover{border-color:var(--accent)}
+.opts.locked .opt{cursor:default;opacity:.5}
+.opts.locked .opt.picked{opacity:1;border-color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.yn{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn.big{padding:18px 12px;font-size:18px;border-radius:18px}
+.yn2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.yn2 p{margin:0;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;font-weight:700}
+.yn2 span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px}
+.tally{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.tally li{display:flex;justify-content:space-between;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;font-weight:700}
+.drink{background:color-mix(in srgb,var(--accent) 14%,var(--surface));border:2px solid var(--accent);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;animation:pop .45s cubic-bezier(.2,1.6,.4,1)}
+.drink p{margin:0;display:flex;justify-content:space-between;font-size:18px}
+.drink p.me b{color:var(--accent)}
+.race{width:100%;min-height:42vh;border-radius:24px;border:0;font-family:var(--display);font-size:clamp(40px,14vw,80px);color:#fff;background:#6b6f76;touch-action:manipulation}
+.race.go{background:var(--k-todos);animation:pop .25s ease}
+.race:disabled{opacity:.6}
+@media (prefers-reduced-motion:reduce){.mucard,.drink{animation:none}}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><h1>Mais <span>Uma!</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="tools">
+      <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
+      <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
+      <button class="btn ghost sm ico" id="mute" type="button" aria-pressed="true" aria-label="Som" title="Som">🔊</button>
+      <button class="btn ghost sm ico" id="themeBtn" type="button" aria-label="Tema escuro" title="Tema escuro">☾</button>
+      <button class="btn ghost sm" id="exitBtn" type="button" hidden>Sair</button>
+    </div>
+  </header>
+
+  <section id="setup" class="setup">
+    <h2>Só mais<span>uma rodada.</span></h2>
+    <p>O jogo para beber com os amigos, cada um no seu telemóvel: Eu nunca e Quem é mais provável com respostas secretas, verdades e desafios, regras para a mesa e corridas. O jogo conta os goles de cada um.</p>
+    <label class="age"><input type="checkbox" id="age18"> Tenho 18 anos ou mais</label>
+    <label class="field"><span class="eyebrow">O teu nome</span><input id="myName" maxlength="14" autocomplete="nickname" placeholder="Ex.: Ivo"></label>
+    <div class="mode" id="onlineMode">
+      <div class="eyebrow">Para 3 a 12 pessoas na mesma mesa, cada uma com o seu telemóvel</div>
+      <div class="choices"><button class="btn" id="hostBtn" type="button">Criar sala</button></div>
+      <div class="join" id="joinArea"><input id="joinCode" placeholder="Código" maxlength="5" autocapitalize="characters" autocomplete="off" spellcheck="false" aria-label="Código da sala"><button class="btn ghost" id="joinBtn" type="button">Entrar</button></div>
+      <p class="note" id="netNote" role="status"></p>
+      <p class="note nopeer-msg">O modo online não está disponível nesta página. Abre o jogo no site para jogar com amigos.</p>
+    </div>
+    <p class="foot drinkwarn">🍺 Só para maiores de 18. Bebe com moderação. Quem conduz não bebe. Dá para jogar com água ou sumo.</p>
+    <p class="foot">Grátis, sem conta e sem publicidade. <button class="linkbtn" id="privBtn" type="button">Privacidade</button></p>
+    
+  </section>
+
+  <section id="lobby" class="setup lobby" hidden>
+    <div class="eyebrow">Código da sala</div>
+    <h2 id="lbCode" class="code">-----</h2>
+    <p id="lbHelp"></p>
+    <div class="choices"><button class="btn" id="shareBtn" type="button">Enviar link</button><button class="btn ghost" id="copyBtn" type="button">Copiar link</button></div>
+    <div class="opts-lobby" id="lbOpts"></div>
+    <ul class="roster" id="roster"></ul>
+    <div class="choices" id="hostCtl"><button class="btn ghost" id="addBot" type="button">+ Computador</button><button class="btn" id="startBtn" type="button">Começar</button></div>
+    <p class="note" id="lbNote" role="status"></p>
+    <button class="btn ghost sm" id="leaveBtn" type="button">Sair da sala</button>
+  </section>
+
+  <main id="game" class="game" hidden>
+    <div class="gbar"><span class="eyebrow" id="gRound"></span><span id="gTimer"></span></div>
+    <ul class="chips" id="chips" aria-label="Jogadores e pontos"></ul>
+    <p class="lost" id="lost" role="status" hidden>Quem criou a sala perdeu a ligação. À espera…</p>
+    <div class="rulebar" id="ruleBar" hidden><span>📜 Regra em vigor</span><b id="ruleText"></b></div>
+    <section class="mucard" id="muCard"><div class="eyebrow" id="muKind"></div><p id="muText"></p><div class="who" id="muWho"></div></section>
+    <section class="panel" id="panel" aria-live="polite"></section>
+  </main>
+</div>
+
+<div class="modal" id="rulesModal" hidden><div class="sheet" role="dialog" aria-modal="true"><h3 id="rulesTitle">Regras</h3><div class="body" id="rulesBody"></div><div class="actions"><button class="btn" id="rulesClose" type="button">Fechar</button></div></div></div>
+<div class="modal" id="modal" hidden><div class="sheet" role="dialog" aria-modal="true"><h3 id="mTitle"></h3><div class="body" id="mBody"></div><div class="actions" id="mActions"></div></div></div>
+<div class="alert" id="alert" role="alert" hidden></div>
+<div class="reacts" id="reacts" hidden></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
+/* ================= SALAS (comum aos jogos ipgames) =================
+   Mesmo esquema da Panela de Pressão, para servir com as mesmas regras do Firebase:
+   rooms/{código}/host  quem criou a sala (o motor do jogo corre lá)
+   rooms/{código}/up    mensagens dos jogadores para quem criou a sala
+   rooms/{código}/down/{uid}  mensagens só para esse jogador
+   rooms/{código}/clients/{uid}  quem está ligado
+   Cada jogo define ROOM.game = {id, maxp, minp, maxBots, botNames, title, start(seats), msg(seat,d), back(seat), drop(seat), client(d)} */
+const FIREBASE_CONFIG={
+  apiKey:"AIzaSyDV65oRQM9JRsPDi-lG5smPQ3visWhFYcY",
+  authDomain:"panela-de-pressao-a158b.firebaseapp.com",
+  databaseURL:"https://panela-de-pressao-a158b-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"panela-de-pressao-a158b",
+  storageBucket:"panela-de-pressao-a158b.firebasestorage.app",
+  messagingSenderId:"990808683809",
+  appId:"1:990808683809:web:7632a6ed6dcfde6ebefa60"
+};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ALPH="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const cleanName=s=>String(s||"").replace(/[<>&"'`\\]/g,"").replace(/\s+/g," ").trim().slice(0,14);
+const cleanCode=s=>String(s||"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,5);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const sstore={get(k){try{return sessionStorage.getItem(k)}catch(e){return null}},set(k,v){try{sessionStorage.setItem(k,v)}catch(e){}}};
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+const ROOM={
+  game:null,role:null,code:null,seats:[],started:false,leaving:false,conns:{},subs:[],conn:null,me:0,lobby:null,
+  /* envia uma jogada minha (para quem criou a sala ou para o motor local) */
+  send(d){
+    if(this.role==="client"){if(this.conn)try{this.conn.send(d)}catch(e){}}
+    else if(this.role==="host"&&this.started){this.game.msg(this.seats[0],d)}
+  },
+  /* motor -> jogador */
+  sendTo(seat,d){
+    if(!seat)return;
+    if(seat.kind==="local")setTimeout(()=>this.game.client(d),0);
+    else if(seat.kind==="remote"&&seat.conn&&seat.online)try{seat.conn.send(d)}catch(e){}
+  },
+  backToLobby(){
+    this.started=false;
+    this.seats=this.seats.filter(s=>s.kind!=="remote"||s.online);
+    showScreen("lobby");lobbyBroadcast();
+  }
+};
+function netNote(id,t){const el=$(id);if(el)el.textContent=t||""}
+function linkFor(code){return location.href.split("#")[0]+"#sala="+code}
+const onlineReady=()=>!!(window.firebase&&(FIREBASE_CONFIG||window.__fbMock));
+let FB=null;
+async function fbInit(){
+  if(FB)return FB;
+  if(!onlineReady())throw new Error("nofb");
+  if(!firebase.apps||!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG||{});
+  const cred=await firebase.auth().signInAnonymously();
+  FB={db:firebase.database(),uid:cred.user.uid};
+  return FB;
+}
+const fbErr=e=>{const c=String(e&&(e.code||e.message)||"");
+  if(/permission|PERMISSION/.test(c))return "O servidor recusou o pedido. Tenta outra vez daqui a pouco.";
+  if(/operation-not-allowed|admin-restricted/.test(c))return "O acesso anónimo não está ligado no Firebase.";
+  if(/network/.test(c))return "Sem ligação à internet. Tenta outra vez.";
+  return "Não consegui ligar ao servidor de salas. Tenta outra vez.";};
+function countGame(kind,players){
+  if(window.__fast||!onlineReady())return;
+  const d=new Date(),ym=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+  fbInit().then(()=>FB.db.ref(`stats/${ym}/${kind}${players}`).transaction(c=>(typeof c==="number"?c:0)+1)).catch(()=>{});
+}
+function sub(ref,ev,fn){ref.on(ev,fn,e=>console.warn(ev,e&&e.message));ROOM.subs.push(()=>ref.off(ev,fn))}
+function unsubAll(){for(const f of ROOM.subs)try{f()}catch(e){}ROOM.subs=[]}
+const roomRef=(...p)=>FB.db.ref(["rooms",ROOM.code,...p].join("/"));
+
+/* ---------- quem cria a sala ---------- */
+function mkConn(uid){
+  return{uid,closed:false,
+    send(m){if(this.closed||!ROOM.code)return;roomRef("down",uid).push({m:JSON.stringify(m)}).catch(()=>{})},
+    close(){this.closed=true}};
+}
+function connFor(uid){let c=ROOM.conns[uid];if(!c||c.closed){c=mkConn(uid);ROOM.conns[uid]=c}return c}
+async function hostRoom(){
+  const name=cleanName($("myName").value);
+  if(!name){netNote("netNote","Escreve o teu nome primeiro.");$("myName").focus();return}
+  store.set("pp-name",name);
+  netNote("netNote","A criar a sala…");
+  try{await fbInit()}catch(e){netNote("netNote",fbErr(e));return}
+  let code=null;
+  for(let i=0;i<6&&!code;i++){
+    const c=Array.from({length:5},()=>ALPH[Math.floor(Math.random()*ALPH.length)]).join("");
+    const hr=FB.db.ref(`rooms/${c}/host`);
+    try{const s=await hr.get();if(s.exists())continue;await hr.set(FB.uid);code=c}catch(e){if(i===5){netNote("netNote",fbErr(e));return}}
+  }
+  if(!code){netNote("netNote","Não consegui criar a sala. Tenta outra vez.");return}
+  unsubAll();
+  Object.assign(ROOM,{role:"host",code,started:false,leaving:false,conns:{},me:0,seats:[{kind:"local",name,online:true}]});
+  if(ROOM.game.cleanOpts)ROOM.opts=ROOM.game.cleanOpts(ROOM.opts);
+  const room=roomRef();
+  room.onDisconnect().remove();
+  let first=true;
+  sub(FB.db.ref(".info/connected"),"value",s=>{
+    if(s.val()!==true||ROOM.role!=="host"||ROOM.code!==code)return;
+    if(first){first=false;return}
+    roomRef("host").set(FB.uid).catch(()=>{});room.onDisconnect().remove();
+  });
+  sub(roomRef("clients"),"child_removed",s=>{
+    const uid=s.key;
+    setTimeout(()=>{
+      if(ROOM.role!=="host"||ROOM.code!==code)return;
+      roomRef("clients",uid).get().then(x=>{
+        if(x.exists())return;
+        const c=ROOM.conns[uid];if(c&&!c.closed){c.close();hostClose(c)}
+      }).catch(()=>{});
+    },2500);
+  });
+  sub(roomRef("up"),"child_added",s=>{
+    const v=s.val();s.ref.remove().catch(()=>{});
+    if(!v||typeof v.m!=="string"||typeof v.from!=="string")return;
+    let d;try{d=JSON.parse(v.m)}catch(e){return}
+    hostData(connFor(v.from),d);
+  });
+  netNote("netNote","");
+  showScreen("lobby");lobbyBroadcast();
+}
+function uniqueName(name,except){
+  let n=name,i=2;
+  const taken=()=>ROOM.seats.some(s=>s!==except&&s.name.toLowerCase()===n.toLowerCase());
+  while(taken())n=`${name.slice(0,12)} ${i++}`;
+  return n;
+}
+function hostData(c,d){
+  if(!d||typeof d!=="object")return;
+  const G=ROOM.game;
+  if(d.t==="hello"){
+    const name=cleanName(d.name)||"Amigo",token=String(d.token||"").replace(/[^a-z0-9]/gi,"").slice(0,40);
+    let s=ROOM.seats.find(x=>x.kind==="remote"&&x.token&&x.token===token);
+    if(ROOM.started){
+      if(s){s.conn=c;s.online=true;c._seat=s;c.send({t:"welcome",code:ROOM.code});G.back(s);return}
+      c.send({t:"full",msg:"A partida já começou. Espera pela próxima e volta a entrar."});
+      setTimeout(()=>c.close(),800);return;
+    }
+    if(!s){
+      if(ROOM.seats.length>=G.maxp){
+        const bot=ROOM.seats.find(x=>x.kind==="bot");
+        if(bot)ROOM.seats=ROOM.seats.filter(x=>x!==bot);
+        else{c.send({t:"full",msg:"A sala está cheia."});setTimeout(()=>c.close(),800);return}
+      }
+      s={kind:"remote",token};ROOM.seats.push(s);
+    }
+    s.name=uniqueName(name,s);s.conn=c;s.online=true;c._seat=s;
+    c.send({t:"welcome",code:ROOM.code});
+    lobbyBroadcast();
+    return;
+  }
+  if(d.t==="leave"){hostClose(c,true);return}
+  if(ROOM.started){const s=ROOM.seats.find(x=>x.conn===c&&x.kind==="remote");if(s&&s.online)G.msg(s,d)}
+}
+function hostClose(c){
+  const s=ROOM.seats.find(x=>x.conn===c&&x.kind==="remote");
+  if(!s)return;
+  if(ROOM.started){if(s.online){s.online=false;ROOM.game.drop(s)}return}
+  ROOM.seats=ROOM.seats.filter(x=>x!==s);lobbyBroadcast();
+}
+function lobbyBroadcast(){
+  const pub=ROOM.seats.map(s=>({name:s.name,kind:s.kind}));
+  ROOM.seats.forEach((s,i)=>{if(s.kind==="remote"&&s.conn&&s.online)try{s.conn.send({t:"lobby",code:ROOM.code,seats:pub,you:i,opts:ROOM.opts||null})}catch(e){}});
+  ROOM.lobby={code:ROOM.code,seats:pub,you:0};
+  renderLobby();
+}
+function addBot(){
+  const G=ROOM.game;
+  if(ROOM.role!=="host"||ROOM.started||ROOM.seats.length>=G.maxp)return;
+  if(ROOM.seats.filter(s=>s.kind==="bot").length>=G.maxBots)return;
+  const used=new Set(ROOM.seats.map(s=>s.name));
+  const name=G.botNames.find(n=>!used.has(n))||"Computador";
+  ROOM.seats.push({kind:"bot",name,online:true});lobbyBroadcast();
+}
+function removeSeat(i){
+  if(ROOM.role!=="host"||ROOM.started)return;
+  const s=ROOM.seats[i];if(!s||s.kind==="local")return;
+  if(s.kind==="remote"&&s.conn){try{s.conn.send({t:"full",msg:"Quem criou a sala tirou-te da sala."})}catch(e){}const c=s.conn;setTimeout(()=>c.close(),500)}
+  ROOM.seats.splice(i,1);lobbyBroadcast();
+}
+function hostStart(){
+  const G=ROOM.game;
+  if(ROOM.role!=="host"||ROOM.started||ROOM.seats.length<G.minp)return;
+  ROOM.started=true;
+  for(const s of ROOM.seats)if(s.kind==="remote"&&s.online)s.conn.send({t:"start"});
+  countGame(G.id,ROOM.seats.length);
+  showScreen("game");
+  G.start(ROOM.seats);
+}
+
+/* ---------- quem entra ---------- */
+async function joinRoom(){
+  const name=cleanName($("myName").value),code=cleanCode($("joinCode").value);
+  if(!name){netNote("netNote","Escreve o teu nome primeiro.");$("myName").focus();return}
+  if(code.length!==5){netNote("netNote","O código da sala tem 5 letras.");$("joinCode").focus();return}
+  store.set("pp-name",name);
+  clearTimeout(ROOM.joinT);unsubAll();
+  netNote("netNote","1/2 A ligar ao servidor…");
+  try{await fbInit()}catch(e){netNote("netNote",fbErr(e));return}
+  ROOM.leaving=false;ROOM.code=code;ROOM.role=null;
+  try{
+    const h=await roomRef("host").get();
+    if(!h.exists()){netNote("netNote","Não encontrei essa sala. Confirma o código e se quem a criou ainda tem o jogo aberto.");return}
+  }catch(e){netNote("netNote",fbErr(e));return}
+  netNote("netNote","2/2 A entrar na sala…");
+  const me=roomRef("clients",FB.uid),down=roomRef("down",FB.uid),up=roomRef("up");
+  try{const old=await down.get();const jobs=[];old.forEach(ch=>{jobs.push(ch.ref.remove())});await Promise.all(jobs)}catch(e){}
+  ROOM.conn={send(m){up.push({from:FB.uid,m:JSON.stringify(m)}).catch(()=>{})}};
+  const hello=()=>{me.set(true).catch(()=>{});me.onDisconnect().remove();ROOM.conn.send({t:"hello",name,token:FB.uid})};
+  sub(down,"child_added",s=>{
+    const v=s.val();s.ref.remove().catch(()=>{});
+    if(!v||typeof v.m!=="string")return;
+    let d;try{d=JSON.parse(v.m)}catch(e){return}
+    clientData(d);
+  });
+  let first=true;
+  sub(FB.db.ref(".info/connected"),"value",s=>{
+    if(s.val()!==true)return;
+    if(first){first=false;return}
+    if(ROOM.role==="client"&&!ROOM.leaving)hello();
+  });
+  let hadHost=true;
+  sub(roomRef("host"),"value",s=>{
+    clearTimeout(ROOM.hostT);
+    if(s.exists()){
+      if(!hadHost&&ROOM.role==="client"&&!ROOM.leaving)hello();
+      hadHost=true;netNote("lbNote","");return;
+    }
+    hadHost=false;
+    if(ROOM.role!=="client")return;
+    netNote("lbNote","Quem criou a sala perdeu a ligação. À espera…");
+    if(ROOM.game.hostLost)ROOM.game.hostLost(true);
+    ROOM.hostT=setTimeout(()=>{
+      if(ROOM.leaving||ROOM.role!=="client")return;
+      notice("Ligação perdida","Quem criou a sala saiu ou ficou sem internet.").then(()=>leaveRoom());
+    },30000);
+  });
+  ROOM.joinT=setTimeout(()=>{if(ROOM.role!=="client"&&ROOM.code===code)netNote("netNote","A sala não respondeu. Confirma que quem a criou tem o jogo aberto e tenta outra vez.")},15000);
+  hello();
+}
+function clientData(d){
+  if(!d||typeof d!=="object")return;
+  switch(d.t){
+    case "welcome":
+      clearTimeout(ROOM.joinT);
+      sstore.set("ip-room",ROOM.code);
+      if(ROOM.role!=="client"){ROOM.role="client";netNote("netNote","");showScreen("lobby")}
+      break;
+    case "lobby":
+      ROOM.lobby={code:cleanCode(d.code),seats:(d.seats||[]).slice(0,ROOM.game.maxp).map(s=>({name:cleanName(s.name),kind:s.kind})),you:+d.you};
+      ROOM.me=+d.you;if(ROOM.game.cleanOpts)ROOM.opts=ROOM.game.cleanOpts(d.opts);
+      if($("lobby").hidden)showScreen("lobby");
+      renderLobby();break;
+    case "full":
+      ROOM.leaving=true;
+      netNote("netNote",String(d.msg||"Não foi possível entrar.").slice(0,120));
+      unsubAll();ROOM.role=null;showScreen("setup");break;
+    case "closed":
+      if(ROOM.role!=="client")break;
+      ROOM.leaving=true;
+      notice("A partida terminou","Quem criou a sala saiu do jogo.").then(()=>leaveRoom());
+      break;
+    case "start":showScreen("game");if(ROOM.game.hostLost)ROOM.game.hostLost(false);break;
+    default:if(ROOM.game.hostLost)ROOM.game.hostLost(false);ROOM.game.client(d);
+  }
+}
+function leaveRoom(){
+  ROOM.leaving=true;clearTimeout(ROOM.hostT);clearTimeout(ROOM.joinT);
+  const role=ROOM.role,code=ROOM.code;
+  if(FB&&code){
+    if(role==="client"){try{ROOM.conn.send({t:"leave"})}catch(e){}FB.db.ref(`rooms/${code}/clients/${FB.uid}`).remove().catch(()=>{})}
+    if(role==="host"){
+      for(const s of ROOM.seats)if(s.kind==="remote"&&s.online&&s.conn)try{s.conn.send({t:"closed"})}catch(e){}
+      const r=FB.db.ref(`rooms/${code}`);setTimeout(()=>r.remove().catch(()=>{}),1500);
+    }
+  }
+  if(ROOM.game.stop)ROOM.game.stop();
+  unsubAll();
+  Object.assign(ROOM,{role:null,conn:null,seats:[],conns:{},lobby:null,started:false,code:null});
+  sstore.set("ip-room","");
+  try{history.replaceState(null,"",location.href.split("#")[0])}catch(e){}
+  showScreen("setup");
+}
+function renderLobby(){
+  const L=ROOM.lobby;if(!L)return;
+  const G=ROOM.game,host=ROOM.role==="host";
+  $("lbCode").textContent=L.code;
+  $("roster").innerHTML=L.seats.map((s,i)=>`<li><span class="rn">${esc(s.name)}${i===L.you?' <em>(tu)</em>':""}</span><span class="rk">${i===0?"criou a sala":s.kind==="bot"?"computador":"amigo"}</span>${host&&i>0?`<button class="btn ghost sm" type="button" data-rm="${i}" aria-label="Tirar ${esc(s.name)}">Tirar</button>`:""}</li>`).join("")
+    +Array.from({length:Math.max(0,Math.min(G.maxp,Math.max(4,L.seats.length+1))-L.seats.length)},()=>`<li class="free"><span class="rn">Lugar livre</span></li>`).join("");
+  $("hostCtl").hidden=!host;
+  $("addBot").disabled=L.seats.length>=G.maxp||L.seats.filter(s=>s.kind==="bot").length>=G.maxBots;
+  $("startBtn").disabled=L.seats.length<G.minp;
+  if(G.renderOpts&&$("lbOpts"))G.renderOpts($("lbOpts"),ROOM.opts,host);
+  $("lbHelp").textContent=host?(L.seats.length<G.minp?G.lobbyHelpFew:"Quando estiverem todos, começa. Mantém esta página aberta durante a partida."):`À espera que ${L.seats[0]?L.seats[0].name:"quem criou a sala"} comece a partida.`;
+}
+function initRoomUI(){
+  const G=ROOM.game;
+  $("roster").addEventListener("click",e=>{const b=e.target.closest("[data-rm]");if(b)removeSeat(+b.dataset.rm)});
+  $("addBot").addEventListener("click",addBot);
+  $("startBtn").addEventListener("click",()=>{unlockAudio();hostStart()});
+  $("leaveBtn").addEventListener("click",leaveRoom);
+  $("hostBtn").addEventListener("click",()=>{unlockAudio();hostRoom()});
+  $("joinBtn").addEventListener("click",()=>{unlockAudio();joinRoom()});
+  $("joinCode").addEventListener("keydown",e=>{if(e.key==="Enter")joinRoom()});
+  const copyLink=async()=>{const url=linkFor(ROOM.code);try{await navigator.clipboard.writeText(url);netNote("lbNote","Link copiado.")}catch(e){netNote("lbNote",url)}};
+  $("copyBtn").addEventListener("click",copyLink);
+  $("shareBtn").addEventListener("click",async()=>{
+    const url=linkFor(ROOM.code);
+    if(navigator.share){try{await navigator.share({title:G.title,text:`Entra na minha sala do ${G.title} (código ${ROOM.code})`,url});return}catch(e){if(e&&e.name==="AbortError")return}}
+    copyLink();
+  });
+  $("shareBtn").hidden=!navigator.share;
+  window.addEventListener("beforeunload",e=>{if(ROOM.role==="host"&&ROOM.started){e.preventDefault();e.returnValue=""}});
+  $("myName").value=store.get("pp-name")||"";
+  const m=location.hash.match(/sala=([A-Za-z0-9]{5})/);
+  if(m){$("joinCode").value=cleanCode(m[1]);$("joinArea").classList.add("fromlink");netNote("netNote","Escreve o teu nome e carrega em Entrar.");setTimeout(()=>($("myName").value?$("joinBtn"):$("myName")).focus(),50);
+    if($("myName").value&&sstore.get("ip-room")===cleanCode(m[1])&&onlineReady())setTimeout(joinRoom,0)}
+  if(!onlineReady())$("onlineMode").classList.add("nopeer");
+}
+
+/* ================= ECRÃ (comum aos jogos de rondas) =================
+   som, tema, relógio, avisos, reações, regras e botão de sair.
+   Cada jogo pode definir ROOM.game.onScreen(nome) para limpar o que é seu. */
+const REACTS=["😂","😱","🤥","👏","🙄","🔥"];
+const TT=ms=>window.__fast?Math.max(30,ms/25):ms;
+
+/* relógio da ronda */
+const TIMER={endAt:0,t:null};
+function startTick(ms){
+  TIMER.endAt=performance.now()+ms;
+  if(TIMER.t)return;
+  let last=null;
+  TIMER.t=setInterval(()=>{
+    const s=Math.max(0,Math.ceil((TIMER.endAt-performance.now())/1000));
+    if(s!==last){last=s;$("gTimer").textContent=s+" s";$("gTimer").classList.toggle("low",s<=10);if(s<=5&&s>0)playSfx("tick")}
+  },200);
+}
+function stopTick(){clearInterval(TIMER.t);TIMER.t=null;const t=$("gTimer");if(t)t.textContent=""}
+
+/* som (sintetizado, sem ficheiros) */
+let AC=null,muted=store.get("pp-mute")==="1";
+function unlockAudio(){try{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=="running")AC.resume()}catch(e){}}
+function tone(f,d,o={}){if(muted||!AC||AC.state!=="running")return;const t=AC.currentTime+(o.at||0),os=AC.createOscillator(),g=AC.createGain();os.type=o.type||"sine";os.frequency.setValueAtTime(f,t);if(o.f2)os.frequency.exponentialRampToValueAtTime(o.f2,t+d);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(o.v||.1,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);os.connect(g).connect(AC.destination);os.start(t);os.stop(t+d+.02)}
+const SFX={
+  send:()=>tone(660,.09,{type:"triangle",v:.1,f2:990}),
+  tick:()=>tone(1200,.05,{type:"square",v:.03}),
+  round:()=>{tone(523,.12,{type:"triangle",v:.09});tone(784,.18,{type:"triangle",v:.09,at:.1})},
+  vote:()=>{tone(392,.1,{type:"triangle",v:.08});tone(523,.14,{type:"triangle",v:.08,at:.09})},
+  lie:()=>{tone(220,.28,{type:"sawtooth",v:.06,f2:150})},
+  truth:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,.2,{type:"triangle",v:.09,at:i*.08}))},
+  win:()=>{[523,659,784,659,784,1047].forEach((f,i)=>tone(f,.22,{type:"triangle",v:.09,at:i*.12}))},
+  end:()=>{[392,523,659].forEach((f,i)=>tone(f,.25,{type:"triangle",v:.08,at:i*.12}))}
+};
+function playSfx(k){try{SFX[k]&&SFX[k]()}catch(e){}}
+function setMute(m){muted=m;store.set("pp-mute",m?"1":"0");$("mute").setAttribute("aria-pressed",String(!m));$("mute").textContent=m?"🔇":"🔊";$("mute").title=m?"Som desligado":"Som ligado"}
+
+function showScreen(n){
+  for(const id of ["setup","lobby","game"])$(id).hidden=id!==n;
+  $("exitBtn").hidden=n!=="game";$("hubLink").hidden=n!=="setup";
+  if(n!=="game")stopTick();
+  $("reactBtn").hidden=n!=="game";$("reacts").hidden=true;
+  if(ROOM.game&&ROOM.game.onScreen)ROOM.game.onScreen(n);
+}
+function setTheme(t,save){
+  if(t==="light")document.documentElement.dataset.ppTheme="light";else delete document.documentElement.dataset.ppTheme;
+  if(save)store.set("pp-tema",t);
+  const tb=$("themeBtn");tb.textContent=t==="light"?"☾":"☀";tb.title=t==="light"?"Tema escuro":"Tema claro";tb.setAttribute("aria-label",tb.title);
+  const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==="light"?"#f4eee3":"#13201f";
+}
+function notice(title,text){return new Promise(res=>{$("mTitle").textContent=title;$("mBody").textContent=text;$("mActions").innerHTML=`<button class="btn" type="button">Voltar ao início</button>`;$("modal").hidden=false;$("mActions").firstChild.onclick=()=>{$("modal").hidden=true;res()}})}
+function openSheet(title,html){$("rulesTitle").textContent=title;$("rulesBody").innerHTML=html;$("rulesModal").hidden=false}
+function flash(t){const a=$("alert");a.textContent=t;a.hidden=false;a.classList.remove("show");void a.offsetWidth;a.classList.add("show");clearTimeout(a._t);a._t=setTimeout(()=>a.hidden=true,2600)}
+function bubble(from,r){
+  const li=[...$("chips").children].find(x=>x.querySelector(".cn")&&x.querySelector(".cn").textContent===from);
+  const b=document.createElement("div");b.className="bubble";b.textContent=r;
+  const rc=(li||$("chips")).getBoundingClientRect();b.style.left=(rc.left+rc.width/2)+"px";b.style.top=(rc.top+4)+"px";
+  document.body.appendChild(b);setTimeout(()=>b.remove(),2600);
+}
+/* reencaminha uma reação para todos (no motor de quem criou a sala) */
+function relayReact(seats,seat,d){
+  if(typeof d.r!=="string"||!REACTS.includes(d.r))return;
+  seats.forEach(s=>{if(s.kind!=="bot")ROOM.sendTo(s,{t:"react",from:seat.name,r:d.r})});
+}
+function privacyHTML(extra){return `<ul>
+  <li><b>Não pedimos conta, email nem dados pessoais.</b> Não há publicidade nem cookies de análise.</li>
+  <li><b>O nome e o que escreves no jogo</b> só são mostrados aos jogadores da tua sala. O nome fica guardado no teu aparelho para a próxima vez.</li>
+  <li><b>As salas</b> usam o Firebase, da Google. Cada aparelho recebe um identificador anónimo, sem nome nem email. As jogadas passam pelos servidores da Google na Bélgica e apagam-se quando a sala fecha. Para o serviço funcionar, a Google trata o endereço de internet (IP) do aparelho.</li>
+  <li><b>Contagem de partidas:</b> guardamos só quantas partidas se jogam por mês e com quantos jogadores, sem saber quem jogou.</li>
+  <li><b>No teu aparelho</b> ficam guardadas as preferências (nome, tema, som)${extra||""}. Podes apagá-las limpando os dados do site no browser.</li>
+  <li><b>O site</b> está alojado na Netlify, que regista dados técnicos de acesso, como o IP, para o servir.</li>
+</ul>`}
+function initUI(o){
+  setTheme(document.documentElement.dataset.ppTheme==="light"?"light":"dark",false);
+  setMute(muted);
+  $("themeBtn").addEventListener("click",()=>setTheme(document.documentElement.dataset.ppTheme==="light"?"dark":"light",true));
+  $("mute").addEventListener("click",()=>{setMute(!muted);if(!muted){unlockAudio();setTimeout(()=>playSfx("send"),50)}});
+  $("rulesBtn").addEventListener("click",()=>openSheet("Como se joga",o.rules));
+  $("privBtn").addEventListener("click",()=>openSheet("Privacidade",o.privacy));
+  $("rulesClose").addEventListener("click",()=>$("rulesModal").hidden=true);
+  $("rulesModal").addEventListener("click",e=>{if(e.target===$("rulesModal"))$("rulesModal").hidden=true});
+  $("exitBtn").addEventListener("click",()=>{
+    const host=ROOM.role==="host"&&ROOM.started;
+    $("mTitle").textContent="Sair?";$("mBody").textContent=host?"Se saíres, a partida acaba para todos.":"Vais sair da sala.";
+    $("mActions").innerHTML=`<button class="btn" type="button" id="exitYes">Sair</button><button class="btn ghost" type="button" id="exitNo">Ficar</button>`;
+    $("modal").hidden=false;
+    $("exitYes").onclick=()=>{$("modal").hidden=true;leaveRoom()};$("exitNo").onclick=()=>$("modal").hidden=true;
+  });
+  $("reacts").innerHTML=REACTS.map(r=>`<button type="button" data-r="${r}">${r}</button>`).join("");
+  $("reactBtn").addEventListener("click",()=>{const R=$("reacts");R.hidden=!R.hidden;if(!R.hidden){const b=$("reactBtn").getBoundingClientRect();R.style.right=Math.max(8,innerWidth-b.right)+"px";R.style.top=(b.bottom+6)+"px"}});
+  $("reacts").addEventListener("click",e=>{const b=e.target.closest("[data-r]");if(!b)return;$("reacts").hidden=true;ROOM.send({t:"react",r:b.dataset.r})});
+  document.addEventListener("click",e=>{if(!$("reacts").hidden&&!e.target.closest("#reacts,#reactBtn"))$("reacts").hidden=true});
+  initRoomUI();
+  showScreen("setup");
+}
+
+/* ================= CARTAS DO MAIS UMA! =================
+   n: normal · p: picante (só entram com a opção "Picante") */
+const MU={
+nunca:{n:[
+"Eu nunca adormeci no autocarro e passei a minha paragem.","Eu nunca fingi que estava ao telemóvel para fugir a alguém.","Eu nunca comi comida que caiu ao chão.","Eu nunca menti sobre a minha idade.",
+"Eu nunca andei a espiar o perfil de um ex nas redes sociais.","Eu nunca chorei a ver um filme de animação.","Eu nunca mandei uma mensagem à pessoa errada.","Eu nunca fiz xixi na piscina.",
+"Eu nunca usei as mesmas cuecas dois dias seguidos.","Eu nunca disse «estou a caminho» ainda em casa.","Eu nunca adormeci numa aula ou numa reunião.","Eu nunca fui expulso de um sítio.",
+"Eu nunca voltei a oferecer um presente que me deram.","Eu nunca fingi gostar de um presente.","Eu nunca tive uma alcunha embaraçosa.","Eu nunca comi um iogurte fora do prazo.",
+"Eu nunca bati com o carro.","Eu nunca chumbei no exame de condução.","Eu nunca andei à pancada.","Eu nunca me perdi com o GPS ligado.",
+"Eu nunca bebi diretamente do pacote do leite.","Eu nunca fui apanhado a falar sozinho.","Eu nunca liguei a alguém sem querer com o telemóvel no bolso.","Eu nunca disse que já tinha visto um filme sem o ter visto.",
+"Eu nunca inventei uma desculpa para faltar ao trabalho.","Eu nunca fiz uma tatuagem de que me arrependi.","Eu nunca dancei em cima de uma mesa.","Eu nunca perdi o telemóvel numa noite de copos.",
+"Eu nunca acordei sem saber como cheguei a casa.","Eu nunca comi uma francesinha inteira sozinho.","Eu nunca me queimei todo no primeiro dia de praia.","Eu nunca fiquei preso num elevador.",
+"Eu nunca escondi comida de alguém lá de casa.","Eu nunca pedi dinheiro emprestado e me esqueci de devolver.","Eu nunca apaguei uma fotografia de grupo porque saí feio.","Eu nunca menti num jogo de Eu Nunca.",
+"Eu nunca fui à casa de banho só para ver o telemóvel.","Eu nunca falei mal de alguém que está nesta sala.","Eu nunca tive medo do escuro depois dos 18.","Eu nunca entrei na casa de banho errada.",
+"Eu nunca fui a um concerto e não me lembro de nada.","Eu nunca mandei um áudio com mais de 5 minutos.","Eu nunca fiz figura de parvo num casamento.","Eu nunca bebi tanto que jurei nunca mais beber.",
+"Eu nunca comi pizza fria ao pequeno-almoço.","Eu nunca deixei a loiça para o dia seguinte.","Eu nunca fiz batota num jogo de tabuleiro.","Eu nunca fiz uma direta para estudar.",
+"Eu nunca cantei música pimba a plenos pulmões.","Eu nunca me ri num funeral.","Eu nunca entrei numa piscina vestido.","Eu nunca liguei a um ex depois de beber.",
+"Eu nunca desliguei o despertador a dormir.","Eu nunca fui multado.","Eu nunca fingi estar doente para não ir a um jantar de família.","Eu nunca ganhei numa raspadinha.",
+"Eu nunca tive uma paixão por um professor.","Eu nunca fiquei a dormir no sofá de alguém depois de uma festa.","Eu nunca saí de casa com a roupa do avesso.","Eu nunca pus sal no café em vez de açúcar."
+],p:[
+"Eu nunca beijei alguém que conheci nessa mesma noite.","Eu nunca enviei uma fotografia atrevida.","Eu nunca fiz sexo dentro de um carro.","Eu nunca fui apanhado em pleno ato.",
+"Eu nunca beijei alguém desta sala.","Eu nunca tive uma amizade colorida.","Eu nunca usei uma aplicação de encontros.","Eu nunca fingi um orgasmo.",
+"Eu nunca fiz sexo na praia.","Eu nunca tive um sonho erótico com alguém conhecido.","Eu nunca fiquei com duas pessoas do mesmo grupo de amigos.","Eu nunca fui a um bar de striptease.",
+"Eu nunca andei nu na rua.","Eu nunca tomei banho com outra pessoa.","Eu nunca fiz um ménage à trois.","Eu nunca voltei para um ex depois de acabar.",
+"Eu nunca fiz sexo ao ar livre.","Eu nunca comprei um brinquedo sexual.","Eu nunca troquei mensagens picantes.","Eu nunca me apaixonei pelo melhor amigo.",
+"Eu nunca traí ninguém.","Eu nunca dormi com alguém cujo nome não sabia.","Eu nunca fiz um striptease para alguém.","Eu nunca fui a um motel.",
+"Eu nunca fiz tanto barulho que os vizinhos se queixaram.","Eu nunca tive uma fantasia com um colega de trabalho.","Eu nunca me envolvi com alguém muito mais velho.","Eu nunca fiz sexo no trabalho."
+]},
+mp:{n:[
+"adormecer primeiro esta noite","ficar milionário","ir preso por uma parvoíce","casar em Las Vegas",
+"chorar com um anúncio da televisão","perder o telemóvel esta noite","sobreviver a um apocalipse zombie","ser o primeiro a morrer num filme de terror",
+"ligar a um ex hoje à noite","comer a comida dos outros do frigorífico","chegar atrasado ao próprio casamento","ficar famoso nas redes sociais",
+"viver até aos 100 anos","fazer uma tatuagem por impulso","ser apanhado a mentir","esquecer o aniversário do melhor amigo",
+"emigrar para o outro lado do mundo","acabar sozinho com dez gatos","ganhar um concurso de comer francesinhas","começar uma guerra no grupo da família",
+"entrar num reality show","dormir no sofá de alguém hoje","dançar em cima da mesa","vomitar primeiro",
+"ser o próximo a casar","ter filhos primeiro","ver uma série inteira numa noite","gastar o ordenado todo num dia",
+"perder-se numa cidade nova","falar com os animais como se fossem pessoas","ser expulso de um restaurante","esquecer-se de onde estacionou o carro",
+"agarrar o microfone no karaoke sem ninguém pedir","ser raptado por extraterrestres","acreditar numa notícia falsa","casar por dinheiro",
+"fazer a pior piada da noite","levar a avó a uma discoteca","ganhar o Euromilhões e perder o boletim","ficar com a última fatia sem perguntar",
+"aparecer de pijama no café","ter uma conta secreta nas redes sociais","ser o velhinho mais rabugento aos 80","acabar a noite a comer um kebab",
+"cair na rua por ir a olhar para o telemóvel","saber os podres de toda a gente","pedir mais uma quando já toda a gente quer ir embora","adormecer na casa de banho de uma discoteca"
+],p:[
+"ter um amante secreto","mandar uma fotografia atrevida à pessoa errada","ir para casa acompanhado hoje","ter o histórico do browser mais vergonhoso",
+"já ter feito sexo num sítio público","ser o melhor na cama","ser o pior na cama","ter mais ex-namorados",
+"fazer um striptease esta noite","ter uma gaveta de brinquedos","voltar a dormir com o ex","ter uma aplicação de encontros instalada neste momento",
+"ser apanhado pelos pais","enviar uma mensagem picante esta noite","ter a fantasia mais estranha","beijar alguém desta sala esta noite",
+"ir a um clube de swing","acordar amanhã ao lado de um desconhecido","ser o mais ciumento","tatuar o nome do parceiro",
+"ter uma relação aberta","ter os pensamentos mais porcos neste momento"
+]},
+verdade:{n:[
+"Qual foi a coisa mais embaraçosa que te aconteceu este ano?","Qual foi a última mentira que disseste?","Quem nesta sala achas mais engraçado?","Qual é o teu maior medo?",
+"Qual foi o pior presente que já recebeste?","O que é que mais te irrita em alguém desta sala?","Qual foi a maior asneira que fizeste bêbado?","Se pudesses trocar de vida com alguém desta sala, quem seria?",
+"Qual foi o pior encontro que já tiveste?","Qual é a música que ouves às escondidas?","O que é que pesquisaste na internet esta semana e não querias que se soubesse?","Qual foi a última vez que choraste e porquê?",
+"Qual é o teu hábito mais nojento?","Qual é a coisa mais infantil que ainda fazes?","Qual foi a pior desculpa que já deste para faltar a alguma coisa?","Quem foi a tua primeira paixão?",
+"Qual é a tua alcunha mais vergonhosa?","Se tivesses de deixar uma pessoa desta sala de fora de um jantar, quem seria?","Que segredo nunca contaste aos teus pais?","Qual é o teu talento mais inútil?",
+"Já leste mensagens do telemóvel de alguém às escondidas?","Qual foi a coisa mais cara que já partiste?","Qual é o pior trabalho que já tiveste?","Qual é a mentira que contas mais vezes?",
+"Mostra a última fotografia que tiraste e explica-a.","De que é que tens mais vergonha no teu quarto?"
+],p:[
+"Qual foi o sítio mais estranho onde já fizeste sexo?","Quem nesta sala achas mais atraente?","Qual é a tua maior fantasia?","Qual foi a tua pior experiência na cama?",
+"Com quantas pessoas já te beijaste, mais ou menos?","Já tiveste uma paixoneta por alguém desta sala?","Qual foi a mensagem mais atrevida que já enviaste?","Qual é a parte do corpo que mais te atrai?",
+"Já foste infiel, ou pensaste nisso?","Quando foi a última vez que fizeste sexo?","Qual é o teu fetiche mais estranho?","Com quem desta sala ficarias numa ilha deserta?",
+"O que é que nunca farias na cama?","Qual foi a tua noite de uma noite só mais memorável?","O que é que te faz perder a cabeça num primeiro encontro?","Qual é a música perfeita para um momento a dois?"
+]},
+desafio:{n:[
+"Imita alguém desta sala até adivinharem quem é.","Fala com sotaque do Porto (ou de Lisboa, se fores do Porto) até à próxima carta.","Faz 10 flexões.","Canta o refrão de uma música pimba.",
+"Mostra a última fotografia da tua galeria.","Dança sem música durante 30 segundos.","Relata o que se está a passar na sala como se fosse um jogo de futebol, durante 1 minuto.","Envia um emoji de coração à última pessoa com quem falaste.",
+"Faz uma declaração de amor dramática ao objeto mais perto de ti.","Diz um elogio sincero a cada pessoa da sala.","Lê em voz alta a última mensagem que recebeste.","Faz a tua melhor imitação de um animal.",
+"Equilibra um copo vazio na cabeça durante 15 segundos.","Conta uma anedota. Se ninguém se rir, bebes na mesma.","Tira uma selfie com a cara mais feia que conseguires e mostra.","Fala só por perguntas até à próxima carta.",
+"Fica em pose de estátua até à próxima carta.","Diz o alfabeto ao contrário.","Faz um rap sobre a pessoa à tua esquerda.","Veste o casaco de outra pessoa até ao fim da noite.",
+"Deixa alguém fazer-te um penteado novo.","Fala com a voz mais aguda que conseguires até à próxima carta.","Diz 5 marcas de cerveja em 10 segundos.","Liga à tua mãe e diz-lhe que gostas muito dela."
+],p:[
+"Dá um beijo na bochecha à pessoa à tua direita.","Faz uma lap dance a uma cadeira.","Diz qual é a tua posição preferida.","Sussurra algo atrevido ao ouvido de alguém.",
+"Faz o teu melhor gemido.","Tira uma peça de roupa (casaco e meias contam).","Faz um striptease de 15 segundos sem tirar nada.","Diz uma frase de engate a alguém da sala.",
+"Imita a cara que fazes no momento alto.","Senta-te ao colo de alguém até à próxima carta, se essa pessoa aceitar.","Diz o nome de alguém com quem gostavas de passar uma noite.","Faz uma massagem nos ombros à pessoa à tua esquerda.",
+"Escreve com o dedo nas costas de alguém uma palavra atrevida, e essa pessoa tem de adivinhar.","Descreve o teu último sonho erótico."
+]},
+regra:[
+"Proibido dizer «não». Quem disser, bebe.","Proibido dizer nomes. Quem disser o nome de alguém, bebe.","Só se bebe com a mão esquerda. Quem se enganar, bebe outra vez.","Quem disser um palavrão, bebe.",
+"Proibido apontar. Quem apontar, bebe.","Antes de beber, diz-se «à nossa». Quem se esquecer, bebe outra vez.","Quem pegar no telemóvel sem ser para o jogo, bebe.","Toda a gente fala de si na terceira pessoa. Quem falhar, bebe.",
+"Proibido rir. Quem se rir, bebe.","Quem for à casa de banho tem de cantar quando voltar.","Proibido dizer «eu». Quem disser, bebe.","Quem disser «tipo», bebe.",
+"Proibido cruzar as pernas. Quem cruzar, bebe.","Antes de falar, levanta-se a mão. Quem não levantar, bebe.","Quem disser «sim», bebe.","Quem disser um número, bebe.",
+"Proibido dizer «mais uma». Quem disser, bebe."
+],
+todos:[
+"Quem está mais perto da porta bebe 2.","Quem chegou em último hoje bebe 2.","Quem tem a bateria do telemóvel mais baixa bebe 2.","Quem usa óculos bebe 1.",
+"Quem está solteiro bebe 1.","Quem foi ao estrangeiro este ano bebe 1.","O mais novo da mesa bebe 2.","O mais velho da mesa escolhe quem bebe 2.",
+"Quem tem um animal de estimação bebe 1.","Quem trabalha amanhã bebe 1. Coragem!","Quem tem alguma coisa branca vestida bebe 1.","Quem tem irmãos bebe 1.",
+"Quem já chorou este mês bebe 1.","Quem é do Benfica bebe 1. Os outros também, para ninguém ficar triste.","Quem mandou a última mensagem no grupo bebe 1.","Quem fizer anos mais perto de hoje bebe 2."
+]
+};
+
+/* ================= MAIS UMA! =================
+   Jogo de beber em que cada um usa o seu telemóvel. Quem criou a sala corre o motor e vai
+   tirando cartas: votações secretas (Quem é mais provável), Eu nunca, verdades e desafios para
+   uma pessoa (que pode sempre beber em vez de cumprir), regras, cartas para a mesa e uma
+   corrida de toque. O jogo conta os goles e, de vez em quando, manda beber água. */
+const T_ANS=40,T_TARGET=50,T_RACE=8000;
+const KIND={mp:"Quem é mais provável…",nunca:"Eu nunca…",verdade:"Verdade ou bebe",desafio:"Desafio ou bebe",regra:"Regra nova",todos:"Para a mesa",rapido:"Corrida!",brinde:"Brinde",agua:"Pausa para água"};
+const EMO={mp:"👉",nunca:"🙊",verdade:"🤫",desafio:"🔥",regra:"📜",todos:"🍻",rapido:"⚡",brinde:"🥂",agua:"💧"};
+const WEIGHTS=[["mp",28],["nunca",28],["verdade",11],["desafio",11],["regra",5],["todos",9],["rapido",6],["brinde",2]];
+
+/* ---------- motor (só em quem criou a sala) ---------- */
+let G=null;
+function later(ms,fn){const g=G;const t=setTimeout(()=>{if(G===g&&!g.dead)fn()},ms);g.timers.push(t);return t}
+const isOn=i=>G.seats[i].online!==false;
+const onIdx=()=>G.seats.map((s,i)=>i).filter(isOn);
+function deck(kind){
+  const src=MU[kind];let list=Array.isArray(src)?src.slice():src.n.concat(G.opts.spicy==="1"?src.p:[]);
+  return shuffle(list);
+}
+function draw(kind){if(!G.decks[kind]||!G.decks[kind].length)G.decks[kind]=deck(kind);return G.decks[kind].pop()}
+function muStart(seats){
+  muStop();
+  G={seats,opts:cleanOpts(ROOM.opts),goles:seats.map(()=>0),ja:seats.map(()=>0),fugas:seats.map(()=>0),n:0,decks:{},rule:null,lastTarget:-1,timers:[],id:Math.random()};
+  nextCard();
+}
+function muStop(){if(G){for(const t of G.timers)clearTimeout(t);G.dead=true}G=null}
+const mult=()=>G.opts.goles==="muitos"?2:1;
+function pickKind(){
+  const every=G.opts.goles==="muitos"?8:10;
+  if(G.n>0&&G.n%every===0)return "agua";
+  let tot=WEIGHTS.reduce((a,w)=>a+w[1],0),r=Math.random()*tot;
+  for(const [k,w] of WEIGHTS){if((r-=w)<0)return k}
+  return "mp";
+}
+function nextCard(){
+  for(const t of G.timers)clearTimeout(t);G.timers=[];
+  G.n++;
+  let kind=pickKind();
+  if((kind==="verdade"||kind==="desafio")&&onIdx().length<2)kind="mp";
+  const c={kind,text:"",target:null,answers:{},result:null};
+  if(kind==="mp")c.text="Quem é mais provável de "+draw("mp")+"?";
+  else if(kind==="agua")c.text="Todos bebem um copo de água. Sim, conta como jogada.";
+  else if(kind==="brinde")c.text="Todos bebem 1 gole. À nossa!";
+  else if(kind==="rapido")c.text="Quando aparecer o botão, toca nele o mais depressa possível. O último a tocar (ou quem tocar antes do tempo) bebe!";
+  else c.text=draw(kind);
+  if(kind==="verdade"||kind==="desafio"){
+    const opts=onIdx().filter(i=>i!==G.lastTarget);c.target=opts[Math.floor(Math.random()*opts.length)];G.lastTarget=c.target;
+  }
+  G.c=c;G.phase="ask";
+  if(kind==="regra"){G.rule=c.text;reveal();return}
+  if(kind==="todos"||kind==="agua"){reveal();return}
+  if(kind==="brinde"){reveal();return}
+  if(kind==="rapido"){
+    c.phase="race";c.goIn=TT(1500+Math.random()*3000);c.goAt=Date.now()+c.goIn;c.taps=[];c.early=[];
+    G.phase="ask";broadcast();
+    later(c.goIn+TT(T_RACE),reveal);return;
+  }
+  G.phase="ask";
+  const t=kind==="verdade"||kind==="desafio"?T_TARGET:T_ANS;
+  G.deadline=Date.now()+TT(t*1000);
+  later(TT(t*1000)+300,reveal);
+  broadcast();
+}
+function allIn(){
+  const c=G.c;
+  if(c.kind==="verdade"||c.kind==="desafio")return c.answers[c.target]!=null||!isOn(c.target);
+  if(c.kind==="rapido")return onIdx().every(i=>c.taps.includes(i)||c.early.includes(i));
+  return onIdx().every(i=>c.answers[i]!=null);
+}
+function reveal(){
+  if(!G||G.phase==="reveal")return;
+  for(const t of G.timers)clearTimeout(t);G.timers=[];
+  const c=G.c,m=mult(),drink=[];
+  const add=(i,g)=>{G.goles[i]+=g;drink.push({i,g})};
+  if(c.kind==="mp"){
+    const tally={};for(const v of Object.values(c.answers))tally[v]=(tally[v]||0)+1;
+    const ks=Object.keys(tally).map(Number);
+    if(ks.length){const max=Math.max(...ks.map(k=>tally[k]));ks.filter(k=>tally[k]===max).forEach(k=>add(k,2*m))}
+    c.result={tally};
+  }else if(c.kind==="nunca"){
+    const ja=Object.keys(c.answers).map(Number).filter(i=>c.answers[i]==="ja");
+    ja.forEach(i=>{add(i,1*m);G.ja[i]++});
+    c.result={ja,nunca:Object.keys(c.answers).map(Number).filter(i=>c.answers[i]==="nunca")};
+  }else if(c.kind==="verdade"||c.kind==="desafio"){
+    const a=c.answers[c.target];
+    if(a!=="fiz"){add(c.target,(c.kind==="desafio"?3:2)*m);G.fugas[c.target]++}
+    c.result={a:a||"tempo"};
+  }else if(c.kind==="rapido"){
+    const missing=onIdx().filter(i=>!c.taps.includes(i)&&!c.early.includes(i));
+    let losers=c.early.concat(missing);
+    if(!losers.length&&c.taps.length>1)losers=[c.taps[c.taps.length-1]];
+    [...new Set(losers)].forEach(i=>add(i,2*m));
+    c.result={order:c.taps.slice(),early:c.early.slice(),missing};
+  }else if(c.kind==="brinde"){
+    onIdx().forEach(i=>add(i,1));c.result={};
+  }else c.result={};
+  c.drink=drink;G.phase="reveal";
+  broadcast();
+}
+function endNight(){
+  for(const t of G.timers)clearTimeout(t);G.timers=[];
+  G.phase="end";
+  const idx=G.seats.map((s,i)=>i),by=a=>idx.slice().sort((x,y)=>a[y]-a[x]);
+  const most=by(G.goles)[0],least=idx.slice().sort((x,y)=>G.goles[x]-G.goles[y])[0];
+  G.end={rank:by(G.goles).map(i=>({name:G.seats[i].name,g:G.goles[i],me:i})),sponge:G.seats[most].name,saint:G.seats[least].name,
+    wild:Math.max(...G.ja)>0?G.seats[by(G.ja)[0]].name:null,wildN:Math.max(...G.ja),chicken:Math.max(...G.fugas)>0?G.seats[by(G.fugas)[0]].name:null,chickenN:Math.max(...G.fugas),cards:G.n};
+  broadcast();
+}
+function viewFor(i){
+  const g=G,c=g.c,ph=g.phase,nm=k=>g.seats[k].name;
+  const v={t:"v",gid:g.id,n:g.n,phase:ph,me:i,host:i===0,opts:g.opts,rule:g.rule,
+    players:g.seats.map((s,j)=>({name:s.name,goles:g.goles[j],off:s.online===false,
+      done:ph==="ask"&&(c.kind==="rapido"?c.taps.includes(j)||c.early.includes(j):c.answers[j]!=null)})),
+    kind:c.kind,text:c.text,target:c.target,targetName:c.target!=null?nm(c.target):null,
+    mine:ph==="ask"?(c.kind==="rapido"?(c.taps.includes(i)?"tap":c.early.includes(i)?"early":null):c.answers[i]??null):null,
+    left:ph==="ask"&&c.kind!=="rapido"?Math.max(0,g.deadline-Date.now()):0,
+    goIn:ph==="ask"&&c.kind==="rapido"?Math.max(0,c.goAt-Date.now()):null,
+    end:ph==="end"?g.end:null};
+  if(ph==="reveal"){
+    const r=c.result||{};
+    v.drink=c.drink.map(d=>({name:nm(d.i),g:d.g,me:d.i===i}));
+    if(c.kind==="mp")v.tally=Object.entries(r.tally||{}).map(([k,n])=>({name:nm(+k),n})).sort((a,b)=>b.n-a.n);
+    if(c.kind==="nunca"){v.ja=(r.ja||[]).map(nm);v.nunca=(r.nunca||[]).map(nm)}
+    if(c.kind==="verdade"||c.kind==="desafio")v.a=r.a;
+    if(c.kind==="rapido"){v.order=(r.order||[]).map(nm);v.early=(r.early||[]).map(nm);v.missing=(r.missing||[]).map(nm)}
+  }
+  return v;
+}
+function broadcast(){if(!G)return;G.seats.forEach((s,i)=>{if(s.kind!=="bot")ROOM.sendTo(s,viewFor(i))})}
+function muMsg(seat,d){
+  if(!G||!d)return;
+  const i=G.seats.indexOf(seat),c=G.c;if(i<0)return;
+  if(d.t==="ans"&&G.phase==="ask"){
+    if(c.kind==="mp"){const k=+d.v;if(G.seats[k]&&c.answers[i]==null)c.answers[i]=k}
+    else if(c.kind==="nunca"){if(c.answers[i]==null&&(d.v==="ja"||d.v==="nunca"))c.answers[i]=d.v}
+    else if((c.kind==="verdade"||c.kind==="desafio")&&i===c.target){if(d.v==="fiz"||d.v==="bebo")c.answers[i]=d.v}
+    else if(c.kind==="rapido"){if(!c.taps.includes(i)&&!c.early.includes(i)){if(Date.now()<c.goAt)c.early.push(i);else c.taps.push(i)}}
+    if(allIn())reveal();else broadcast();return;
+  }
+  if(d.t==="next"&&G.phase==="reveal"){nextCard();return}
+  if(d.t==="react"){relayReact(G.seats,seat,d);return}
+  if(i===0&&d.t==="endnight"&&(G.phase==="reveal"||G.phase==="ask")){endNight();return}
+  if(i===0&&d.t==="again"&&G.phase==="end"){ROOM.started=false;ROOM.seats=ROOM.seats.filter(s=>s.kind!=="remote"||s.online);hostStart();return}
+  if(i===0&&d.t==="lobby"&&G.phase==="end"){muStop();ROOM.backToLobby();return}
+}
+
+/* ---------- opções da sala ---------- */
+function cleanOpts(o){o=o||{};return{spicy:o.spicy==="1"?"1":"0",goles:o.goles==="muitos"?"muitos":"poucos"}}
+function renderOpts(el,o,host){
+  o=cleanOpts(o);
+  const seg=(k,items)=>`<div class="seg" role="group">${items.map(([v,l])=>`<button type="button" class="${o[k]===v?"on":""}" data-k="${k}" data-v="${v}" ${host?"":"disabled"} aria-pressed="${o[k]===v}">${l}</button>`).join("")}</div>`;
+  el.innerHTML=`<div class="optrow"><span class="eyebrow">Cartas</span>${seg("spicy",[["0","Normais"],["1","Com picantes 🌶"]])}</div>
+    <div class="optrow"><span class="eyebrow">Goles</span>${seg("goles",[["poucos","Poucos"],["muitos","Muitos"]])}</div>
+    <p class="note">${o.goles==="muitos"?"Muitos: cada castigo vale o dobro. Pausa para água a cada 8 cartas.":"Poucos: castigos de 1 a 3 goles. Pausa para água a cada 10 cartas."}</p>`;
+  if(host)el.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const n=Object.assign({},o);n[b.dataset.k]=b.dataset.v;ROOM.opts=cleanOpts(n);lobbyBroadcast()});
+  const ab=$("addBot");if(ab)ab.hidden=true;
+}
+
+/* ---------- ecrã do jogador ---------- */
+const UI={v:null,key:null,raceT:null};
+function muClient(d){
+  if(d.t==="react"){bubble(d.from,d.r);return}
+  if(d.t!=="v")return;
+  if($("game").hidden)showScreen("game");
+  render(d);
+}
+const g1=n=>n===1?"1 gole":n+" goles";
+function render(v){
+  UI.v=v;
+  $("gRound").textContent=v.phase==="end"?"Fim da noite":`Carta ${v.n}`;
+  $("chips").innerHTML=v.players.map((p,j)=>`<li class="${j===v.me?"me":""}${p.off?" off":""}${p.done?" done":""}${v.target===j&&v.phase!=="end"?" turnnow":""}"><span class="cn">${esc(p.name)}</span><b>🍺 ${p.goles}</b>${p.done?'<i class="st">✓</i>':""}</li>`).join("");
+  $("ruleBar").hidden=!v.rule||v.phase==="end";
+  if(v.rule)$("ruleText").textContent=v.rule;
+  if(v.phase==="ask"&&v.left)startTick(v.left);else stopTick();
+  const key=`${v.gid}:${v.n}:${v.phase}`,fresh=key!==UI.key;UI.key=key;
+  const card=$("muCard"),P=$("panel");
+  if(v.phase==="end"){card.hidden=true;if(fresh)drawEnd(v);else endButtons(v);return}
+  card.hidden=false;card.className="mucard k-"+v.kind;
+  $("muKind").textContent=`${EMO[v.kind]} ${KIND[v.kind]}`;
+  $("muText").textContent=v.kind==="mp"?v.text:v.text;
+  $("muWho").textContent=(v.kind==="verdade"||v.kind==="desafio")?(v.target===v.me?"É contigo!":`Para: ${v.targetName}`):"";
+  if(fresh){playSfx(v.phase==="ask"?"round":"vote");if(v.phase==="ask"&&v.target===v.me&&navigator.vibrate)try{navigator.vibrate(200)}catch(e){}}
+  if(v.phase==="ask")drawAsk(v,fresh);else drawReveal(v,fresh);
+}
+function drawAsk(v,fresh){
+  const P=$("panel"),wait=`<p class="wait">${v.players.filter(p=>p.done).length} de ${v.players.filter(p=>!p.off).length} já responderam.</p>`;
+  if(v.kind==="mp"){
+    if(v.mine!=null){P.innerHTML=`<p class="lead">Votaste em <b>${esc(v.players[v.mine].name)}</b>. Ninguém sabe.</p>${wait}`;return}
+    if(!fresh&&$("mpList"))return;
+    P.innerHTML=`<p class="lead">Vota em segredo. O mais votado bebe ${g1(2*(v.opts.goles==="muitos"?2:1))}.</p><div class="opts" id="mpList">${v.players.map((p,j)=>`<button type="button" class="opt" data-v="${j}">${esc(p.name)}${j===v.me?" (tu)":""}</button>`).join("")}</div>`;
+    $("mpList").onclick=e=>{const b=e.target.closest(".opt");if(!b)return;unlockAudio();playSfx("send");ROOM.send({t:"ans",v:+b.dataset.v});$("mpList").classList.add("locked");b.classList.add("picked")};
+  }else if(v.kind==="nunca"){
+    if(v.mine){P.innerHTML=`<p class="lead">Respondeste <b>${v.mine==="ja"?"Já fiz 🍺":"Nunca fiz 😇"}</b>. A resposta de todos aparece no fim.</p>${wait}`;return}
+    P.innerHTML=`<p class="lead">Responde com sinceridade. Quem já fez bebe ${g1(v.opts.goles==="muitos"?2:1)}.</p><div class="yn"><button class="btn big" type="button" data-v="ja">Já fiz 🍺</button><button class="btn ghost big" type="button" data-v="nunca">Nunca fiz 😇</button></div>`;
+    P.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{unlockAudio();playSfx("send");ROOM.send({t:"ans",v:b.dataset.v});P.querySelectorAll("[data-v]").forEach(x=>x.disabled=true)});
+  }else if(v.kind==="verdade"||v.kind==="desafio"){
+    const g=(v.kind==="desafio"?3:2)*(v.opts.goles==="muitos"?2:1);
+    if(v.target===v.me){
+      P.innerHTML=`<p class="lead">${v.kind==="verdade"?"Responde em voz alta":"Faz o desafio"}, ou foge e bebe ${g1(g)}.</p><div class="yn"><button class="btn big" type="button" data-v="fiz">${v.kind==="verdade"?"Respondi ✅":"Fiz ✅"}</button><button class="btn ghost big" type="button" data-v="bebo">Prefiro beber 🍺</button></div><p class="mine">Os outros são o júri: se fizeres batota, eles mandam-te beber na mesma.</p>`;
+      P.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{unlockAudio();playSfx("send");ROOM.send({t:"ans",v:b.dataset.v});P.querySelectorAll("[data-v]").forEach(x=>x.disabled=true)});
+    }else P.innerHTML=`<p class="lead">À espera de <b>${esc(v.targetName)}</b>: ${v.kind==="verdade"?"responde ou bebe":"cumpre ou bebe"}.</p>`;
+  }else if(v.kind==="rapido"){
+    if(v.mine){P.innerHTML=`<p class="lead">${v.mine==="early"?"Queimaste a largada! 😬":"Tocaste! ⚡"}</p><p class="wait">À espera dos outros…</p>`;return}
+    if(!fresh&&$("raceBtn"))return;
+    P.innerHTML=`<button type="button" class="race hold" id="raceBtn">Espera…</button>`;
+    const b=$("raceBtn");clearTimeout(UI.raceT);
+    UI.raceT=setTimeout(()=>{if(UI.key!==`${v.gid}:${v.n}:ask`)return;b.classList.remove("hold");b.classList.add("go");b.textContent="TOCA!";playSfx("truth");if(navigator.vibrate)try{navigator.vibrate(80)}catch(e){}},v.goIn||0);
+    b.onclick=()=>{unlockAudio();ROOM.send({t:"ans",v:"tap"});b.disabled=true};
+  }
+}
+function drawReveal(v,fresh){
+  const P=$("panel");let html="";
+  if(v.kind==="mp"&&v.tally)html+=`<ul class="tally">${v.tally.map(t=>`<li><span>${esc(t.name)}</span><b>${t.n} ${t.n===1?"voto":"votos"}</b></li>`).join("")}</ul>`;
+  if(v.kind==="nunca")html+=`<div class="yn2"><p><span>Já fizeram 🍺</span>${v.ja.length?v.ja.map(esc).join(", "):"Ninguém. Santinhos."}</p><p><span>Nunca fizeram 😇</span>${v.nunca.length?v.nunca.map(esc).join(", "):"Ninguém!"}</p></div>`;
+  if(v.kind==="verdade"||v.kind==="desafio")html+=`<p class="lead">${v.a==="fiz"?`${esc(v.targetName)} ${v.kind==="verdade"?"respondeu":"cumpriu"}. 👏`:v.a==="bebo"?`${esc(v.targetName)} fugiu e bebe! 🐔`:`${esc(v.targetName)} não respondeu a tempo, bebe!`}</p>`;
+  if(v.kind==="rapido")html+=`<p class="lead">${v.order.length?"Ordem: "+v.order.map(esc).join(" → "):""}</p>${v.early.length?`<p class="mine">Queimaram a largada: ${v.early.map(esc).join(", ")}</p>`:""}${v.missing.length?`<p class="mine">Não tocaram: ${v.missing.map(esc).join(", ")}</p>`:""}`;
+  if(v.kind==="regra")html+=`<p class="lead">Esta regra fica até aparecer outra. Está sempre lá em cima, no aviso amarelo.</p>`;
+  if(v.kind==="todos")html+=`<p class="lead">Vocês é que sabem quem é. Sem batota!</p>`;
+  if(v.kind==="agua")html+=`<p class="lead">💧 Hidratar faz parte do jogo. Quem conduz não bebe álcool, nem hoje nem nunca.</p>`;
+  if(v.drink&&v.drink.length)html+=`<div class="drink"><div class="eyebrow">Bebem</div>${v.drink.map(d=>`<p class="${d.me?"me":""}"><b>${esc(d.name)}</b><span>🍺 ${g1(d.g)}</span></p>`).join("")}</div>`;
+  else if(["mp","nunca","verdade","desafio","rapido"].includes(v.kind))html+=`<p class="wait">Ninguém bebe desta vez.</p>`;
+  html+=`<div class="choices"><button class="btn" type="button" id="nextBtn">Próxima carta</button>${v.host?'<button class="btn ghost" type="button" id="endBtn">Terminar a noite</button>':""}</div>`;
+  P.innerHTML=html;
+  $("nextBtn").onclick=()=>{unlockAudio();$("nextBtn").disabled=true;ROOM.send({t:"next"})};
+  if($("endBtn"))$("endBtn").onclick=()=>ROOM.send({t:"endnight"});
+  if(fresh&&v.drink&&v.drink.some(d=>d.me))playSfx("lie");
+}
+function drawEnd(v){
+  const e=v.end;
+  $("panel").innerHTML=`<div class="win"><div class="eyebrow">Fim da noite · ${e.cards} cartas</div><h2>Mais uma? 🍻</h2></div>
+    <div class="awards"><p><span>🧽 Esponja da noite</span>${esc(e.sponge)}</p><p><span>😇 Santo da noite</span>${esc(e.saint)}</p>${e.wild?`<p><span>🙊 Já fez de tudo</span>${esc(e.wild)} · ${e.wildN} «já fiz»</p>`:""}${e.chicken?`<p><span>🐔 Galinha da noite</span>${esc(e.chicken)} · fugiu ${e.chickenN} ${e.chickenN===1?"vez":"vezes"}</p>`:""}</div>
+    <ol class="board">${e.rank.map(r=>`<li class="${r.me===v.me?"me":""}"><span class="cn">${esc(r.name)}</span><b>🍺 ${r.g}</b></li>`).join("")}</ol>
+    <p class="mine">Bebam água e voltem para casa em segurança. Quem bebeu não conduz.</p>
+    <div class="choices" id="endBtns"></div><p class="wait" id="endWait"></p>`;
+  endButtons(v);playSfx("end");
+}
+function endButtons(v){
+  const b=$("endBtns");if(!b)return;
+  if(v.host){b.innerHTML=`<button class="btn" type="button" id="againBtn">Mais uma!</button><button class="btn ghost" type="button" id="lobbyBtn">Voltar à sala</button>`;
+    $("againBtn").onclick=()=>{unlockAudio();ROOM.send({t:"again"})};$("lobbyBtn").onclick=()=>ROOM.send({t:"lobby"});$("endWait").textContent=""}
+  else{b.innerHTML="";$("endWait").textContent=`À espera de ${v.players[0].name}.`}
+}
+const RULES=`<ul>
+  <li>Cada um joga no seu telemóvel. Em cada carta acontece uma coisa diferente:</li>
+  <li><b>Quem é mais provável…</b> todos votam em segredo e o mais votado bebe.</li>
+  <li><b>Eu nunca…</b> cada um responde em segredo «já fiz» ou «nunca fiz». No fim vê-se tudo e quem já fez bebe.</li>
+  <li><b>Verdade ou bebe / Desafio ou bebe:</b> calha a uma pessoa, que cumpre ou bebe. Os outros são o júri.</li>
+  <li><b>Regras:</b> ficam em vigor até aparecer outra. Quem falhar, bebe.</li>
+  <li><b>Corrida:</b> o último a tocar no botão, ou quem tocar antes do tempo, bebe.</li>
+  <li>De vez em quando há <b>pausa para água</b>. Ninguém é obrigado a beber álcool: dá para jogar com água, sumo ou cerveja sem álcool.</li>
+  <li>Qualquer pessoa pode passar à próxima carta. Quem criou a sala termina a noite e vê os prémios.</li>
+</ul><p class="note">Só para maiores de 18. Bebe com moderação. Quem conduz não bebe.</p>`;
+ROOM.game={id:"maisuma",title:"Mais Uma!",maxp:12,minp:3,maxBots:0,botNames:[],
+  lobbyHelpFew:"São precisas pelo menos 3 pessoas. Envia o link a quem está contigo.",
+  start:muStart,msg:muMsg,client:muClient,stop:()=>{muStop();stopTick()},cleanOpts,renderOpts,
+  back(seat){ROOM.sendTo(seat,{t:"start"});if(G)broadcast()},
+  drop(seat){if(!G)return;if(G.phase==="ask"&&allIn())reveal();else broadcast()},
+  hostLost(on){$("lost").hidden=!on},
+  onScreen(n){if(n!=="game")UI.key=null}
+};
+ROOM.opts=cleanOpts(null);
+/* confirmação de idade antes de criar ou entrar numa sala */
+{
+  const ok=()=>{const c=$("age18");return!c||c.checked};
+  const guard=e=>{if(!ok()){e.stopImmediatePropagation();netNote("netNote","Confirma que tens 18 anos ou mais.");$("age18").focus()}};
+  $("hostBtn").addEventListener("click",guard,true);$("joinBtn").addEventListener("click",guard,true);
+  $("joinCode").addEventListener("keydown",e=>{if(e.key==="Enter")guard(e)},true);
+  try{if(store.get("mu-18")==="1")$("age18").checked=true}catch(e){}
+  $("age18").addEventListener("change",()=>store.set("mu-18",$("age18").checked?"1":"0"));
+}
+initUI({rules:RULES,privacy:privacyHTML("")});
+
+</script>
+</body>
+</html>
