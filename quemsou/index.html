@@ -795,7 +795,7 @@ const DECKS=[
 /* ================= QUEM SOU EU? (Adivinha na Testa, cada um no seu telemóvel) =================
    Cada jogador recebe uma palavra secreta. Vê as palavras de todos menos a sua.
    À vez, quem joga faz em voz alta uma pergunta de sim ou não; o primeiro a responder no telemóvel (Sim ou Não)
-   passa logo a vez ao seguinte. Antes da resposta, quem joga pode arriscar um palpite ou desistir. Palpite certo: sai do jogo com pontos
+   decide: «Sim» = continua a perguntar; «Não» = a vez passa ao seguinte. Antes da resposta, quem joga pode arriscar um palpite ou desistir. Palpite certo: sai do jogo com pontos
    (quanto mais cedo, mais pontos). Palpite errado: perde a vez. Se o palpite não bater certo à letra,
    os outros decidem se aceitam (ex.: «gato» para «Gato preto»). */
 const T_JUDGE=20,GUESSLEN=40,LOGN=6;
@@ -889,7 +889,7 @@ function viewFor(i){
     players:g.seats.map((s,j)=>({name:s.name,score:g.scores[j],off:s.online===false,turn:j===turn,
       done:R.done[j]?{how:R.done[j].how,place:R.done[j].place,pts:R.done[j].pts}:null,
       word:(j!==i||R.done[j]||over)?R.words[j]:null})),
-    turn,tkey:turn!=null?R.turns[turn]+":"+turn:null,
+    turn,qn:R.qn||0,tkey:turn!=null?(R.qn||0)+":"+turn:null,
     judge:R.judge?{i:R.judge.i,name:nm(R.judge.i),text:R.judge.text,word:R.judge.i===i?null:R.words[R.judge.i],my:R.judge.votes[i]||null,
       n:Object.keys(R.judge.votes).length,of:judges().length}:null,
     log:R.log.slice(-LOGN).reverse().map(e=>({k:e.k,name:nm(e.i),me:e.i===i,by:e.by!=null?nm(e.by):null,byMe:e.by===i,a:e.a||null,text:e.text||null,w:e.k==="ok"||e.k==="give"?e.w:null,pts:e.pts||0})),
@@ -900,7 +900,7 @@ function qsMsg(seat,d){
   if(!G||!d)return;
   const i=G.seats.indexOf(seat),R=G.r;if(i<0)return;
   const turn=R.order[R.pos];
-  if(d.t==="ans"&&R.phase==="play"&&i!==turn&&ANSL[d.a]&&d.turn===R.turns[turn]+":"+turn){addLog({k:"ans",i:turn,by:i,a:d.a});nextTurn();return}
+  if(d.t==="ans"&&R.phase==="play"&&i!==turn&&ANSL[d.a]&&d.turn===(R.qn||0)+":"+turn){R.qn=(R.qn||0)+1;addLog({k:"ans",i:turn,by:i,a:d.a});if(d.a==="sim")broadcast();else nextTurn();return}
   if(d.t==="pass"&&R.phase==="play"&&i===turn){addLog({k:"pass",i});nextTurn();return}
   if(d.t==="give"&&R.phase==="play"&&i===turn){finish(i,"give");addLog({k:"give",i,w:R.words[i]});nextTurn();return}
   if(d.t==="guess"&&R.phase==="play"&&i===turn){
@@ -961,7 +961,7 @@ function render(v){
     return`<li class="${cls}"><span class="who">${me?"Tu":esc(p.name)}${p.turn?" · a perguntar":""}</span><b>${p.word?esc(p.word):"???"}</b></li>`}).join("");
   if(v.phase==="play"&&v.timed)startTick(v.left);else stopTick();
   const myTurn=v.turn===v.me,P=$("panel");
-  const key=`${v.gid}:${v.round}:${v.phase}:${v.turn}:${v.log.length?v.log[0].k+v.log[0].name:""}`,fresh=key!==UI.key;UI.key=key;
+  const key=`${v.gid}:${v.round}:${v.phase}:${v.turn}:${v.qn}:${v.log.length?v.log[0].k+v.log[0].name:""}`,fresh=key!==UI.key;UI.key=key;
   if(v.phase==="over"){if(fresh)drawOver(v);else overButtons(v);return}
   if(v.phase==="judge"){
     const J=v.judge;
@@ -975,12 +975,12 @@ function render(v){
     return;
   }
   const meDone=v.players[v.me].done,L=v.log[0];
-  const last=fresh?(L&&L.k==="ans"?`<div class="lastans ${L.a}">${L.me?"A tua pergunta":esc(L.name)}: <b>${ANSL[L.a].toUpperCase()}</b></div>`:""):(UI.last||"");
+  const last=fresh?(L&&L.k==="ans"?`<div class="lastans ${L.a}">${L.me?"A tua pergunta":esc(L.name)}: <b>${ANSL[L.a].toUpperCase()}</b><small style="display:block;font-size:15px">${L.a==="sim"?(L.me?"Continua, faz outra pergunta!":"Continua a perguntar"):(L.me?"Passou a vez":"A vez passou")}</small></div>`:""):(UI.last||"");
   UI.last=last;
   if(myTurn){
     if(fresh){UI.guessing=false;playSfx("vote");try{navigator.vibrate&&navigator.vibrate(150)}catch(e){}}
     else if($("myTurnBox"))return;
-    P.innerHTML=`${last}<div class="yourturn" id="myTurnBox"><b>É a tua vez!</b><p>Faz em voz alta uma pergunta de sim ou não sobre a tua palavra. Ex.: «Sou um animal?», «Como-se?» Quando alguém responder, passa a vez.</p>
+    P.innerHTML=`${last}<div class="yourturn" id="myTurnBox"><b>É a tua vez!</b><p>Faz em voz alta uma pergunta de sim ou não sobre a tua palavra. Ex.: «Sou um animal?», «Como-se?» Se te responderem <b style="font-size:inherit;font-family:inherit">Sim</b>, continuas a perguntar; se for <b style="font-size:inherit;font-family:inherit">Não</b>, passa a vez.</p>
       <div class="rowbtns"><button class="btn" type="button" id="guessOpen">Já sei!</button></div>
       <div class="ansrow" id="guessRow" ${UI.guessing?"":"hidden"}><input id="guessIn" maxlength="${GUESSLEN}" placeholder="Eu sou…" autocomplete="off" enterkeyhint="send"><button class="btn" type="button" id="guessBtn">Arriscar</button></div>
       <button class="linkbtn" type="button" id="giveBtn">Desistir e ver a minha palavra</button></div>${logHTML(v)}`;
@@ -994,7 +994,7 @@ function render(v){
   if(!fresh&&$("ansList"))return;
   P.innerHTML=`${last}${meDone&&meDone.how==="ok"?`<p class="wait">Já acertaste! Agora ajuda os outros.</p>`:""}
     <p class="lead">Vez de <b>${esc(tp.name)}</b>. A palavra é <b>${esc(tp.word||"")}</b>.</p>
-    <p class="wait" style="margin:0">Ouve a pergunta e responde. Basta um responder: a vez passa logo ao seguinte.</p>
+    <p class="wait" style="margin:0">Ouve a pergunta e responde. Basta um responder. Sim: continua a perguntar. Não: passa a vez.</p>
     <div class="opts answers" id="ansList">${ANS.map(([k,l])=>`<button type="button" class="opt ${k}" data-a="${k}">${l}</button>`).join("")}</div>${logHTML(v)}`;
   $("ansList").addEventListener("click",e=>{const b=e.target.closest(".opt");if(!b||$("ansList").classList.contains("locked"))return;unlockAudio();ROOM.send({t:"ans",a:b.dataset.a,turn:v.tkey});$("ansList").classList.add("locked");b.classList.add("picked");playSfx("send")});
   if(fresh&&prev&&prev.log.length&&v.log[0]&&v.log[0].k==="ok"&&prev.log[0]!==v.log[0])playSfx("truth");
@@ -1018,7 +1018,7 @@ function overButtons(v){
 const RULES=`<ul>
   <li>Cada um recebe uma <b>palavra secreta</b>: um animal, uma comida, uma profissão… Vês as palavras de <b>todos menos a tua</b>, como se a tivesses colada na testa.</li>
   <li>À vez, quem joga faz em voz alta <b>uma pergunta de sim ou não</b> sobre a sua palavra («Sou um animal?», «Sou maior do que um carro?»).</li>
-  <li>Os outros respondem só <b>Sim</b> ou <b>Não</b>, no botão do telemóvel. Basta um responder: a resposta aparece a todos e <b>a vez passa logo</b> ao seguinte.</li>
+  <li>Os outros respondem só <b>Sim</b> ou <b>Não</b>, no botão do telemóvel. Basta um responder. Se a resposta for <b>Sim</b>, continua a perguntar; se for <b>Não</b>, a vez passa ao seguinte.</li>
   <li>Antes de alguém responder, quem joga pode <b>arriscar</b>: escreve o que acha que é. Se errar, perde a vez.</li>
   <li>Se o palpite não for exatamente igual (por exemplo «gato» para «Gato preto»), os outros decidem se aceitam.</li>
   <li>Quem acertar primeiro ganha mais pontos: com 4 jogadores, o 1.º ganha 3, o 2.º ganha 2 e o 3.º ganha 1. A ronda acaba quando só falta um.</li>
