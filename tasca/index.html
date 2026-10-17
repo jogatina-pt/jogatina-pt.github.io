@@ -1539,15 +1539,18 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 .qrcard{background:#fff;color:#151515;border:3px solid #151515;box-shadow:6px 6px 0 #151515;border-radius:20px;padding:16px 16px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;width:min(340px,100%);text-align:center}
 .qrcard svg{width:100%;height:auto;display:block}
 .qrcard b{font-family:var(--display,Impact);font-size:34px;letter-spacing:.14em;line-height:1}
-.qrcard p{margin:0;font-size:14px;font-weight:700;color:#333}`;
+.qrcard p{margin:0;font-size:14px;font-weight:700;color:#333}
+.roomtag{font-family:var(--display,Impact);font-size:15px;letter-spacing:.08em;background:var(--surface,#fff);color:var(--ink,#151515);border:2px solid var(--stroke,#151515);box-shadow:2px 2px 0 var(--stroke,#151515);border-radius:999px;padding:2px 10px;white-space:nowrap;cursor:pointer;line-height:1.4}
+.roomtag[hidden]{display:none}.roomtag b{font-weight:400;color:var(--accent,#d23a6e)}`;
   document.head.appendChild(st);
   const wrap=document.createElement("div");wrap.className="qrwrap";wrap.hidden=true;
-  wrap.innerHTML='<div class="qrcard" role="dialog" aria-modal="true" aria-label="QR code da sala"><div class="qrsvg"></div><b class="qrcode"></b><p>Aponta a câmara do telemóvel para entrar na sala.</p><button class="btn" type="button">Fechar</button></div>';
+  wrap.innerHTML='<div class="qrcard" role="dialog" aria-modal="true" aria-label="QR code da sala"><div class="qrsvg"></div><b class="qrcode"></b><p>Aponta a câmara do telemóvel para entrar na sala, ou escreve o código no jogo. Quem saiu volta a entrar com o mesmo código, no mesmo telemóvel.</p><button class="btn" type="button">Fechar</button></div>';
   document.body.appendChild(wrap);
   const close=()=>{wrap.hidden=true};
   wrap.addEventListener("click",e=>{if(e.target===wrap||e.target.closest("button"))close()});
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!wrap.hidden)close()});
-  const code=()=>(box.textContent||"").trim();
+  const cur=()=>{try{if(typeof ROOM!=="undefined"&&ROOM.code)return ROOM.code}catch(e){}try{if(typeof NET!=="undefined"&&NET.code)return NET.code}catch(e){}return null};
+  const code=()=>{const g=document.getElementById("game");return(g&&!g.hidden&&cur())||(box.textContent||"").trim()};
   const url=c=>location.href.split("#")[0]+"#sala="+c;
   function show(){
     const c=code();if(!/^[A-Za-z0-9]{5}$/.test(c))return;
@@ -1559,6 +1562,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   const row=document.getElementById("shareBtn")&&document.getElementById("shareBtn").parentNode;
   if(row){const b=document.createElement("button");b.className="btn ghost";b.type="button";b.id="qrBtn";b.textContent="QR code";b.addEventListener("click",show);row.appendChild(b)}
   window.showRoomQR=show;
+  /* durante a partida: o código da sala fica sempre à vista no cabeçalho */
+  const tag=document.createElement("button");tag.type="button";tag.className="roomtag";tag.hidden=true;tag.title="Código da sala (toca para ver o QR code)";
+  const h1=document.querySelector("header h1");if(h1)h1.parentNode.insertBefore(tag,h1.nextSibling);
+  tag.addEventListener("click",show);
+  setInterval(()=>{const g=document.getElementById("game"),c=cur(),on=!!c&&!!g&&!g.hidden;if(tag.hidden===on)tag.hidden=!on;if(on&&tag.dataset.c!==c){tag.dataset.c=c;tag.innerHTML="Sala <b>"+c+"</b>"}},600);
 })();
 </script><script>/* ===== Ecrã completo (menu e todos os jogos) =====
    O navegador sai do ecrã completo sempre que muda de página. Para não sair ao andar entre jogos,
