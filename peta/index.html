@@ -178,6 +178,37 @@ input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shado
 .rstep.lie{border-color:var(--danger)}.rstep.lie .rverdict b{color:var(--danger)}
 .rstep.truth{border-color:var(--good)}.rstep.truth .rverdict b{color:var(--good)}
 @media (min-width:760px){.qcard{padding:22px 26px}.opts{display:grid;grid-template-columns:1fr 1fr}}
+/* ===== Estilo banda desenhada (comum a todos os jogos) ===== */
+@font-face{font-family:"Bangers";font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/bangers.woff2) format("woff2")}
+:root{--display:"Bangers","Bowlby One",Impact,sans-serif;--stroke:#151515;--pop:#ffd23f;--pop-ink:#151515;
+  --dots:radial-gradient(rgba(21,21,21,.09) 1.3px,transparent 1.6px)}
+:root:not([data-pp-theme="light"]){--stroke:#050807;--dots:radial-gradient(rgba(255,255,255,.06) 1.3px,transparent 1.6px)}
+body{background-image:var(--dots);background-size:13px 13px}
+h1,h2,h3{font-family:var(--display);letter-spacing:.03em;font-weight:400}
+.brand h1{font-size:clamp(30px,8vw,42px);-webkit-text-stroke:1.5px var(--stroke);text-shadow:3px 3px 0 var(--stroke);color:var(--title)}
+.brand h1 span{color:var(--accent)}
+.setup h2{font-size:clamp(40px,12vw,72px);line-height:.92;text-shadow:3px 3px 0 color-mix(in srgb,var(--stroke) 25%,transparent)}
+.btn{border:3px solid var(--stroke)!important;box-shadow:3px 3px 0 var(--stroke);font-family:var(--display);font-size:19px;letter-spacing:.06em;font-weight:400;padding:9px 20px;transition:transform .08s,box-shadow .08s}
+.btn.sm{font-size:15px;padding:4px 11px;box-shadow:2px 2px 0 var(--stroke)}
+.btn.ico{font-family:var(--body)}
+.btn:not(:disabled):active{transform:translate(3px,3px);box-shadow:0 0 0 var(--stroke)}
+.btn.ghost{background:var(--surface)}
+input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
+.mode,.roster li,.sheet,.qcard,.bcard,.wordcard,.mucard,.rstep,.board li,.opt,.sub,.wcard,.sent,.jbox,.yourturn,.outbox,.words p,.roles li,.others li,.tally li,.drink,.yn2 p,.rulebar,.vol li,.chips li,.seg button,.age{border:3px solid var(--stroke)!important;box-shadow:4px 4px 0 var(--stroke)}
+.roster li.free{box-shadow:none;border-style:dashed!important}
+.chips li,.seg button,.vol li{box-shadow:2px 2px 0 var(--stroke)}
+.qcard,.bcard,.wordcard,.mucard{border-radius:18px;box-shadow:6px 6px 0 var(--stroke)}
+.opt:not(:disabled):active,.sub:not(:disabled):active,.wcard:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--stroke)}
+.lobby .code{-webkit-text-stroke:2px var(--stroke);text-shadow:4px 4px 0 var(--stroke);letter-spacing:.14em}
+.win h2,.winbox h2,.outbox h2{-webkit-text-stroke:1.5px var(--stroke);text-shadow:3px 3px 0 var(--stroke)}
+.eyebrow{letter-spacing:.12em}
+.alert{border:3px solid var(--stroke);box-shadow:5px 5px 0 var(--stroke);font-family:var(--display);font-size:20px;letter-spacing:.05em}
+.setup .mascot{width:min(42vw,170px);height:auto;align-self:flex-end;margin:-8px 0 -18px;filter:drop-shadow(4px 4px 0 rgba(0,0,0,.12))}
+.hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;width:100%}
+.bubble-say{position:relative;background:#fff;color:#151515;border:3px solid #151515;border-radius:18px;padding:8px 12px;font-family:var(--display);font-size:20px;letter-spacing:.04em;box-shadow:3px 3px 0 #151515;max-width:16ch}
+.bubble-say::after{content:"";position:absolute;bottom:-14px;right:22px;border:8px solid transparent;border-top:12px solid #151515}
+
+.macaco-mini{width:100%;height:auto;display:block}
 
 </style>
 </head>
@@ -195,7 +226,29 @@ input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shado
   </header>
 
   <section id="setup" class="setup">
-    <h2>Quem prega<span>a melhor peta?</span></h2>
+    <div class="hero-row"><h2>Quem prega<span>a melhor peta?</span></h2><svg class="mascot girafa" viewBox="0 0 200 270" role="img" aria-label="Girafa de óculos a ler um livro">
+<g stroke="#151515" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+<path d="M80 262 C84 200 88 158 92 118 L122 118 C126 158 132 200 138 262 Z" fill="#f2b544"/>
+<g stroke-width="3" fill="#b8662b"><path d="M97 150q9-7 15 1q-1 11-12 9q-7-3-3-10z"/><path d="M114 182q9-5 13 3q-2 9-11 7q-6-4-2-10z"/><path d="M93 200q8-5 13 2q-1 10-11 8q-6-3-2-10z"/><path d="M110 228q9-5 14 3q-2 9-12 7q-6-4-2-10z"/><path d="M98 128q6-4 10 1q-1 7-8 6q-4-3-2-7z"/></g>
+<path d="M66 62q-34-14-40 2q16 18 44 10z" fill="#f2b544"/><path d="M58 62q-16-4-22 1" fill="none" stroke-width="3"/>
+<path d="M142 62q34-14 40 2q-16 18-44 10z" fill="#f2b544"/><path d="M150 62q16-4 22 1" fill="none" stroke-width="3"/>
+<path d="M88 46l-7-26" stroke-width="8"/><circle cx="80" cy="17" r="9" fill="#7a3f1c"/>
+<path d="M118 46l7-26" stroke-width="8"/><circle cx="126" cy="17" r="9" fill="#7a3f1c"/>
+<path d="M62 74C58 36 146 34 146 72C148 98 140 110 130 120L80 120C68 110 62 98 62 74Z" fill="#f2b544"/>
+<g stroke-width="3" fill="#b8662b"><path d="M70 92q6-5 10 1q-1 7-8 5q-4-2-2-6z"/><path d="M128 50q7-4 10 2q-2 7-8 5q-4-3-2-7z"/><path d="M80 48q6-3 9 2q-2 6-7 4q-4-2-2-6z"/></g>
+<ellipse cx="104" cy="116" rx="35" ry="23" fill="#f7d9a3"/>
+<circle cx="92" cy="113" r="3.5" fill="#151515" stroke-width="0"/><circle cx="116" cy="113" r="3.5" fill="#151515" stroke-width="0"/>
+<path d="M88 127q16 9 32 0" fill="none" stroke-width="4"/>
+<circle cx="85" cy="78" r="16" fill="#e8f4ff" fill-opacity=".55"/><circle cx="123" cy="78" r="16" fill="#e8f4ff" fill-opacity=".55"/>
+<path d="M101 77q3-4 6 0" fill="none" stroke-width="4"/><path d="M69 76l-8-3M139 76l8-3" stroke-width="4"/>
+<circle cx="87" cy="82" r="5.5" fill="#151515" stroke-width="0"/><circle cx="121" cy="82" r="5.5" fill="#151515" stroke-width="0"/>
+<circle cx="89" cy="80" r="1.6" fill="#fff" stroke-width="0"/><circle cx="123" cy="80" r="1.6" fill="#fff" stroke-width="0"/>
+<path d="M76 76q11-6 22 0M112 76q11-6 22 0" fill="none" stroke-width="4"/>
+<path d="M77 74l-3-4M82 72l-1-4M126 72l1-4M131 74l3-4" stroke-width="2.5"/>
+<path d="M30 230l74-16l74 16l0 34l-74-14l-74 14z" fill="#b8352c"/>
+<path d="M36 226l68-12l0 34l-68 12z" fill="#fffdf8"/><path d="M172 226l-68-12l0 34l68 12z" fill="#fffdf8"/>
+<path d="M46 232l46-8M46 242l46-8M116 224l46 8M116 234l46 8" stroke-width="2.5" stroke="#8a8a8a"/>
+</g></svg></div>
     <p>Aparece uma pergunta verdadeira e esquisita. Cada um inventa uma resposta falsa que pareça verdade. Depois todos tentam descobrir a verdadeira no meio das petas. Ganha pontos quem acerta e quem engana.</p>
     <label class="field"><span class="eyebrow">O teu nome</span><input id="myName" maxlength="14" autocomplete="nickname" placeholder="Ex.: Ivo"></label>
     <div class="mode" id="onlineMode">

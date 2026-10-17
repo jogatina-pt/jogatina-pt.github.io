@@ -189,6 +189,37 @@ input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shado
 .others li{display:flex;justify-content:space-between;gap:10px;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;font-weight:700}
 .others em{font-style:normal;color:var(--muted);font-size:13px;white-space:nowrap}
 @media (prefers-reduced-motion:reduce){.fillin.win,.winbox h2{animation:none}}
+/* ===== Estilo banda desenhada (comum a todos os jogos) ===== */
+@font-face{font-family:"Bangers";font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/bangers.woff2) format("woff2")}
+:root{--display:"Bangers","Bowlby One",Impact,sans-serif;--stroke:#151515;--pop:#ffd23f;--pop-ink:#151515;
+  --dots:radial-gradient(rgba(21,21,21,.09) 1.3px,transparent 1.6px)}
+:root:not([data-pp-theme="light"]){--stroke:#050807;--dots:radial-gradient(rgba(255,255,255,.06) 1.3px,transparent 1.6px)}
+body{background-image:var(--dots);background-size:13px 13px}
+h1,h2,h3{font-family:var(--display);letter-spacing:.03em;font-weight:400}
+.brand h1{font-size:clamp(30px,8vw,42px);-webkit-text-stroke:1.5px var(--stroke);text-shadow:3px 3px 0 var(--stroke);color:var(--title)}
+.brand h1 span{color:var(--accent)}
+.setup h2{font-size:clamp(40px,12vw,72px);line-height:.92;text-shadow:3px 3px 0 color-mix(in srgb,var(--stroke) 25%,transparent)}
+.btn{border:3px solid var(--stroke)!important;box-shadow:3px 3px 0 var(--stroke);font-family:var(--display);font-size:19px;letter-spacing:.06em;font-weight:400;padding:9px 20px;transition:transform .08s,box-shadow .08s}
+.btn.sm{font-size:15px;padding:4px 11px;box-shadow:2px 2px 0 var(--stroke)}
+.btn.ico{font-family:var(--body)}
+.btn:not(:disabled):active{transform:translate(3px,3px);box-shadow:0 0 0 var(--stroke)}
+.btn.ghost{background:var(--surface)}
+input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
+.mode,.roster li,.sheet,.qcard,.bcard,.wordcard,.mucard,.rstep,.board li,.opt,.sub,.wcard,.sent,.jbox,.yourturn,.outbox,.words p,.roles li,.others li,.tally li,.drink,.yn2 p,.rulebar,.vol li,.chips li,.seg button,.age{border:3px solid var(--stroke)!important;box-shadow:4px 4px 0 var(--stroke)}
+.roster li.free{box-shadow:none;border-style:dashed!important}
+.chips li,.seg button,.vol li{box-shadow:2px 2px 0 var(--stroke)}
+.qcard,.bcard,.wordcard,.mucard{border-radius:18px;box-shadow:6px 6px 0 var(--stroke)}
+.opt:not(:disabled):active,.sub:not(:disabled):active,.wcard:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--stroke)}
+.lobby .code{-webkit-text-stroke:2px var(--stroke);text-shadow:4px 4px 0 var(--stroke);letter-spacing:.14em}
+.win h2,.winbox h2,.outbox h2{-webkit-text-stroke:1.5px var(--stroke);text-shadow:3px 3px 0 var(--stroke)}
+.eyebrow{letter-spacing:.12em}
+.alert{border:3px solid var(--stroke);box-shadow:5px 5px 0 var(--stroke);font-family:var(--display);font-size:20px;letter-spacing:.05em}
+.setup .mascot{width:min(42vw,170px);height:auto;align-self:flex-end;margin:-8px 0 -18px;filter:drop-shadow(4px 4px 0 rgba(0,0,0,.12))}
+.hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;width:100%}
+.bubble-say{position:relative;background:#fff;color:#151515;border:3px solid #151515;border-radius:18px;padding:8px 12px;font-family:var(--display);font-size:20px;letter-spacing:.04em;box-shadow:3px 3px 0 #151515;max-width:16ch}
+.bubble-say::after{content:"";position:absolute;bottom:-14px;right:22px;border:8px solid transparent;border-top:12px solid #151515}
+
+.macaco-mini{width:100%;height:auto;display:block}
 
 </style>
 </head>
@@ -206,7 +237,32 @@ input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shado
   </header>
 
   <section id="setup" class="setup">
-    <h2>Quem tem a resposta<span>mais parva?</span></h2>
+    <div class="hero-row"><h2>Quem tem a resposta<span>mais parva?</span></h2><svg class="mascot macaco" viewBox="0 0 230 270" role="img" aria-label="Macaco de camisola às riscas a beber uma imperial">
+<defs><clipPath id="mcShirt"><path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z"/></clipPath></defs>
+<g stroke="#151515" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+<path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z" fill="#fffdf8"/>
+<g clip-path="url(#mcShirt)" stroke-width="0" fill="#1f5fc0"><rect x="40" y="170" width="22" height="110"/><rect x="84" y="170" width="22" height="110"/><rect x="128" y="170" width="22" height="110"/><rect x="172" y="170" width="22" height="110"/></g>
+<path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z" fill="none"/>
+<path d="M92 184l20 22l20-22" fill="#fffdf8"/>
+<circle cx="50" cy="104" r="22" fill="#5a3a24"/><circle cx="50" cy="104" r="11" fill="#d9a77c" stroke-width="3"/>
+<circle cx="172" cy="104" r="22" fill="#5a3a24"/><circle cx="172" cy="104" r="11" fill="#d9a77c" stroke-width="3"/>
+<circle cx="111" cy="100" r="64" fill="#5a3a24"/>
+<path d="M111 70C90 48 56 60 62 96C66 128 84 156 111 158C138 156 156 128 160 96C166 60 132 48 111 70Z" fill="#d9a77c"/>
+<path d="M70 82q20-14 38-2q3 2 6 0q18-12 38 2" fill="none" stroke-width="7"/>
+<circle cx="90" cy="94" r="8" fill="#fff"/><circle cx="132" cy="94" r="8" fill="#fff"/>
+<circle cx="92" cy="96" r="4.5" fill="#3a2414" stroke-width="0"/><circle cx="130" cy="96" r="4.5" fill="#3a2414" stroke-width="0"/>
+<path d="M82 88q8-4 16 0M124 88q8-4 16 0" fill="none" stroke-width="3"/>
+<ellipse cx="111" cy="130" rx="34" ry="22" fill="#e8bc91"/>
+<path d="M104 118q3 3 0 6M118 118q-3 3 0 6" fill="none" stroke-width="3.5"/>
+<path d="M90 136q21 14 42-2" fill="none" stroke-width="4.5"/><path d="M128 132l6-2" stroke-width="4"/>
+<path d="M176 196C192 176 192 150 186 132" fill="none" stroke-width="22" stroke="#151515"/><path d="M176 196C192 176 192 150 186 132" fill="none" stroke-width="13" stroke="#5a3a24"/>
+<path d="M166 58l40 0l-4 52q-2 14-16 16q-14-2-16-16z" fill="#f5a623"/>
+<path d="M170 76h32" stroke="#fff3c4" stroke-width="3" opacity=".8"/>
+<path d="M162 60q2-14 14-10q6-10 16-4q12-4 16 8q-2 6-46 6z" fill="#fffdf8"/>
+<path d="M186 126v16M174 148h24" stroke-width="5"/>
+<ellipse cx="184" cy="122" rx="14" ry="9" fill="#5a3a24"/>
+<path d="M176 100q4 6 0 14" fill="none" stroke="#fff3c4" stroke-width="3" opacity=".7"/>
+</g></svg></div>
     <p>Aparece uma frase com um espaço em branco e cada um escolhe da mão a carta mais engraçada para a completar. Em cada ronda há um juiz, que escolhe a melhor sem saber de quem é. Há modo Família e modo Adulto.</p>
     <label class="field"><span class="eyebrow">O teu nome</span><input id="myName" maxlength="14" autocomplete="nickname" placeholder="Ex.: Ivo"></label>
     <div class="mode" id="onlineMode">

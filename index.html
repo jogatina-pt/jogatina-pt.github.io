@@ -18,7 +18,7 @@
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="theme-color" content="#f4eee3">
-<link rel="preload" href="fonts/bowlby-one.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
 <style>
@@ -106,92 +106,168 @@ input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shado
 .reacts button{font-size:24px;background:var(--surface-2);border:0;border-radius:10px;padding:4px 9px}
 @media (prefers-reduced-motion:reduce){.alert.show,.bubble{animation:none}}
 
-.brand h1{font-size:clamp(30px,8vw,44px)}
-.hero{display:flex;flex-direction:column;gap:10px;padding-block:18px 6px}
-.hero h2{font-size:clamp(32px,9vw,56px);line-height:.98;color:var(--title)}
-.hero h2 span{color:var(--accent);display:block}
-.hero p{margin:0;color:var(--muted);max-width:52ch;font-size:16px}
-.games{display:grid;grid-template-columns:1fr;gap:14px;margin-top:6px}
-@media (min-width:700px){.games{grid-template-columns:1fr 1fr}}
-@media (min-width:1000px){.wrap{max-width:1040px}}
-.game{--gc:var(--accent);position:relative;display:flex;flex-direction:column;gap:12px;background:var(--surface);border:1.5px solid var(--line);border-radius:22px;padding:16px;text-decoration:none;color:var(--ink);box-shadow:0 6px 0 var(--surface-2);transition:transform .15s,box-shadow .15s,border-color .15s}
-.game:hover{transform:translateY(-3px);border-color:var(--gc);box-shadow:0 9px 0 var(--surface-2)}
-.game:active{transform:translateY(2px);box-shadow:0 2px 0 var(--surface-2)}
-.game.panela{--gc:#e8731f}.game.peta{--gc:#d23a6e}.game.tasca{--gc:#4f7f23}.game.branco{--gc:#2f5fb3}.game.maisuma{--gc:#c27c00}
-:root:not([data-pp-theme="light"]) .game.panela{--gc:#ff8a3d}:root:not([data-pp-theme="light"]) .game.peta{--gc:#ff6f9c}:root:not([data-pp-theme="light"]) .game.tasca{--gc:#9ccc65}:root:not([data-pp-theme="light"]) .game.branco{--gc:#7fb2ff}:root:not([data-pp-theme="light"]) .game.maisuma{--gc:#ffb627}
-.pic{height:150px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--gc) 16%,var(--surface))}
-.pic svg{height:118px;width:auto;overflow:visible}
-.game h3{font-size:28px;line-height:1;color:var(--title)}
-.game p{margin:0;color:var(--muted)}
-.tags{display:flex;flex-wrap:wrap;gap:6px}
-.tags span{font-size:12px;font-weight:800;border-radius:999px;padding:3px 10px;background:var(--surface-2);color:var(--ink)}
-.play{margin-top:auto;align-self:flex-start;background:var(--gc);color:#fff;border-radius:999px;padding:10px 18px;font-weight:800}
-:root:not([data-pp-theme="light"]) .play{color:#1d130b}
-.new{position:absolute;top:12px;right:12px;background:var(--gc);color:#fff;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;border-radius:999px;padding:4px 10px}
-:root:not([data-pp-theme="light"]) .new{color:#1d130b}
-.soon{border:1.5px dashed var(--line);border-radius:22px;padding:16px;color:var(--muted);display:flex;align-items:center;justify-content:center;text-align:center;min-height:80px}
-.pb-lid{transform-box:fill-box;transform-origin:50% 100%}
-.game.panela:hover .pb-lid{animation:pblid .7s cubic-bezier(.2,1.6,.4,1)}
-@keyframes pblid{0%{transform:none}30%{transform:translateY(-9px) rotate(-12deg)}55%{transform:translateY(-3px) rotate(6deg)}100%{transform:none}}
-.bub2{transform-box:fill-box;transform-origin:20% 100%}
-.game:hover .bub2{animation:wig .6s ease}
-@keyframes wig{30%{transform:rotate(-8deg) scale(1.06)}60%{transform:rotate(5deg)}}
-@media (prefers-reduced-motion:reduce){.game,.game:hover .pb-lid,.game:hover .bub2{animation:none;transition:none}}
+/* ===== Estilo banda desenhada (comum a todos os jogos) ===== */
+@font-face{font-family:"Bangers";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/bangers.woff2) format("woff2")}
+:root{--display:"Bangers","Bowlby One",Impact,sans-serif;--stroke:#151515;--pop:#ffd23f;--pop-ink:#151515;
+  --dots:radial-gradient(rgba(21,21,21,.09) 1.3px,transparent 1.6px)}
+:root:not([data-pp-theme="light"]){--stroke:#050807;--dots:radial-gradient(rgba(255,255,255,.06) 1.3px,transparent 1.6px)}
+body{background-image:var(--dots);background-size:13px 13px}
+h1,h2,h3{font-family:var(--display);letter-spacing:.03em;font-weight:400}
+.brand h1{font-size:clamp(30px,8vw,42px);-webkit-text-stroke:1.5px var(--stroke);text-shadow:3px 3px 0 var(--stroke);color:var(--title)}
+.brand h1 span{color:var(--accent)}
+.setup h2{font-size:clamp(40px,12vw,72px);line-height:.92;text-shadow:3px 3px 0 color-mix(in srgb,var(--stroke) 25%,transparent)}
+.btn{border:3px solid var(--stroke)!important;box-shadow:3px 3px 0 var(--stroke);font-family:var(--display);font-size:19px;letter-spacing:.06em;font-weight:400;padding:9px 20px;transition:transform .08s,box-shadow .08s}
+.btn.sm{font-size:15px;padding:4px 11px;box-shadow:2px 2px 0 var(--stroke)}
+.btn.ico{font-family:var(--body)}
+.btn:not(:disabled):active{transform:translate(3px,3px);box-shadow:0 0 0 var(--stroke)}
+.btn.ghost{background:var(--surface)}
+input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
+.mode,.roster li,.sheet,.qcard,.bcard,.wordcard,.mucard,.rstep,.board li,.opt,.sub,.wcard,.sent,.jbox,.yourturn,.outbox,.words p,.roles li,.others li,.tally li,.drink,.yn2 p,.rulebar,.vol li,.chips li,.seg button,.age{border:3px solid var(--stroke)!important;box-shadow:4px 4px 0 var(--stroke)}
+.roster li.free{box-shadow:none;border-style:dashed!important}
+.chips li,.seg button,.vol li{box-shadow:2px 2px 0 var(--stroke)}
+.qcard,.bcard,.wordcard,.mucard{border-radius:18px;box-shadow:6px 6px 0 var(--stroke)}
+.opt:not(:disabled):active,.sub:not(:disabled):active,.wcard:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--stroke)}
+.lobby .code{-webkit-text-stroke:2px var(--stroke);text-shadow:4px 4px 0 var(--stroke);letter-spacing:.14em}
+.win h2,.winbox h2,.outbox h2{-webkit-text-stroke:1.5px var(--stroke);text-shadow:3px 3px 0 var(--stroke)}
+.eyebrow{letter-spacing:.12em}
+.alert{border:3px solid var(--stroke);box-shadow:5px 5px 0 var(--stroke);font-family:var(--display);font-size:20px;letter-spacing:.05em}
+.setup .mascot{width:min(42vw,170px);height:auto;align-self:flex-end;margin:-8px 0 -18px;filter:drop-shadow(4px 4px 0 rgba(0,0,0,.12))}
+.hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;width:100%}
+.bubble-say{position:relative;background:#fff;color:#151515;border:3px solid #151515;border-radius:18px;padding:8px 12px;font-family:var(--display);font-size:20px;letter-spacing:.04em;box-shadow:3px 3px 0 #151515;max-width:16ch}
+.bubble-say::after{content:"";position:absolute;bottom:-14px;right:22px;border:8px solid transparent;border-top:12px solid #151515}
+
+.macaco-mini{width:100%;height:auto;display:block}
+
+html,body{height:100%}
+body{padding-top:max(6px,env(safe-area-inset-top,0px));padding-bottom:max(8px,env(safe-area-inset-bottom,0px))}
+.wrap{max-width:1040px;gap:10px;min-height:0}
+header.top{flex:none}
+.brand h1{font-size:clamp(34px,9vw,48px)}
+.hero{flex:none;display:flex;align-items:flex-end;justify-content:space-between;gap:6px;position:relative}
+.hero .mascot{height:clamp(96px,17dvh,190px);width:auto;flex:none}
+.hero .say{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding-bottom:10px;min-width:0}
+.hero .bubble-say{max-width:none;text-align:center;font-size:clamp(17px,4.6vw,26px);line-height:1.05}
+.hero .bubble-say.l::after{left:18px;right:auto}
+.hero .tagline{margin:0;color:var(--muted);font-size:clamp(12px,3.2vw,15px);text-align:center;font-weight:700}
+.games{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:10px}
+.game{--gc:#ffd23f;position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:4px;min-height:0;overflow:hidden;background:var(--gc);color:#151515;border:3px solid var(--stroke);border-radius:16px;padding:10px 12px;text-decoration:none;box-shadow:5px 5px 0 var(--stroke);transition:transform .1s,box-shadow .1s}
+.game:nth-child(odd){transform:rotate(-.6deg)}.game:nth-child(even){transform:rotate(.6deg)}
+.game:hover{transform:translate(-2px,-2px) rotate(0);box-shadow:7px 7px 0 var(--stroke)}
+.game:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--stroke)}
+.game::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(0,0,0,.12) 1.2px,transparent 1.5px) 0 0/9px 9px;pointer-events:none;-webkit-mask:linear-gradient(135deg,transparent 45%,#000);mask:linear-gradient(135deg,transparent 45%,#000)}
+.game .pic{position:absolute;right:6px;bottom:6px;width:34%;max-width:110px;height:auto;pointer-events:none}
+.game .pic svg{width:100%;height:auto;display:block}
+.game h3{position:relative;font-size:clamp(21px,5.6vw,30px);line-height:.95;color:#151515;-webkit-text-stroke:0;text-shadow:2px 2px 0 rgba(255,255,255,.6)}
+.game p{position:relative;margin:0;font-size:clamp(11.5px,3vw,14px);line-height:1.25;font-weight:700;max-width:64%;color:#1b1b1b}
+.game .tag{position:relative;z-index:1;align-self:flex-start;white-space:nowrap;background:#151515;color:#fff;font-family:var(--display);letter-spacing:.06em;font-size:13px;border-radius:999px;padding:2px 9px}
+.game.panela{--gc:#ffb26b}.game.peta{--gc:#ff9ec0}.game.tasca{--gc:#b9e07f}.game.branco{--gc:#9cc3ff}.game.maisuma{--gc:#ffd23f}
+.game.maisuma{grid-column:1/-1}
+.game.maisuma .pic{width:36%;max-width:190px;right:10px;bottom:-26px}
+.game.maisuma p{max-width:58%}
+:root:not([data-pp-theme="light"]) .game{filter:saturate(.9) brightness(.95)}
+.foot{flex:none;margin:0;text-align:center;font-size:12px}
+@media (min-width:760px){
+  .games{grid-template-columns:repeat(6,1fr);grid-template-rows:1fr 1fr}
+  .game{grid-column:span 2}
+  .game.branco,.game.maisuma{grid-column:span 3}
+  .game .pic{max-width:140px}
+}
+@media (min-width:760px) and (min-height:600px){.game .pic{max-width:150px}}
+@media (max-height:700px){.hero .mascot{height:88px}.hero .tagline{display:none}.hero .bubble-say{font-size:16px}.game h3{font-size:20px}.game p{font-size:11px}.games{gap:8px}}
+@media (prefers-reduced-motion:reduce){.game{transition:none}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>joga<span>tina</span></h1></div>
+    <div class="brand"><h1>Joga<span>tina</span></h1></div>
     <div class="tools"><button class="btn ghost sm ico" id="themeBtn" type="button" aria-label="Tema escuro" title="Tema escuro">☾</button></div>
   </header>
-  <section class="hero">
-    <h2>Joga com amigos,<span>cada um no seu telemóvel.</span></h2>
-    <p>Cria uma sala, envia o link e pronto. Grátis, sem conta e sem publicidade.</p>
+  <section class="hero" aria-label="Boas-vindas">
+    <svg class="mascot girafa" viewBox="0 0 200 270" role="img" aria-label="Girafa de óculos a ler um livro">
+<g stroke="#151515" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+<path d="M80 262 C84 200 88 158 92 118 L122 118 C126 158 132 200 138 262 Z" fill="#f2b544"/>
+<g stroke-width="3" fill="#b8662b"><path d="M97 150q9-7 15 1q-1 11-12 9q-7-3-3-10z"/><path d="M114 182q9-5 13 3q-2 9-11 7q-6-4-2-10z"/><path d="M93 200q8-5 13 2q-1 10-11 8q-6-3-2-10z"/><path d="M110 228q9-5 14 3q-2 9-12 7q-6-4-2-10z"/><path d="M98 128q6-4 10 1q-1 7-8 6q-4-3-2-7z"/></g>
+<path d="M66 62q-34-14-40 2q16 18 44 10z" fill="#f2b544"/><path d="M58 62q-16-4-22 1" fill="none" stroke-width="3"/>
+<path d="M142 62q34-14 40 2q-16 18-44 10z" fill="#f2b544"/><path d="M150 62q16-4 22 1" fill="none" stroke-width="3"/>
+<path d="M88 46l-7-26" stroke-width="8"/><circle cx="80" cy="17" r="9" fill="#7a3f1c"/>
+<path d="M118 46l7-26" stroke-width="8"/><circle cx="126" cy="17" r="9" fill="#7a3f1c"/>
+<path d="M62 74C58 36 146 34 146 72C148 98 140 110 130 120L80 120C68 110 62 98 62 74Z" fill="#f2b544"/>
+<g stroke-width="3" fill="#b8662b"><path d="M70 92q6-5 10 1q-1 7-8 5q-4-2-2-6z"/><path d="M128 50q7-4 10 2q-2 7-8 5q-4-3-2-7z"/><path d="M80 48q6-3 9 2q-2 6-7 4q-4-2-2-6z"/></g>
+<ellipse cx="104" cy="116" rx="35" ry="23" fill="#f7d9a3"/>
+<circle cx="92" cy="113" r="3.5" fill="#151515" stroke-width="0"/><circle cx="116" cy="113" r="3.5" fill="#151515" stroke-width="0"/>
+<path d="M88 127q16 9 32 0" fill="none" stroke-width="4"/>
+<circle cx="85" cy="78" r="16" fill="#e8f4ff" fill-opacity=".55"/><circle cx="123" cy="78" r="16" fill="#e8f4ff" fill-opacity=".55"/>
+<path d="M101 77q3-4 6 0" fill="none" stroke-width="4"/><path d="M69 76l-8-3M139 76l8-3" stroke-width="4"/>
+<circle cx="87" cy="82" r="5.5" fill="#151515" stroke-width="0"/><circle cx="121" cy="82" r="5.5" fill="#151515" stroke-width="0"/>
+<circle cx="89" cy="80" r="1.6" fill="#fff" stroke-width="0"/><circle cx="123" cy="80" r="1.6" fill="#fff" stroke-width="0"/>
+<path d="M76 76q11-6 22 0M112 76q11-6 22 0" fill="none" stroke-width="4"/>
+<path d="M77 74l-3-4M82 72l-1-4M126 72l1-4M131 74l3-4" stroke-width="2.5"/>
+<path d="M30 230l74-16l74 16l0 34l-74-14l-74 14z" fill="#b8352c"/>
+<path d="M36 226l68-12l0 34l-68 12z" fill="#fffdf8"/><path d="M172 226l-68-12l0 34l68 12z" fill="#fffdf8"/>
+<path d="M46 232l46-8M46 242l46-8M116 224l46 8M116 234l46 8" stroke-width="2.5" stroke="#8a8a8a"/>
+</g></svg>
+    <div class="say"><div class="bubble-say">Joga com a malta, cada um no seu telemóvel!</div><p class="tagline">Grátis · sem conta · sem publicidade</p></div>
+    <svg class="mascot macaco" viewBox="0 0 230 270" role="img" aria-label="Macaco de camisola às riscas a beber uma imperial">
+<defs><clipPath id="mcShirt"><path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z"/></clipPath></defs>
+<g stroke="#151515" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+<path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z" fill="#fffdf8"/>
+<g clip-path="url(#mcShirt)" stroke-width="0" fill="#1f5fc0"><rect x="40" y="170" width="22" height="110"/><rect x="84" y="170" width="22" height="110"/><rect x="128" y="170" width="22" height="110"/><rect x="172" y="170" width="22" height="110"/></g>
+<path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z" fill="none"/>
+<path d="M92 184l20 22l20-22" fill="#fffdf8"/>
+<circle cx="50" cy="104" r="22" fill="#5a3a24"/><circle cx="50" cy="104" r="11" fill="#d9a77c" stroke-width="3"/>
+<circle cx="172" cy="104" r="22" fill="#5a3a24"/><circle cx="172" cy="104" r="11" fill="#d9a77c" stroke-width="3"/>
+<circle cx="111" cy="100" r="64" fill="#5a3a24"/>
+<path d="M111 70C90 48 56 60 62 96C66 128 84 156 111 158C138 156 156 128 160 96C166 60 132 48 111 70Z" fill="#d9a77c"/>
+<path d="M70 82q20-14 38-2q3 2 6 0q18-12 38 2" fill="none" stroke-width="7"/>
+<circle cx="90" cy="94" r="8" fill="#fff"/><circle cx="132" cy="94" r="8" fill="#fff"/>
+<circle cx="92" cy="96" r="4.5" fill="#3a2414" stroke-width="0"/><circle cx="130" cy="96" r="4.5" fill="#3a2414" stroke-width="0"/>
+<path d="M82 88q8-4 16 0M124 88q8-4 16 0" fill="none" stroke-width="3"/>
+<ellipse cx="111" cy="130" rx="34" ry="22" fill="#e8bc91"/>
+<path d="M104 118q3 3 0 6M118 118q-3 3 0 6" fill="none" stroke-width="3.5"/>
+<path d="M90 136q21 14 42-2" fill="none" stroke-width="4.5"/><path d="M128 132l6-2" stroke-width="4"/>
+<path d="M176 196C192 176 192 150 186 132" fill="none" stroke-width="22" stroke="#151515"/><path d="M176 196C192 176 192 150 186 132" fill="none" stroke-width="13" stroke="#5a3a24"/>
+<path d="M166 58l40 0l-4 52q-2 14-16 16q-14-2-16-16z" fill="#f5a623"/>
+<path d="M170 76h32" stroke="#fff3c4" stroke-width="3" opacity=".8"/>
+<path d="M162 60q2-14 14-10q6-10 16-4q12-4 16 8q-2 6-46 6z" fill="#fffdf8"/>
+<path d="M186 126v16M174 148h24" stroke-width="5"/>
+<ellipse cx="184" cy="122" rx="14" ry="9" fill="#5a3a24"/>
+<path d="M176 100q4 6 0 14" fill="none" stroke="#fff3c4" stroke-width="3" opacity=".7"/>
+</g></svg>
   </section>
-  <section class="games" aria-label="Jogos">
-    <a class="game panela" href="panela/">
-      <div class="pic" aria-hidden="true"><svg viewBox="0 0 48 44"><g><rect x="2" y="22" width="7" height="5" rx="2.5" fill="#8fa19c" stroke="#1b2422" stroke-width="1.8"/><rect x="39" y="22" width="7" height="5" rx="2.5" fill="#8fa19c" stroke="#1b2422" stroke-width="1.8"/><rect x="8" y="19" width="32" height="21" rx="5" fill="#c9d3d0" stroke="#1b2422" stroke-width="2"/><circle cx="18" cy="29" r="2.6" fill="#1b2422"/><circle cx="30" cy="29" r="2.6" fill="#1b2422"/><path d="M20 35q4 2.6 8 0" fill="none" stroke="#1b2422" stroke-width="1.8" stroke-linecap="round"/></g><g class="pb-lid"><path d="M7 19q0-9 17-9t17 9z" fill="#8fa19c" stroke="#1b2422" stroke-width="2" stroke-linejoin="round"/><rect x="21" y="5" width="6" height="5" rx="2" fill="#1b2422"/><rect x="32" y="5" width="4" height="6" rx="1.5" fill="#ffc857" stroke="#1b2422" stroke-width="1.5"/></g></svg></div>
-      <h3>Panela de Pressão</h3>
-      <p>Jogo de cartas: tira cartas e foge das panelas. Se te sair uma sem válvula, rebentas.</p>
-      <div class="tags"><span>Cartas</span><span>2 a 6 jogadores</span><span>Também sozinho</span></div>
-      <span class="play">Jogar</span>
-    </a>
-    <a class="game peta" href="peta/">
-      <span class="new">Novo</span>
-      <div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M6 6h34a5 5 0 0 1 5 5v15a5 5 0 0 1-5 5H20l-8 7v-7H6a5 5 0 0 1-5-5V11a5 5 0 0 1 5-5z" fill="#fffdf8" stroke="#1b2422" stroke-width="2" stroke-linejoin="round"/><text x="23" y="24" text-anchor="middle" font-family="Bowlby One, Impact, sans-serif" font-size="13" fill="#1b2422">?!</text><g class="bub2"><path d="M34 20h24a4 4 0 0 1 4 4v11a4 4 0 0 1-4 4h-3v6l-7-6H34a4 4 0 0 1-4-4V24a4 4 0 0 1 4-4z" fill="#d23a6e" stroke="#1b2422" stroke-width="2" stroke-linejoin="round"/><circle cx="40" cy="30" r="1.8" fill="#fff"/><circle cx="46" cy="30" r="1.8" fill="#fff"/><circle cx="52" cy="30" r="1.8" fill="#fff"/></g></svg></div>
-      <h3>Peta</h3>
-      <p>Jogo de bluff: inventa respostas falsas a perguntas verdadeiras e tenta enganar os amigos.</p>
-      <div class="tags"><span>Bluff</span><span>2 a 8 jogadores</span><span>Perguntas portuguesas</span></div>
-      <span class="play">Jogar</span>
-    </a>
-    <a class="game tasca" href="tasca/">
-      <span class="new">Novo</span>
-      <div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><g class="bub2"><rect x="6" y="6" width="26" height="36" rx="4" fill="#1f2a28" stroke="#1b2422" stroke-width="2" transform="rotate(-8 19 24)"/><rect x="11" y="18" width="14" height="2.6" rx="1.3" fill="#fffaf1" transform="rotate(-8 19 24)"/><rect x="11" y="24" width="9" height="2.6" rx="1.3" fill="#9ccc65" transform="rotate(-8 19 24)"/></g><rect x="30" y="8" width="26" height="36" rx="4" fill="#fffdf8" stroke="#1b2422" stroke-width="2" transform="rotate(9 43 26)"/><rect x="35" y="18" width="15" height="2.6" rx="1.3" fill="#1b2422" transform="rotate(9 43 26)"/><rect x="35" y="24" width="11" height="2.6" rx="1.3" fill="#1b2422" transform="rotate(9 43 26)"/><text x="44" y="40" text-anchor="middle" font-family="Bowlby One, Impact, sans-serif" font-size="9" fill="#4f7f23" transform="rotate(9 43 26)">ah!</text></svg></div>
-      <h3>Conversa de Tasca</h3>
-      <p>Completa a frase com a carta mais parva da tua mão. Em cada ronda há um juiz que escolhe a melhor.</p>
-      <div class="tags"><span>Cartas</span><span>3 a 8 jogadores</span><span>Família ou +18</span></div>
-      <span class="play">Jogar</span>
-    </a>
-    <a class="game branco" href="branco/">
-      <span class="new">Novo</span>
-      <div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="8" y="10" width="22" height="30" rx="4" fill="#2f5fb3" stroke="#1b2422" stroke-width="2" transform="rotate(-10 19 25)"/><rect x="21" y="5" width="22" height="30" rx="4" fill="#2f5fb3" stroke="#1b2422" stroke-width="2"/><rect x="34" y="10" width="22" height="30" rx="4" fill="#fffdf8" stroke="#1b2422" stroke-width="2" transform="rotate(10 45 25)"/><text x="45" y="32" text-anchor="middle" font-family="Bowlby One, Impact, sans-serif" font-size="16" fill="#2f5fb3" transform="rotate(10 45 25)">?</text></svg></div>
-      <h3>Senhor Branco</h3>
-      <p>Todos têm a mesma palavra, menos os impostores. Dá pistas, desconfia de todos e vota para os expulsar.</p>
-      <div class="tags"><span>Dedução</span><span>3 a 10 jogadores</span><span>Mesma sala ou à distância</span></div>
-      <span class="play">Jogar</span>
-    </a>
-    <a class="game maisuma" href="maisuma/">
-      <span class="new">+18</span>
-      <div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><g transform="rotate(-12 22 26)"><rect x="10" y="14" width="22" height="28" rx="3" fill="#ffb627" stroke="#1b2422" stroke-width="2"/><path d="M32 20h4a5 5 0 0 1 0 10h-4" fill="none" stroke="#1b2422" stroke-width="2.5"/><path d="M9 15q2-8 8-5q3-5 8-1q5-4 8 3q2 2 0 4H9z" fill="#fffdf8" stroke="#1b2422" stroke-width="2" stroke-linejoin="round"/></g><g transform="rotate(12 42 26)"><rect x="32" y="14" width="22" height="28" rx="3" fill="#ffb627" stroke="#1b2422" stroke-width="2"/><path d="M32 20h-4a5 5 0 0 0 0 10h4" fill="none" stroke="#1b2422" stroke-width="2.5"/><path d="M31 15q2-8 8-5q3-5 8-1q5-4 8 3q2 2 0 4H31z" fill="#fffdf8" stroke="#1b2422" stroke-width="2" stroke-linejoin="round"/></g><path d="M31 6l1-4M27 8l-2-3M36 8l2-3" stroke="#1b2422" stroke-width="2" stroke-linecap="round"/></svg></div>
-      <h3>Mais Uma!</h3>
-      <p>O jogo para beber com os amigos: Eu nunca, Quem é mais provável, verdades, desafios e regras.</p>
-      <div class="tags"><span>Para beber</span><span>3 a 12 jogadores</span><span>Só +18</span></div>
-      <span class="play">Jogar</span>
-    </a>
-  </section>
-  
-  <p class="foot">Feito em Portugal. As salas usam o Firebase (Google) e apagam-se quando acabam; não há contas nem publicidade.</p>
+  <nav class="games" aria-label="Jogos">
+    <a class="game panela" href="panela/"><h3>Panela de Pressão</h3><p>Foge das panelas antes que rebentem!</p><span class="tag">2-6 · cartas</span><div class="pic" aria-hidden="true"><svg viewBox="0 0 48 44"><g stroke="#151515" stroke-width="2.4"><rect x="2" y="22" width="7" height="5" rx="2.5" fill="#8fa19c"/><rect x="39" y="22" width="7" height="5" rx="2.5" fill="#8fa19c"/><rect x="8" y="19" width="32" height="21" rx="5" fill="#dfe6e3"/><path d="M7 19q0-9 17-9t17 9z" fill="#8fa19c"/><rect x="21" y="5" width="6" height="5" rx="2" fill="#151515"/><rect x="32" y="5" width="4" height="6" rx="1.5" fill="#ffd23f"/></g><circle cx="18" cy="29" r="2.6" fill="#151515"/><circle cx="30" cy="29" r="2.6" fill="#151515"/><path d="M20 35q4 2.6 8 0" fill="none" stroke="#151515" stroke-width="2" stroke-linecap="round"/></svg></div></a>
+    <a class="game peta" href="peta/"><h3>Peta</h3><p>Inventa mentiras e engana os amigos.</p><span class="tag">2-8 · bluff</span><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M6 6h34a5 5 0 0 1 5 5v15a5 5 0 0 1-5 5H20l-8 7v-7H6a5 5 0 0 1-5-5V11a5 5 0 0 1 5-5z" fill="#fff" stroke="#151515" stroke-width="2.4" stroke-linejoin="round"/><text x="23" y="24" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="15" fill="#151515">?!</text><path d="M34 20h24a4 4 0 0 1 4 4v11a4 4 0 0 1-4 4h-3v6l-7-6H34a4 4 0 0 1-4-4V24a4 4 0 0 1 4-4z" fill="#d23a6e" stroke="#151515" stroke-width="2.4" stroke-linejoin="round"/><circle cx="40" cy="30" r="2" fill="#fff"/><circle cx="46" cy="30" r="2" fill="#fff"/><circle cx="52" cy="30" r="2" fill="#fff"/></svg></div></a>
+    <a class="game tasca" href="tasca/"><h3>Conversa de Tasca</h3><p>A resposta mais parva ganha.</p><span class="tag">3-8 · família ou +18</span><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="6" y="6" width="26" height="36" rx="4" fill="#1f2a28" stroke="#151515" stroke-width="2.4" transform="rotate(-8 19 24)"/><rect x="11" y="18" width="14" height="3" rx="1.5" fill="#fffaf1" transform="rotate(-8 19 24)"/><rect x="30" y="8" width="26" height="36" rx="4" fill="#fff" stroke="#151515" stroke-width="2.4" transform="rotate(9 43 26)"/><text x="44" y="32" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="12" fill="#4f7f23" transform="rotate(9 43 26)">AH!</text></svg></div></a>
+    <a class="game branco" href="branco/"><h3>Senhor Branco</h3><p>Descobre o impostor pelas pistas.</p><span class="tag">3-10 · dedução</span><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="8" y="10" width="22" height="30" rx="4" fill="#2f5fb3" stroke="#151515" stroke-width="2.4" transform="rotate(-10 19 25)"/><rect x="21" y="5" width="22" height="30" rx="4" fill="#2f5fb3" stroke="#151515" stroke-width="2.4"/><rect x="34" y="10" width="22" height="30" rx="4" fill="#fff" stroke="#151515" stroke-width="2.4" transform="rotate(10 45 25)"/><text x="45" y="32" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="18" fill="#2f5fb3" transform="rotate(10 45 25)">?</text></svg></div></a>
+    <a class="game maisuma" href="maisuma/"><h3>Mais Uma!</h3><p>Eu nunca, quem é mais provável, verdades e desafios. Bebe com juízo.</p><span class="tag">3-12 · +18</span><div class="pic" aria-hidden="true"><svg class="macaco-mini" viewBox="0 0 230 270" role="img" aria-label="Macaco de camisola às riscas a beber uma imperial">
+<defs><clipPath id="mcShirt2"><path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z"/></clipPath></defs>
+<g stroke="#151515" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+<path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z" fill="#fffdf8"/>
+<g clip-path="url(#mcShirt2)" stroke-width="0" fill="#1f5fc0"><rect x="40" y="170" width="22" height="110"/><rect x="84" y="170" width="22" height="110"/><rect x="128" y="170" width="22" height="110"/><rect x="172" y="170" width="22" height="110"/></g>
+<path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z" fill="none"/>
+<path d="M92 184l20 22l20-22" fill="#fffdf8"/>
+<circle cx="50" cy="104" r="22" fill="#5a3a24"/><circle cx="50" cy="104" r="11" fill="#d9a77c" stroke-width="3"/>
+<circle cx="172" cy="104" r="22" fill="#5a3a24"/><circle cx="172" cy="104" r="11" fill="#d9a77c" stroke-width="3"/>
+<circle cx="111" cy="100" r="64" fill="#5a3a24"/>
+<path d="M111 70C90 48 56 60 62 96C66 128 84 156 111 158C138 156 156 128 160 96C166 60 132 48 111 70Z" fill="#d9a77c"/>
+<path d="M70 82q20-14 38-2q3 2 6 0q18-12 38 2" fill="none" stroke-width="7"/>
+<circle cx="90" cy="94" r="8" fill="#fff"/><circle cx="132" cy="94" r="8" fill="#fff"/>
+<circle cx="92" cy="96" r="4.5" fill="#3a2414" stroke-width="0"/><circle cx="130" cy="96" r="4.5" fill="#3a2414" stroke-width="0"/>
+<path d="M82 88q8-4 16 0M124 88q8-4 16 0" fill="none" stroke-width="3"/>
+<ellipse cx="111" cy="130" rx="34" ry="22" fill="#e8bc91"/>
+<path d="M104 118q3 3 0 6M118 118q-3 3 0 6" fill="none" stroke-width="3.5"/>
+<path d="M90 136q21 14 42-2" fill="none" stroke-width="4.5"/><path d="M128 132l6-2" stroke-width="4"/>
+<path d="M176 196C192 176 192 150 186 132" fill="none" stroke-width="22" stroke="#151515"/><path d="M176 196C192 176 192 150 186 132" fill="none" stroke-width="13" stroke="#5a3a24"/>
+<path d="M166 58l40 0l-4 52q-2 14-16 16q-14-2-16-16z" fill="#f5a623"/>
+<path d="M170 76h32" stroke="#fff3c4" stroke-width="3" opacity=".8"/>
+<path d="M162 60q2-14 14-10q6-10 16-4q12-4 16 8q-2 6-46 6z" fill="#fffdf8"/>
+<path d="M186 126v16M174 148h24" stroke-width="5"/>
+<ellipse cx="184" cy="122" rx="14" ry="9" fill="#5a3a24"/>
+<path d="M176 100q4 6 0 14" fill="none" stroke="#fff3c4" stroke-width="3" opacity=".7"/>
+</g></svg></div></a>
+  </nav>
+  <p class="foot">Feito em Portugal. As salas usam o Firebase (Google) e apagam-se quando acabam.</p>
 </div>
 <script>
 const tb=document.getElementById("themeBtn");
