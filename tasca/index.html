@@ -1,0 +1,1471 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Conversa de Tasca</title>
+<meta name="description" content="Jogo de cartas grátis para jogar com amigos: completa a frase com a carta mais engraçada. Modo família e modo adulto.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_PT">
+<meta property="og:site_name" content="Jogatina">
+<meta property="og:title" content="Conversa de Tasca: quem tem a resposta mais parva?">
+<meta property="og:description" content="Completa a frase com a carta mais engraçada. Jogo grátis, cada um no seu telemóvel.">
+<meta property="og:url" content="https://ivomarcelopinto-png.github.io/jogatina/tasca/">
+<meta property="og:image" content="https://ivomarcelopinto-png.github.io/jogatina/tasca/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Conversa de Tasca, jogo de cartas">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tasca">
+<meta name="theme-color" content="#f4eee3">
+<link rel="preload" href="../fonts/bowlby-one.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
+<script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
+<style>
+/* ipgames: base comum (mesma família visual da Panela de Pressão) */
+@font-face{font-family:"Bowlby One";font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/bowlby-one.woff2) format("woff2")}
+@font-face{font-family:"Figtree";font-style:normal;font-weight:300 900;font-display:swap;src:url(../fonts/figtree.woff2) format("woff2")}
+[hidden]{display:none!important}
+:root{
+  --bg:#13201f; --surface:#1b2d2b; --surface-2:#223835; --line:#2f4744;
+  --ink:#eef2ea; --muted:#9fb5af; --title:#f1ece2; --enamel:#f1ece2; --card-ink:#1b2422;
+  --accent:#ff8a3d; --accent-ink:#1d130b; --steam:#8fd3c8; --danger:#ff5a4f; --good:#5fd08a;
+  --display:"Bowlby One", Impact, "Arial Black", sans-serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme:dark;
+}
+:root[data-pp-theme="light"]{
+  --bg:#f4eee3; --surface:#fffaf1; --surface-2:#ebe1cf; --line:#d8cab2;
+  --ink:#1f2a28; --muted:#5b6965; --title:#1f2a28; --enamel:#fffdf8; --card-ink:#1b2422;
+  --accent:#e8731f; --steam:#1d7a6e; --danger:#c8352b; --good:#1f8a4c;
+  color-scheme:light;
+}
+html,body{margin:0}
+html{height:100%}
+html,body{background:var(--bg);color:var(--ink)}
+body{min-height:100%;box-sizing:border-box;overflow-x:hidden;font-family:var(--body);font-size:15px;line-height:1.45;padding:max(8px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column}
+.wrap{width:100%;max-width:820px;margin:0 auto;flex:1;display:flex;flex-direction:column;gap:12px}
+h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:.01em;text-wrap:balance;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid var(--steam);outline-offset:2px}
+a{color:inherit}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:11px 20px;font-weight:800;font-size:15px;text-decoration:none;line-height:1.1}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn.ico{min-width:36px;padding-inline:9px;font-size:15px;line-height:1}
+.btn.ico[aria-pressed="false"]{opacity:.45;filter:grayscale(1)}
+#exitBtn{border-color:var(--danger);color:var(--danger)}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;flex:none}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.brand h1{font-size:clamp(24px,6vw,34px);line-height:1;color:var(--title)}
+.brand h1 span{color:var(--accent)}
+.brand a.home{font-size:13px;color:var(--muted);text-decoration:none;font-weight:700;white-space:nowrap}
+.tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+input{font:inherit;font-size:16px;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;box-sizing:border-box;min-width:0}
+input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shadow:inset 0 0 0 1.5px var(--steam)}
+.setup{display:flex;flex-direction:column;gap:16px;align-items:flex-start;flex:1;padding-block:12px 24px}
+.setup h2{font-size:clamp(34px,10vw,60px);line-height:.95;color:var(--title)}
+.setup h2 span{color:var(--accent);display:block}
+.setup p{max-width:58ch;color:var(--muted);margin:0}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:6px;width:100%;max-width:360px}
+.mode{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;width:100%;max-width:440px;box-sizing:border-box}
+.join{display:flex;gap:8px}
+.join input{text-transform:uppercase;letter-spacing:.2em;font-weight:800;flex:1}
+.join.fromlink input{border-color:var(--accent)}
+.note{font-size:13.5px;color:var(--steam);margin:0;min-height:1.2em}
+.note.bad{color:var(--danger);font-weight:700}
+.nopeer-msg{display:none;color:var(--muted)}
+.mode.nopeer .nopeer-msg{display:block}
+.mode.nopeer .choices,.mode.nopeer .join{display:none}
+.lobby .code{font-size:clamp(44px,14vw,80px);letter-spacing:.12em;color:var(--accent)}
+.roster{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;width:100%;max-width:420px}
+.roster li{display:flex;align-items:center;gap:10px;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;min-height:24px}
+.roster li.free{border-style:dashed;background:transparent;color:var(--muted)}
+.roster .rn{font-weight:800;flex:1;min-width:0;overflow-wrap:anywhere}
+.roster .rn em{font-style:normal;font-weight:600;color:var(--muted)}
+.roster .rk{font-size:12px;color:var(--muted)}
+.roster li.free .rn{font-weight:400}
+.linkbtn{background:none;border:0;padding:4px 2px;color:var(--muted);font-size:13px;text-decoration:underline;text-underline-offset:3px}
+.foot{font-size:13px;color:var(--muted);margin:4px 0 0}
+.modal{position:fixed;inset:0;background:rgba(8,14,13,.72);display:grid;place-items:center;padding:16px;z-index:33;box-sizing:border-box}
+.sheet{box-sizing:border-box;background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:20px;max-width:460px;width:100%;max-height:calc(100dvh - 32px);overflow:auto;display:flex;flex-direction:column;gap:14px}
+.sheet h3{font-size:24px;color:var(--title)}
+.sheet .body{color:var(--muted)}
+.sheet .actions{display:flex;gap:8px;flex-wrap:wrap}
+.sheet ul{padding-left:18px;margin:0;display:flex;flex-direction:column;gap:6px}
+.sheet li b{color:var(--ink)}
+.alert{position:fixed;left:50%;top:max(12px,env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:40;max-width:min(92vw,520px);width:max-content;box-sizing:border-box;background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:15px;padding:12px 16px;border-radius:14px;box-shadow:0 12px 28px rgba(0,0,0,.3);text-align:center;pointer-events:none}
+.alert.show{animation:alertin .35s cubic-bezier(.2,1.5,.4,1)}
+@keyframes alertin{from{transform:translate(-50%,-20px) scale(.9);opacity:0}to{transform:translateX(-50%);opacity:1}}
+.bubble{position:fixed;transform:translate(-50%,-100%);font-size:30px;pointer-events:none;animation:bub 2.6s ease forwards;z-index:26}
+@keyframes bub{0%{opacity:0;transform:translate(-50%,-80%) scale(.6)}12%{opacity:1;transform:translate(-50%,-100%) scale(1.1)}20%{transform:translate(-50%,-100%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-150%)}}
+.reacts{position:fixed;z-index:35;display:grid;grid-template-columns:repeat(3,auto);gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:8px;box-shadow:0 12px 28px rgba(0,0,0,.3)}
+.reacts button{font-size:24px;background:var(--surface-2);border:0;border-radius:10px;padding:4px 9px}
+@media (prefers-reduced-motion:reduce){.alert.show,.bubble{animation:none}}
+
+/* comum aos jogos de rondas: barra, jogadores, quadro de pontos, vencedor */
+.game{display:flex;flex-direction:column;gap:12px;flex:1;padding-bottom:8px}
+.gbar{display:flex;justify-content:space-between;align-items:center;gap:10px}
+#gTimer{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums;color:var(--ink);min-width:3ch;text-align:right}
+#gTimer.low{color:var(--danger)}
+.chips{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.chips li{display:flex;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:4px 10px;font-size:13px;min-width:0}
+.chips li.me{border-color:var(--accent)}
+.chips li.off{opacity:.5}
+.chips li .cn{font-weight:700;max-width:10ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chips li b{font-variant-numeric:tabular-nums}
+.chips li i{font-style:normal;color:var(--muted);font-weight:800}
+.chips li.done i{color:var(--good)}
+.chips .think{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:think 1s ease-in-out infinite}
+@keyframes think{50%{opacity:.25}}
+.lost{margin:0;color:var(--danger);font-weight:700}
+.panel{display:flex;flex-direction:column;gap:10px}
+.wait{margin:0;color:var(--muted);font-size:14px;min-height:1.3em}
+.mine{margin:0;color:var(--muted);font-size:13px}
+@keyframes pop{from{transform:scale(.4) rotate(-6deg);opacity:0}to{transform:none;opacity:1}}
+.board{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.board li{display:flex;align-items:center;gap:10px;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:9px 14px}
+.board li.me{border-color:var(--accent)}
+.board .cn{flex:1;font-weight:800;min-width:0;overflow-wrap:anywhere}
+.board em{font-style:normal;color:var(--good);font-weight:800}
+.board b{font-family:var(--display);font-weight:400;font-size:20px;font-variant-numeric:tabular-nums;min-width:2ch;text-align:right}
+.board .pos{font-family:var(--display);color:var(--muted);width:1.4em}
+.board.final li:first-child{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.win{display:flex;flex-direction:column;gap:2px}
+.win h2{font-size:clamp(34px,10vw,56px);line-height:1;color:var(--accent);animation:pop .6s cubic-bezier(.2,1.6,.4,1)}
+.awards{display:flex;flex-direction:column;gap:6px}
+.awards p{margin:0;font-weight:700}
+.awards span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.rstep,.rverdict b,.win h2,.blank.fill{animation:none}}
+/* Conversa de Tasca: verde-garrafa, carta preta e cartas brancas */
+:root{--accent:#9ccc65;--accent-ink:#13200a;--bcard:#0c1514;--bcard-ink:#f1ece2}
+:root[data-pp-theme="light"]{--accent:#4f7f23;--accent-ink:#fff;--bcard:#1f2a28;--bcard-ink:#fffaf1}
+.brand h1{font-size:clamp(20px,5.4vw,30px)}
+.opts-lobby{display:flex;flex-direction:column;gap:10px;width:100%;max-width:420px}
+.optrow{display:flex;flex-direction:column;gap:6px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:8px 14px;font-weight:800;font-size:14px;color:var(--ink)}
+.seg button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.seg button:disabled{cursor:default}
+.seg button:disabled:not(.on){opacity:.55}
+.chips li.judge{border-color:var(--ink);border-style:dashed}
+.bcard{background:var(--bcard);color:var(--bcard-ink);border-radius:18px;padding:18px 20px 14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 6px 0 var(--surface-2)}
+.bcard p{margin:0;font-size:clamp(20px,5.4vw,27px);line-height:1.28;font-weight:800;text-wrap:pretty}
+.bcard .eyebrow{color:color-mix(in srgb,var(--bcard-ink) 60%,transparent)}
+.gap{display:inline-block;min-width:4ch;border-bottom:3px solid var(--accent);color:transparent;line-height:1}
+.fillin{color:var(--accent);font-weight:800}
+.fillin.win{animation:fillpop .5s cubic-bezier(.2,1.5,.4,1);display:inline-block}
+@keyframes fillpop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+.hand{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (min-width:600px){.hand{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:860px){.hand{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.wcard{text-align:left;min-height:96px;background:var(--enamel);color:var(--card-ink);border:1.5px solid var(--line);border-radius:14px;padding:11px 12px;font-weight:800;font-size:15px;line-height:1.25;overflow-wrap:anywhere;display:flex;flex-direction:column;gap:4px;box-shadow:0 3px 0 var(--surface-2);transition:transform .12s,box-shadow .12s}
+.wcard:active{transform:scale(.97)}
+.wcard.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent);transform:translateY(-3px)}
+.wcard.blank{border-style:dashed;background:transparent;color:var(--ink)}
+.wcard.blank small{font-weight:600;color:var(--muted)}
+.playbar{position:sticky;bottom:max(8px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;background:var(--bg);padding-top:6px}
+.playbar .btn{width:100%}
+.jbox{background:var(--surface);border:1.5px dashed var(--line);border-radius:16px;padding:14px 16px}
+.jbox b{font-family:var(--display);font-weight:400;font-size:22px}
+.jbox p{margin:6px 0 0;color:var(--muted)}
+.sent p .fillin{color:var(--accent)}
+.subs{display:flex;flex-direction:column;gap:8px}
+.sub{text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:13px 15px;font-size:16px;font-weight:700;color:var(--ink);line-height:1.3;overflow-wrap:anywhere}
+.sub .fillin{color:var(--accent)}
+.sub.sel{border-color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.subs.view .sub{cursor:default;opacity:.9}
+.winbox{display:flex;flex-direction:column;gap:2px}
+.winbox h2{font-size:clamp(28px,8vw,42px);line-height:1.05;color:var(--accent);animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
+.others{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.others li{display:flex;justify-content:space-between;gap:10px;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;font-weight:700}
+.others em{font-style:normal;color:var(--muted);font-size:13px;white-space:nowrap}
+@media (prefers-reduced-motion:reduce){.fillin.win,.winbox h2{animation:none}}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><h1>Conversa de <span>Tasca</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="tools">
+      <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
+      <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
+      <button class="btn ghost sm ico" id="mute" type="button" aria-pressed="true" aria-label="Som" title="Som">🔊</button>
+      <button class="btn ghost sm ico" id="themeBtn" type="button" aria-label="Tema escuro" title="Tema escuro">☾</button>
+      <button class="btn ghost sm" id="exitBtn" type="button" hidden>Sair</button>
+    </div>
+  </header>
+
+  <section id="setup" class="setup">
+    <h2>Quem tem a resposta<span>mais parva?</span></h2>
+    <p>Aparece uma frase com um espaço em branco e cada um escolhe da mão a carta mais engraçada para a completar. Em cada ronda há um juiz, que escolhe a melhor sem saber de quem é. Há modo Família e modo Adulto.</p>
+    <label class="field"><span class="eyebrow">O teu nome</span><input id="myName" maxlength="14" autocomplete="nickname" placeholder="Ex.: Ivo"></label>
+    <div class="mode" id="onlineMode">
+      <div class="eyebrow">Com amigos, de 3 a 8 pessoas, cada um no seu telemóvel</div>
+      <div class="choices"><button class="btn" id="hostBtn" type="button">Criar sala</button></div>
+      <div class="join" id="joinArea"><input id="joinCode" placeholder="Código" maxlength="5" autocapitalize="characters" autocomplete="off" spellcheck="false" aria-label="Código da sala"><button class="btn ghost" id="joinBtn" type="button">Entrar</button></div>
+      <p class="note" id="netNote" role="status"></p>
+      <p class="note nopeer-msg">O modo online não está disponível nesta página. Abre o jogo no site para jogar com amigos.</p>
+    </div>
+    <p class="foot">Grátis, sem conta e sem publicidade. <button class="linkbtn" id="privBtn" type="button">Privacidade</button></p>
+    <p class="foot credit">O modo Clássico usa cartas traduzidas e adaptadas do <a href="https://cardsagainsthumanity.com/" target="_blank" rel="noopener">Cards Against Humanity</a> (<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.pt" target="_blank" rel="noopener">CC BY-NC-SA</a>), sem fins comerciais e sem ligação aos autores originais.</p>
+  </section>
+
+  <section id="lobby" class="setup lobby" hidden>
+    <div class="eyebrow">Código da sala</div>
+    <h2 id="lbCode" class="code">-----</h2>
+    <p id="lbHelp"></p>
+    <div class="choices"><button class="btn" id="shareBtn" type="button">Enviar link</button><button class="btn ghost" id="copyBtn" type="button">Copiar link</button></div>
+    <div class="opts-lobby" id="lbOpts"></div>
+    <ul class="roster" id="roster"></ul>
+    <div class="choices" id="hostCtl"><button class="btn ghost" id="addBot" type="button">+ Computador</button><button class="btn" id="startBtn" type="button">Começar</button></div>
+    <p class="note" id="lbNote" role="status"></p>
+    <button class="btn ghost sm" id="leaveBtn" type="button">Sair da sala</button>
+  </section>
+
+  <main id="game" class="game" hidden>
+    <div class="gbar"><span class="eyebrow" id="gRound"></span><span id="gTimer"></span></div>
+    <ul class="chips" id="chips" aria-label="Jogadores e pontos"></ul>
+    <p class="lost" id="lost" role="status" hidden>Quem criou a sala perdeu a ligação. À espera…</p>
+    <section class="bcard" id="black"><p id="blackText"></p><div class="eyebrow" id="judgeLine"></div></section>
+    <section class="panel" id="panel" aria-live="polite"></section>
+  </main>
+</div>
+
+<div class="modal" id="rulesModal" hidden><div class="sheet" role="dialog" aria-modal="true"><h3 id="rulesTitle">Regras</h3><div class="body" id="rulesBody"></div><div class="actions"><button class="btn" id="rulesClose" type="button">Fechar</button></div></div></div>
+<div class="modal" id="modal" hidden><div class="sheet" role="dialog" aria-modal="true"><h3 id="mTitle"></h3><div class="body" id="mBody"></div><div class="actions" id="mActions"></div></div></div>
+<div class="alert" id="alert" role="alert" hidden></div>
+<div class="reacts" id="reacts" hidden></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
+/* ================= SALAS (comum aos jogos ipgames) =================
+   Mesmo esquema da Panela de Pressão, para servir com as mesmas regras do Firebase:
+   rooms/{código}/host  quem criou a sala (o motor do jogo corre lá)
+   rooms/{código}/up    mensagens dos jogadores para quem criou a sala
+   rooms/{código}/down/{uid}  mensagens só para esse jogador
+   rooms/{código}/clients/{uid}  quem está ligado
+   Cada jogo define ROOM.game = {id, maxp, minp, maxBots, botNames, title, start(seats), msg(seat,d), back(seat), drop(seat), client(d)} */
+const FIREBASE_CONFIG={
+  apiKey:"AIzaSyDV65oRQM9JRsPDi-lG5smPQ3visWhFYcY",
+  authDomain:"panela-de-pressao-a158b.firebaseapp.com",
+  databaseURL:"https://panela-de-pressao-a158b-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"panela-de-pressao-a158b",
+  storageBucket:"panela-de-pressao-a158b.firebasestorage.app",
+  messagingSenderId:"990808683809",
+  appId:"1:990808683809:web:7632a6ed6dcfde6ebefa60"
+};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ALPH="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const cleanName=s=>String(s||"").replace(/[<>&"'`\\]/g,"").replace(/\s+/g," ").trim().slice(0,14);
+const cleanCode=s=>String(s||"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,5);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const sstore={get(k){try{return sessionStorage.getItem(k)}catch(e){return null}},set(k,v){try{sessionStorage.setItem(k,v)}catch(e){}}};
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+const ROOM={
+  game:null,role:null,code:null,seats:[],started:false,leaving:false,conns:{},subs:[],conn:null,me:0,lobby:null,
+  /* envia uma jogada minha (para quem criou a sala ou para o motor local) */
+  send(d){
+    if(this.role==="client"){if(this.conn)try{this.conn.send(d)}catch(e){}}
+    else if(this.role==="host"&&this.started){this.game.msg(this.seats[0],d)}
+  },
+  /* motor -> jogador */
+  sendTo(seat,d){
+    if(!seat)return;
+    if(seat.kind==="local")setTimeout(()=>this.game.client(d),0);
+    else if(seat.kind==="remote"&&seat.conn&&seat.online)try{seat.conn.send(d)}catch(e){}
+  },
+  backToLobby(){
+    this.started=false;
+    this.seats=this.seats.filter(s=>s.kind!=="remote"||s.online);
+    showScreen("lobby");lobbyBroadcast();
+  }
+};
+function netNote(id,t){const el=$(id);if(el)el.textContent=t||""}
+function linkFor(code){return location.href.split("#")[0]+"#sala="+code}
+const onlineReady=()=>!!(window.firebase&&(FIREBASE_CONFIG||window.__fbMock));
+let FB=null;
+async function fbInit(){
+  if(FB)return FB;
+  if(!onlineReady())throw new Error("nofb");
+  if(!firebase.apps||!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG||{});
+  const cred=await firebase.auth().signInAnonymously();
+  FB={db:firebase.database(),uid:cred.user.uid};
+  return FB;
+}
+const fbErr=e=>{const c=String(e&&(e.code||e.message)||"");
+  if(/permission|PERMISSION/.test(c))return "O servidor recusou o pedido. Tenta outra vez daqui a pouco.";
+  if(/operation-not-allowed|admin-restricted/.test(c))return "O acesso anónimo não está ligado no Firebase.";
+  if(/network/.test(c))return "Sem ligação à internet. Tenta outra vez.";
+  return "Não consegui ligar ao servidor de salas. Tenta outra vez.";};
+function countGame(kind,players){
+  if(window.__fast||!onlineReady())return;
+  const d=new Date(),ym=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+  fbInit().then(()=>FB.db.ref(`stats/${ym}/${kind}${players}`).transaction(c=>(typeof c==="number"?c:0)+1)).catch(()=>{});
+}
+function sub(ref,ev,fn){ref.on(ev,fn,e=>console.warn(ev,e&&e.message));ROOM.subs.push(()=>ref.off(ev,fn))}
+function unsubAll(){for(const f of ROOM.subs)try{f()}catch(e){}ROOM.subs=[]}
+const roomRef=(...p)=>FB.db.ref(["rooms",ROOM.code,...p].join("/"));
+
+/* ---------- quem cria a sala ---------- */
+function mkConn(uid){
+  return{uid,closed:false,
+    send(m){if(this.closed||!ROOM.code)return;roomRef("down",uid).push({m:JSON.stringify(m)}).catch(()=>{})},
+    close(){this.closed=true}};
+}
+function connFor(uid){let c=ROOM.conns[uid];if(!c||c.closed){c=mkConn(uid);ROOM.conns[uid]=c}return c}
+async function hostRoom(){
+  const name=cleanName($("myName").value);
+  if(!name){netNote("netNote","Escreve o teu nome primeiro.");$("myName").focus();return}
+  store.set("pp-name",name);
+  netNote("netNote","A criar a sala…");
+  try{await fbInit()}catch(e){netNote("netNote",fbErr(e));return}
+  let code=null;
+  for(let i=0;i<6&&!code;i++){
+    const c=Array.from({length:5},()=>ALPH[Math.floor(Math.random()*ALPH.length)]).join("");
+    const hr=FB.db.ref(`rooms/${c}/host`);
+    try{const s=await hr.get();if(s.exists())continue;await hr.set(FB.uid);code=c}catch(e){if(i===5){netNote("netNote",fbErr(e));return}}
+  }
+  if(!code){netNote("netNote","Não consegui criar a sala. Tenta outra vez.");return}
+  unsubAll();
+  Object.assign(ROOM,{role:"host",code,started:false,leaving:false,conns:{},me:0,seats:[{kind:"local",name,online:true}]});
+  if(ROOM.game.cleanOpts)ROOM.opts=ROOM.game.cleanOpts(ROOM.opts);
+  const room=roomRef();
+  room.onDisconnect().remove();
+  let first=true;
+  sub(FB.db.ref(".info/connected"),"value",s=>{
+    if(s.val()!==true||ROOM.role!=="host"||ROOM.code!==code)return;
+    if(first){first=false;return}
+    roomRef("host").set(FB.uid).catch(()=>{});room.onDisconnect().remove();
+  });
+  sub(roomRef("clients"),"child_removed",s=>{
+    const uid=s.key;
+    setTimeout(()=>{
+      if(ROOM.role!=="host"||ROOM.code!==code)return;
+      roomRef("clients",uid).get().then(x=>{
+        if(x.exists())return;
+        const c=ROOM.conns[uid];if(c&&!c.closed){c.close();hostClose(c)}
+      }).catch(()=>{});
+    },2500);
+  });
+  sub(roomRef("up"),"child_added",s=>{
+    const v=s.val();s.ref.remove().catch(()=>{});
+    if(!v||typeof v.m!=="string"||typeof v.from!=="string")return;
+    let d;try{d=JSON.parse(v.m)}catch(e){return}
+    hostData(connFor(v.from),d);
+  });
+  netNote("netNote","");
+  showScreen("lobby");lobbyBroadcast();
+}
+function uniqueName(name,except){
+  let n=name,i=2;
+  const taken=()=>ROOM.seats.some(s=>s!==except&&s.name.toLowerCase()===n.toLowerCase());
+  while(taken())n=`${name.slice(0,12)} ${i++}`;
+  return n;
+}
+function hostData(c,d){
+  if(!d||typeof d!=="object")return;
+  const G=ROOM.game;
+  if(d.t==="hello"){
+    const name=cleanName(d.name)||"Amigo",token=String(d.token||"").replace(/[^a-z0-9]/gi,"").slice(0,40);
+    let s=ROOM.seats.find(x=>x.kind==="remote"&&x.token&&x.token===token);
+    if(ROOM.started){
+      if(s){s.conn=c;s.online=true;c._seat=s;c.send({t:"welcome",code:ROOM.code});G.back(s);return}
+      c.send({t:"full",msg:"A partida já começou. Espera pela próxima e volta a entrar."});
+      setTimeout(()=>c.close(),800);return;
+    }
+    if(!s){
+      if(ROOM.seats.length>=G.maxp){
+        const bot=ROOM.seats.find(x=>x.kind==="bot");
+        if(bot)ROOM.seats=ROOM.seats.filter(x=>x!==bot);
+        else{c.send({t:"full",msg:"A sala está cheia."});setTimeout(()=>c.close(),800);return}
+      }
+      s={kind:"remote",token};ROOM.seats.push(s);
+    }
+    s.name=uniqueName(name,s);s.conn=c;s.online=true;c._seat=s;
+    c.send({t:"welcome",code:ROOM.code});
+    lobbyBroadcast();
+    return;
+  }
+  if(d.t==="leave"){hostClose(c,true);return}
+  if(ROOM.started){const s=ROOM.seats.find(x=>x.conn===c&&x.kind==="remote");if(s&&s.online)G.msg(s,d)}
+}
+function hostClose(c){
+  const s=ROOM.seats.find(x=>x.conn===c&&x.kind==="remote");
+  if(!s)return;
+  if(ROOM.started){if(s.online){s.online=false;ROOM.game.drop(s)}return}
+  ROOM.seats=ROOM.seats.filter(x=>x!==s);lobbyBroadcast();
+}
+function lobbyBroadcast(){
+  const pub=ROOM.seats.map(s=>({name:s.name,kind:s.kind}));
+  ROOM.seats.forEach((s,i)=>{if(s.kind==="remote"&&s.conn&&s.online)try{s.conn.send({t:"lobby",code:ROOM.code,seats:pub,you:i,opts:ROOM.opts||null})}catch(e){}});
+  ROOM.lobby={code:ROOM.code,seats:pub,you:0};
+  renderLobby();
+}
+function addBot(){
+  const G=ROOM.game;
+  if(ROOM.role!=="host"||ROOM.started||ROOM.seats.length>=G.maxp)return;
+  if(ROOM.seats.filter(s=>s.kind==="bot").length>=G.maxBots)return;
+  const used=new Set(ROOM.seats.map(s=>s.name));
+  const name=G.botNames.find(n=>!used.has(n))||"Computador";
+  ROOM.seats.push({kind:"bot",name,online:true});lobbyBroadcast();
+}
+function removeSeat(i){
+  if(ROOM.role!=="host"||ROOM.started)return;
+  const s=ROOM.seats[i];if(!s||s.kind==="local")return;
+  if(s.kind==="remote"&&s.conn){try{s.conn.send({t:"full",msg:"Quem criou a sala tirou-te da sala."})}catch(e){}const c=s.conn;setTimeout(()=>c.close(),500)}
+  ROOM.seats.splice(i,1);lobbyBroadcast();
+}
+function hostStart(){
+  const G=ROOM.game;
+  if(ROOM.role!=="host"||ROOM.started||ROOM.seats.length<G.minp)return;
+  ROOM.started=true;
+  for(const s of ROOM.seats)if(s.kind==="remote"&&s.online)s.conn.send({t:"start"});
+  countGame(G.id,ROOM.seats.length);
+  showScreen("game");
+  G.start(ROOM.seats);
+}
+
+/* ---------- quem entra ---------- */
+async function joinRoom(){
+  const name=cleanName($("myName").value),code=cleanCode($("joinCode").value);
+  if(!name){netNote("netNote","Escreve o teu nome primeiro.");$("myName").focus();return}
+  if(code.length!==5){netNote("netNote","O código da sala tem 5 letras.");$("joinCode").focus();return}
+  store.set("pp-name",name);
+  clearTimeout(ROOM.joinT);unsubAll();
+  netNote("netNote","1/2 A ligar ao servidor…");
+  try{await fbInit()}catch(e){netNote("netNote",fbErr(e));return}
+  ROOM.leaving=false;ROOM.code=code;ROOM.role=null;
+  try{
+    const h=await roomRef("host").get();
+    if(!h.exists()){netNote("netNote","Não encontrei essa sala. Confirma o código e se quem a criou ainda tem o jogo aberto.");return}
+  }catch(e){netNote("netNote",fbErr(e));return}
+  netNote("netNote","2/2 A entrar na sala…");
+  const me=roomRef("clients",FB.uid),down=roomRef("down",FB.uid),up=roomRef("up");
+  try{const old=await down.get();const jobs=[];old.forEach(ch=>{jobs.push(ch.ref.remove())});await Promise.all(jobs)}catch(e){}
+  ROOM.conn={send(m){up.push({from:FB.uid,m:JSON.stringify(m)}).catch(()=>{})}};
+  const hello=()=>{me.set(true).catch(()=>{});me.onDisconnect().remove();ROOM.conn.send({t:"hello",name,token:FB.uid})};
+  sub(down,"child_added",s=>{
+    const v=s.val();s.ref.remove().catch(()=>{});
+    if(!v||typeof v.m!=="string")return;
+    let d;try{d=JSON.parse(v.m)}catch(e){return}
+    clientData(d);
+  });
+  let first=true;
+  sub(FB.db.ref(".info/connected"),"value",s=>{
+    if(s.val()!==true)return;
+    if(first){first=false;return}
+    if(ROOM.role==="client"&&!ROOM.leaving)hello();
+  });
+  let hadHost=true;
+  sub(roomRef("host"),"value",s=>{
+    clearTimeout(ROOM.hostT);
+    if(s.exists()){
+      if(!hadHost&&ROOM.role==="client"&&!ROOM.leaving)hello();
+      hadHost=true;netNote("lbNote","");return;
+    }
+    hadHost=false;
+    if(ROOM.role!=="client")return;
+    netNote("lbNote","Quem criou a sala perdeu a ligação. À espera…");
+    if(ROOM.game.hostLost)ROOM.game.hostLost(true);
+    ROOM.hostT=setTimeout(()=>{
+      if(ROOM.leaving||ROOM.role!=="client")return;
+      notice("Ligação perdida","Quem criou a sala saiu ou ficou sem internet.").then(()=>leaveRoom());
+    },30000);
+  });
+  ROOM.joinT=setTimeout(()=>{if(ROOM.role!=="client"&&ROOM.code===code)netNote("netNote","A sala não respondeu. Confirma que quem a criou tem o jogo aberto e tenta outra vez.")},15000);
+  hello();
+}
+function clientData(d){
+  if(!d||typeof d!=="object")return;
+  switch(d.t){
+    case "welcome":
+      clearTimeout(ROOM.joinT);
+      sstore.set("ip-room",ROOM.code);
+      if(ROOM.role!=="client"){ROOM.role="client";netNote("netNote","");showScreen("lobby")}
+      break;
+    case "lobby":
+      ROOM.lobby={code:cleanCode(d.code),seats:(d.seats||[]).slice(0,ROOM.game.maxp).map(s=>({name:cleanName(s.name),kind:s.kind})),you:+d.you};
+      ROOM.me=+d.you;if(ROOM.game.cleanOpts)ROOM.opts=ROOM.game.cleanOpts(d.opts);
+      if($("lobby").hidden)showScreen("lobby");
+      renderLobby();break;
+    case "full":
+      ROOM.leaving=true;
+      netNote("netNote",String(d.msg||"Não foi possível entrar.").slice(0,120));
+      unsubAll();ROOM.role=null;showScreen("setup");break;
+    case "closed":
+      if(ROOM.role!=="client")break;
+      ROOM.leaving=true;
+      notice("A partida terminou","Quem criou a sala saiu do jogo.").then(()=>leaveRoom());
+      break;
+    case "start":showScreen("game");if(ROOM.game.hostLost)ROOM.game.hostLost(false);break;
+    default:if(ROOM.game.hostLost)ROOM.game.hostLost(false);ROOM.game.client(d);
+  }
+}
+function leaveRoom(){
+  ROOM.leaving=true;clearTimeout(ROOM.hostT);clearTimeout(ROOM.joinT);
+  const role=ROOM.role,code=ROOM.code;
+  if(FB&&code){
+    if(role==="client"){try{ROOM.conn.send({t:"leave"})}catch(e){}FB.db.ref(`rooms/${code}/clients/${FB.uid}`).remove().catch(()=>{})}
+    if(role==="host"){
+      for(const s of ROOM.seats)if(s.kind==="remote"&&s.online&&s.conn)try{s.conn.send({t:"closed"})}catch(e){}
+      const r=FB.db.ref(`rooms/${code}`);setTimeout(()=>r.remove().catch(()=>{}),1500);
+    }
+  }
+  if(ROOM.game.stop)ROOM.game.stop();
+  unsubAll();
+  Object.assign(ROOM,{role:null,conn:null,seats:[],conns:{},lobby:null,started:false,code:null});
+  sstore.set("ip-room","");
+  try{history.replaceState(null,"",location.href.split("#")[0])}catch(e){}
+  showScreen("setup");
+}
+function renderLobby(){
+  const L=ROOM.lobby;if(!L)return;
+  const G=ROOM.game,host=ROOM.role==="host";
+  $("lbCode").textContent=L.code;
+  $("roster").innerHTML=L.seats.map((s,i)=>`<li><span class="rn">${esc(s.name)}${i===L.you?' <em>(tu)</em>':""}</span><span class="rk">${i===0?"criou a sala":s.kind==="bot"?"computador":"amigo"}</span>${host&&i>0?`<button class="btn ghost sm" type="button" data-rm="${i}" aria-label="Tirar ${esc(s.name)}">Tirar</button>`:""}</li>`).join("")
+    +Array.from({length:Math.max(0,Math.min(G.maxp,Math.max(4,L.seats.length+1))-L.seats.length)},()=>`<li class="free"><span class="rn">Lugar livre</span></li>`).join("");
+  $("hostCtl").hidden=!host;
+  $("addBot").disabled=L.seats.length>=G.maxp||L.seats.filter(s=>s.kind==="bot").length>=G.maxBots;
+  $("startBtn").disabled=L.seats.length<G.minp;
+  if(G.renderOpts&&$("lbOpts"))G.renderOpts($("lbOpts"),ROOM.opts,host);
+  $("lbHelp").textContent=host?(L.seats.length<G.minp?G.lobbyHelpFew:"Quando estiverem todos, começa. Mantém esta página aberta durante a partida."):`À espera que ${L.seats[0]?L.seats[0].name:"quem criou a sala"} comece a partida.`;
+}
+function initRoomUI(){
+  const G=ROOM.game;
+  $("roster").addEventListener("click",e=>{const b=e.target.closest("[data-rm]");if(b)removeSeat(+b.dataset.rm)});
+  $("addBot").addEventListener("click",addBot);
+  $("startBtn").addEventListener("click",()=>{unlockAudio();hostStart()});
+  $("leaveBtn").addEventListener("click",leaveRoom);
+  $("hostBtn").addEventListener("click",()=>{unlockAudio();hostRoom()});
+  $("joinBtn").addEventListener("click",()=>{unlockAudio();joinRoom()});
+  $("joinCode").addEventListener("keydown",e=>{if(e.key==="Enter")joinRoom()});
+  const copyLink=async()=>{const url=linkFor(ROOM.code);try{await navigator.clipboard.writeText(url);netNote("lbNote","Link copiado.")}catch(e){netNote("lbNote",url)}};
+  $("copyBtn").addEventListener("click",copyLink);
+  $("shareBtn").addEventListener("click",async()=>{
+    const url=linkFor(ROOM.code);
+    if(navigator.share){try{await navigator.share({title:G.title,text:`Entra na minha sala do ${G.title} (código ${ROOM.code})`,url});return}catch(e){if(e&&e.name==="AbortError")return}}
+    copyLink();
+  });
+  $("shareBtn").hidden=!navigator.share;
+  window.addEventListener("beforeunload",e=>{if(ROOM.role==="host"&&ROOM.started){e.preventDefault();e.returnValue=""}});
+  $("myName").value=store.get("pp-name")||"";
+  const m=location.hash.match(/sala=([A-Za-z0-9]{5})/);
+  if(m){$("joinCode").value=cleanCode(m[1]);$("joinArea").classList.add("fromlink");netNote("netNote","Escreve o teu nome e carrega em Entrar.");setTimeout(()=>($("myName").value?$("joinBtn"):$("myName")).focus(),50);
+    if($("myName").value&&sstore.get("ip-room")===cleanCode(m[1])&&onlineReady())setTimeout(joinRoom,0)}
+  if(!onlineReady())$("onlineMode").classList.add("nopeer");
+}
+
+/* ================= ECRÃ (comum aos jogos de rondas) =================
+   som, tema, relógio, avisos, reações, regras e botão de sair.
+   Cada jogo pode definir ROOM.game.onScreen(nome) para limpar o que é seu. */
+const REACTS=["😂","😱","🤥","👏","🙄","🔥"];
+const TT=ms=>window.__fast?Math.max(30,ms/25):ms;
+
+/* relógio da ronda */
+const TIMER={endAt:0,t:null};
+function startTick(ms){
+  TIMER.endAt=performance.now()+ms;
+  if(TIMER.t)return;
+  let last=null;
+  TIMER.t=setInterval(()=>{
+    const s=Math.max(0,Math.ceil((TIMER.endAt-performance.now())/1000));
+    if(s!==last){last=s;$("gTimer").textContent=s+" s";$("gTimer").classList.toggle("low",s<=10);if(s<=5&&s>0)playSfx("tick")}
+  },200);
+}
+function stopTick(){clearInterval(TIMER.t);TIMER.t=null;const t=$("gTimer");if(t)t.textContent=""}
+
+/* som (sintetizado, sem ficheiros) */
+let AC=null,muted=store.get("pp-mute")==="1";
+function unlockAudio(){try{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=="running")AC.resume()}catch(e){}}
+function tone(f,d,o={}){if(muted||!AC||AC.state!=="running")return;const t=AC.currentTime+(o.at||0),os=AC.createOscillator(),g=AC.createGain();os.type=o.type||"sine";os.frequency.setValueAtTime(f,t);if(o.f2)os.frequency.exponentialRampToValueAtTime(o.f2,t+d);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(o.v||.1,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);os.connect(g).connect(AC.destination);os.start(t);os.stop(t+d+.02)}
+const SFX={
+  send:()=>tone(660,.09,{type:"triangle",v:.1,f2:990}),
+  tick:()=>tone(1200,.05,{type:"square",v:.03}),
+  round:()=>{tone(523,.12,{type:"triangle",v:.09});tone(784,.18,{type:"triangle",v:.09,at:.1})},
+  vote:()=>{tone(392,.1,{type:"triangle",v:.08});tone(523,.14,{type:"triangle",v:.08,at:.09})},
+  lie:()=>{tone(220,.28,{type:"sawtooth",v:.06,f2:150})},
+  truth:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,.2,{type:"triangle",v:.09,at:i*.08}))},
+  win:()=>{[523,659,784,659,784,1047].forEach((f,i)=>tone(f,.22,{type:"triangle",v:.09,at:i*.12}))},
+  end:()=>{[392,523,659].forEach((f,i)=>tone(f,.25,{type:"triangle",v:.08,at:i*.12}))}
+};
+function playSfx(k){try{SFX[k]&&SFX[k]()}catch(e){}}
+function setMute(m){muted=m;store.set("pp-mute",m?"1":"0");$("mute").setAttribute("aria-pressed",String(!m));$("mute").textContent=m?"🔇":"🔊";$("mute").title=m?"Som desligado":"Som ligado"}
+
+function showScreen(n){
+  for(const id of ["setup","lobby","game"])$(id).hidden=id!==n;
+  $("exitBtn").hidden=n!=="game";$("hubLink").hidden=n!=="setup";
+  if(n!=="game")stopTick();
+  $("reactBtn").hidden=n!=="game";$("reacts").hidden=true;
+  if(ROOM.game&&ROOM.game.onScreen)ROOM.game.onScreen(n);
+}
+function setTheme(t,save){
+  if(t==="light")document.documentElement.dataset.ppTheme="light";else delete document.documentElement.dataset.ppTheme;
+  if(save)store.set("pp-tema",t);
+  const tb=$("themeBtn");tb.textContent=t==="light"?"☾":"☀";tb.title=t==="light"?"Tema escuro":"Tema claro";tb.setAttribute("aria-label",tb.title);
+  const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==="light"?"#f4eee3":"#13201f";
+}
+function notice(title,text){return new Promise(res=>{$("mTitle").textContent=title;$("mBody").textContent=text;$("mActions").innerHTML=`<button class="btn" type="button">Voltar ao início</button>`;$("modal").hidden=false;$("mActions").firstChild.onclick=()=>{$("modal").hidden=true;res()}})}
+function openSheet(title,html){$("rulesTitle").textContent=title;$("rulesBody").innerHTML=html;$("rulesModal").hidden=false}
+function flash(t){const a=$("alert");a.textContent=t;a.hidden=false;a.classList.remove("show");void a.offsetWidth;a.classList.add("show");clearTimeout(a._t);a._t=setTimeout(()=>a.hidden=true,2600)}
+function bubble(from,r){
+  const li=[...$("chips").children].find(x=>x.querySelector(".cn")&&x.querySelector(".cn").textContent===from);
+  const b=document.createElement("div");b.className="bubble";b.textContent=r;
+  const rc=(li||$("chips")).getBoundingClientRect();b.style.left=(rc.left+rc.width/2)+"px";b.style.top=(rc.top+4)+"px";
+  document.body.appendChild(b);setTimeout(()=>b.remove(),2600);
+}
+/* reencaminha uma reação para todos (no motor de quem criou a sala) */
+function relayReact(seats,seat,d){
+  if(typeof d.r!=="string"||!REACTS.includes(d.r))return;
+  seats.forEach(s=>{if(s.kind!=="bot")ROOM.sendTo(s,{t:"react",from:seat.name,r:d.r})});
+}
+function privacyHTML(extra){return `<ul>
+  <li><b>Não pedimos conta, email nem dados pessoais.</b> Não há publicidade nem cookies de análise.</li>
+  <li><b>O nome e o que escreves no jogo</b> só são mostrados aos jogadores da tua sala. O nome fica guardado no teu aparelho para a próxima vez.</li>
+  <li><b>As salas</b> usam o Firebase, da Google. Cada aparelho recebe um identificador anónimo, sem nome nem email. As jogadas passam pelos servidores da Google na Bélgica e apagam-se quando a sala fecha. Para o serviço funcionar, a Google trata o endereço de internet (IP) do aparelho.</li>
+  <li><b>Contagem de partidas:</b> guardamos só quantas partidas se jogam por mês e com quantos jogadores, sem saber quem jogou.</li>
+  <li><b>No teu aparelho</b> ficam guardadas as preferências (nome, tema, som)${extra||""}. Podes apagá-las limpando os dados do site no browser.</li>
+  <li><b>O site</b> está alojado na Netlify, que regista dados técnicos de acesso, como o IP, para o servir.</li>
+</ul>`}
+function initUI(o){
+  setTheme(document.documentElement.dataset.ppTheme==="light"?"light":"dark",false);
+  setMute(muted);
+  $("themeBtn").addEventListener("click",()=>setTheme(document.documentElement.dataset.ppTheme==="light"?"dark":"light",true));
+  $("mute").addEventListener("click",()=>{setMute(!muted);if(!muted){unlockAudio();setTimeout(()=>playSfx("send"),50)}});
+  $("rulesBtn").addEventListener("click",()=>openSheet("Como se joga",o.rules));
+  $("privBtn").addEventListener("click",()=>openSheet("Privacidade",o.privacy));
+  $("rulesClose").addEventListener("click",()=>$("rulesModal").hidden=true);
+  $("rulesModal").addEventListener("click",e=>{if(e.target===$("rulesModal"))$("rulesModal").hidden=true});
+  $("exitBtn").addEventListener("click",()=>{
+    const host=ROOM.role==="host"&&ROOM.started;
+    $("mTitle").textContent="Sair?";$("mBody").textContent=host?"Se saíres, a partida acaba para todos.":"Vais sair da sala.";
+    $("mActions").innerHTML=`<button class="btn" type="button" id="exitYes">Sair</button><button class="btn ghost" type="button" id="exitNo">Ficar</button>`;
+    $("modal").hidden=false;
+    $("exitYes").onclick=()=>{$("modal").hidden=true;leaveRoom()};$("exitNo").onclick=()=>$("modal").hidden=true;
+  });
+  $("reacts").innerHTML=REACTS.map(r=>`<button type="button" data-r="${r}">${r}</button>`).join("");
+  $("reactBtn").addEventListener("click",()=>{const R=$("reacts");R.hidden=!R.hidden;if(!R.hidden){const b=$("reactBtn").getBoundingClientRect();R.style.right=Math.max(8,innerWidth-b.right)+"px";R.style.top=(b.bottom+6)+"px"}});
+  $("reacts").addEventListener("click",e=>{const b=e.target.closest("[data-r]");if(!b)return;$("reacts").hidden=true;ROOM.send({t:"react",r:b.dataset.r})});
+  document.addEventListener("click",e=>{if(!$("reacts").hidden&&!e.target.closest("#reacts,#reactBtn"))$("reacts").hidden=true});
+  initRoomUI();
+  showScreen("setup");
+}
+
+/* ================= CARTAS =================
+   p: frases (cartas pretas). Com ____ a resposta entra no espaço; sem ____ é uma pergunta.
+   r: respostas (cartas brancas).
+   O modo Família usa só "fam". O modo Adulto usa tudo de "adu" e uma parte de "fam" (cerca de 1/3 das cartas),
+   porque frases inocentes com respostas porcas também dão boas combinações. */
+const CARDS={
+fam:{p:[
+"O segredo da receita da avó é ____.",
+"Ninguém sabe, mas o verdadeiro motivo dos atrasos dos comboios é ____.",
+"No próximo Natal, a família vai deixar de se falar por causa de ____.",
+"O novo sabor de gelado deste verão: ____.",
+"O que é que o meu tio leva sempre para a praia?",
+"Depois de três horas na fila das Finanças, deram-me ____.",
+"A nova aplicação do Governo serve para ____.",
+"O que é que se encontra sempre no fundo da mala da mãe?",
+"A grande novidade do Multibanco: agora também dá ____.",
+"No grupo de WhatsApp da família, a tia partilhou ____.",
+"O que é que está a fazer barulho no sótão?",
+"Diz o meu avô que no tempo dele não havia ____.",
+"O primeiro prémio da rifa da festa da aldeia é ____.",
+"O que é que o vizinho de cima anda a fazer às 3 da manhã?",
+"Este ano, nos Santos Populares, a sardinha vem com ____.",
+"O que é que o professor confiscou na aula?",
+"Para o almoço de domingo, a sogra trouxe ____.",
+"O novo programa da televisão: «A Ilha de ____».",
+"O meu superpoder secreto é ____.",
+"A partir de janeiro, é obrigatório ter no carro ____.",
+"O que é que o gato trouxe para casa esta manhã?",
+"Senhores passageiros, o voo vai atrasar por causa de ____.",
+"O novo museu de Lisboa é todo dedicado a ____.",
+"O que é que ninguém quer encontrar na sopa?",
+"O segredo para chegar aos 100 anos, segundo a bisavó: ____.",
+"O que é que o Pai Natal trouxe este ano, por engano?",
+"Na reunião de condomínio, quase houve porrada por causa de ____.",
+"O treinador explicou a derrota com ____.",
+"Para impressionar no primeiro dia de trabalho, levei ____.",
+"Encontraram um tesouro escondido em Sintra: ____.",
+"O que é que o GPS me mandou fazer desta vez?",
+"O sonho do meu primo é abrir uma loja de ____.",
+"A estátua nova da rotunda representa ____.",
+"O que é que saiu da máquina de lavar?",
+"A minha banda preferida chama-se «Os ____».",
+"Na excursão da junta, o momento alto foi ____.",
+"O que é que os extraterrestres vieram buscar a Portugal?",
+"O novo desporto olímpico: ____.",
+"O que é que não me deixa dormir à noite?",
+"O verdadeiro ingrediente secreto da francesinha: ____.",
+"Em caso de incêndio, salvem primeiro ____.",
+"O que é que a minha mãe diz sempre antes de eu sair de casa?",
+"Prato do dia na tasca da esquina: ____.",
+"A minha avó acha que a internet é ____.",
+"O evento do ano na terra: o Festival de ____.",
+"O que é que levo para uma ilha deserta?",
+"A música que vai representar Portugal na Eurovisão é sobre ____.",
+"A minha desculpa para não ter feito os trabalhos de casa: ____.",
+"O que é que encontrei debaixo do sofá?",
+"O que é que o tio trouxe da viagem a França?",
+"Na feira, o vendedor jurou que aquilo era ____.",
+"Ganhei o concurso de talentos da escola com ____.",
+"O que é que a vizinha anda a cozinhar que cheira tão mal?",
+"Pedido ao génio da lâmpada: ____.",
+"O que é que não se deve levar para um casamento?",
+"O meu cão, se fosse presidente, proibia ____.",
+"O jantar de família correu bem até aparecer ____.",
+"Fui expulso dos escuteiros por causa de ____.",
+"O que é que o meu avô esconde na garagem?",
+"O que é que dá azar em Portugal?",
+"A loja dos trezentos já vende ____.",
+"A conversa no café da aldeia hoje é sobre ____.",
+"O que é que a minha avó reza todas as noites para que não aconteça?",
+"Este verão, o Algarve está cheio de ____.",
+"O que é que me fez perder o último autocarro?"
+],r:[
+"um pastel de nata gigante","o tio a dançar kizomba no casamento","uma sardinha de óculos escuros","a avó ao telemóvel em alta voz no autocarro",
+"três galinhas e um pato com problemas de atitude","o cão do vizinho, que ladra ao vento","um bacalhau congelado usado como arma","a fila da Loja do Cidadão",
+"o comboio das 8h12, que nunca chega","um GPS que só fala castelhano","uma caixa de bombons onde só sobram os de licor","o grupo de WhatsApp da família",
+"a minha sogra","um anão de jardim muito zangado","a máquina de café do escritório, que já viu coisas","o Wi-Fi da casa da avó",
+"um polvo que sabe abrir frascos","um caracol de corrida dopado","meias brancas com chinelos","um guarda-chuva virado do avesso",
+"a sopa de ontem, que hoje está melhor","um galo de Barcelos com atitude","um balde de caracóis","a vizinha do 3.º esquerdo, que sabe tudo",
+"o Pai Natal de férias no Algarve","um pombo com fome e sem medo","um tupperware sem tampa","a gaveta das tampas sem tupperware",
+"o senhor que fala sozinho no autocarro","um pinguim perdido no Cais do Sodré","o jogo da cobra do Nokia","uma bifana às 3 da tarde",
+"um chouriço assado a arder","a avó em videochamada a mostrar o teto","a senha número 347","um talão do supermercado com dois metros",
+"o saco dos sacos","uma bola de Berlim a escorrer creme","o bolo-rei que ninguém comeu","a fava do bolo-rei",
+"um robô aspirador com medo do escuro","o comando da televisão desaparecido para sempre","a telenovela das nove","um ouriço-cacheiro tímido",
+"o professor de Educação Física de calções curtos","um Tamagotchi que morreu em 1998","uma pastilha elástica colada debaixo da mesa","a camisola de lã que a avó tricotou e que pica",
+"um sapo que diz que é príncipe","uma lagosta de pijama","a tia que pergunta quando é que casas","a pergunta «então, e namoricos?»",
+"uma vaca a fazer surf na Nazaré","um gnomo a fazer ioga","o tio que conta sempre a mesma anedota","o primo que só fala de criptomoedas",
+"uma cadeira de plástico branca","o Natal em casa dos sogros","uma melancia inteira","a mala da mãe, onde cabe uma família",
+"um lenço de papel já usado","um rebuçado peganhento com cotão","a previsão do tempo, que falhou outra vez","um ninho de cegonhas em cima da igreja",
+"um trator na autoestrada","uma rotunda com sete saídas","um condutor de domingo com chapéu","o arrumador de carros",
+"o senhor das castanhas","um pastor-alemão vegetariano","uma vaca com sotaque açoriano","um cozido à portuguesa às 9 da manhã",
+"sopa de pedra com pedra","o último croquete da travessa","um palito ao canto da boca","um galão escuro em copo",
+"um pão com chouriço da feira","o carrossel da feira, que range","uma rifa premiada com um peru vivo","o dominó dos reformados no jardim",
+"uma mosca na sopa","uma aranha na banheira","um mosquito às 4 da manhã","uma osga a olhar para mim",
+"um bebé a chorar no avião","um balão de hélio fugitivo","um esquilo com cafeína","um papagaio que diz asneiras à frente do padre",
+"o despertador às 6h30","segunda-feira de manhã","férias no parque de campismo","um colchão insuflável furado",
+"a toalha na espreguiçadeira às 7 da manhã","um escaldão com a marca da t-shirt","areia nas sandes","uma geleira azul com rissóis",
+"um nadador-salvador a dormir","uma alforreca","um mergulho de barriga","um flamingo insuflável",
+"um golo na própria baliza","o videoárbitro","o tio aos gritos com a televisão","a banda filarmónica a tocar mal",
+"o rancho folclórico","o presidente da junta","o carro de som da campanha eleitoral","um cartaz eleitoral com bigode desenhado",
+"chá de cidreira para tudo","uma colher de óleo de fígado de bacalhau","um pudim que treme","um micro-ondas a explodir com um ovo lá dentro",
+"uma torradeira possuída","o frigorífico vazio","um iogurte fora do prazo há dois anos","a gaveta da tralha",
+"um carregador que ninguém sabe de quê","a palavra-passe do Wi-Fi num post-it","uma impressora que só imprime a cor-de-rosa","o tio que escreve tudo em MAIÚSCULAS",
+"um áudio de 7 minutos","uma imagem de «bom dia» com rosas e brilhos","uma corrente para enviar a dez amigos","o pai a tentar fazer vídeos para a internet",
+"um unicórnio com mau feitio","um dragão com rinite","um fantasma muito educado","um vampiro vegetariano",
+"um extraterrestre perdido em Vila Real","uma nave espacial estacionada em segunda fila","o fim do mundo, outra vez","uma carta das Finanças",
+"o subsídio de Natal","uma moeda de 1 cêntimo","uma raspadinha","um gato preto que me persegue",
+"o mau-olhado","a porteira do prédio","o elevador avariado com o vizinho lá dentro","um sofá velho no meio da rua",
+"o camião do lixo às 6 da manhã","uma panela de pressão a apitar","uma peta muito bem pregada","um ananás dos Açores",
+"um queijo da serra a escorrer","uma ginjinha em copo de chocolate","um prato de tremoços","um puzzle com uma peça em falta",
+"um peixe-dourado chamado Fernando","o hamster da turma, que fugiu","um homem-estátua com comichão","um ninja reformado",
+"uma avó com cinto negro de karaté","um pastor com 400 ovelhas no meio da estrada","um pombo-correio com GPS","o fantasma do Mosteiro dos Jerónimos",
+"um rei D. Sebastião que voltou e quer o trono","uma tourada de patos","o anão da Branca de Neve que ninguém conhece","um cavalo que fuma",
+"um bacalhau que fala","três tias e um secador de cabelo","a lancheira do pai, com sardinhas","um rissol de camarão sem camarão",
+"um penteado dos anos 80","um bigode que ganhou vida","sapatos com luzes","um pijama de corpo inteiro com orelhas",
+"uma vuvuzela às 7 da manhã","o canal do tempo em loop","uma sesta de quatro horas","a avó a ganhar a todos à sueca",
+"o primo que vive na cave","um robô que só sabe dizer «pois»","um caracol na alface","o cheiro a fritos da cozinha da vizinha",
+"uma galinha que põe ovos de chocolate","um furão com óculos","uma alheira gigante insuflável","um peru de Natal fugido",
+"um bombeiro voluntário vestido de Pai Natal","a sirene dos bombeiros ao meio-dia","o padre da freguesia de mota","um dentista com as mãos a tremer",
+"o barbeiro que só sabe um corte","uma carrinha de pão a tocar música","o fiscal do autocarro","um pastel de Tentúgal que se desfez todo"
+]},
+adu:{p:[
+"Na despedida de solteiro, o noivo acabou a noite com ____.",
+"O que é que a avó deixou no testamento que ninguém estava à espera?",
+"O que é que encontraram dentro do caixão no velório do tio?",
+"O médico olhou para as minhas análises e disse: «Isto é ____».",
+"Ao fim de 20 anos de casamento, o que nos mantém juntos é ____.",
+"O que é que não se deve dizer durante o sexo?",
+"Inventei uma posição sexual nova e chamei-lhe «____».",
+"O meu último encontro da aplicação acabou com ____.",
+"O que é que está na pasta escondida do computador do meu pai?",
+"Depois dos 40, o meu corpo só me dá ____.",
+"O que é que se passa à noite no lar de idosos?",
+"No funeral, toda a gente se lembrava do falecido por causa de ____.",
+"Entrei nas urgências às 4 da manhã com ____ num sítio onde não devia estar.",
+"O que é que me faz cagar mais depressa do que um café?",
+"O meu terapeuta desistiu de mim no dia em que lhe falei de ____.",
+"Os meus pais entraram no quarto sem bater e apanharam-me com ____.",
+"A coisa mais nojenta que já fiz por 20 euros: ____.",
+"Na minha campa vai estar escrito: «Morreu como viveu: com ____».",
+"O que é que o meu gato vai fazer ao meu corpo se eu morrer sozinho em casa?",
+"O melhor afrodisíaco português: ____.",
+"O que é que a minha ex anda a contar de mim às amigas?",
+"Bati no fundo no dia em que acordei com ____.",
+"A minha sogra só se cala com ____.",
+"O que é que ninguém te conta sobre ter filhos?",
+"Lançaram uma aplicação de encontros só para pessoas que gostam de ____.",
+"O que é que estava no vídeo que o tio mandou por engano para o grupo da família?",
+"Na primeira noite, tirou a roupa e lá estava ____.",
+"O que é que eu quero que façam às minhas cinzas?",
+"O meu plano para a reforma: ____.",
+"O que é que o médico encontrou na colonoscopia?",
+"O discurso do padrinho acabou com o casamento quando falou de ____.",
+"O pior sítio para ter uma diarreia: ____.",
+"O que é que a vizinha grita todas as noites às 23h?",
+"O que é que dói mais do que um pontapé nos tomates?",
+"Para esquecer a ex, enfiei-me em ____.",
+"O que é que me vai matar primeiro?",
+"O que é que a minha mãe encontrou na minha mesinha de cabeceira?",
+"A minha autobiografia vai chamar-se «____ e outras desgraças».",
+"Fui para o inferno. O meu castigo é ____ para toda a eternidade.",
+"Relatório da autópsia. Causa da morte: ____.",
+"O que é que cheira a arrependimento?",
+"Os meus amigos fizeram-me uma intervenção por causa de ____.",
+"Depois de três shots de absinto, acabei a noite com ____.",
+"O casamento do meu primo durou três meses por causa de ____.",
+"O que é que se ouve no quarto ao lado, no hotel em Benidorm?",
+"A minha vida sexual resume-se a ____.",
+"O que é que o canalizador encontrou entupido no cano?",
+"A viúva estava inconsolável até aparecer ____.",
+"O que é que ninguém deve ver com uma luz ultravioleta?",
+"Ganhei um prémio Darwin por causa de ____.",
+"Ninguém pode saber que eu gosto secretamente de ____.",
+"A minha avó, antes de morrer, só pediu ____."
+],r:[
+"as cinzas do avô confundidas com canela no arroz-doce","um velório com bar aberto","o padre a chorar no funeral errado","um caixão em saldos",
+"a herança toda deixada ao gato","um testamento escrito num guardanapo da tasca","um enfarte a meio do sexo","um enfarte na fila do pão",
+"uma colonoscopia sem anestesia","uma hemorroide do tamanho de uma uva","uma diarreia num elevador cheio","cagar-me nas calças no primeiro encontro",
+"um peido molhado","uma mancha suspeita nas cuecas","um cagalhão que se recusa a descer","o desentupidor da casa de banho",
+"a última folha de papel higiénico","um vibrador a apitar no raio X do aeroporto","um vibrador com as pilhas a acabar","a gaveta dos brinquedos da sogra",
+"um consolo de 30 centímetros","algemas peludas cor-de-rosa","um chicote de cabedal comprado em Badajoz","uma sex shop em Fátima",
+"um preservativo com sabor a bacalhau","um preservativo que rebentou","um teste de gravidez positivo","um filho com a cara do carteiro",
+"uma pila do tamanho de um tremoço","tomates peludos","mamas de silicone fora do prazo","pelos púbicos no sabonete",
+"acabar antes de começar","uma ereção na missa","o Viagra do avô","o avô com Viagra a mais",
+"sexo de 30 segundos e um pedido de desculpas","sexo de reconciliação no carro funerário","uma orgia de reformados no lar","swing com os vizinhos do 2.º andar",
+"um ménage à trois com o canalizador","o rego do canalizador","um fetiche por pés","chupar um dedo do pé com joanete",
+"uma lap dance de um senhor de 70 anos","um stripper com barriga de cerveja","um vídeo porno no grupo da família","o histórico de sites porno",
+"um nude com o dedo à frente da câmara","uma fotografia da pila que ninguém pediu","sexting com o corretor automático ligado","um gemido falso",
+"fingir orgasmos há 15 anos","dizer o nome da ex a meio do sexo","um ataque de soluços a meio do sexo","areia em sítios onde o sol não chega",
+"chatos apanhados no festival","uma doença venérea de lembrança de Albufeira","uma ida às urgências com um pepino","uma courgette com grandes ambições",
+"um vibrador a tocar a meio da reunião de Zoom","o chefe nu na videochamada","vomitar para dentro da carteira","vomitar nos sapatos do noivo",
+"vomitar pelo nariz","um vómito com pedaços de sardinha","mijar para a piscina dos miúdos","acordar numa poça que não é água",
+"acordar em Espanha sem calças","acordar abraçado a uma sanita","acordar ao lado de um desconhecido muito peludo","uma tatuagem no rabo com o nome errado",
+"um piercing infetado num sítio íntimo","a ressaca mais longa da história","três dias sem tomar banho no festival","vinho de pacote às 10 da manhã",
+"bagaço caseiro a 70 graus","beber a água das azeitonas","a cirrose do tio Zé","o fígado do avô, que já é de pedra",
+"um rim vendido na internet","vender a avó na internet","o lar mais barato do distrito","deixar o avô esquecido na bomba de gasolina",
+"uma morte lenta e cara","morrer sozinho e ser comido pelo gato","um gato que só está à espera que eu morra","a crise existencial das 3 da manhã",
+"a certeza de que vou morrer sozinho","um divórcio com guarda partilhada do cão","a ex grávida do meu melhor amigo","a minha mãe numa aplicação de encontros",
+"o meu pai num clube de swing","a avó com um namorado de 25 anos","um cota de rabo de cavalo e descapotável","a menopausa da sogra",
+"um toque retal com dedos grossos","o dedo do urologista","pelos nas costas que davam para um tapete","depilar o rabo com fita-cola",
+"um cheiro a peixe que ninguém sabe de onde vem","chulé de bota de biqueira de aço","o bafo da manhã seguinte","o vizinho que anda nu com a janela aberta",
+"uma câmara escondida no alojamento local","um motel pago à hora","o recibo do motel no bolso das calças","os lençóis do motel vistos com luz ultravioleta",
+"uma cama de água furada","o meu ex e a sua pila torta","uma pança que já não me deixa ver lá para baixo","a minha líbido em coma induzido",
+"sexo uma vez por ano, no Natal","um casamento sem sexo desde 2014","uma muralha de almofadas a meio da cama","o carteiro que passa duas vezes por dia",
+"um teste de ADN que estragou o Natal","uma batata frita com forma de pila","uma beringela suspeita no carrinho de compras","o emoji do pêssego enviado à avó",
+"uma selfie no funeral","um ataque de riso no funeral","um peido no minuto de silêncio","o discurso fúnebre feito por um bêbado",
+"o caixão a cair pelas escadas da igreja","o morto a mexer-se no velório","a viúva a pedir o número ao coveiro","um corpo no porta-bagagens",
+"a avó embalsamada no sofá da sala","o fantasma do avô a ver-me no banho","reencarnar num pombo de Lisboa","vender a alma por uma bifana",
+"uma morte estúpida a tirar uma selfie","uma ressonância magnética com um piercing esquecido","a vasectomia que não resultou","o terceiro filho, que foi um acidente",
+"uma fralda de adulto","fraldas para mim, daqui a uns anos","a dentadura do avô no meu sumo","a tia que cheira a naftalina e a morte",
+"o cão a montar a perna do padre","o cão a lamber-se à frente das visitas","um cão com gases no carro","o meu chefe a chorar na casa de banho",
+"mandar o chefe à merda","um email ao chefe a dizer o que realmente penso","trabalhar até morrer","um T1 com bolor e vista para a autoestrada",
+"as Finanças a penhorar o meu rim","um crédito pessoal para pagar o funeral","a minha mulher a aumentar o meu seguro de vida","um chá esquisito que a sogra me fez",
+"a pulseira eletrónica do tio","uma rusga da polícia na despedida de solteiro","as luzes da discoteca a acenderem às 7 da manhã","um kebab às 5 da manhã",
+"a última imperial, que me arruinou a vida","o meu fígado a pedir socorro","a dignidade que deixei no Bairro Alto","chorar no banco de trás do táxi",
+"uma palmada no rabo do sogro","cuecas com um buraco estratégico","o fio dental do tio na praia","fazer topless na praia da família",
+"o efeito da água do Atlântico lá em baixo","um penso higiénico colado ao sapato","um soutien pendurado no candeeiro","o sovaco do senhor do metro em agosto",
+"um piolho que sobreviveu a três tratamentos","uma tatuagem de golfinho no fundo das costas","o Jorge, amante da minha mulher","o colchão do motel, que já viu tudo",
+"uma noite de paixão no carro do pai","a quinta jarra de sangria","um after às 9 da manhã num sítio que não sei onde é","a casa de banho do festival ao terceiro dia",
+"um strip de meias brancas","um chupão no pescoço no dia do casamento","a ex que aparece no meu funeral","uma cueca da sorte com 12 anos"
+]}
+};
+
+/* ================= CARTAS CLÁSSICAS (tradução) =================
+   Traduzidas e adaptadas para português de Portugal a partir do conjunto base do
+   Cards Against Humanity (cardsagainsthumanity.com), distribuído com a licença
+   Creative Commons BY-NC-SA. Esta adaptação segue a mesma licença: uso não comercial,
+   com atribuição. Seleção: ficaram de fora as cartas sobre raças, religiões, orientação
+   sexual, deficiência, crianças em contexto sexual ou violento, violência sexual,
+   suicídio, genocídios e pessoas reais; referências locais foram adaptadas. */
+const CARDS_CAH={p:[
+"____ é um sinal claro do declínio da humanidade.",
+"____ só acontece nos meus piores pesadelos.",
+"____: bom até à última gota.",
+"____: depois de começares, já não consegues parar!",
+"____? Pois, há porno sobre isso.",
+"____? Há uma aplicação para isso.",
+"____? Hum, não.",
+"____: brilhante em teoria, uma confusão na prática.",
+"____: aposto que não consegues comer só um!",
+"____. Mais cinco, mano.",
+"____. É uma armadilha!",
+"____. Isso foi tão metal.",
+"____. É assim que eu quero morrer.",
+"____: a melhor forma de apimentar a vida sexual.",
+"★☆☆☆☆ NÃO VENHAM CÁ! Encontrei ____ no meu bitoque.",
+"50% dos casamentos acabam em ____.",
+"Um estudo recente mostra que os estudantes universitários fazem 50% menos sexo depois de expostos a ____.",
+"Um jantar romântico à luz das velas não fica completo sem ____.",
+"Uma boa entrevista de emprego começa com um aperto de mão firme e acaba com ____.",
+"Depois de quatro discos de platina, está na hora de voltar às raízes, ao que me inspirou a fazer música: ____.",
+"As novas regras de segurança dos aeroportos proíbem ____ nos aviões.",
+"A medicina alternativa descobriu agora os poderes curativos de ____.",
+
+"Antropólogos descobriram uma tribo perdida que venera ____.",
+"Como resolução de Ano Novo, prometo largar ____.",
+
+"O novo reality show junta oito famosos acabados a viver com ____.",
+"Antes de o matar, Sr. Bond, tenho de lhe mostrar ____.",
+"Olhem para mim! Chamo a este passo de dança «____».",
+"Esta temporada no Teatro Nacional, o clássico de Beckett: «À Espera de ____».",
+"Em breve no Coliseu: ____, o Musical.",
+"Este Natal nos cinemas: «Star Wars: A Ascensão de ____».",
+"Credo! Nunca vi ____ assim! Vamos chegar mais perto.",
+"Pai, porque é que a mãe está a chorar?",
+"Querida Tia Conselheira, estou com problemas com ____ e preciso do seu conselho.",
+"Doutor, foi longe demais! O corpo humano não foi feito para aguentar tanto ____!",
+"Pá, não vás àquela casa de banho. Está lá ____.",
+"Depois de um escândalo, o hipermercado deixou de vender ____.",
+"Durante a infância, Salvador Dalí pintou centenas de quadros de ____.",
+"Durante o sexo, gosto de pensar em ____.",
+"Finalmente! Um serviço que entrega ____ à tua porta.",
+"Na minha vez, gasto quatro moedas de ouro e ponho os meus três trabalhadores em ____.",
+"Dica do dia: quando o teu homem te pedir sexo oral, surpreende-o antes com ____.",
+"Os historiadores do futuro vão concordar que ____ marcou o início do declínio de Portugal.",
+"Aqui está a igreja, aqui está a torre, abre-se a porta e lá dentro está ____.",
+"Olá, internet! Eu sou ____. Perguntem-me o que quiserem.",
+"Como é que eu mantenho o meu estado civil?",
+"Como é que perdi a virgindade?",
+"Não sei com que armas se vai lutar na Terceira Guerra Mundial, mas a Quarta vai ser com ____.",
+"Bebo para esquecer ____.",
+"Vou-me safando com uma ajudinha de ____.",
+"Aprendi da pior maneira que não se consola um amigo de luto com ____.",
+"Vejo, vejo... ____.",
+"Quem me dera não ter perdido o manual de instruções de ____.",
+"Esta semana estou a fazer uma dieta detox: só sumo de couve e ____.",
+"Não sou médico, mas tenho quase a certeza de que o que tens se chama «____».",
+
+"Não sou como vocês. Sou demasiado rico e ocupado para ____.",
+"Se não podes estar com quem amas, ama ____.",
+"Daqui a mil anos, quando o dinheiro em papel for só uma memória, ____ vai ser a nossa moeda.",
+"Na Austrália, ____ é duas vezes maior e duas vezes mais mortal.",
+"Na prisão, diz-se que dá para trocar 200 cigarros por ____.",
+"No sétimo círculo do Inferno, os pecadores têm de aguentar ____ para toda a eternidade.",
+
+"Apresentamos o Futebol Radical! É como o futebol, mas com ____!",
+"Só uma vez, gostava de te ouvir dizer: «Obrigado, mãe. Obrigado por ____.»",
+"Vejam este vídeo revoltante e partilhem! Basta de ____!",
+"Malta, eu não preciso de drogas para ficar pedrado. Fico pedrado com ____.",
+"A vida era difícil para os homens das cavernas antes de ____.",
+"A Liga proibiu ____ por dar aos jogadores uma vantagem injusta.",
+"Talvez ela tenha nascido assim. Talvez seja ____.",
+"Os historiadores militares lembram Alexandre, o Grande, pelo uso brilhante de ____ contra os persas.",
+"O dinheiro não compra amor, mas compra ____.",
+"A minha mãe fica tão feliz quando a visito, mas eu só lá vou por causa de ____.",
+"O meu plano para dominar o mundo começa com ____.",
+"O próximo livro da saga: «Harry Potter e a Câmara de ____».",
+"A seguir na televisão: o Campeonato do Mundo de ____.",
+"A seguir: «Pesadelo na Cozinha de ____».",
+"Ninguém espera a Inquisição Espanhola! As nossas armas principais são o medo, a surpresa e ____.",
+"Agora no Museu de História Natural: uma exposição interativa sobre ____.",
+"Na quinta do tio Manel há ____. I-A-I-A-Ó.",
+"Só tu podes impedir ____.",
+"A ciência nunca vai conseguir explicar ____.",
+"Estudos mostram que os ratos de laboratório saem dos labirintos 50% mais depressa depois de expostos a ____.",
+"Graças a Deus pelo álcool e por ____.",
+"O encontro às cegas estava a correr pessimamente até descobrirmos que os dois gostávamos de ____.",
+
+"Os Quatro Cavaleiros do Apocalipse: a Peste, a Guerra, a Fome e ____.",
+"As colinas ganham vida com o som de ____.",
+
+"O segredo de um casamento duradouro é comunicação, comunicação e ____.",
+"A CP pede desculpa pelo atraso dos comboios devido a ____.",
+"O tema do Festival da Canção do próximo ano é «Nós somos ____».",
+"É assim que o mundo acaba. Não com uma explosão, mas com ____.",
+"Fala o comandante. Por favor, preparem-se para ____.",
+"A notícia do dia: o que não sabe sobre ____ pode matá-lo.",
+"Pessoal, eu sei que a ideia foi minha, mas estou com sérias dúvidas sobre ____.",
+"A guerra! Para que é que serve?",
+"Se me dão licença, meus senhores, tenho um encontro com ____.",
+"Do que é que vou abdicar na Quaresma?",
+"O que é que os meus pais me andam a esconder?",
+"O que é que travou a orgia a fundo?",
+"O que é que eu trouxe de Amesterdão?",
+"A que é que cheiram os velhos?",
+"O que é que acabou com a minha última relação?",
+"O que é que melhora com a idade?",
+"O que é que me dá gases incontroláveis?",
+"O que é que tem dificultado a vida na colónia de nudistas?",
+"Qual é o prazer secreto do Batman?",
+"O que é que deixou esta mancha no meu sofá?",
+"O que é que faz a vida valer a pena?",
+"O que é que nunca falha para animar uma festa?",
+"O que é que te garante sempre uma queca?",
+"O que é que eu levaria numa viagem ao passado para convencer toda a gente de que sou um feiticeiro poderoso?",
+"O que é que a avó acharia perturbador, mas estranhamente encantador?",
+"Qual é o melhor amigo de uma mulher?",
+"Qual é a minha alternativa às drogas?",
+"Qual é o meu poder secreto?",
+"Que cheiro é este?",
+"Que barulho é este?",
+"O que é que está mais encrostado?",
+"Qual é a coisa mais emo de todas?",
+"Qual é a nova dieta da moda?",
+"Qual é a próxima dupla de super-herói e ajudante?",
+"O que é que há em quantidade no Céu?",
+"Quando tudo falha, posso sempre masturbar-me a pensar em ____.",
+"Quando for bilionário, vou erguer uma estátua de 20 metros em honra de ____.",
+"Quando for primeiro-ministro, vou criar o Ministério de ____.",
+"Quando fiz cocó, o que é que me saiu do rabo?",
+"Quando estou a cagar, gosto de pensar em ____.",
+"Como o Faraó não cedeu, Moisés lançou uma praga de ____.",
+"Quem roubou as bolachas do frasco?",
+"Porque é que estou peganhento?",
+"Porque é que não consigo dormir à noite?",
+"Porque é que me dói o corpo todo?",
+"Perdeste a autorização de segurança por causa do teu passado vergonhoso envolvendo ____.",
+"Charlie e a Fábrica de ____.",
+"Amar-te é fácil porque és ____.",
+"Caros portugueses: antes do fim da década, vamos pôr ____ na Lua!",
+"O novo carro familiar. Com potência e espaço para levar ____ para todo o lado.",
+"Afinal, o Homem-____ não era o herói de que precisávamos nem o que queríamos."
+],r:[
+"(estou a fazer exercícios de Kegel neste momento)","50 mg de antidepressivos todos os dias","50 000 volts diretos aos mamilos","um saco de feijões mágicos",
+"um pequeno-almoço equilibrado","uma bola de cera dos ouvidos, sémen e unhas dos pés","muito barulho por nada","um pássaro que caga cagalhões humanos",
+"uma chapada de mão aberta","um cu branqueado","uma tigela de maionese e dentes humanos","um tumor cerebral",
+"um balde de cabeças de peixe","uma carícia na parte de dentro da coxa","um gato com... mãos","um banco de palmadas em madeira de cerejeira",
+"coçar o rabo às escondidas","uma geleira cheia de órgãos","um coala fofinho, mas com clamídia","um raio da morte",
+"uma porra de uma ligação à internet decente","um preservativo com defeito","uma festa de anos dececionante","um falcão com um boné na cabeça",
+"um peido vaginal","um peido tão forte que acorda os gigantes de um sono de mil anos","um feto","uma vagina de bolso",
+"uma boca suja","uma porrada de amêndoas","um antílope com gases","uma boa cheiradela",
+"um gorila forte e saudável","um fio de sémen que apanha a luz enquanto desenha um arco no ar da manhã","um galão de soja sem açúcar com caramelo e gelo","uma horda de vikings",
+"uma desgraça ambulante","uma vida inteira de tristeza","um tornado de fogo literal",
+"uma plateia ao vivo","um nível de vida miserável","uma vaca louca","um homem à beira do orgasmo",
+"um ritual de acasalamento","um micropénis","um porquinho minúsculo de gabardina e botinhas","um homem de meia-idade de patins",
+"um mimo a ter um AVC","um minuto de silêncio","um macaco a fumar um charuto","um leão do jardim zoológico deprimido",
+"uma mulher muito mais nova","um crime hediondo","um Tamagotchi abandonado","uma bica bem tirada",
+"um polvo pangénero que percorre o cosmos em busca de amor","um ananás com clamídia","uma pirâmide de cabeças cortadas","um chapéu mesmo fixe",
+"um deus triste com os mamilos cobertos de merda","uma punheta triste","uma salada para homens feita de metal","uma surpresa salgada",
+"uma festa da salsicha","um solo de saxofone","um tubarão!","um vombate doente",
+"um tampão ligeiramente usado","uma tartaruga a morder a ponta da pila","um pentelho perdido",
+"uma pistola de água cheia de xixi de gato","uma detonação termonuclear","mil guerreiros escoceses a levantar o kilt ao mesmo tempo","um paradoxo temporal",
+"um cavalo minúsculo","uma teia de mentiras","uma tonelada de manteiga","um moinho cheio de cadáveres",
+"um burrito picante ao pequeno-almoço","abstinência","aceitar as coisas como elas são","escuta ativa",
+"importar-me a sério com alguma coisa","um coma alcoólico","alcoolismo",
+"todos os meus pretendentes","todos os gajos com quem já fui para a cama","marisco à discrição por 4,99 €","um rabo do tamanho de duas bolas de praia",
+"uma plástica às mamas assimétrica","uma diarreia sem fim","uma ereção que dura mais de quatro horas","um homem mau com roupa má",
+"um polícia honesto sem nada a perder","uma lobotomia com um picador de gelo","um polvo a fazer sete punhetas e a fumar um cigarro","um complexo de Édipo",
+"um velhote que está quase a morrer","uma senhora mais velha que sabe bem o que fazer com uma pila","um chupa-chupa gigante","uma cara feia",
+"uma irritação na pele nada surpreendente","uma gravidez indesejada","um uppercut","bolas anais",
+"avisar que me estou a vir","mais um raio de um filme de vampiros","pedir desculpa","calças de cabedal sem rabo",
+"atitude","autocanibalismo","desodorizante barato de adolescente","tomates. Grandes tomates. Tomates mesmo grandes",
+"bananas","ganhar o ordenado mínimo","BATMAN!","amputações no campo de batalha",
+"transformar-me num mirtilo","abelhas?","ser um adulto ocupado com muitas coisas importantes para fazer",
+"ser um dinossauro","ser uma besta horrenda que ninguém consegue amar","ser a porra de um feiticeiro","conseguir falar com elefantes",
+"ser fabuloso","ser caçado como uma raposa","estar a arder","ser rico",
+"tartarugas de ataque geneticamente modificadas com bafo de ácido","ouro ao pescoço","sangue, suor e lágrimas","macacos do nariz",
+"Bond. James Bond","armadilhar a casa para apanhar os ladrões","fazer uma trança com três pilas","desatar a cantar e a dançar",
+"mandar bitaites a torto e a direito","escolher o copo de escova de dentes certo para o meu estilo de vida","atum em lata com golfinho extra","sugerir um ménage à trois como quem não quer a coisa",
+"catapultas","centauros","motosserras no lugar das mãos","carisma",
+"um anal atrevido","armas químicas","cavalheirismo",
+"bocados de um mochileiro morto","muita lata","uma confiança completamente injustificada","esconder uma ereção",
+"sexo consentido","consultores","um cancro de cara contagioso","apalpões",
+"reabilitação por ordem do tribunal","cobrir-me de queijo ralado e piri-piri porque sou uma pizza","dívidas que me esmagam","migalhas por toda a porcaria da carpete",
+"metanfetamina","miminhos no sofá","funcionários do apoio ao cliente","implantes cibernéticos",
+"os tomates engraçados do pai","problemas com o pai","o cartão de crédito do papá","forças sombrias e misteriosas que não controlamos",
+"o Darth Vader","pássaros mortos por todo o lado","pais mortos","barreiras de látex para sexo oral",
+"recusar sexo para jogar consola","destruir as provas","dedos que parecem pilas","fotografias de pilas",
+"fraldas sujas","sexo no carro com plateia","fazê-lo por trás","cometer crimes",
+"fazer a coisa certa","arcos-íris duplos","imbecis agarrados ao telemóvel","beber sozinho",
+"beber da sanita e comer lixo","deixar cair um candelabro em cima dos inimigos e subir pela corda","druidas","rodas de tambores",
+"vómitos em seco","morrer e milagrosamente voltar à vida","morrer de disenteria","morrer",
+"música pimba a todo o volume","comer um ovo cozido do cu do meu marido","comer o último bisonte do mundo","comer demasiado de um candeeiro",
+"ecstasy","cuecas comestíveis","atirar ovos a um deputado","eletricidade",
+"células estaminais embrionárias","sair do mar e destruir Tóquio","emoções","disfunção erétil",
+"mostrar quem manda","espetacularidade eterna","exatamente o que estavas à espera","a Excalibur",
+"trocar cumprimentos de circunstância","existencialistas","um exorcismo","esperar um arroto e vomitar para o chão",
+"explicar como funcionam as vaginas","explosões","calças justíssimas","o Facebook",
+"desvanecer no nada","andar a empatar","mamas falsas","fome",
+"mandar um peido e ir embora","o próprio medo","cocós a arder",
+"pintar com os dedos","uma dedada","cheias repentinas","preservativos com sabor",
+"bactérias carnívoras","aves que não voam","discos voadores","cobras sexuais voadoras",
+"prepúcio","bebidas energéticas com álcool","masculinidade frágil","amostras grátis",
+"fricção","fogo amigo","amigos que comem os aperitivos todos","amizades coloridas",
+"saltitar alegremente","fazer sexo com a apresentadora do tempo em direto","nudez frontal total","rimas fresquinhas",
+"o Gandalf","gansos","supersoldados geneticamente modificados","piercings nos genitais",
+"uma ligação humana genuína","turistas alemães no Algarve","ser esmagado por uma máquina de vending","arranjar droga na rua e metê-la no corpo",
+"embebedar-me com elixir bucal","ter um acidente de carro bem feio","casar, ter uns filhos, comprar umas coisas, reformar-me no Algarve e morrer","engravidar outra vez",
+"ficar mesmo pedrado","ficar tão irritado que me dá uma tesão","fantasmas","dar 110%",
+"dar à luz o Anticristo","combates de gladiadores","o aquecimento global","cabras a comer latas",
+"duendes","passar um dia inteiro sem me masturbar","andar a cheirar os sovacos das pessoas","chuva dourada",
+"a avó","a careca do avô","profanar sepulturas","ganhar tomates",
+"gajos que não ligam","meio quilo de heroína pura","preliminares feitos à pressa","erotismo do Harry Potter",
+"ter uma pila","ter cus no lugar dos olhos","ter grandes sonhos e nenhuma forma realista de os concretizar","fazer sexo pela primeira vez",
+"fazer sexo pouco depois de dar à luz","sexo desleixado com o cão a ver","heroína",
+"hipsters","esperança","injeções de hormonas","acidentes horríveis na depilação a laser",
+"carne de cavalo","cuidados paliativos","queijo quente","pessoas bonitas",
+"como é incrível estar de cogumelos","até onde consigo enfiar a minha pila no meu próprio rabo","a erva que dá para comprar com 20 euros","snifar tinta de spray",
+"bíceps enormes","«acidentes» de caça","atirar-me por uma colina abaixo atrás de um queijo","magoar quem me é mais próximo",
+"«sou amigo do teu pai no Facebook»","impotência","cantar à tirolesa em momentos impróprios","enfiar um frasco de compota no cu",
+"sonhos insuportavelmente vívidos","síndrome do intestino irritável","paleio sem nexo","empregos",
+"julgar toda a gente","bolas de Kegel","dar um beijo na testa da avó e desligar-lhe a máquina","minas terrestres",
+"pôr um ovo","deixar uma mensagem de voz constrangedora","lepra","desleixar-me",
+"subir de nível","lamber coisas para dizer que são minhas","ouvir os problemas dela sem os tentar resolver","comer merda, literalmente",
+"viver num caixote do lixo","tétano","procurar o esconderijo de pornografia do pai","língua solta",
+"fantasias com lenhadores","a doença das vacas loucas","ímanes","fazer beicinho",
+"pôr as pilas a dar um beijinho","carne de homem","um homem a explicar-me o que eu já sei","muitos morcegos",
+"masturbação","génios da matemática","tempo para mim","gente má",
+"memes","homens a falar dos seus sentimentos de forma emocionalmente saudável","homens","milhões de sapos venenosos",
+"acidentes nas minas","a mãe","ambiguidade moral","mais pila de elefante do que estava à espera",
+"herpes na boca","destruição mútua assegurada","os meus tomates na tua cara","o cabrão do meu marido, que me anda a trair",
+"a minha coleção de brinquedos sexuais de alta tecnologia","a minha ex-mulher","o meu pai, que morreu quando eu tinha sete anos","o meu primeiro beijo",
+"os meus genitais","o meu soutien bom","os meus demónios interiores","a minha pequena tesão",
+"a minha catana","o meu amigo Zé","o meu estado civil","a minha vida sexual",
+"a minha alma","o meu motorista de TVDE, o Pavel","a minha cara feia e a minha má personalidade","nachos para a mesa",
+"a seleção natural","música New Age","mamilos à mostra sem querer","poluções noturnas",
+"não pôr a mão à frente da boca quando espirro","não retribuir o sexo oral","não usar calças",
+"nada além de areia","nada. Absolutamente nada","nunchakus","a permanência do objeto",
+"cheiro a velho","música de fundo sinistra","uma mama de fora","um bilião de euros",
+"polegares oponíveis","o Optimus Prime a fazer sexo com uma máquina de lavar loiça","compensação exagerada","sexo de pandas",
+"abrir o Mar Vermelho","desmancha-prazeres","expulsar uma pedra no rim","passivo-agressividade",
+"post-its passivo-agressivos","fazer um bocadinho de xixi","bafo a pila","inveja do pénis",
+"pessoas que cheiram as próprias meias","preliminares por obrigação","cara de orgasmo permanente","fotografias de mamas",
+"andar a fazer palhaçadas","fazer cocó de um lado para o outro. Para sempre","fazer cocó num portátil e fechá-lo","fazer cocó na sopa",
+"más escolhas de vida","má higiene pessoal","atores porno","pobreza",
+"alergias fortíssimas","coxas poderosas","analgésicos receitados","fingir que me importo",
+"pronunciar o nome das aldeias de Trás-os-Montes","ovos de pterodáctilo","ridicularização pública","preservativos com sabor a abóbora e canela",
+"dar um murro na cara de um deputado","cachorrinhos!","pôr as coisas no sítio onde elas vão","filas",
+"ataques de velociraptores","oferecer prendas que me deram","retângulos","reabilitação",
+"repressão","os ricos","partir em direção ao pôr do sol","copiar os Beatles",
+"abrir o peito a um homem e arrancar-lhe o coração ainda a bater","a subida do nível do mar, tal como os cientistas previram","assaltar um banco de esperma","o RoboCop",
+"correr nu pelos aspersores da rega","ficar sem sémen","o Pai Natal","solos de saxofone",
+"dizer «amo-te»","ciência","cócegas no escroto","esfregar debaixo das pregas",
+"sedução","ver a avó nua","ver o meu pai chorar","ver o que acontece quando se fecha pessoas numa sala com gaivotas esfomeadas",
+"ferver de ressentimento em silêncio","roupa que se dobra sozinha","ódio a mim próprio","servidão",
+"sete mortos e três em estado crítico","sexting","humilhação sexual","xixi sexual",
+"tensão sexual","lutas de almofadas sensuais","metamorfos","partilhar seringas",
+"objetos brilhantes","cagar uma salsicha perfeita","cagar uma cara aos gritos","ir a uma orgia só pela comida",
+"calar-me para ver o jogo","mama de lado","silêncio","beber manteiga de pipocas artificial",
+"sentares-te na minha cara","o Skeletor","esmegma",
+"cheirar e beijar os meus pés","snifar cola","pingos de ranho congelados","chorar para cima de um jantar congelado",
+"sexo de missionário, meiguinho e com beijinhos","borrar-me todo","resolver problemas com violência","a porra de um bocadinho de paz e sossego",
+"base, rímel e um toque de blush","um gajo qualquer","uma espécie de homem-pássaro",
+"«este conteúdo não está disponível no seu país»","sopa demasiado quente","esparguete? Outra vez?","abdominais espetaculares",
+"gastar o dinheiro que os meus pais ganharam com tanto esforço","cachalotes","combustão humana espontânea","olhar para um quadro e fazer «hmmmmm…»",
+"ainda ser virgem","síndrome de Estocolmo","stormtroopers","personagens femininas fortes",
+"duplos de cinema","a Doença da Explosão Súbita de Cocó","sol e arco-íris",
+"sexo surpresa!","doce, doce vingança","soluções sinérgicas de gestão","desdizer o que disse",
+"parar um minuto para perceber o que Shakespeare quer dizer nesta cena","tirar a camisola","molas de brinquedo todas emaranhadas","sapatear como se não houvesse amanhã",
+"ensinar um robô a amar","atividades de team building","rasgar aquele rabo como papel de embrulho na manhã de Natal","contar uma história de merda que não vai dar a lado nenhum",
+"porno de tentáculos","torção testicular","aquela coisa que dá choques nos abdominais","a chegada da pizza",
+"a arte da sedução","o Big Bang","a porra do buraco gigante na camada de ozono",
+"a Peste Negra","as ereções dos velhos","o matagal lá em baixo","o clítoris",
+"o sexo louco aos estalos que os teus pais estão a ter neste preciso momento","a Dança da Fada do Açúcar","o próprio Diabo","o clube de teatro",
+"a economia","o fim dos tempos","o orgasmo feminino","a flauta",
+"a loucura dos homens","o fruto proibido","a Força","o teto de vidro",
+"a Grande Depressão","a Grande Guerra dos Emus","os soluços","a Centopeia Humana: edição infinita",
+"a ilusão de escolha numa sociedade capitalista em fase terminal","a inevitável morte térmica do universo","a mão invisível","a terra do chocolate",
+"a luz de mil milhões de sóis","a magia do teatro ao vivo","o leiteiro","o milagre do parto",
+"o passado","o patriarcado","o solo de flauta do «My Heart Will Go On»","os pequenos problemas da nobreza rural",
+"a vida de pirata","a placenta","as ameixas secas que guardei para ti nos sovacos","os gritos... os gritos terríveis",
+"o períneo; a ponte de carne da alegria","o colapso total do sistema financeiro mundial","o verdadeiro espírito do Natal","a violação dos nossos direitos humanos mais básicos",
+"a palavra-passe do Wi-Fi","terapia","a terceira base","esta resposta é pós-moderna",
+"aquelas vezes em que fica areia na vagina","três pilas ao mesmo tempo","atirar uma virgem para dentro de um vulcão","atirar uvas a um homem até ele perder o contacto com a realidade",
+"pé de trincheira","ficar completamente pedrado","vinte toneladas de merda de morcego","estupidez insondável",
+"cuecas usadas","homicídio por atropelamento","Viagra","justiça pelas próprias mãos",
+"mãos de jazz vigorosas","vikings","vomitar para dentro da bolsa de um canguru","vomitar marisco e sangrar pelo rabo",
+"esperar até ao casamento","acordar meio nu no parque de estacionamento de uma área de serviço","usar as cuecas do avesso para não ter de lavar a roupa","sonhos molhados",
+"o que aquela boca faz","o que resta da Grande Barreira de Coral","quando dás um peido e sai um bocadinho","fazer birra até conseguir o que quero",
+"pôr aquilo cá para fora","seja quem for o primeiro-ministro agora","piscar o olho a velhinhos","limpar-lhe o rabo",
+"música de feiticeiros","mulheres de anúncios de iogurte","cuecas de senhora","perguntar se dá para levar o molho para casa",
+"palavras","a paz mundial","a tua mãe","o teu irmão esquisito"
+]};
+
+/* ================= CONVERSA DE TASCA =================
+   Em cada ronda há um juiz (roda pela mesa) e uma frase com um espaço em branco.
+   Os outros escolhem da mão a carta que fica mais engraçada na frase; o juiz vê-as sem saber de quem são
+   e escolhe a melhor. Quem a jogou ganha 1 ponto. Ganha quem chegar primeiro aos pontos combinados.
+   Quem criou a sala corre o motor; cada um só recebe a sua mão. */
+const HAND=7,T_PLAY=60,T_JUDGE=45,T_SHOW=6500,BLANKS=8,MAXLEN=60;
+const TARGETS=[5,7,10];
+const cleanAns=s=>String(s||"").replace(/[\u0000-\u001f<>]/g,"").replace(/\s+/g," ").trim().slice(0,MAXLEN);
+const isQ=t=>!t.includes("____");
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const atStart=b=>/^[^\wÀ-ÿ]*____/.test(b);
+function fillText(black,ans){
+  if(!isQ(black))return black.replace("____",atStart(black)?cap(ans):ans);
+  return black+" "+ans.charAt(0).toUpperCase()+ans.slice(1)+".";
+}
+function fillHTML(black,ans,cls){
+  const a=`<span class="${cls||"fillin"}">${esc(atStart(black)?cap(ans):ans)}</span>`;
+  if(!isQ(black))return esc(black).replace("____",a);
+  return `${esc(black)} <span class="${cls||"fillin"}">${esc(ans.charAt(0).toUpperCase()+ans.slice(1))}.</span>`;
+}
+
+/* ---------- motor (só em quem criou a sala) ---------- */
+let G=null;
+function seenKey(mode){return "tasca-vistas-"+mode}
+/* cartas de família com crianças ou escola não entram nos modos +18, para não caírem ao lado de respostas porcas */
+const KIDS=/(^|\s)beb[ée]s?(\s|$)|crian|miúd|filh|turma|escola|escuteiro|professor|aula|trabalhos de casa|puto|órfã/i;
+function deckLists(mode){
+  if(mode==="cah")return{P:CARDS_CAH.p.slice(),R:CARDS_CAH.r.slice()};
+  if(mode==="adu"){
+    const fp=shuffle(CARDS.fam.p.filter(t=>!KIDS.test(t))),fr=shuffle(CARDS.fam.r.filter(t=>!KIDS.test(t)));
+    return{P:CARDS.adu.p.concat(fp.slice(0,Math.round(CARDS.adu.p.length/2))),R:CARDS.adu.r.concat(fr.slice(0,Math.round(CARDS.adu.r.length/2)))};
+  }
+  return{P:CARDS.fam.p.slice(),R:CARDS.fam.r.slice()};
+}
+function buildDecks(mode){
+  const {P,R}=deckLists(mode);
+  let seen=[];try{seen=JSON.parse(store.get(seenKey(mode))||"[]")}catch(e){}
+  if(!Array.isArray(seen)||seen.length>P.length-15)seen=[];
+  const fresh=shuffle(P.filter(t=>!seen.includes(t))),old=shuffle(P.filter(t=>seen.includes(t)));
+  const pdeck=old.concat(fresh); /* tira-se do fim: primeiro as que ainda não saíram */
+  let n=0;
+  const rdeck=shuffle(R.map(t=>({id:n++,t})).concat(Array.from({length:BLANKS},()=>({id:n++,t:"",b:true}))));
+  return{pdeck,rdeck,rdisc:[]};
+}
+function draw(){
+  if(!G.rdeck.length){G.rdeck=shuffle(G.rdisc);G.rdisc=[]}
+  return G.rdeck.pop();
+}
+function tascaStart(seats){
+  tascaStop();
+  const o=cleanOpts(ROOM.opts);
+  G=Object.assign({seats,mode:o.mode,target:o.target,scores:seats.map(()=>0),hands:seats.map(()=>[]),round:0,judge:Math.floor(Math.random()*seats.length)-1,timers:[],id:Math.random(),wins:seats.map(()=>[])},buildDecks(o.mode));
+  nextRound();
+}
+function tascaStop(){if(G){for(const t of G.timers)clearTimeout(t);G.dead=true}G=null}
+function later(ms,fn){const g=G;const t=setTimeout(()=>{if(G===g&&!g.dead)fn()},ms);g.timers.push(t);return t}
+const isOn=i=>G.seats[i].online!==false;
+const players=()=>G.seats.map((s,i)=>i).filter(i=>i!==G.judge&&isOn(i));
+function nextJudge(){
+  for(let k=1;k<=G.seats.length;k++){const j=(G.judge+k+G.seats.length)%G.seats.length;if(isOn(j))return j}
+  return 0;
+}
+function nextRound(){
+  G.round++;
+  G.judge=nextJudge();
+  for(let i=0;i<G.seats.length;i++)while(G.hands[i].length<HAND)G.hands[i].push(draw());
+  if(!G.pdeck.length)G.pdeck=shuffle(deckLists(G.mode).P);
+  G.black=G.pdeck.pop();
+  try{const k=seenKey(G.mode),s=JSON.parse(store.get(k)||"[]");s.push(G.black);store.set(k,JSON.stringify(s.slice(-200)))}catch(e){}
+  Object.assign(G,{phase:"play",plays:{},subs:null,win:null,pick:null});
+  G.deadline=Date.now()+TT(T_PLAY*1000);
+  G.phaseT=later(TT(T_PLAY*1000)+300,playTimeout);
+  G.seats.forEach((s,i)=>{if(s.kind==="bot"&&i!==G.judge)later(TT(3000+Math.random()*12000),()=>{if(G.phase==="play"&&!G.plays[i])autoPlay(i)})});
+  broadcast();
+}
+function playCard(i,id,text){
+  const h=G.hands[i],k=h.findIndex(c=>c.id===id);if(k<0)return false;
+  const c=h[k];
+  const t=c.b?cleanAns(text):c.t;
+  if(!t)return false;
+  h.splice(k,1);if(!c.b)G.rdisc.push(c);else G.rdisc.push({id:c.id,t:"",b:true});
+  G.plays[i]={text:t,blank:!!c.b};
+  return true;
+}
+function autoPlay(i){const h=G.hands[i].filter(c=>!c.b);const c=h[Math.floor(Math.random()*h.length)]||G.hands[i][0];if(c)playCard(i,c.id,c.b?"…":null);afterPlay()}
+function afterPlay(){
+  if(G.phase!=="play")return;
+  if(players().every(i=>G.plays[i]))toJudge();else broadcast();
+}
+function playTimeout(){
+  if(!G||G.phase!=="play")return;
+  /* quem está ligado e não escolheu joga uma carta ao calhas, para o juiz ter por onde escolher */
+  for(const i of players())if(!G.plays[i]){const h=G.hands[i].filter(c=>!c.b);const c=h[Math.floor(Math.random()*h.length)];if(c)playCard(i,c.id)}
+  toJudge();
+}
+function toJudge(){
+  if(!G||G.phase!=="play")return;
+  clearTimeout(G.phaseT);
+  G.subs=shuffle(Object.entries(G.plays).map(([i,p])=>({i:+i,text:p.text}))).map((s,k)=>Object.assign(s,{id:k}));
+  if(!G.subs.length){G.phase="show";G.win=null;broadcast();later(TT(3000),nextRound);return}
+  G.phase="judge";
+  G.deadline=Date.now()+TT(T_JUDGE*1000);
+  G.phaseT=later(TT(T_JUDGE*1000)+300,()=>pickWin(Math.floor(Math.random()*G.subs.length),true));
+  const j=G.seats[G.judge];
+  if(j.kind==="bot"||!isOn(G.judge))later(TT((j.kind==="bot"?4000:1500)+Math.random()*4000),()=>pickWin(Math.floor(Math.random()*G.subs.length),!isOn(G.judge)));
+  broadcast();
+}
+function pickWin(id,auto){
+  if(!G||G.phase!=="judge")return;
+  const s=G.subs[id];if(!s)return;
+  clearTimeout(G.phaseT);
+  G.scores[s.i]++;G.wins[s.i].push(fillText(G.black,s.text));
+  Object.assign(G,{phase:"show",win:{id:s.id,i:s.i,auto:!!auto}});
+  broadcast();
+  later(TT(T_SHOW),()=>{if(G.scores[s.i]>=G.target)endGame();else nextRound()});
+}
+function endGame(){
+  G.phase="end";
+  const order=G.seats.map((s,i)=>i).sort((a,b)=>G.scores[b]-G.scores[a]);
+  const w=order[0];
+  G.end={rank:order.map(i=>({name:G.seats[i].name,score:G.scores[i],me:i})),best:G.wins[w].slice(-1)[0]||null};
+  broadcast();
+}
+function viewFor(i){
+  const g=G,ph=g.phase,names=k=>g.seats[k].name;
+  return{t:"v",gid:g.id,phase:ph,round:g.round,me:i,host:i===0,judge:g.judge,target:g.target,mode:g.mode,
+    players:g.seats.map((s,j)=>({name:s.name,score:g.scores[j],bot:s.kind==="bot",off:s.online===false,done:ph==="play"&&j!==g.judge?!!g.plays[j]:false})),
+    black:g.black,
+    hand:g.hands[i].map(c=>({id:c.id,t:c.t,b:!!c.b})),
+    mine:g.plays&&g.plays[i]?g.plays[i].text:null,
+    need:ph==="play"?players().length:0,got:ph==="play"?Object.keys(g.plays).length:0,
+    subs:(ph==="judge"||ph==="show")&&g.subs?g.subs.map(s=>({id:s.id,text:s.text})):null,
+    win:ph==="show"&&g.win?{id:g.win.id,by:names(g.win.i),auto:g.win.auto,all:g.subs.map(s=>({id:s.id,text:s.text,by:names(s.i)}))}:null,
+    left:(ph==="play"||ph==="judge")?Math.max(0,g.deadline-Date.now()):0,
+    end:ph==="end"?g.end:null};
+}
+function broadcast(){if(!G)return;G.seats.forEach((s,i)=>{if(s.kind!=="bot")ROOM.sendTo(s,viewFor(i))})}
+function tascaMsg(seat,d){
+  if(!G||!d)return;
+  const i=G.seats.indexOf(seat);if(i<0)return;
+  if(d.t==="play"&&G.phase==="play"&&i!==G.judge&&!G.plays[i]){if(playCard(i,+d.id,d.text))afterPlay();return}
+  if(d.t==="pick"&&G.phase==="judge"&&i===G.judge){pickWin(+d.id,false);return}
+  if(d.t==="react"){relayReact(G.seats,seat,d);return}
+  if(i===0&&d.t==="again"&&G.phase==="end"){ROOM.started=false;ROOM.seats=ROOM.seats.filter(s=>s.kind!=="remote"||s.online);hostStart();return}
+  if(i===0&&d.t==="lobby"&&G.phase==="end"){tascaStop();ROOM.backToLobby();return}
+}
+
+/* ---------- opções da sala ---------- */
+function cleanOpts(o){o=o||{};return{mode:["adu","cah"].includes(o.mode)?o.mode:"fam",target:TARGETS.includes(+o.target)?+o.target:5}}
+function renderOpts(el,o,host){
+  o=cleanOpts(o);
+  const seg=(k,items)=>`<div class="seg" role="group">${items.map(([v,l])=>`<button type="button" class="${o[k]===v?"on":""}" data-k="${k}" data-v="${v}" ${host?"":"disabled"} aria-pressed="${o[k]===v}">${l}</button>`).join("")}</div>`;
+  el.innerHTML=`<div class="optrow"><span class="eyebrow">Modo</span>${seg("mode",[["fam","Família"],["adu","Adulto +18"],["cah","Clássico +18"]])}</div>
+    <div class="optrow"><span class="eyebrow">Ganha quem chegar a</span>${seg("target",TARGETS.map(t=>[t,t+" pontos"]))}</div>
+    ${o.mode==="adu"?'<p class="note">Modo adulto: humor porco e negro, sem filtro. Só para maiores de 18 e para quem não se ofende com facilidade.</p>':""}
+    ${o.mode==="cah"?'<p class="note">Modo clássico: cartas traduzidas e adaptadas do Cards Against Humanity (licença CC BY-NC-SA, uso não comercial). Só para maiores de 18.</p>':""}`;
+  if(host)el.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const n=Object.assign({},o);n[b.dataset.k]=b.dataset.k==="target"?+b.dataset.v:b.dataset.v;ROOM.opts=cleanOpts(n);lobbyBroadcast()});
+}
+
+/* ---------- ecrã do jogador ---------- */
+const UI={v:null,key:null,sel:null,jsel:null};
+function tascaClient(d){
+  if(d.t==="react"){bubble(d.from,d.r);return}
+  if(d.t!=="v")return;
+  if($("game").hidden)showScreen("game");
+  render(d);
+}
+function render(v){
+  UI.v=v;
+  const meJudge=v.me===v.judge,jn=v.players[v.judge]?v.players[v.judge].name:"";
+  $("gRound").textContent=v.phase==="end"?"Fim do jogo":`Ronda ${v.round} · ganha quem chegar a ${v.target}${v.mode!=="fam"?" · +18":""}`;
+  $("chips").innerHTML=v.players.map((p,j)=>`<li class="${j===v.me?"me":""}${p.off?" off":""}${p.done?" done":""}${j===v.judge&&v.phase!=="end"?" judge":""}"><span class="cn">${esc(p.name)}</span><b>${p.score}</b>${v.phase!=="end"&&j===v.judge?'<i class="st" title="juiz">⚖</i>':v.phase==="play"?(p.off?'<i class="st">⏸</i>':p.done?'<i class="st">✓</i>':'<i class="think"></i>'):""}</li>`).join("");
+  /* carta preta */
+  const bc=$("black");
+  bc.hidden=v.phase==="end";
+  if(v.black){
+    const w=v.phase==="show"&&v.win?v.win.all.find(a=>a.id===v.win.id):null;
+    $("blackText").innerHTML=w?fillHTML(v.black,w.text,"fillin win"):isQ(v.black)?esc(v.black):esc(v.black).replace("____",'<span class="gap">______</span>');
+    $("judgeLine").textContent=v.phase==="end"?"":meJudge?"Tu és o juiz desta ronda":`Juiz: ${jn}`;
+  }
+  if(v.phase==="play"||v.phase==="judge")startTick(v.left);else stopTick();
+  const key=`${v.gid}:${v.round}:${v.phase}`,fresh=key!==UI.key;UI.key=key;
+  if(fresh){UI.sel=null;UI.jsel=null}
+  const P=$("panel");
+  if(v.phase==="play"){
+    if(meJudge){P.innerHTML=`<div class="jbox"><b>És o juiz.</b><p>Os outros estão a escolher a carta mais engraçada para esta frase. Depois escolhes a melhor, sem saber de quem é.</p><p class="wait">${v.got} de ${v.need} já escolheram.</p></div>`;}
+    else if(v.mine){P.innerHTML=`<div class="sent"><div class="eyebrow">Jogaste</div><p>${fillHTML(v.black,v.mine)}</p></div><p class="wait">${v.got} de ${v.need} já escolheram. Depois ${esc(jn)} escolhe a melhor.</p>`;}
+    else if(fresh||!$("hand"))drawHand(v);
+    else updateHand(v);
+    if(fresh)playSfx("round");
+  }else if(v.phase==="judge"){
+    if(fresh||!$("subs"))drawSubs(v,meJudge);
+    if(fresh)playSfx("vote");
+  }else if(v.phase==="show"){
+    if(fresh)drawShow(v);
+  }else if(v.phase==="end"){
+    if(fresh)drawEnd(v);else endButtons(v);
+  }
+}
+function drawHand(v){
+  $("panel").innerHTML=`<div class="eyebrow">Escolhe a carta que fica melhor na frase</div><div class="hand" id="hand"></div>
+    <div class="playbar" id="playbar"><div id="blankBox" hidden><input id="blankIn" maxlength="${MAXLEN}" placeholder="Escreve a tua resposta" autocomplete="off" enterkeyhint="send"></div><button class="btn" type="button" id="playBtn" disabled>Jogar esta carta</button></div><p class="note bad" id="playNote"></p>`;
+  $("hand").addEventListener("click",e=>{const b=e.target.closest(".wcard");if(!b)return;UI.sel=+b.dataset.id;updateHand(UI.v);const c=UI.v.hand.find(x=>x.id===UI.sel);if(c&&c.b)setTimeout(()=>{const e=$("blankIn");if(e)e.focus()},30)});
+  $("playBtn").addEventListener("click",sendPlay);
+  $("blankIn").addEventListener("keydown",e=>{if(e.key==="Enter")sendPlay()});
+  updateHand(v);
+}
+function updateHand(v){
+  const h=$("hand");if(!h)return;
+  if(UI.sel!=null&&!v.hand.some(c=>c.id===UI.sel))UI.sel=null;
+  h.innerHTML=v.hand.map(c=>`<button type="button" class="wcard${c.b?" blank":""}${UI.sel===c.id?" sel":""}" data-id="${c.id}">${c.b?"<span>✏️ Carta em branco</span><small>escreves tu</small>":esc(c.t)}</button>`).join("");
+  const c=v.hand.find(x=>x.id===UI.sel);
+  $("blankBox").hidden=!(c&&c.b);
+  $("playBtn").disabled=!c;
+  $("playBtn").textContent=c&&c.b?"Jogar a minha resposta":"Jogar esta carta";
+}
+function sendPlay(){
+  const c=UI.v&&UI.v.hand.find(x=>x.id===UI.sel);if(!c)return;
+  let text=null;
+  if(c.b){text=cleanAns($("blankIn").value);if(!text){$("playNote").textContent="Escreve a tua resposta primeiro.";return}}
+  unlockAudio();playSfx("send");
+  ROOM.send({t:"play",id:c.id,text});
+  $("playBtn").disabled=true;
+}
+function drawSubs(v,meJudge){
+  $("panel").innerHTML=`<div class="eyebrow">${meJudge?"Escolhe a mais engraçada":`${esc(v.players[v.judge].name)} está a escolher…`}</div>
+    <div class="subs${meJudge?"":" view"}" id="subs">${v.subs.map(s=>`<button type="button" class="sub" data-id="${s.id}" ${meJudge?"":"disabled"}>${isQ(v.black)?`<span class="fillin">${esc(s.text.charAt(0).toUpperCase()+s.text.slice(1))}</span>`:fillHTML(v.black,s.text)}</button>`).join("")}</div>
+    ${meJudge?'<button class="btn" type="button" id="pickBtn" disabled>Escolher esta</button>':'<p class="wait">As cartas aparecem sem nome. Faz figas!</p>'}`;
+  if(meJudge){
+    $("subs").addEventListener("click",e=>{const b=e.target.closest(".sub");if(!b)return;UI.jsel=+b.dataset.id;$("subs").querySelectorAll(".sub").forEach(x=>x.classList.toggle("sel",+x.dataset.id===UI.jsel));$("pickBtn").disabled=false});
+    $("pickBtn").addEventListener("click",()=>{if(UI.jsel==null)return;unlockAudio();ROOM.send({t:"pick",id:UI.jsel});$("pickBtn").disabled=true});
+  }
+}
+function drawShow(v){
+  const P=$("panel");
+  if(!v.win){P.innerHTML=`<p class="wait">Ninguém jogou nesta ronda. Vamos à próxima.</p>`;return}
+  const w=v.win.all.find(a=>a.id===v.win.id),mine=w.by===v.players[v.me].name;
+  P.innerHTML=`<div class="winbox${mine?" mine":""}"><div class="eyebrow">${v.win.auto?"O tempo acabou, ganhou ao calhas":"O juiz escolheu"}</div><h2>${mine?"Ganhaste a ronda!":`Ponto para ${esc(w.by)}!`}</h2></div>
+    <ul class="others">${v.win.all.filter(a=>a.id!==v.win.id).map(a=>`<li><span>${esc(a.text)}</span><em>${esc(a.by)}</em></li>`).join("")}</ul>
+    <p class="wait">Próxima ronda já a seguir…</p>`;
+  playSfx(mine?"win":"truth");
+}
+function drawEnd(v){
+  const e=v.end,top=e.rank[0].score,winners=e.rank.filter(r=>r.score===top).map(r=>r.name);
+  $("panel").innerHTML=`<div class="win"><div class="eyebrow">${winners.length>1?"Empate!":"Ganhou"}</div><h2>${esc(winners.join(" e "))}</h2></div>
+    ${e.best?`<div class="awards"><p><span>A última carta vencedora</span>«${esc(e.best)}»</p></div>`:""}
+    <ol class="board final">${e.rank.map(r=>`<li class="${r.me===v.me?"me":""}"><span class="pos">${1+e.rank.filter(x=>x.score>r.score).length}</span><span class="cn">${esc(r.name)}</span><b>${r.score}</b></li>`).join("")}</ol>
+    <div class="choices" id="endBtns"></div><p class="wait" id="endWait"></p>`;
+  endButtons(v);
+  playSfx(winners.includes(v.players[v.me].name)?"win":"end");
+}
+function endButtons(v){
+  const b=$("endBtns");if(!b)return;
+  if(v.host){b.innerHTML=`<button class="btn" type="button" id="againBtn">Jogar outra vez</button><button class="btn ghost" type="button" id="lobbyBtn">Voltar à sala</button>`;
+    $("againBtn").onclick=()=>{unlockAudio();ROOM.send({t:"again"})};$("lobbyBtn").onclick=()=>ROOM.send({t:"lobby"});$("endWait").textContent=""}
+  else{b.innerHTML="";$("endWait").textContent=`À espera que ${v.players[0].name} comece outra partida.`}
+}
+const RULES=`<ul>
+  <li>Cada um recebe <b>${HAND} cartas brancas</b> com respostas.</li>
+  <li>Em cada ronda há um <b>juiz</b>, que vai rodando pela mesa, e aparece uma <b>frase com um espaço em branco</b>.</li>
+  <li>Os outros escolhem da mão a carta que fica <b>mais engraçada</b> na frase.</li>
+  <li>O juiz vê as cartas <b>sem saber de quem são</b> e escolhe a melhor. Quem a jogou ganha <b>1 ponto</b>.</li>
+  <li>As <b>cartas em branco</b> deixam-te escrever a tua própria resposta.</li>
+  <li>Ganha quem chegar primeiro aos pontos combinados na sala.</li>
+  <li>Há três modos: <b>Família</b>, para todas as idades; <b>Adulto +18</b>, com humor porco e negro; e <b>Clássico +18</b>, com cartas traduzidas e adaptadas do Cards Against Humanity.</li>
+  <li class="credit">O modo Clássico usa cartas do <a href="https://cardsagainsthumanity.com/" target="_blank" rel="noopener">Cards Against Humanity</a>, distribuídas com a licença <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.pt" target="_blank" rel="noopener">CC BY-NC-SA</a>. Esta tradução segue a mesma licença e não tem fins comerciais. Este jogo não tem ligação ao Cards Against Humanity.</li>
+</ul>`;
+ROOM.game={id:"tasca",title:"Conversa de Tasca",maxp:8,minp:3,maxBots:3,botNames:["Sr. Américo","Tia Rosa","Avó Lurdes"],
+  lobbyHelpFew:"São precisas pelo menos 3 pessoas (contando com o juiz). Envia o link aos amigos ou junta o computador.",
+  start:tascaStart,msg:tascaMsg,client:tascaClient,stop:()=>{tascaStop();stopTick()},cleanOpts,renderOpts,
+  back(seat){ROOM.sendTo(seat,{t:"start"});if(G)broadcast()},
+  drop(seat){if(!G)return;if(G.phase==="play")afterPlay();else if(G.phase==="judge"&&G.seats.indexOf(seat)===G.judge)later(TT(1500),()=>pickWin(Math.floor(Math.random()*G.subs.length),true));else broadcast()},
+  hostLost(on){$("lost").hidden=!on},
+  onScreen(n){if(n!=="game")UI.key=null}
+};
+ROOM.opts=cleanOpts(null);
+initUI({rules:RULES,privacy:privacyHTML(" e as frases que já te saíram, para não se repetirem")});
+
+</script>
+</body>
+</html>

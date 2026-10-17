@@ -1,0 +1,1083 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Senhor Branco</title>
+<meta name="description" content="Jogo de grupo grátis: descobre quem tem a palavra diferente e quem não tem palavra nenhuma. Na mesma sala ou à distância.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_PT">
+<meta property="og:site_name" content="Jogatina">
+<meta property="og:title" content="Senhor Branco: quem é o impostor?">
+<meta property="og:description" content="Todos têm a mesma palavra, menos os impostores. Descobre-os antes que te descubram. Grátis, cada um no seu telemóvel.">
+<meta property="og:url" content="https://ivomarcelopinto-png.github.io/jogatina/branco/">
+<meta property="og:image" content="https://ivomarcelopinto-png.github.io/jogatina/branco/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Senhor Branco, jogo de grupo">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="S. Branco">
+<meta name="theme-color" content="#f4eee3">
+<link rel="preload" href="../fonts/bowlby-one.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
+<script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
+<style>
+/* ipgames: base comum (mesma família visual da Panela de Pressão) */
+@font-face{font-family:"Bowlby One";font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/bowlby-one.woff2) format("woff2")}
+@font-face{font-family:"Figtree";font-style:normal;font-weight:300 900;font-display:swap;src:url(../fonts/figtree.woff2) format("woff2")}
+[hidden]{display:none!important}
+:root{
+  --bg:#13201f; --surface:#1b2d2b; --surface-2:#223835; --line:#2f4744;
+  --ink:#eef2ea; --muted:#9fb5af; --title:#f1ece2; --enamel:#f1ece2; --card-ink:#1b2422;
+  --accent:#ff8a3d; --accent-ink:#1d130b; --steam:#8fd3c8; --danger:#ff5a4f; --good:#5fd08a;
+  --display:"Bowlby One", Impact, "Arial Black", sans-serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme:dark;
+}
+:root[data-pp-theme="light"]{
+  --bg:#f4eee3; --surface:#fffaf1; --surface-2:#ebe1cf; --line:#d8cab2;
+  --ink:#1f2a28; --muted:#5b6965; --title:#1f2a28; --enamel:#fffdf8; --card-ink:#1b2422;
+  --accent:#e8731f; --steam:#1d7a6e; --danger:#c8352b; --good:#1f8a4c;
+  color-scheme:light;
+}
+html,body{margin:0}
+html{height:100%}
+html,body{background:var(--bg);color:var(--ink)}
+body{min-height:100%;box-sizing:border-box;overflow-x:hidden;font-family:var(--body);font-size:15px;line-height:1.45;padding:max(8px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column}
+.wrap{width:100%;max-width:820px;margin:0 auto;flex:1;display:flex;flex-direction:column;gap:12px}
+h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:.01em;text-wrap:balance;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid var(--steam);outline-offset:2px}
+a{color:inherit}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:11px 20px;font-weight:800;font-size:15px;text-decoration:none;line-height:1.1}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn.ico{min-width:36px;padding-inline:9px;font-size:15px;line-height:1}
+.btn.ico[aria-pressed="false"]{opacity:.45;filter:grayscale(1)}
+#exitBtn{border-color:var(--danger);color:var(--danger)}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;flex:none}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.brand h1{font-size:clamp(24px,6vw,34px);line-height:1;color:var(--title)}
+.brand h1 span{color:var(--accent)}
+.brand a.home{font-size:13px;color:var(--muted);text-decoration:none;font-weight:700;white-space:nowrap}
+.tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+input{font:inherit;font-size:16px;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;box-sizing:border-box;min-width:0}
+input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shadow:inset 0 0 0 1.5px var(--steam)}
+.setup{display:flex;flex-direction:column;gap:16px;align-items:flex-start;flex:1;padding-block:12px 24px}
+.setup h2{font-size:clamp(34px,10vw,60px);line-height:.95;color:var(--title)}
+.setup h2 span{color:var(--accent);display:block}
+.setup p{max-width:58ch;color:var(--muted);margin:0}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:6px;width:100%;max-width:360px}
+.mode{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;width:100%;max-width:440px;box-sizing:border-box}
+.join{display:flex;gap:8px}
+.join input{text-transform:uppercase;letter-spacing:.2em;font-weight:800;flex:1}
+.join.fromlink input{border-color:var(--accent)}
+.note{font-size:13.5px;color:var(--steam);margin:0;min-height:1.2em}
+.note.bad{color:var(--danger);font-weight:700}
+.nopeer-msg{display:none;color:var(--muted)}
+.mode.nopeer .nopeer-msg{display:block}
+.mode.nopeer .choices,.mode.nopeer .join{display:none}
+.lobby .code{font-size:clamp(44px,14vw,80px);letter-spacing:.12em;color:var(--accent)}
+.roster{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;width:100%;max-width:420px}
+.roster li{display:flex;align-items:center;gap:10px;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;min-height:24px}
+.roster li.free{border-style:dashed;background:transparent;color:var(--muted)}
+.roster .rn{font-weight:800;flex:1;min-width:0;overflow-wrap:anywhere}
+.roster .rn em{font-style:normal;font-weight:600;color:var(--muted)}
+.roster .rk{font-size:12px;color:var(--muted)}
+.roster li.free .rn{font-weight:400}
+.linkbtn{background:none;border:0;padding:4px 2px;color:var(--muted);font-size:13px;text-decoration:underline;text-underline-offset:3px}
+.foot{font-size:13px;color:var(--muted);margin:4px 0 0}
+.modal{position:fixed;inset:0;background:rgba(8,14,13,.72);display:grid;place-items:center;padding:16px;z-index:33;box-sizing:border-box}
+.sheet{box-sizing:border-box;background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:20px;max-width:460px;width:100%;max-height:calc(100dvh - 32px);overflow:auto;display:flex;flex-direction:column;gap:14px}
+.sheet h3{font-size:24px;color:var(--title)}
+.sheet .body{color:var(--muted)}
+.sheet .actions{display:flex;gap:8px;flex-wrap:wrap}
+.sheet ul{padding-left:18px;margin:0;display:flex;flex-direction:column;gap:6px}
+.sheet li b{color:var(--ink)}
+.alert{position:fixed;left:50%;top:max(12px,env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:40;max-width:min(92vw,520px);width:max-content;box-sizing:border-box;background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:15px;padding:12px 16px;border-radius:14px;box-shadow:0 12px 28px rgba(0,0,0,.3);text-align:center;pointer-events:none}
+.alert.show{animation:alertin .35s cubic-bezier(.2,1.5,.4,1)}
+@keyframes alertin{from{transform:translate(-50%,-20px) scale(.9);opacity:0}to{transform:translateX(-50%);opacity:1}}
+.bubble{position:fixed;transform:translate(-50%,-100%);font-size:30px;pointer-events:none;animation:bub 2.6s ease forwards;z-index:26}
+@keyframes bub{0%{opacity:0;transform:translate(-50%,-80%) scale(.6)}12%{opacity:1;transform:translate(-50%,-100%) scale(1.1)}20%{transform:translate(-50%,-100%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-150%)}}
+.reacts{position:fixed;z-index:35;display:grid;grid-template-columns:repeat(3,auto);gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:8px;box-shadow:0 12px 28px rgba(0,0,0,.3)}
+.reacts button{font-size:24px;background:var(--surface-2);border:0;border-radius:10px;padding:4px 9px}
+@media (prefers-reduced-motion:reduce){.alert.show,.bubble{animation:none}}
+
+/* comum aos jogos de rondas: barra, jogadores, quadro de pontos, vencedor */
+.game{display:flex;flex-direction:column;gap:12px;flex:1;padding-bottom:8px}
+.gbar{display:flex;justify-content:space-between;align-items:center;gap:10px}
+#gTimer{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums;color:var(--ink);min-width:3ch;text-align:right}
+#gTimer.low{color:var(--danger)}
+.chips{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.chips li{display:flex;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:4px 10px;font-size:13px;min-width:0}
+.chips li.me{border-color:var(--accent)}
+.chips li.off{opacity:.5}
+.chips li .cn{font-weight:700;max-width:10ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chips li b{font-variant-numeric:tabular-nums}
+.chips li i{font-style:normal;color:var(--muted);font-weight:800}
+.chips li.done i{color:var(--good)}
+.chips .think{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:think 1s ease-in-out infinite}
+@keyframes think{50%{opacity:.25}}
+.lost{margin:0;color:var(--danger);font-weight:700}
+.panel{display:flex;flex-direction:column;gap:10px}
+.wait{margin:0;color:var(--muted);font-size:14px;min-height:1.3em}
+.mine{margin:0;color:var(--muted);font-size:13px}
+@keyframes pop{from{transform:scale(.4) rotate(-6deg);opacity:0}to{transform:none;opacity:1}}
+.board{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.board li{display:flex;align-items:center;gap:10px;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:9px 14px}
+.board li.me{border-color:var(--accent)}
+.board .cn{flex:1;font-weight:800;min-width:0;overflow-wrap:anywhere}
+.board em{font-style:normal;color:var(--good);font-weight:800}
+.board b{font-family:var(--display);font-weight:400;font-size:20px;font-variant-numeric:tabular-nums;min-width:2ch;text-align:right}
+.board .pos{font-family:var(--display);color:var(--muted);width:1.4em}
+.board.final li:first-child{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.win{display:flex;flex-direction:column;gap:2px}
+.win h2{font-size:clamp(34px,10vw,56px);line-height:1;color:var(--accent);animation:pop .6s cubic-bezier(.2,1.6,.4,1)}
+.awards{display:flex;flex-direction:column;gap:6px}
+.awards p{margin:0;font-weight:700}
+.awards span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.rstep,.rverdict b,.win h2,.blank.fill{animation:none}}
+/* Senhor Branco: azul-ardósia, carta da palavra em destaque */
+:root{--accent:#7fb2ff;--accent-ink:#0b1a30}
+:root[data-pp-theme="light"]{--accent:#2f5fb3;--accent-ink:#fff}
+.opts-lobby{display:flex;flex-direction:column;gap:10px;width:100%;max-width:440px}
+.optrow{display:flex;flex-direction:column;gap:6px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:8px 14px;font-weight:800;font-size:14px;color:var(--ink)}
+.seg button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.seg button:disabled{cursor:default}
+.seg button:disabled:not(.on){opacity:.55}
+.chips li.dead{opacity:.55}
+.chips li.dead .cn{text-decoration:line-through}
+.chips li.turnnow{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.chips .rt{font-style:normal;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.r-civ{color:var(--good)}.r-inf{color:var(--danger)}.r-sb{color:var(--accent)}
+.wordcard{display:flex;flex-direction:column;gap:6px;align-items:flex-start;text-align:left;background:var(--enamel);color:var(--card-ink);border:2px solid var(--line);border-radius:18px;padding:16px 18px;box-shadow:0 6px 0 var(--surface-2);width:100%;box-sizing:border-box;position:relative;overflow:hidden}
+.wordcard .eyebrow{color:#5b6965}
+.wordcard .eyebrow i{font-style:normal;text-transform:none;letter-spacing:0;font-weight:600}
+.wordcard b{font-family:var(--display);font-weight:400;font-size:clamp(30px,9vw,46px);line-height:1;overflow-wrap:anywhere}
+.wordcard small{font-size:13px;color:#5b6965;font-weight:600}
+.wordcard.sb{background:#1f2a28;color:#fffaf1;border-color:#1f2a28}
+.wordcard.sb .eyebrow,.wordcard.sb small{color:#c9d6d1}
+.wordcard .hidden-msg{display:none}
+.wordcard.hide{background:repeating-linear-gradient(135deg,var(--surface-2) 0 10px,var(--surface) 10px 20px);color:var(--ink);border-style:dashed}
+.wordcard.hide>*:not(.hidden-msg){display:none}
+.wordcard.hide .hidden-msg{display:block;font-weight:800;padding:14px 0}
+.wordcard.dead{opacity:.6}
+.lead{margin:0;font-size:17px;font-weight:700}
+.lead b{color:var(--accent)}
+.yourturn{background:color-mix(in srgb,var(--accent) 14%,var(--surface));border:2px solid var(--accent);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.yourturn b{font-family:var(--display);font-weight:400;font-size:24px}
+.yourturn p{margin:0}
+.yourturn .btn{align-self:flex-start}
+.order{margin:0;display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;font-size:13px;color:var(--muted)}
+.order span{font-weight:700}
+.order span.past{text-decoration:line-through;opacity:.6}
+.order span.now{color:var(--accent);font-weight:800}
+.order i{font-style:normal;opacity:.5}
+.clues{display:flex;flex-direction:column;gap:10px}
+.vol ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.vol li{background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:6px 10px;display:flex;gap:8px;align-items:baseline;font-size:14px}
+.vol li span{font-weight:800;color:var(--accent)}
+.vol li em{font-style:normal;color:var(--muted);font-size:12px}
+.outbox{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:16px 18px;display:flex;flex-direction:column;gap:4px;animation:pop .45s cubic-bezier(.2,1.6,.4,1)}
+.outbox h2{font-size:clamp(26px,7vw,38px);line-height:1.05}
+.outbox p{margin:0;font-size:17px}
+.outbox.r-civ{border-color:var(--good)}.outbox.r-inf{border-color:var(--danger)}.outbox.r-sb{border-color:var(--accent)}
+.outbox.r-civ b{color:var(--good)}.outbox.r-inf b{color:var(--danger)}.outbox.r-sb b{color:var(--accent)}
+.words{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.words p{margin:0;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.words span{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:700}
+.words b{font-family:var(--display);font-weight:400;font-size:22px}
+.roles{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.roles li{display:flex;align-items:center;gap:10px;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:8px 12px}
+.roles li.me{border-color:var(--accent)}
+.roles .cn{flex:1;font-weight:800}
+.roles .role{font-style:normal;font-weight:800;font-size:13px}
+.roles b{color:var(--good)}
+@media (prefers-reduced-motion:reduce){.outbox{animation:none}}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.opt{text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:13px 16px;font-size:17px;font-weight:800;color:var(--ink);overflow-wrap:anywhere;transition:transform .12s,border-color .12s}
+.opt:hover{border-color:var(--accent)}
+.opt:active{transform:scale(.98)}
+.opts.locked .opt{cursor:default;opacity:.5}
+.opts.locked .opt.picked{opacity:1;border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--surface));box-shadow:inset 0 0 0 1.5px var(--accent)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><h1>Senhor <span>Branco</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="tools">
+      <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
+      <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
+      <button class="btn ghost sm ico" id="mute" type="button" aria-pressed="true" aria-label="Som" title="Som">🔊</button>
+      <button class="btn ghost sm ico" id="themeBtn" type="button" aria-label="Tema escuro" title="Tema escuro">☾</button>
+      <button class="btn ghost sm" id="exitBtn" type="button" hidden>Sair</button>
+    </div>
+  </header>
+
+  <section id="setup" class="setup">
+    <h2>Quem é<span>o impostor?</span></h2>
+    <p>Todos recebem a mesma palavra secreta, menos os infiltrados, que têm uma parecida sem saberem, e o Senhor Branco, que não tem nenhuma. À vez, cada um dá uma pista. Depois votam para expulsar quem parece estar a fingir.</p>
+    <label class="field"><span class="eyebrow">O teu nome</span><input id="myName" maxlength="14" autocomplete="nickname" placeholder="Ex.: Ivo"></label>
+    <div class="mode" id="onlineMode">
+      <div class="eyebrow">Com amigos, de 3 a 10 pessoas, na mesma sala ou à distância</div>
+      <div class="choices"><button class="btn" id="hostBtn" type="button">Criar sala</button></div>
+      <div class="join" id="joinArea"><input id="joinCode" placeholder="Código" maxlength="5" autocapitalize="characters" autocomplete="off" spellcheck="false" aria-label="Código da sala"><button class="btn ghost" id="joinBtn" type="button">Entrar</button></div>
+      <p class="note" id="netNote" role="status"></p>
+      <p class="note nopeer-msg">O modo online não está disponível nesta página. Abre o jogo no site para jogar com amigos.</p>
+    </div>
+    <p class="foot">Grátis, sem conta e sem publicidade. <button class="linkbtn" id="privBtn" type="button">Privacidade</button></p>
+    
+  </section>
+
+  <section id="lobby" class="setup lobby" hidden>
+    <div class="eyebrow">Código da sala</div>
+    <h2 id="lbCode" class="code">-----</h2>
+    <p id="lbHelp"></p>
+    <div class="choices"><button class="btn" id="shareBtn" type="button">Enviar link</button><button class="btn ghost" id="copyBtn" type="button">Copiar link</button></div>
+    <div class="opts-lobby" id="lbOpts"></div>
+    <ul class="roster" id="roster"></ul>
+    <div class="choices" id="hostCtl"><button class="btn ghost" id="addBot" type="button">+ Computador</button><button class="btn" id="startBtn" type="button">Começar</button></div>
+    <p class="note" id="lbNote" role="status"></p>
+    <button class="btn ghost sm" id="leaveBtn" type="button">Sair da sala</button>
+  </section>
+
+  <main id="game" class="game" hidden>
+    <div class="gbar"><span class="eyebrow" id="gRound"></span><span id="gTimer"></span></div>
+    <ul class="chips" id="chips" aria-label="Jogadores e pontos"></ul>
+    <p class="lost" id="lost" role="status" hidden>Quem criou a sala perdeu a ligação. À espera…</p>
+    <button type="button" class="wordcard" id="wordCard" aria-label="Mostrar ou esconder a tua palavra"><span class="eyebrow">A tua palavra <i>(toca para esconder)</i></span><b id="wordText"></b><small id="wordSub"></small><span class="hidden-msg">Palavra escondida. Toca para ver.</span></button>
+    <section class="panel" id="panel" aria-live="polite"></section>
+  </main>
+</div>
+
+<div class="modal" id="rulesModal" hidden><div class="sheet" role="dialog" aria-modal="true"><h3 id="rulesTitle">Regras</h3><div class="body" id="rulesBody"></div><div class="actions"><button class="btn" id="rulesClose" type="button">Fechar</button></div></div></div>
+<div class="modal" id="modal" hidden><div class="sheet" role="dialog" aria-modal="true"><h3 id="mTitle"></h3><div class="body" id="mBody"></div><div class="actions" id="mActions"></div></div></div>
+<div class="alert" id="alert" role="alert" hidden></div>
+<div class="reacts" id="reacts" hidden></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
+/* ================= SALAS (comum aos jogos ipgames) =================
+   Mesmo esquema da Panela de Pressão, para servir com as mesmas regras do Firebase:
+   rooms/{código}/host  quem criou a sala (o motor do jogo corre lá)
+   rooms/{código}/up    mensagens dos jogadores para quem criou a sala
+   rooms/{código}/down/{uid}  mensagens só para esse jogador
+   rooms/{código}/clients/{uid}  quem está ligado
+   Cada jogo define ROOM.game = {id, maxp, minp, maxBots, botNames, title, start(seats), msg(seat,d), back(seat), drop(seat), client(d)} */
+const FIREBASE_CONFIG={
+  apiKey:"AIzaSyDV65oRQM9JRsPDi-lG5smPQ3visWhFYcY",
+  authDomain:"panela-de-pressao-a158b.firebaseapp.com",
+  databaseURL:"https://panela-de-pressao-a158b-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"panela-de-pressao-a158b",
+  storageBucket:"panela-de-pressao-a158b.firebasestorage.app",
+  messagingSenderId:"990808683809",
+  appId:"1:990808683809:web:7632a6ed6dcfde6ebefa60"
+};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ALPH="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const cleanName=s=>String(s||"").replace(/[<>&"'`\\]/g,"").replace(/\s+/g," ").trim().slice(0,14);
+const cleanCode=s=>String(s||"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,5);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const sstore={get(k){try{return sessionStorage.getItem(k)}catch(e){return null}},set(k,v){try{sessionStorage.setItem(k,v)}catch(e){}}};
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+const ROOM={
+  game:null,role:null,code:null,seats:[],started:false,leaving:false,conns:{},subs:[],conn:null,me:0,lobby:null,
+  /* envia uma jogada minha (para quem criou a sala ou para o motor local) */
+  send(d){
+    if(this.role==="client"){if(this.conn)try{this.conn.send(d)}catch(e){}}
+    else if(this.role==="host"&&this.started){this.game.msg(this.seats[0],d)}
+  },
+  /* motor -> jogador */
+  sendTo(seat,d){
+    if(!seat)return;
+    if(seat.kind==="local")setTimeout(()=>this.game.client(d),0);
+    else if(seat.kind==="remote"&&seat.conn&&seat.online)try{seat.conn.send(d)}catch(e){}
+  },
+  backToLobby(){
+    this.started=false;
+    this.seats=this.seats.filter(s=>s.kind!=="remote"||s.online);
+    showScreen("lobby");lobbyBroadcast();
+  }
+};
+function netNote(id,t){const el=$(id);if(el)el.textContent=t||""}
+function linkFor(code){return location.href.split("#")[0]+"#sala="+code}
+const onlineReady=()=>!!(window.firebase&&(FIREBASE_CONFIG||window.__fbMock));
+let FB=null;
+async function fbInit(){
+  if(FB)return FB;
+  if(!onlineReady())throw new Error("nofb");
+  if(!firebase.apps||!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG||{});
+  const cred=await firebase.auth().signInAnonymously();
+  FB={db:firebase.database(),uid:cred.user.uid};
+  return FB;
+}
+const fbErr=e=>{const c=String(e&&(e.code||e.message)||"");
+  if(/permission|PERMISSION/.test(c))return "O servidor recusou o pedido. Tenta outra vez daqui a pouco.";
+  if(/operation-not-allowed|admin-restricted/.test(c))return "O acesso anónimo não está ligado no Firebase.";
+  if(/network/.test(c))return "Sem ligação à internet. Tenta outra vez.";
+  return "Não consegui ligar ao servidor de salas. Tenta outra vez.";};
+function countGame(kind,players){
+  if(window.__fast||!onlineReady())return;
+  const d=new Date(),ym=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+  fbInit().then(()=>FB.db.ref(`stats/${ym}/${kind}${players}`).transaction(c=>(typeof c==="number"?c:0)+1)).catch(()=>{});
+}
+function sub(ref,ev,fn){ref.on(ev,fn,e=>console.warn(ev,e&&e.message));ROOM.subs.push(()=>ref.off(ev,fn))}
+function unsubAll(){for(const f of ROOM.subs)try{f()}catch(e){}ROOM.subs=[]}
+const roomRef=(...p)=>FB.db.ref(["rooms",ROOM.code,...p].join("/"));
+
+/* ---------- quem cria a sala ---------- */
+function mkConn(uid){
+  return{uid,closed:false,
+    send(m){if(this.closed||!ROOM.code)return;roomRef("down",uid).push({m:JSON.stringify(m)}).catch(()=>{})},
+    close(){this.closed=true}};
+}
+function connFor(uid){let c=ROOM.conns[uid];if(!c||c.closed){c=mkConn(uid);ROOM.conns[uid]=c}return c}
+async function hostRoom(){
+  const name=cleanName($("myName").value);
+  if(!name){netNote("netNote","Escreve o teu nome primeiro.");$("myName").focus();return}
+  store.set("pp-name",name);
+  netNote("netNote","A criar a sala…");
+  try{await fbInit()}catch(e){netNote("netNote",fbErr(e));return}
+  let code=null;
+  for(let i=0;i<6&&!code;i++){
+    const c=Array.from({length:5},()=>ALPH[Math.floor(Math.random()*ALPH.length)]).join("");
+    const hr=FB.db.ref(`rooms/${c}/host`);
+    try{const s=await hr.get();if(s.exists())continue;await hr.set(FB.uid);code=c}catch(e){if(i===5){netNote("netNote",fbErr(e));return}}
+  }
+  if(!code){netNote("netNote","Não consegui criar a sala. Tenta outra vez.");return}
+  unsubAll();
+  Object.assign(ROOM,{role:"host",code,started:false,leaving:false,conns:{},me:0,seats:[{kind:"local",name,online:true}]});
+  if(ROOM.game.cleanOpts)ROOM.opts=ROOM.game.cleanOpts(ROOM.opts);
+  const room=roomRef();
+  room.onDisconnect().remove();
+  let first=true;
+  sub(FB.db.ref(".info/connected"),"value",s=>{
+    if(s.val()!==true||ROOM.role!=="host"||ROOM.code!==code)return;
+    if(first){first=false;return}
+    roomRef("host").set(FB.uid).catch(()=>{});room.onDisconnect().remove();
+  });
+  sub(roomRef("clients"),"child_removed",s=>{
+    const uid=s.key;
+    setTimeout(()=>{
+      if(ROOM.role!=="host"||ROOM.code!==code)return;
+      roomRef("clients",uid).get().then(x=>{
+        if(x.exists())return;
+        const c=ROOM.conns[uid];if(c&&!c.closed){c.close();hostClose(c)}
+      }).catch(()=>{});
+    },2500);
+  });
+  sub(roomRef("up"),"child_added",s=>{
+    const v=s.val();s.ref.remove().catch(()=>{});
+    if(!v||typeof v.m!=="string"||typeof v.from!=="string")return;
+    let d;try{d=JSON.parse(v.m)}catch(e){return}
+    hostData(connFor(v.from),d);
+  });
+  netNote("netNote","");
+  showScreen("lobby");lobbyBroadcast();
+}
+function uniqueName(name,except){
+  let n=name,i=2;
+  const taken=()=>ROOM.seats.some(s=>s!==except&&s.name.toLowerCase()===n.toLowerCase());
+  while(taken())n=`${name.slice(0,12)} ${i++}`;
+  return n;
+}
+function hostData(c,d){
+  if(!d||typeof d!=="object")return;
+  const G=ROOM.game;
+  if(d.t==="hello"){
+    const name=cleanName(d.name)||"Amigo",token=String(d.token||"").replace(/[^a-z0-9]/gi,"").slice(0,40);
+    let s=ROOM.seats.find(x=>x.kind==="remote"&&x.token&&x.token===token);
+    if(ROOM.started){
+      if(s){s.conn=c;s.online=true;c._seat=s;c.send({t:"welcome",code:ROOM.code});G.back(s);return}
+      c.send({t:"full",msg:"A partida já começou. Espera pela próxima e volta a entrar."});
+      setTimeout(()=>c.close(),800);return;
+    }
+    if(!s){
+      if(ROOM.seats.length>=G.maxp){
+        const bot=ROOM.seats.find(x=>x.kind==="bot");
+        if(bot)ROOM.seats=ROOM.seats.filter(x=>x!==bot);
+        else{c.send({t:"full",msg:"A sala está cheia."});setTimeout(()=>c.close(),800);return}
+      }
+      s={kind:"remote",token};ROOM.seats.push(s);
+    }
+    s.name=uniqueName(name,s);s.conn=c;s.online=true;c._seat=s;
+    c.send({t:"welcome",code:ROOM.code});
+    lobbyBroadcast();
+    return;
+  }
+  if(d.t==="leave"){hostClose(c,true);return}
+  if(ROOM.started){const s=ROOM.seats.find(x=>x.conn===c&&x.kind==="remote");if(s&&s.online)G.msg(s,d)}
+}
+function hostClose(c){
+  const s=ROOM.seats.find(x=>x.conn===c&&x.kind==="remote");
+  if(!s)return;
+  if(ROOM.started){if(s.online){s.online=false;ROOM.game.drop(s)}return}
+  ROOM.seats=ROOM.seats.filter(x=>x!==s);lobbyBroadcast();
+}
+function lobbyBroadcast(){
+  const pub=ROOM.seats.map(s=>({name:s.name,kind:s.kind}));
+  ROOM.seats.forEach((s,i)=>{if(s.kind==="remote"&&s.conn&&s.online)try{s.conn.send({t:"lobby",code:ROOM.code,seats:pub,you:i,opts:ROOM.opts||null})}catch(e){}});
+  ROOM.lobby={code:ROOM.code,seats:pub,you:0};
+  renderLobby();
+}
+function addBot(){
+  const G=ROOM.game;
+  if(ROOM.role!=="host"||ROOM.started||ROOM.seats.length>=G.maxp)return;
+  if(ROOM.seats.filter(s=>s.kind==="bot").length>=G.maxBots)return;
+  const used=new Set(ROOM.seats.map(s=>s.name));
+  const name=G.botNames.find(n=>!used.has(n))||"Computador";
+  ROOM.seats.push({kind:"bot",name,online:true});lobbyBroadcast();
+}
+function removeSeat(i){
+  if(ROOM.role!=="host"||ROOM.started)return;
+  const s=ROOM.seats[i];if(!s||s.kind==="local")return;
+  if(s.kind==="remote"&&s.conn){try{s.conn.send({t:"full",msg:"Quem criou a sala tirou-te da sala."})}catch(e){}const c=s.conn;setTimeout(()=>c.close(),500)}
+  ROOM.seats.splice(i,1);lobbyBroadcast();
+}
+function hostStart(){
+  const G=ROOM.game;
+  if(ROOM.role!=="host"||ROOM.started||ROOM.seats.length<G.minp)return;
+  ROOM.started=true;
+  for(const s of ROOM.seats)if(s.kind==="remote"&&s.online)s.conn.send({t:"start"});
+  countGame(G.id,ROOM.seats.length);
+  showScreen("game");
+  G.start(ROOM.seats);
+}
+
+/* ---------- quem entra ---------- */
+async function joinRoom(){
+  const name=cleanName($("myName").value),code=cleanCode($("joinCode").value);
+  if(!name){netNote("netNote","Escreve o teu nome primeiro.");$("myName").focus();return}
+  if(code.length!==5){netNote("netNote","O código da sala tem 5 letras.");$("joinCode").focus();return}
+  store.set("pp-name",name);
+  clearTimeout(ROOM.joinT);unsubAll();
+  netNote("netNote","1/2 A ligar ao servidor…");
+  try{await fbInit()}catch(e){netNote("netNote",fbErr(e));return}
+  ROOM.leaving=false;ROOM.code=code;ROOM.role=null;
+  try{
+    const h=await roomRef("host").get();
+    if(!h.exists()){netNote("netNote","Não encontrei essa sala. Confirma o código e se quem a criou ainda tem o jogo aberto.");return}
+  }catch(e){netNote("netNote",fbErr(e));return}
+  netNote("netNote","2/2 A entrar na sala…");
+  const me=roomRef("clients",FB.uid),down=roomRef("down",FB.uid),up=roomRef("up");
+  try{const old=await down.get();const jobs=[];old.forEach(ch=>{jobs.push(ch.ref.remove())});await Promise.all(jobs)}catch(e){}
+  ROOM.conn={send(m){up.push({from:FB.uid,m:JSON.stringify(m)}).catch(()=>{})}};
+  const hello=()=>{me.set(true).catch(()=>{});me.onDisconnect().remove();ROOM.conn.send({t:"hello",name,token:FB.uid})};
+  sub(down,"child_added",s=>{
+    const v=s.val();s.ref.remove().catch(()=>{});
+    if(!v||typeof v.m!=="string")return;
+    let d;try{d=JSON.parse(v.m)}catch(e){return}
+    clientData(d);
+  });
+  let first=true;
+  sub(FB.db.ref(".info/connected"),"value",s=>{
+    if(s.val()!==true)return;
+    if(first){first=false;return}
+    if(ROOM.role==="client"&&!ROOM.leaving)hello();
+  });
+  let hadHost=true;
+  sub(roomRef("host"),"value",s=>{
+    clearTimeout(ROOM.hostT);
+    if(s.exists()){
+      if(!hadHost&&ROOM.role==="client"&&!ROOM.leaving)hello();
+      hadHost=true;netNote("lbNote","");return;
+    }
+    hadHost=false;
+    if(ROOM.role!=="client")return;
+    netNote("lbNote","Quem criou a sala perdeu a ligação. À espera…");
+    if(ROOM.game.hostLost)ROOM.game.hostLost(true);
+    ROOM.hostT=setTimeout(()=>{
+      if(ROOM.leaving||ROOM.role!=="client")return;
+      notice("Ligação perdida","Quem criou a sala saiu ou ficou sem internet.").then(()=>leaveRoom());
+    },30000);
+  });
+  ROOM.joinT=setTimeout(()=>{if(ROOM.role!=="client"&&ROOM.code===code)netNote("netNote","A sala não respondeu. Confirma que quem a criou tem o jogo aberto e tenta outra vez.")},15000);
+  hello();
+}
+function clientData(d){
+  if(!d||typeof d!=="object")return;
+  switch(d.t){
+    case "welcome":
+      clearTimeout(ROOM.joinT);
+      sstore.set("ip-room",ROOM.code);
+      if(ROOM.role!=="client"){ROOM.role="client";netNote("netNote","");showScreen("lobby")}
+      break;
+    case "lobby":
+      ROOM.lobby={code:cleanCode(d.code),seats:(d.seats||[]).slice(0,ROOM.game.maxp).map(s=>({name:cleanName(s.name),kind:s.kind})),you:+d.you};
+      ROOM.me=+d.you;if(ROOM.game.cleanOpts)ROOM.opts=ROOM.game.cleanOpts(d.opts);
+      if($("lobby").hidden)showScreen("lobby");
+      renderLobby();break;
+    case "full":
+      ROOM.leaving=true;
+      netNote("netNote",String(d.msg||"Não foi possível entrar.").slice(0,120));
+      unsubAll();ROOM.role=null;showScreen("setup");break;
+    case "closed":
+      if(ROOM.role!=="client")break;
+      ROOM.leaving=true;
+      notice("A partida terminou","Quem criou a sala saiu do jogo.").then(()=>leaveRoom());
+      break;
+    case "start":showScreen("game");if(ROOM.game.hostLost)ROOM.game.hostLost(false);break;
+    default:if(ROOM.game.hostLost)ROOM.game.hostLost(false);ROOM.game.client(d);
+  }
+}
+function leaveRoom(){
+  ROOM.leaving=true;clearTimeout(ROOM.hostT);clearTimeout(ROOM.joinT);
+  const role=ROOM.role,code=ROOM.code;
+  if(FB&&code){
+    if(role==="client"){try{ROOM.conn.send({t:"leave"})}catch(e){}FB.db.ref(`rooms/${code}/clients/${FB.uid}`).remove().catch(()=>{})}
+    if(role==="host"){
+      for(const s of ROOM.seats)if(s.kind==="remote"&&s.online&&s.conn)try{s.conn.send({t:"closed"})}catch(e){}
+      const r=FB.db.ref(`rooms/${code}`);setTimeout(()=>r.remove().catch(()=>{}),1500);
+    }
+  }
+  if(ROOM.game.stop)ROOM.game.stop();
+  unsubAll();
+  Object.assign(ROOM,{role:null,conn:null,seats:[],conns:{},lobby:null,started:false,code:null});
+  sstore.set("ip-room","");
+  try{history.replaceState(null,"",location.href.split("#")[0])}catch(e){}
+  showScreen("setup");
+}
+function renderLobby(){
+  const L=ROOM.lobby;if(!L)return;
+  const G=ROOM.game,host=ROOM.role==="host";
+  $("lbCode").textContent=L.code;
+  $("roster").innerHTML=L.seats.map((s,i)=>`<li><span class="rn">${esc(s.name)}${i===L.you?' <em>(tu)</em>':""}</span><span class="rk">${i===0?"criou a sala":s.kind==="bot"?"computador":"amigo"}</span>${host&&i>0?`<button class="btn ghost sm" type="button" data-rm="${i}" aria-label="Tirar ${esc(s.name)}">Tirar</button>`:""}</li>`).join("")
+    +Array.from({length:Math.max(0,Math.min(G.maxp,Math.max(4,L.seats.length+1))-L.seats.length)},()=>`<li class="free"><span class="rn">Lugar livre</span></li>`).join("");
+  $("hostCtl").hidden=!host;
+  $("addBot").disabled=L.seats.length>=G.maxp||L.seats.filter(s=>s.kind==="bot").length>=G.maxBots;
+  $("startBtn").disabled=L.seats.length<G.minp;
+  if(G.renderOpts&&$("lbOpts"))G.renderOpts($("lbOpts"),ROOM.opts,host);
+  $("lbHelp").textContent=host?(L.seats.length<G.minp?G.lobbyHelpFew:"Quando estiverem todos, começa. Mantém esta página aberta durante a partida."):`À espera que ${L.seats[0]?L.seats[0].name:"quem criou a sala"} comece a partida.`;
+}
+function initRoomUI(){
+  const G=ROOM.game;
+  $("roster").addEventListener("click",e=>{const b=e.target.closest("[data-rm]");if(b)removeSeat(+b.dataset.rm)});
+  $("addBot").addEventListener("click",addBot);
+  $("startBtn").addEventListener("click",()=>{unlockAudio();hostStart()});
+  $("leaveBtn").addEventListener("click",leaveRoom);
+  $("hostBtn").addEventListener("click",()=>{unlockAudio();hostRoom()});
+  $("joinBtn").addEventListener("click",()=>{unlockAudio();joinRoom()});
+  $("joinCode").addEventListener("keydown",e=>{if(e.key==="Enter")joinRoom()});
+  const copyLink=async()=>{const url=linkFor(ROOM.code);try{await navigator.clipboard.writeText(url);netNote("lbNote","Link copiado.")}catch(e){netNote("lbNote",url)}};
+  $("copyBtn").addEventListener("click",copyLink);
+  $("shareBtn").addEventListener("click",async()=>{
+    const url=linkFor(ROOM.code);
+    if(navigator.share){try{await navigator.share({title:G.title,text:`Entra na minha sala do ${G.title} (código ${ROOM.code})`,url});return}catch(e){if(e&&e.name==="AbortError")return}}
+    copyLink();
+  });
+  $("shareBtn").hidden=!navigator.share;
+  window.addEventListener("beforeunload",e=>{if(ROOM.role==="host"&&ROOM.started){e.preventDefault();e.returnValue=""}});
+  $("myName").value=store.get("pp-name")||"";
+  const m=location.hash.match(/sala=([A-Za-z0-9]{5})/);
+  if(m){$("joinCode").value=cleanCode(m[1]);$("joinArea").classList.add("fromlink");netNote("netNote","Escreve o teu nome e carrega em Entrar.");setTimeout(()=>($("myName").value?$("joinBtn"):$("myName")).focus(),50);
+    if($("myName").value&&sstore.get("ip-room")===cleanCode(m[1])&&onlineReady())setTimeout(joinRoom,0)}
+  if(!onlineReady())$("onlineMode").classList.add("nopeer");
+}
+
+/* ================= ECRÃ (comum aos jogos de rondas) =================
+   som, tema, relógio, avisos, reações, regras e botão de sair.
+   Cada jogo pode definir ROOM.game.onScreen(nome) para limpar o que é seu. */
+const REACTS=["😂","😱","🤥","👏","🙄","🔥"];
+const TT=ms=>window.__fast?Math.max(30,ms/25):ms;
+
+/* relógio da ronda */
+const TIMER={endAt:0,t:null};
+function startTick(ms){
+  TIMER.endAt=performance.now()+ms;
+  if(TIMER.t)return;
+  let last=null;
+  TIMER.t=setInterval(()=>{
+    const s=Math.max(0,Math.ceil((TIMER.endAt-performance.now())/1000));
+    if(s!==last){last=s;$("gTimer").textContent=s+" s";$("gTimer").classList.toggle("low",s<=10);if(s<=5&&s>0)playSfx("tick")}
+  },200);
+}
+function stopTick(){clearInterval(TIMER.t);TIMER.t=null;const t=$("gTimer");if(t)t.textContent=""}
+
+/* som (sintetizado, sem ficheiros) */
+let AC=null,muted=store.get("pp-mute")==="1";
+function unlockAudio(){try{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=="running")AC.resume()}catch(e){}}
+function tone(f,d,o={}){if(muted||!AC||AC.state!=="running")return;const t=AC.currentTime+(o.at||0),os=AC.createOscillator(),g=AC.createGain();os.type=o.type||"sine";os.frequency.setValueAtTime(f,t);if(o.f2)os.frequency.exponentialRampToValueAtTime(o.f2,t+d);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(o.v||.1,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);os.connect(g).connect(AC.destination);os.start(t);os.stop(t+d+.02)}
+const SFX={
+  send:()=>tone(660,.09,{type:"triangle",v:.1,f2:990}),
+  tick:()=>tone(1200,.05,{type:"square",v:.03}),
+  round:()=>{tone(523,.12,{type:"triangle",v:.09});tone(784,.18,{type:"triangle",v:.09,at:.1})},
+  vote:()=>{tone(392,.1,{type:"triangle",v:.08});tone(523,.14,{type:"triangle",v:.08,at:.09})},
+  lie:()=>{tone(220,.28,{type:"sawtooth",v:.06,f2:150})},
+  truth:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,.2,{type:"triangle",v:.09,at:i*.08}))},
+  win:()=>{[523,659,784,659,784,1047].forEach((f,i)=>tone(f,.22,{type:"triangle",v:.09,at:i*.12}))},
+  end:()=>{[392,523,659].forEach((f,i)=>tone(f,.25,{type:"triangle",v:.08,at:i*.12}))}
+};
+function playSfx(k){try{SFX[k]&&SFX[k]()}catch(e){}}
+function setMute(m){muted=m;store.set("pp-mute",m?"1":"0");$("mute").setAttribute("aria-pressed",String(!m));$("mute").textContent=m?"🔇":"🔊";$("mute").title=m?"Som desligado":"Som ligado"}
+
+function showScreen(n){
+  for(const id of ["setup","lobby","game"])$(id).hidden=id!==n;
+  $("exitBtn").hidden=n!=="game";$("hubLink").hidden=n!=="setup";
+  if(n!=="game")stopTick();
+  $("reactBtn").hidden=n!=="game";$("reacts").hidden=true;
+  if(ROOM.game&&ROOM.game.onScreen)ROOM.game.onScreen(n);
+}
+function setTheme(t,save){
+  if(t==="light")document.documentElement.dataset.ppTheme="light";else delete document.documentElement.dataset.ppTheme;
+  if(save)store.set("pp-tema",t);
+  const tb=$("themeBtn");tb.textContent=t==="light"?"☾":"☀";tb.title=t==="light"?"Tema escuro":"Tema claro";tb.setAttribute("aria-label",tb.title);
+  const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==="light"?"#f4eee3":"#13201f";
+}
+function notice(title,text){return new Promise(res=>{$("mTitle").textContent=title;$("mBody").textContent=text;$("mActions").innerHTML=`<button class="btn" type="button">Voltar ao início</button>`;$("modal").hidden=false;$("mActions").firstChild.onclick=()=>{$("modal").hidden=true;res()}})}
+function openSheet(title,html){$("rulesTitle").textContent=title;$("rulesBody").innerHTML=html;$("rulesModal").hidden=false}
+function flash(t){const a=$("alert");a.textContent=t;a.hidden=false;a.classList.remove("show");void a.offsetWidth;a.classList.add("show");clearTimeout(a._t);a._t=setTimeout(()=>a.hidden=true,2600)}
+function bubble(from,r){
+  const li=[...$("chips").children].find(x=>x.querySelector(".cn")&&x.querySelector(".cn").textContent===from);
+  const b=document.createElement("div");b.className="bubble";b.textContent=r;
+  const rc=(li||$("chips")).getBoundingClientRect();b.style.left=(rc.left+rc.width/2)+"px";b.style.top=(rc.top+4)+"px";
+  document.body.appendChild(b);setTimeout(()=>b.remove(),2600);
+}
+/* reencaminha uma reação para todos (no motor de quem criou a sala) */
+function relayReact(seats,seat,d){
+  if(typeof d.r!=="string"||!REACTS.includes(d.r))return;
+  seats.forEach(s=>{if(s.kind!=="bot")ROOM.sendTo(s,{t:"react",from:seat.name,r:d.r})});
+}
+function privacyHTML(extra){return `<ul>
+  <li><b>Não pedimos conta, email nem dados pessoais.</b> Não há publicidade nem cookies de análise.</li>
+  <li><b>O nome e o que escreves no jogo</b> só são mostrados aos jogadores da tua sala. O nome fica guardado no teu aparelho para a próxima vez.</li>
+  <li><b>As salas</b> usam o Firebase, da Google. Cada aparelho recebe um identificador anónimo, sem nome nem email. As jogadas passam pelos servidores da Google na Bélgica e apagam-se quando a sala fecha. Para o serviço funcionar, a Google trata o endereço de internet (IP) do aparelho.</li>
+  <li><b>Contagem de partidas:</b> guardamos só quantas partidas se jogam por mês e com quantos jogadores, sem saber quem jogou.</li>
+  <li><b>No teu aparelho</b> ficam guardadas as preferências (nome, tema, som)${extra||""}. Podes apagá-las limpando os dados do site no browser.</li>
+  <li><b>O site</b> está alojado na Netlify, que regista dados técnicos de acesso, como o IP, para o servir.</li>
+</ul>`}
+function initUI(o){
+  setTheme(document.documentElement.dataset.ppTheme==="light"?"light":"dark",false);
+  setMute(muted);
+  $("themeBtn").addEventListener("click",()=>setTheme(document.documentElement.dataset.ppTheme==="light"?"dark":"light",true));
+  $("mute").addEventListener("click",()=>{setMute(!muted);if(!muted){unlockAudio();setTimeout(()=>playSfx("send"),50)}});
+  $("rulesBtn").addEventListener("click",()=>openSheet("Como se joga",o.rules));
+  $("privBtn").addEventListener("click",()=>openSheet("Privacidade",o.privacy));
+  $("rulesClose").addEventListener("click",()=>$("rulesModal").hidden=true);
+  $("rulesModal").addEventListener("click",e=>{if(e.target===$("rulesModal"))$("rulesModal").hidden=true});
+  $("exitBtn").addEventListener("click",()=>{
+    const host=ROOM.role==="host"&&ROOM.started;
+    $("mTitle").textContent="Sair?";$("mBody").textContent=host?"Se saíres, a partida acaba para todos.":"Vais sair da sala.";
+    $("mActions").innerHTML=`<button class="btn" type="button" id="exitYes">Sair</button><button class="btn ghost" type="button" id="exitNo">Ficar</button>`;
+    $("modal").hidden=false;
+    $("exitYes").onclick=()=>{$("modal").hidden=true;leaveRoom()};$("exitNo").onclick=()=>$("modal").hidden=true;
+  });
+  $("reacts").innerHTML=REACTS.map(r=>`<button type="button" data-r="${r}">${r}</button>`).join("");
+  $("reactBtn").addEventListener("click",()=>{const R=$("reacts");R.hidden=!R.hidden;if(!R.hidden){const b=$("reactBtn").getBoundingClientRect();R.style.right=Math.max(8,innerWidth-b.right)+"px";R.style.top=(b.bottom+6)+"px"}});
+  $("reacts").addEventListener("click",e=>{const b=e.target.closest("[data-r]");if(!b)return;$("reacts").hidden=true;ROOM.send({t:"react",r:b.dataset.r})});
+  document.addEventListener("click",e=>{if(!$("reacts").hidden&&!e.target.closest("#reacts,#reactBtn"))$("reacts").hidden=true});
+  initRoomUI();
+  showScreen("setup");
+}
+
+/* ================= PARES DE PALAVRAS =================
+   Cada par tem duas palavras parecidas. Em cada ronda, uma vai para os civis e a outra
+   para os infiltrados (sorteado). O Senhor Branco não recebe nenhuma. */
+const PAIRS=[
+/* comida e bebida */
+["bica","galão"],["francesinha","tosta mista"],["bacalhau","sardinha"],["pastel de nata","bola de Berlim"],["caldo verde","canja"],
+["bifana","prego"],["cozido à portuguesa","feijoada"],["arroz-doce","leite-creme"],["vinho verde","vinho do Porto"],["imperial","caneca"],
+["ginjinha","licor beirão"],["queijo da serra","requeijão"],["chouriço","alheira"],["presunto","fiambre"],["broa","pão de forma"],
+["polvo","lula"],["camarão","lagosta"],["amêijoas","mexilhões"],["frango assado","frango de churrasco"],["batatas fritas","puré"],
+["pizza","lasanha"],["hambúrguer","cachorro-quente"],["sushi","ceviche"],["kebab","shawarma"],["gelado","sorvete"],
+["chocolate quente","cappuccino"],["chá","tisana"],["sumo de laranja","limonada"],["sangria","vinho tinto"],["cerveja","sidra"],
+["croissant","pão de leite"],["bolo-rei","bolo-rainha"],["rabanadas","filhoses"],["mel","compota"],["azeite","manteiga"],
+["tremoços","amendoins"],["pipocas","nachos"],["ovo estrelado","ovo mexido"],["omelete","fritada"],["sopa de legumes","creme de abóbora"],
+["maçã","pera"],["laranja","tangerina"],["morango","framboesa"],["melancia","melão"],["banana","manga"],
+["cebola","alho"],["tomate","pimento"],["batata","batata-doce"],["cenoura","nabo"],["couve","alface"],
+/* lugares */
+["Lisboa","Porto"],["Algarve","Ibiza"],["Coimbra","Braga"],["Madeira","Açores"],["Sintra","Cascais"],
+["praia","piscina"],["montanha","colina"],["café","pastelaria"],["tasca","restaurante"],["discoteca","bar"],
+["supermercado","mercearia"],["hospital","centro de saúde"],["farmácia","parafarmácia"],["igreja","capela"],["escola","universidade"],
+["aeroporto","estação de comboios"],["metro","elétrico"],["autocarro","camioneta"],["ginásio","pavilhão"],["biblioteca","livraria"],
+["cinema","teatro"],["museu","galeria de arte"],["parque de campismo","hotel"],["quinta","herdade"],["aldeia","vila"],
+["Fátima","Santiago de Compostela"],["Paris","Londres"],["Espanha","França"],["Brasil","Angola"],["Nova Iorque","Las Vegas"],
+/* casa e objetos */
+["sofá","cadeirão"],["cama","beliche"],["frigorífico","arca congeladora"],["micro-ondas","forno"],["chaleira","cafeteira"],
+["garfo","colher"],["copo","taça"],["prato","tigela"],["panela","frigideira"],["panela de pressão","tacho"],
+["guarda-chuva","impermeável"],["casaco","camisola"],["sapatilhas","chinelos"],["meias","collants"],["chapéu","boné"],
+["óculos","lentes de contacto"],["relógio","pulseira"],["anel","brinco"],["mala","mochila"],["carteira","porta-moedas"],
+["telemóvel","tablet"],["computador","portátil"],["televisão","rádio"],["comando","teclado"],["auscultadores","colunas"],
+["vassoura","esfregona"],["aspirador","robot aspirador"],["máquina de lavar roupa","máquina de lavar loiça"],["toalha","lençol"],["almofada","edredão"],
+["escova de dentes","fio dental"],["champô","gel de banho"],["perfume","desodorizante"],["espelho","janela"],["vela","candeeiro"],
+["chave","cadeado"],["tesoura","faca"],["martelo","chave de fendas"],["fita-cola","cola"],["caneta","lápis"],
+/* transportes */
+["carro","mota"],["bicicleta","trotinete"],["avião","helicóptero"],["barco","mota de água"],["comboio","teleférico"],
+["táxi","TVDE"],["ambulância","carro da polícia"],["trator","camião"],["caravana","tenda"],["skate","patins"],
+/* pessoas e profissões */
+["médico","enfermeiro"],["professor","explicador"],["polícia","GNR"],["bombeiro","nadador-salvador"],["padre","freira"],
+["cozinheiro","empregado de mesa"],["canalizador","eletricista"],["carteiro","estafeta"],["advogado","juiz"],["dentista","cabeleireiro"],
+["sogra","madrasta"],["avó","tia"],["primo","sobrinho"],["vizinho","porteiro"],["chefe","colega de trabalho"],
+["namorado","amante"],["ex-namorado","melhor amigo"],["noiva","dama de honor"],["padrinho","testemunha"],["bebé","criança"],
+/* animais */
+["cão","lobo"],["gato","tigre"],["galinha","pato"],["vaca","boi"],["porco","javali"],
+["cavalo","burro"],["ovelha","cabra"],["coelho","lebre"],["rato","hamster"],["pombo","gaivota"],
+["golfinho","tubarão"],["baleia","orca"],["sapo","rã"],["cobra","lagarto"],["abelha","vespa"],
+["mosca","mosquito"],["formiga","barata"],["papagaio","periquito"],["pinguim","foca"],["urso","panda"],
+/* desporto e lazer */
+["Benfica","Sporting"],["FC Porto","Vitória de Guimarães"],["futebol","futsal"],["ténis","padel"],["basquetebol","andebol"],
+["surf","bodyboard"],["ciclismo","corrida"],["xadrez","damas"],["sueca","poker"],["bowling","bilhar"],
+["ioga","pilates"],["natação","hidroginástica"],["karaté","judo"],["golfe","minigolfe"],["dardos","matraquilhos"],
+/* música, festas e cultura */
+["fado","pimba"],["guitarra portuguesa","viola"],["piano","acordeão"],["Natal","Páscoa"],["Carnaval","Halloween"],
+["Santos Populares","festa da aldeia"],["casamento","batizado"],["aniversário","jantar de empresa"],["funeral","missa"],["despedida de solteiro","festa de anos"],
+["telenovela","série"],["telejornal","programa da manhã"],["Festival da Canção","Eurovisão"],["WhatsApp","Messenger"],["Instagram","TikTok"],
+["Pai Natal","Rei Mago"],["fantasma","zombie"],["vampiro","lobisomem"],["bruxa","fada"],["sereia","ninfa"],
+/* coisas do dia a dia */
+["segunda-feira","domingo"],["manhã","madrugada"],["verão","primavera"],["chuva","nevoeiro"],["sol","lua"],
+["ressaca","enjoo"],["constipação","gripe"],["dor de cabeça","dor de dentes"],["sesta","noitada"],["pequeno-almoço","lanche"],
+["Multibanco","MB WAY"],["Finanças","Segurança Social"],["multa","portagem"],["renda","prestação da casa"],["ordenado","subsídio de Natal"],
+["fila","trânsito"],["rotunda","semáforo"],["passadeira","ponte"],["elevador","escada rolante"],["garagem","arrecadação"],
+["selfie","fotografia de grupo"],["áudio","mensagem"],["videochamada","chamada"],["email","carta"],["emoji","sticker"],
+["dieta","jejum"],["ginástica","caminhada"],["tatuagem","piercing"],["barba","bigode"],["peruca","extensões"],
+["beijo","abraço"],["piscar o olho","acenar"],["rir","sorrir"],["chorar","bocejar"],["espirrar","tossir"]
+];
+
+/* ================= SENHOR BRANCO =================
+   Quase todos (civis) recebem a mesma palavra. Os infiltrados recebem uma parecida e não sabem
+   que são infiltrados. O Senhor Branco não recebe palavra. À vez, cada um dá uma pista;
+   depois vota-se para eliminar alguém. Se o Senhor Branco for eliminado, pode tentar adivinhar
+   a palavra dos civis e ganhar sozinho.
+   Civis ganham quando saem todos os impostores; impostores ganham quando ficam tantos quantos os civis.
+   Pontos: civis +2 cada, infiltrados +10 cada, Senhor Branco +6. */
+const T_READY=30,T_CLUE_DIST=45,T_CLUE_ROOM=40,T_VOTE=60,T_GUESS=40,T_OUT=4500,CLUELEN=30;
+const PTS={civ:2,inf:10,sb:6};
+const ROLE_NAME={civ:"Civil",inf:"Infiltrado",sb:"Senhor Branco"};
+const STOPW=new Set(["o","a","os","as","um","uma","de","do","da","dos","das"]);
+const normW=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g," ").trim().split(" ").filter(w=>w&&!STOPW.has(w)).map(w=>w.length>3&&w.endsWith("s")?w.slice(0,-1):w).join(" ");
+const cleanTxt=(s,n)=>String(s||"").replace(/[\u0000-\u001f<>]/g,"").replace(/\s+/g," ").trim().slice(0,n);
+
+/* ---------- motor (só em quem criou a sala) ---------- */
+let G=null;
+function later(ms,fn){const g=G;const t=setTimeout(()=>{if(G===g&&!g.dead)fn()},ms);g.timers.push(t);return t}
+function clearTimers(){if(G){for(const t of G.timers)clearTimeout(t);G.timers=[]}}
+function brancoStart(seats){
+  brancoStop();
+  G={seats,opts:cleanOpts(ROOM.opts),scores:seats.map(()=>0),round:0,timers:[],id:Math.random()};
+  newRound();
+}
+function brancoStop(){if(G){clearTimers();G.dead=true}G=null}
+const isOn=i=>G.seats[i].online!==false;
+function counts(n,o){
+  let inf=o.inf==="auto"?(n<=6?1:n<=8?2:3):+o.inf,sb=o.sb==="1"?1:0;
+  const max=Math.max(1,Math.floor((n-1)/2));
+  while(inf+sb>max){if(inf>1)inf--;else if(sb>0)sb--;else inf--}
+  return{inf:Math.max(sb?0:1,inf),sb};
+}
+function pickPair(){
+  let seen=[];try{seen=JSON.parse(store.get("branco-vistos")||"[]")}catch(e){}
+  if(!Array.isArray(seen)||seen.length>PAIRS.length-20)seen=[];
+  const pool=PAIRS.map((p,k)=>k).filter(k=>!seen.includes(k));
+  const k=pool[Math.floor(Math.random()*pool.length)];
+  store.set("branco-vistos",JSON.stringify(seen.concat([k])));
+  const p=PAIRS[k].slice();if(Math.random()<.5)p.reverse();
+  return{civ:p[0],inf:p[1]};
+}
+function newRound(){
+  clearTimers();
+  const n=G.seats.length,c=counts(n,G.opts);
+  const idx=shuffle(G.seats.map((s,i)=>i));
+  const roles=G.seats.map(()=>"civ");
+  idx.slice(0,c.inf).forEach(i=>roles[i]="inf");
+  idx.slice(c.inf,c.inf+c.sb).forEach(i=>roles[i]="sb");
+  G.round++;
+  G.r={words:pickPair(),roles,c,alive:G.seats.map(()=>true),volta:0,clues:[],ready:{},votes:{},tie:null,out:null,guess:null,result:null,phase:"ready"};
+  G.deadline=Date.now()+TT(T_READY*1000);
+  G.phaseT=later(TT(T_READY*1000)+300,startClues);
+  broadcast();
+}
+function aliveIdx(){return G.seats.map((s,i)=>i).filter(i=>G.r.alive[i])}
+function startClues(){
+  const R=G.r;if(R.phase!=="ready"&&R.phase!=="out"&&R.phase!=="guess")return;
+  clearTimeout(G.phaseT);
+  R.volta++;
+  /* ordem: a partir de alguém ao calhas, nunca começa pelo Senhor Branco */
+  const al=aliveIdx();let s=Math.floor(Math.random()*al.length);
+  for(let k=0;k<al.length&&R.roles[al[s]]==="sb";k++)s=(s+1)%al.length;
+  R.order=al.slice(s).concat(al.slice(0,s));
+  R.turn=0;R.clues.push([]);R.phase="clue";R.votes={};R.tie=null;R.out=null;
+  nextTurn(true);
+}
+function nextTurn(first){
+  const R=G.r;
+  if(!first)R.turn++;
+  while(R.turn<R.order.length&&!isOn(R.order[R.turn])){R.clues[R.volta-1].push({i:R.order[R.turn],text:null,skip:true});R.turn++}
+  if(R.turn>=R.order.length)return startVote();
+  const t=G.opts.mode==="dist"?T_CLUE_DIST:T_CLUE_ROOM;
+  clearTimeout(G.phaseT);
+  G.deadline=Date.now()+TT(t*1000);
+  const who=R.order[R.turn],turnNo=R.turn,v=R.volta;
+  G.phaseT=later(TT(t*1000)+300,()=>{if(G.r.phase==="clue"&&G.r.volta===v&&G.r.turn===turnNo){G.r.clues[v-1].push({i:who,text:null,skip:true});nextTurn()}});
+  broadcast();
+}
+function startVote(){
+  const R=G.r;clearTimeout(G.phaseT);
+  R.phase="vote";R.votes={};
+  G.deadline=Date.now()+TT(T_VOTE*1000);
+  G.phaseT=later(TT(T_VOTE*1000)+300,countVotes);
+  broadcast();
+}
+function voters(){return aliveIdx().filter(isOn)}
+function cands(){return G.r.tie||aliveIdx()}
+function countVotes(){
+  const R=G.r;if(R.phase!=="vote")return;
+  clearTimeout(G.phaseT);
+  const tally={};for(const v of Object.values(R.votes))tally[v]=(tally[v]||0)+1;
+  const keys=Object.keys(tally).map(Number);
+  if(!keys.length){R.out={i:null};R.phase="out";broadcast();later(TT(T_OUT),startClues);return}
+  const max=Math.max(...keys.map(k=>tally[k]));
+  const top=keys.filter(k=>tally[k]===max);
+  if(top.length>1&&!R.tie){R.tie=top;R.phase="vote";R.votes={};R.tieNote=true;G.deadline=Date.now()+TT(T_VOTE*1000);G.phaseT=later(TT(T_VOTE*1000)+300,countVotes);broadcast();return}
+  const out=top[Math.floor(Math.random()*top.length)];
+  R.tie=null;R.alive[out]=false;
+  R.out={i:out,role:R.roles[out],tally};
+  if(R.roles[out]==="sb"){
+    R.phase="guess";G.deadline=Date.now()+TT(T_GUESS*1000);
+    G.phaseT=later(TT(T_GUESS*1000)+300,()=>finishGuess(null));
+    if(!isOn(out))later(TT(1500),()=>finishGuess(null));
+    broadcast();return;
+  }
+  R.phase="out";broadcast();
+  later(TT(T_OUT),()=>checkWin()||startClues());
+}
+function finishGuess(text){
+  const R=G.r;if(R.phase!=="guess")return;
+  clearTimeout(G.phaseT);
+  R.guess={text:text||"",ok:!!text&&normW(text)===normW(R.words.civ)};
+  if(R.guess.ok)return endRound("sb");
+  R.phase="out";broadcast();
+  later(TT(T_OUT),()=>checkWin()||startClues());
+}
+function checkWin(){
+  const R=G.r,al=aliveIdx();
+  const civ=al.filter(i=>R.roles[i]==="civ").length,imp=al.length-civ;
+  if(imp===0){endRound("civ");return true}
+  if(imp>=civ){endRound("imp");return true}
+  return false;
+}
+function endRound(w){
+  const R=G.r;clearTimeout(G.phaseT);
+  const delta=G.seats.map(()=>0);
+  G.seats.forEach((s,i)=>{const r=R.roles[i];
+    if(w==="civ"&&r==="civ")delta[i]=PTS.civ;
+    if(w==="imp"&&r==="inf")delta[i]=PTS.inf;
+    if(w==="imp"&&r==="sb")delta[i]=PTS.sb;
+    if(w==="sb"&&r==="sb")delta[i]=PTS.sb;});
+  delta.forEach((d,i)=>G.scores[i]+=d);
+  R.result={winner:w,delta};R.phase="over";
+  broadcast();
+}
+function viewFor(i){
+  const g=G,R=g.r,ph=R.phase,nm=k=>g.seats[k].name,show=ph==="over";
+  const curr=ph==="clue"?R.order[R.turn]:null;
+  return{t:"v",gid:g.id,round:g.round,phase:ph,me:i,host:i===0,mode:g.opts.mode,volta:R.volta,c:R.c,
+    players:g.seats.map((s,j)=>({name:s.name,score:g.scores[j],alive:R.alive[j],off:s.online===false,
+      done:ph==="ready"?!!R.ready[j]:ph==="vote"?R.votes[j]!=null:false,turn:j===curr,
+      role:(show||!R.alive[j])?R.roles[j]:null})),
+    word:R.roles[i]==="sb"?null:R.words[R.roles[i]==="inf"?"inf":"civ"],sb:R.roles[i]==="sb",alive:R.alive[i],
+    ready:!!R.ready[i],
+    turn:curr,clues:R.clues.map(v=>v.map(c=>({name:nm(c.i),text:g.opts.mode==="dist"?c.text:null,skip:!!c.skip,said:true}))),
+    order:ph==="clue"?R.order.map(nm):null,turnPos:ph==="clue"?R.turn:null,
+    cands:ph==="vote"?cands().filter(k=>k!==i).map(k=>({i:k,name:nm(k)})):null,tie:ph==="vote"&&!!R.tie,
+    myVote:ph==="vote"&&R.votes[i]!=null?R.votes[i]:null,canVote:ph==="vote"&&R.alive[i],
+    out:R.out&&R.out.i!=null?{name:nm(R.out.i),role:R.out.role,me:R.out.i===i,votes:R.out.tally?R.out.tally[R.out.i]:0}:(R.out?{none:true}:null),
+    guess:R.guess?{text:R.guess.text,ok:R.guess.ok}:null,
+    result:show?{winner:R.result.winner,delta:R.result.delta,words:R.words,roles:g.seats.map((s,j)=>({name:s.name,role:R.roles[j]}))}:null,
+    left:["ready","clue","vote","guess"].includes(ph)?Math.max(0,g.deadline-Date.now()):0};
+}
+function broadcast(){if(!G)return;G.seats.forEach((s,i)=>{if(s.kind!=="bot")ROOM.sendTo(s,viewFor(i))})}
+function brancoMsg(seat,d){
+  if(!G||!d)return;
+  const i=G.seats.indexOf(seat),R=G.r;if(i<0)return;
+  if(d.t==="ready"&&R.phase==="ready"){R.ready[i]=true;if(G.seats.every((s,j)=>R.ready[j]||!isOn(j)))startClues();else broadcast();return}
+  if(d.t==="clue"&&R.phase==="clue"&&R.order[R.turn]===i){
+    let text=null;
+    if(G.opts.mode==="dist"){
+      text=cleanTxt(d.text,CLUELEN);
+      if(!normW(text)){ROOM.sendTo(seat,{t:"err",msg:"Escreve uma pista."});return}
+      const mine=R.roles[i]==="sb"?null:R.words[R.roles[i]==="inf"?"inf":"civ"];
+      if(mine&&(normW(text)===normW(mine)||normW(text).includes(normW(mine)))){ROOM.sendTo(seat,{t:"err",msg:"Não podes dizer a tua palavra! Dá uma pista."});return}
+    }
+    R.clues[R.volta-1].push({i,text});nextTurn();return;
+  }
+  if(d.t==="vote"&&R.phase==="vote"&&R.alive[i]&&R.votes[i]==null){
+    const k=+d.i;if(k===i||!cands().includes(k))return;
+    R.votes[i]=k;
+    if(voters().every(j=>R.votes[j]!=null))countVotes();else broadcast();return;
+  }
+  if(d.t==="guess"&&R.phase==="guess"&&R.out&&R.out.i===i){finishGuess(cleanTxt(d.text,CLUELEN));return}
+  if(d.t==="react"){relayReact(G.seats,seat,d);return}
+  if(i===0&&d.t==="again"&&R.phase==="over"){newRound();return}
+  if(i===0&&d.t==="lobby"&&R.phase==="over"){brancoStop();ROOM.backToLobby();return}
+}
+
+/* ---------- opções da sala ---------- */
+function cleanOpts(o){o=o||{};return{mode:o.mode==="dist"?"dist":"sala",inf:["auto","1","2","3"].includes(String(o.inf))?String(o.inf):"auto",sb:o.sb==="0"?"0":"1"}}
+function renderOpts(el,o,host){
+  o=cleanOpts(o);
+  const seg=(k,items)=>`<div class="seg" role="group">${items.map(([v,l])=>`<button type="button" class="${o[k]===v?"on":""}" data-k="${k}" data-v="${v}" ${host?"":"disabled"} aria-pressed="${o[k]===v}">${l}</button>`).join("")}</div>`;
+  el.innerHTML=`<div class="optrow"><span class="eyebrow">Onde estão</span>${seg("mode",[["sala","Na mesma sala"],["dist","À distância"]])}</div>
+    <div class="optrow"><span class="eyebrow">Infiltrados</span>${seg("inf",[["auto","Automático"],["1","1"],["2","2"],["3","3"]])}</div>
+    <div class="optrow"><span class="eyebrow">Senhor Branco</span>${seg("sb",[["1","Sim"],["0","Não"]])}</div>
+    <p class="note">${o.mode==="sala"?"Na mesma sala: as pistas dizem-se em voz alta e o telemóvel diz de quem é a vez.":"À distância: cada um escreve a sua pista no jogo, à vez."}</p>`;
+  if(host)el.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const n=Object.assign({},o);n[b.dataset.k]=b.dataset.v;ROOM.opts=cleanOpts(n);lobbyBroadcast()});
+  const ab=$("addBot");if(ab)ab.hidden=true;
+}
+
+/* ---------- ecrã do jogador ---------- */
+const UI={v:null,key:null,peek:true,vsel:null};
+function brancoClient(d){
+  if(d.t==="react"){bubble(d.from,d.r);return}
+  if(d.t==="err"){const n=$("clueNote");if(n)n.textContent=d.msg;const b=$("clueBtn");if(b)b.disabled=false;return}
+  if(d.t!=="v")return;
+  if($("game").hidden)showScreen("game");
+  render(d);
+}
+function roleTag(r){return r?`<em class="role r-${r}">${ROLE_NAME[r]}</em>`:""}
+function render(v){
+  const prev=UI.v;UI.v=v;
+  const newRound=!prev||prev.gid!==v.gid||prev.round!==v.round;
+  if(newRound)UI.peek=true;
+  $("gRound").textContent=`Ronda ${v.round}${v.volta?` · volta ${v.volta}`:""}`;
+  $("chips").innerHTML=v.players.map((p,j)=>`<li class="${j===v.me?"me":""}${p.off?" off":""}${p.alive?"":" dead"}${p.turn?" turnnow":""}${p.done?" done":""}"><span class="cn">${esc(p.name)}</span><b>${p.score}</b>${p.turn?'<i class="st">🗣</i>':p.done?'<i class="st">✓</i>':""}${!p.alive&&p.role?`<i class="rt r-${p.role}">${p.role==="civ"?"civil":p.role==="inf"?"infiltrado":"S. Branco"}</i>`:""}</li>`).join("");
+  /* a tua palavra */
+  const wc=$("wordCard");
+  wc.classList.toggle("sb",v.sb);wc.classList.toggle("hide",!UI.peek);wc.classList.toggle("dead",!v.alive);
+  $("wordText").textContent=v.sb?"Não tens palavra":v.word;
+  $("wordSub").textContent=v.sb?"És o Senhor Branco. Ouve as pistas, finge que sabes e tenta adivinhar a palavra.":v.alive?"Dá pistas sem dizeres a palavra. Atenção: podes ser um infiltrado sem saberes.":"Foste eliminado. Agora só podes ver.";
+  if(["ready","clue","vote","guess"].includes(v.phase))startTick(v.left);else stopTick();
+  const key=`${v.gid}:${v.round}:${v.phase}:${v.volta}:${v.tie?1:0}`,fresh=key!==UI.key;UI.key=key;
+  const P=$("panel");
+  if(v.phase==="ready"){
+    P.innerHTML=`<p class="lead">${v.sb?"Não tens palavra nesta ronda.":"Decora a tua palavra."} Quando estiveres pronto, carrega no botão.</p>
+      <p class="mine">Nesta ronda: ${v.c.inf} ${v.c.inf===1?"infiltrado":"infiltrados"}${v.c.sb?" e 1 Senhor Branco":""}.</p>
+      ${v.ready?`<p class="wait">À espera dos outros (${v.players.filter(p=>p.done).length} de ${v.players.filter(p=>!p.off).length}).</p>`:'<button class="btn" type="button" id="readyBtn">Já vi, vamos lá</button>'}`;
+    const b=$("readyBtn");if(b)b.onclick=()=>{unlockAudio();ROOM.send({t:"ready"});b.disabled=true};
+    if(fresh)playSfx("round");
+  }else if(v.phase==="clue")drawClue(v,fresh);
+  else if(v.phase==="vote")drawVote(v,fresh);
+  else if(v.phase==="out"||v.phase==="guess")drawOut(v,fresh);
+  else if(v.phase==="over"){if(fresh)drawOver(v);else overButtons(v)}
+}
+function cluesHTML(v){
+  if(!v.clues.length)return"";
+  return`<div class="clues">${v.clues.map((vol,k)=>vol.length?`<div class="vol"><span class="eyebrow">Volta ${k+1}</span><ul>${vol.map(c=>`<li><b>${esc(c.name)}</b>${c.skip?'<em>passou a vez</em>':v.mode==="dist"?`<span>${esc(c.text)}</span>`:'<em>já disse</em>'}</li>`).join("")}</ul></div>`:"").join("")}</div>`;
+}
+function drawClue(v,fresh){
+  const P=$("panel"),mine=v.turn===v.me,who=v.players[v.turn]?v.players[v.turn].name:"";
+  const orderLine=`<p class="order">${v.order.map((n,k)=>`<span class="${k<v.turnPos?"past":k===v.turnPos?"now":""}">${esc(n)}</span>`).join("<i>→</i>")}</p>`;
+  if(mine&&v.mode==="dist"){
+    if(fresh||!$("clueIn")){
+      P.innerHTML=`<div class="yourturn"><b>É a tua vez!</b><p>Escreve uma pista sobre a tua palavra${v.sb?" (inventa: não tens palavra!)":""}.</p>
+        <div class="ansrow"><input id="clueIn" maxlength="${CLUELEN}" placeholder="Uma ou duas palavras" autocomplete="off" enterkeyhint="send"><button class="btn" type="button" id="clueBtn">Enviar</button></div><p class="note bad" id="clueNote"></p></div>${orderLine}${cluesHTML(v)}`;
+      const send=()=>{const t=cleanTxt($("clueIn").value,CLUELEN);if(!t){$("clueNote").textContent="Escreve uma pista.";return}unlockAudio();$("clueBtn").disabled=true;ROOM.send({t:"clue",text:t});playSfx("send")};
+      $("clueBtn").onclick=send;$("clueIn").addEventListener("keydown",e=>{if(e.key==="Enter")send()});
+      setTimeout(()=>{const e=$("clueIn");if(e)e.focus()},50);
+      playSfx("vote");if(navigator.vibrate)try{navigator.vibrate(150)}catch(e){}
+    }
+    return;
+  }
+  if(mine){
+    P.innerHTML=`<div class="yourturn"><b>É a tua vez!</b><p>Diz em voz alta uma pista sobre a tua palavra${v.sb?" (inventa: não tens palavra!)":""}. Depois carrega no botão.</p><button class="btn" type="button" id="saidBtn">Já disse a minha pista</button></div>${orderLine}${cluesHTML(v)}`;
+    $("saidBtn").onclick=()=>{unlockAudio();$("saidBtn").disabled=true;ROOM.send({t:"clue"})};
+    if(fresh||UI.lastTurn!==v.turnPos){playSfx("vote");if(navigator.vibrate)try{navigator.vibrate(150)}catch(e){}}
+  }else{
+    P.innerHTML=`<p class="lead">${v.mode==="dist"?"A escrever a pista:":"Agora fala:"} <b>${esc(who)}</b></p>${orderLine}${cluesHTML(v)}`;
+  }
+  UI.lastTurn=v.turnPos;
+}
+function drawVote(v,fresh){
+  const P=$("panel");
+  if(!v.canVote){P.innerHTML=`<p class="lead">A votação está a decorrer.</p><p class="wait">Foste eliminado, por isso só podes ver.</p>${cluesHTML(v)}`;return}
+  if(v.myVote!=null){const n=v.players[v.myVote];P.innerHTML=`<p class="lead">Votaste em <b>${esc(n?n.name:"")}</b>.</p><p class="wait">À espera dos outros (${v.players.filter(p=>p.done).length} já votaram).</p>${cluesHTML(v)}`;return}
+  if(!fresh&&$("voteList"))return;
+  P.innerHTML=`<p class="lead">${v.tie?"Empate! Votem outra vez, só entre estes:":"Quem é o impostor? Vota para eliminar alguém."}</p>
+    <div class="opts" id="voteList">${v.cands.map(c=>`<button type="button" class="opt" data-i="${c.i}">${esc(c.name)}</button>`).join("")}</div>${cluesHTML(v)}`;
+  $("voteList").addEventListener("click",e=>{const b=e.target.closest(".opt");if(!b)return;unlockAudio();ROOM.send({t:"vote",i:+b.dataset.i});$("voteList").classList.add("locked");b.classList.add("picked");playSfx("send")});
+  if(fresh)playSfx("vote");
+}
+function drawOut(v,fresh){
+  const P=$("panel"),o=v.out;
+  if(o&&o.none){P.innerHTML=`<p class="lead">Ninguém votou. Ninguém sai desta vez.</p>`;return}
+  let html=`<div class="outbox r-${o.role}"><div class="eyebrow">${o.votes} ${o.votes===1?"voto":"votos"}</div><h2>${o.me?"Foste eliminado":esc(o.name)+" sai"}</h2><p>Era ${o.role==="civ"?"um":"o"} <b>${ROLE_NAME[o.role]}</b>${o.role==="civ"?" 😬":o.role==="inf"?" 🎯":" 👀"}</p></div>`;
+  if(v.phase==="guess"){
+    if(o.me){
+      if(fresh||!$("guessIn")){
+        P.innerHTML=html+`<div class="yourturn"><b>Última hipótese!</b><p>Adivinha a palavra dos civis. Se acertares, ganhas a ronda sozinho.</p><div class="ansrow"><input id="guessIn" maxlength="${CLUELEN}" placeholder="A palavra dos civis" autocomplete="off" enterkeyhint="send"><button class="btn" type="button" id="guessBtn">Arriscar</button></div></div>`;
+        const send=()=>{const t=cleanTxt($("guessIn").value,CLUELEN);if(!t)return;$("guessBtn").disabled=true;ROOM.send({t:"guess",text:t})};
+        $("guessBtn").onclick=send;$("guessIn").addEventListener("keydown",e=>{if(e.key==="Enter")send()});
+        setTimeout(()=>{const e=$("guessIn");if(e)e.focus()},50);
+      }
+      return;
+    }
+    P.innerHTML=html+`<p class="wait">O Senhor Branco está a tentar adivinhar a vossa palavra… 😰</p>`;
+  }else{
+    if(v.guess&&!v.guess.ok)html+=`<p class="lead">Tentou «${esc(v.guess.text||"…")}». Errou!</p>`;
+    P.innerHTML=html+`<p class="wait">O jogo continua…</p>`;
+  }
+  if(fresh)playSfx(o.role==="civ"?"lie":"truth");
+}
+function drawOver(v){
+  const r=v.result,me=v.players[v.me].name;
+  const title=r.winner==="civ"?"Os civis ganharam!":r.winner==="sb"?"O Senhor Branco adivinhou!":"Os impostores ganharam!";
+  const won=r.delta[v.me]>0;
+  $("panel").innerHTML=`<div class="win"><div class="eyebrow">Fim da ronda</div><h2>${title}</h2></div>
+    ${v.guess&&v.guess.ok?`<p class="lead">Adivinhou «${esc(v.guess.text)}».</p>`:""}
+    <div class="words"><p><span>Palavra dos civis</span><b>${esc(r.words.civ)}</b></p><p><span>Palavra dos infiltrados</span><b>${esc(r.words.inf)}</b></p></div>
+    <ul class="roles">${r.roles.map((x,j)=>`<li class="${x.name===me?"me":""}"><span class="cn">${esc(x.name)}</span>${roleTag(x.role)}${r.delta[j]?`<b>+${r.delta[j]}</b>`:""}</li>`).join("")}</ul>
+    <div class="eyebrow">Pontuação total</div>
+    <ol class="board">${v.players.map((p,i)=>i).sort((a,b)=>v.players[b].score-v.players[a].score).map(i=>`<li class="${i===v.me?"me":""}"><span class="cn">${esc(v.players[i].name)}</span><b>${v.players[i].score}</b></li>`).join("")}</ol>
+    <div class="choices" id="endBtns"></div><p class="wait" id="endWait"></p>`;
+  overButtons(v);
+  playSfx(won?"win":"end");
+}
+function overButtons(v){
+  const b=$("endBtns");if(!b)return;
+  if(v.host){b.innerHTML=`<button class="btn" type="button" id="againBtn">Nova ronda</button><button class="btn ghost" type="button" id="lobbyBtn">Voltar à sala</button>`;
+    $("againBtn").onclick=()=>{unlockAudio();ROOM.send({t:"again"})};$("lobbyBtn").onclick=()=>ROOM.send({t:"lobby"});$("endWait").textContent=""}
+  else{b.innerHTML="";$("endWait").textContent=`À espera que ${v.players[0].name} comece a próxima ronda.`}
+}
+const RULES=`<ul>
+  <li>Quase todos são <b>civis</b> e recebem a mesma palavra secreta.</li>
+  <li>Os <b>infiltrados</b> recebem uma palavra parecida (por exemplo, «bica» e «galão») e <b>não sabem</b> que são infiltrados.</li>
+  <li>O <b>Senhor Branco</b> não recebe palavra nenhuma e tem de fingir.</li>
+  <li>À vez, cada um dá <b>uma pista</b> sobre a sua palavra, sem a dizer. Na mesma sala, diz-se em voz alta; à distância, escreve-se no jogo.</li>
+  <li>No fim de cada volta, todos <b>votam</b> para eliminar alguém. A pessoa eliminada mostra o que era.</li>
+  <li>Se o Senhor Branco for eliminado, tem uma última hipótese: se <b>adivinhar a palavra dos civis</b>, ganha sozinho.</li>
+  <li>Os civis ganham quando saem todos os impostores. Os impostores ganham quando ficam tantos quantos os civis.</li>
+  <li>Pontos: civis <b>+${PTS.civ}</b>, infiltrados <b>+${PTS.inf}</b>, Senhor Branco <b>+${PTS.sb}</b>. Joguem várias rondas e somem os pontos.</li>
+</ul>`;
+ROOM.game={id:"branco",title:"Senhor Branco",maxp:10,minp:3,maxBots:0,botNames:[],
+  lobbyHelpFew:"São precisas pelo menos 3 pessoas. Envia o link aos amigos. Fica melhor com 5 ou mais.",
+  start:brancoStart,msg:brancoMsg,client:brancoClient,stop:()=>{brancoStop();stopTick()},cleanOpts,renderOpts,
+  back(seat){ROOM.sendTo(seat,{t:"start"});if(G)broadcast()},
+  drop(seat){if(!G)return;const i=G.seats.indexOf(seat),R=G.r;
+    if(R.phase==="ready"&&G.seats.every((s,j)=>R.ready[j]||!isOn(j)))startClues();
+    else if(R.phase==="clue"&&R.order[R.turn]===i){R.clues[R.volta-1].push({i,text:null,skip:true});nextTurn()}
+    else if(R.phase==="vote"&&voters().every(j=>R.votes[j]!=null))countVotes();
+    else broadcast()},
+  hostLost(on){$("lost").hidden=!on},
+  onScreen(n){if(n!=="game")UI.key=null}
+};
+ROOM.opts=cleanOpts(null);
+$("wordCard").addEventListener("click",()=>{UI.peek=!UI.peek;$("wordCard").classList.toggle("hide",!UI.peek)});
+initUI({rules:RULES,privacy:privacyHTML(" e os pares de palavras que já te saíram, para não se repetirem")});
+
+</script>
+</body>
+</html>

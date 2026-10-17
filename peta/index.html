@@ -1,0 +1,1021 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Peta: quem prega a melhor?</title>
+<meta name="description" content="Jogo de bluff grátis para jogar com amigos, cada um no seu telemóvel. Inventa respostas falsas e tenta enganar os outros.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_PT">
+<meta property="og:site_name" content="Jogatina">
+<meta property="og:title" content="Peta: quem prega a melhor?">
+<meta property="og:description" content="Inventa uma resposta falsa e engana os teus amigos. Jogo grátis, cada um no seu telemóvel.">
+<meta property="og:url" content="https://ivomarcelopinto-png.github.io/jogatina/peta/">
+<meta property="og:image" content="https://ivomarcelopinto-png.github.io/jogatina/peta/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Peta, jogo de bluff">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Peta">
+<meta name="theme-color" content="#f4eee3">
+<link rel="preload" href="../fonts/bowlby-one.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
+<script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
+<style>
+/* ipgames: base comum (mesma família visual da Panela de Pressão) */
+@font-face{font-family:"Bowlby One";font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/bowlby-one.woff2) format("woff2")}
+@font-face{font-family:"Figtree";font-style:normal;font-weight:300 900;font-display:swap;src:url(../fonts/figtree.woff2) format("woff2")}
+[hidden]{display:none!important}
+:root{
+  --bg:#13201f; --surface:#1b2d2b; --surface-2:#223835; --line:#2f4744;
+  --ink:#eef2ea; --muted:#9fb5af; --title:#f1ece2; --enamel:#f1ece2; --card-ink:#1b2422;
+  --accent:#ff8a3d; --accent-ink:#1d130b; --steam:#8fd3c8; --danger:#ff5a4f; --good:#5fd08a;
+  --display:"Bowlby One", Impact, "Arial Black", sans-serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme:dark;
+}
+:root[data-pp-theme="light"]{
+  --bg:#f4eee3; --surface:#fffaf1; --surface-2:#ebe1cf; --line:#d8cab2;
+  --ink:#1f2a28; --muted:#5b6965; --title:#1f2a28; --enamel:#fffdf8; --card-ink:#1b2422;
+  --accent:#e8731f; --steam:#1d7a6e; --danger:#c8352b; --good:#1f8a4c;
+  color-scheme:light;
+}
+html,body{margin:0}
+html{height:100%}
+html,body{background:var(--bg);color:var(--ink)}
+body{min-height:100%;box-sizing:border-box;overflow-x:hidden;font-family:var(--body);font-size:15px;line-height:1.45;padding:max(8px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column}
+.wrap{width:100%;max-width:820px;margin:0 auto;flex:1;display:flex;flex-direction:column;gap:12px}
+h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:.01em;text-wrap:balance;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid var(--steam);outline-offset:2px}
+a{color:inherit}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:11px 20px;font-weight:800;font-size:15px;text-decoration:none;line-height:1.1}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn.ico{min-width:36px;padding-inline:9px;font-size:15px;line-height:1}
+.btn.ico[aria-pressed="false"]{opacity:.45;filter:grayscale(1)}
+#exitBtn{border-color:var(--danger);color:var(--danger)}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;flex:none}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.brand h1{font-size:clamp(24px,6vw,34px);line-height:1;color:var(--title)}
+.brand h1 span{color:var(--accent)}
+.brand a.home{font-size:13px;color:var(--muted);text-decoration:none;font-weight:700;white-space:nowrap}
+.tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+input{font:inherit;font-size:16px;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;box-sizing:border-box;min-width:0}
+input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shadow:inset 0 0 0 1.5px var(--steam)}
+.setup{display:flex;flex-direction:column;gap:16px;align-items:flex-start;flex:1;padding-block:12px 24px}
+.setup h2{font-size:clamp(34px,10vw,60px);line-height:.95;color:var(--title)}
+.setup h2 span{color:var(--accent);display:block}
+.setup p{max-width:58ch;color:var(--muted);margin:0}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:6px;width:100%;max-width:360px}
+.mode{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;width:100%;max-width:440px;box-sizing:border-box}
+.join{display:flex;gap:8px}
+.join input{text-transform:uppercase;letter-spacing:.2em;font-weight:800;flex:1}
+.join.fromlink input{border-color:var(--accent)}
+.note{font-size:13.5px;color:var(--steam);margin:0;min-height:1.2em}
+.note.bad{color:var(--danger);font-weight:700}
+.nopeer-msg{display:none;color:var(--muted)}
+.mode.nopeer .nopeer-msg{display:block}
+.mode.nopeer .choices,.mode.nopeer .join{display:none}
+.lobby .code{font-size:clamp(44px,14vw,80px);letter-spacing:.12em;color:var(--accent)}
+.roster{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;width:100%;max-width:420px}
+.roster li{display:flex;align-items:center;gap:10px;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;min-height:24px}
+.roster li.free{border-style:dashed;background:transparent;color:var(--muted)}
+.roster .rn{font-weight:800;flex:1;min-width:0;overflow-wrap:anywhere}
+.roster .rn em{font-style:normal;font-weight:600;color:var(--muted)}
+.roster .rk{font-size:12px;color:var(--muted)}
+.roster li.free .rn{font-weight:400}
+.linkbtn{background:none;border:0;padding:4px 2px;color:var(--muted);font-size:13px;text-decoration:underline;text-underline-offset:3px}
+.foot{font-size:13px;color:var(--muted);margin:4px 0 0}
+.modal{position:fixed;inset:0;background:rgba(8,14,13,.72);display:grid;place-items:center;padding:16px;z-index:33;box-sizing:border-box}
+.sheet{box-sizing:border-box;background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:20px;max-width:460px;width:100%;max-height:calc(100dvh - 32px);overflow:auto;display:flex;flex-direction:column;gap:14px}
+.sheet h3{font-size:24px;color:var(--title)}
+.sheet .body{color:var(--muted)}
+.sheet .actions{display:flex;gap:8px;flex-wrap:wrap}
+.sheet ul{padding-left:18px;margin:0;display:flex;flex-direction:column;gap:6px}
+.sheet li b{color:var(--ink)}
+.alert{position:fixed;left:50%;top:max(12px,env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:40;max-width:min(92vw,520px);width:max-content;box-sizing:border-box;background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:15px;padding:12px 16px;border-radius:14px;box-shadow:0 12px 28px rgba(0,0,0,.3);text-align:center;pointer-events:none}
+.alert.show{animation:alertin .35s cubic-bezier(.2,1.5,.4,1)}
+@keyframes alertin{from{transform:translate(-50%,-20px) scale(.9);opacity:0}to{transform:translateX(-50%);opacity:1}}
+.bubble{position:fixed;transform:translate(-50%,-100%);font-size:30px;pointer-events:none;animation:bub 2.6s ease forwards;z-index:26}
+@keyframes bub{0%{opacity:0;transform:translate(-50%,-80%) scale(.6)}12%{opacity:1;transform:translate(-50%,-100%) scale(1.1)}20%{transform:translate(-50%,-100%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-150%)}}
+.reacts{position:fixed;z-index:35;display:grid;grid-template-columns:repeat(3,auto);gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:8px;box-shadow:0 12px 28px rgba(0,0,0,.3)}
+.reacts button{font-size:24px;background:var(--surface-2);border:0;border-radius:10px;padding:4px 9px}
+@media (prefers-reduced-motion:reduce){.alert.show,.bubble{animation:none}}
+
+/* comum aos jogos de rondas: barra, jogadores, quadro de pontos, vencedor */
+.game{display:flex;flex-direction:column;gap:12px;flex:1;padding-bottom:8px}
+.gbar{display:flex;justify-content:space-between;align-items:center;gap:10px}
+#gTimer{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums;color:var(--ink);min-width:3ch;text-align:right}
+#gTimer.low{color:var(--danger)}
+.chips{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.chips li{display:flex;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:4px 10px;font-size:13px;min-width:0}
+.chips li.me{border-color:var(--accent)}
+.chips li.off{opacity:.5}
+.chips li .cn{font-weight:700;max-width:10ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chips li b{font-variant-numeric:tabular-nums}
+.chips li i{font-style:normal;color:var(--muted);font-weight:800}
+.chips li.done i{color:var(--good)}
+.chips .think{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:think 1s ease-in-out infinite}
+@keyframes think{50%{opacity:.25}}
+.lost{margin:0;color:var(--danger);font-weight:700}
+.panel{display:flex;flex-direction:column;gap:10px}
+.wait{margin:0;color:var(--muted);font-size:14px;min-height:1.3em}
+.mine{margin:0;color:var(--muted);font-size:13px}
+@keyframes pop{from{transform:scale(.4) rotate(-6deg);opacity:0}to{transform:none;opacity:1}}
+.board{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.board li{display:flex;align-items:center;gap:10px;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:9px 14px}
+.board li.me{border-color:var(--accent)}
+.board .cn{flex:1;font-weight:800;min-width:0;overflow-wrap:anywhere}
+.board em{font-style:normal;color:var(--good);font-weight:800}
+.board b{font-family:var(--display);font-weight:400;font-size:20px;font-variant-numeric:tabular-nums;min-width:2ch;text-align:right}
+.board .pos{font-family:var(--display);color:var(--muted);width:1.4em}
+.board.final li:first-child{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.win{display:flex;flex-direction:column;gap:2px}
+.win h2{font-size:clamp(34px,10vw,56px);line-height:1;color:var(--accent);animation:pop .6s cubic-bezier(.2,1.6,.4,1)}
+.awards{display:flex;flex-direction:column;gap:6px}
+.awards p{margin:0;font-weight:700}
+.awards span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.rstep,.rverdict b,.win h2,.blank.fill{animation:none}}
+/* Peta: cor própria (framboesa) sobre a base comum */
+:root{--accent:#ff6f9c;--accent-ink:#2a0d18}
+:root[data-pp-theme="light"]{--accent:#d23a6e;--accent-ink:#fff}
+.qcard{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;box-shadow:0 6px 0 var(--surface-2)}
+.qcard p{margin:0;font-size:clamp(19px,5vw,25px);line-height:1.3;font-weight:700;color:var(--title);text-wrap:pretty}
+.blank{display:inline-block;min-width:4ch;border-bottom:3px solid var(--accent);color:transparent;line-height:1.05}
+.blank.fill{color:var(--accent);border-bottom-color:transparent;animation:fillin .5s cubic-bezier(.2,1.5,.4,1)}
+@keyframes fillin{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+.ansform{display:flex;flex-direction:column;gap:6px}
+.ansrow{display:flex;gap:8px}
+.ansrow input{flex:1}
+.sent{background:var(--surface-2);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.sent p{margin:0;font-size:18px;font-weight:800;overflow-wrap:anywhere}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:13px 16px;font-size:17px;font-weight:700;color:var(--ink);overflow-wrap:anywhere;transition:transform .12s,border-color .12s}
+.opt:hover{border-color:var(--accent)}
+.opt:active{transform:scale(.98)}
+.opts.locked .opt{cursor:default;opacity:.5}
+.opts.locked .opt.picked{opacity:1;border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--surface));box-shadow:inset 0 0 0 1.5px var(--accent)}
+.rev{min-height:180px;display:grid}
+.rstep{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:12px;animation:stepin .35s cubic-bezier(.2,1.4,.4,1)}
+@keyframes stepin{from{transform:translateY(12px) scale(.96);opacity:0}to{transform:none;opacity:1}}
+.rtext{margin:0;font-size:clamp(20px,5.5vw,28px);font-weight:800;color:var(--title);overflow-wrap:anywhere}
+.rwho{display:flex;flex-wrap:wrap;gap:6px;opacity:0;transform:translateY(6px);transition:.3s}
+.rstep.whoin .rwho{opacity:1;transform:none}
+.rwho span{background:var(--surface-2);border-radius:999px;padding:3px 10px;font-size:13px;font-weight:700}
+.rwho em{color:var(--muted);font-size:13px}
+.rverdict{display:flex;flex-direction:column;gap:2px;min-height:48px}
+.rverdict b{font-family:var(--display);font-weight:400;font-size:clamp(24px,7vw,34px);line-height:1.05;animation:pop .45s cubic-bezier(.2,1.6,.4,1)}
+.rverdict span{color:var(--muted);font-weight:700;font-size:14px}
+.rstep.lie{border-color:var(--danger)}.rstep.lie .rverdict b{color:var(--danger)}
+.rstep.truth{border-color:var(--good)}.rstep.truth .rverdict b{color:var(--good)}
+@media (min-width:760px){.qcard{padding:22px 26px}.opts{display:grid;grid-template-columns:1fr 1fr}}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><h1>Pe<span>ta</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="tools">
+      <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
+      <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
+      <button class="btn ghost sm ico" id="mute" type="button" aria-pressed="true" aria-label="Som" title="Som">🔊</button>
+      <button class="btn ghost sm ico" id="themeBtn" type="button" aria-label="Tema escuro" title="Tema escuro">☾</button>
+      <button class="btn ghost sm" id="exitBtn" type="button" hidden>Sair</button>
+    </div>
+  </header>
+
+  <section id="setup" class="setup">
+    <h2>Quem prega<span>a melhor peta?</span></h2>
+    <p>Aparece uma pergunta verdadeira e esquisita. Cada um inventa uma resposta falsa que pareça verdade. Depois todos tentam descobrir a verdadeira no meio das petas. Ganha pontos quem acerta e quem engana.</p>
+    <label class="field"><span class="eyebrow">O teu nome</span><input id="myName" maxlength="14" autocomplete="nickname" placeholder="Ex.: Ivo"></label>
+    <div class="mode" id="onlineMode">
+      <div class="eyebrow">Com amigos, de 2 a 8 pessoas, cada um no seu telemóvel</div>
+      <div class="choices"><button class="btn" id="hostBtn" type="button">Criar sala</button></div>
+      <div class="join" id="joinArea"><input id="joinCode" placeholder="Código" maxlength="5" autocapitalize="characters" autocomplete="off" spellcheck="false" aria-label="Código da sala"><button class="btn ghost" id="joinBtn" type="button">Entrar</button></div>
+      <p class="note" id="netNote" role="status"></p>
+      <p class="note nopeer-msg">O modo online não está disponível nesta página. Abre o jogo no site para jogar com amigos.</p>
+    </div>
+    <p class="foot">Grátis, sem conta e sem publicidade. <button class="linkbtn" id="privBtn" type="button">Privacidade</button></p>
+  </section>
+
+  <section id="lobby" class="setup lobby" hidden>
+    <div class="eyebrow">Código da sala</div>
+    <h2 id="lbCode" class="code">-----</h2>
+    <p id="lbHelp"></p>
+    <div class="choices"><button class="btn" id="shareBtn" type="button">Enviar link</button><button class="btn ghost" id="copyBtn" type="button">Copiar link</button></div>
+    <ul class="roster" id="roster"></ul>
+    <div class="choices" id="hostCtl"><button class="btn ghost" id="addBot" type="button">+ Computador</button><button class="btn" id="startBtn" type="button">Começar</button></div>
+    <p class="note" id="lbNote" role="status"></p>
+    <button class="btn ghost sm" id="leaveBtn" type="button">Sair da sala</button>
+  </section>
+
+  <main id="game" class="game" hidden>
+    <div class="gbar"><span class="eyebrow" id="gRound"></span><span id="gTimer"></span></div>
+    <ul class="chips" id="chips" aria-label="Jogadores e pontos"></ul>
+    <p class="lost" id="lost" role="status" hidden>Quem criou a sala perdeu a ligação. À espera…</p>
+    <section class="qcard" id="qcard"><div class="eyebrow" id="qCat"></div><p id="qText"></p></section>
+    <section class="panel" id="panel" aria-live="polite"></section>
+  </main>
+</div>
+
+<div class="modal" id="rulesModal" hidden><div class="sheet" role="dialog" aria-modal="true"><h3 id="rulesTitle">Regras</h3><div class="body" id="rulesBody"></div><div class="actions"><button class="btn" id="rulesClose" type="button">Fechar</button></div></div></div>
+<div class="modal" id="modal" hidden><div class="sheet" role="dialog" aria-modal="true"><h3 id="mTitle"></h3><div class="body" id="mBody"></div><div class="actions" id="mActions"></div></div></div>
+<div class="alert" id="alert" role="alert" hidden></div>
+<div class="reacts" id="reacts" hidden></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
+/* ================= SALAS (comum aos jogos ipgames) =================
+   Mesmo esquema da Panela de Pressão, para servir com as mesmas regras do Firebase:
+   rooms/{código}/host  quem criou a sala (o motor do jogo corre lá)
+   rooms/{código}/up    mensagens dos jogadores para quem criou a sala
+   rooms/{código}/down/{uid}  mensagens só para esse jogador
+   rooms/{código}/clients/{uid}  quem está ligado
+   Cada jogo define ROOM.game = {id, maxp, minp, maxBots, botNames, title, start(seats), msg(seat,d), back(seat), drop(seat), client(d)} */
+const FIREBASE_CONFIG={
+  apiKey:"AIzaSyDV65oRQM9JRsPDi-lG5smPQ3visWhFYcY",
+  authDomain:"panela-de-pressao-a158b.firebaseapp.com",
+  databaseURL:"https://panela-de-pressao-a158b-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"panela-de-pressao-a158b",
+  storageBucket:"panela-de-pressao-a158b.firebasestorage.app",
+  messagingSenderId:"990808683809",
+  appId:"1:990808683809:web:7632a6ed6dcfde6ebefa60"
+};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ALPH="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const cleanName=s=>String(s||"").replace(/[<>&"'`\\]/g,"").replace(/\s+/g," ").trim().slice(0,14);
+const cleanCode=s=>String(s||"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,5);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const sstore={get(k){try{return sessionStorage.getItem(k)}catch(e){return null}},set(k,v){try{sessionStorage.setItem(k,v)}catch(e){}}};
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+const ROOM={
+  game:null,role:null,code:null,seats:[],started:false,leaving:false,conns:{},subs:[],conn:null,me:0,lobby:null,
+  /* envia uma jogada minha (para quem criou a sala ou para o motor local) */
+  send(d){
+    if(this.role==="client"){if(this.conn)try{this.conn.send(d)}catch(e){}}
+    else if(this.role==="host"&&this.started){this.game.msg(this.seats[0],d)}
+  },
+  /* motor -> jogador */
+  sendTo(seat,d){
+    if(!seat)return;
+    if(seat.kind==="local")setTimeout(()=>this.game.client(d),0);
+    else if(seat.kind==="remote"&&seat.conn&&seat.online)try{seat.conn.send(d)}catch(e){}
+  },
+  backToLobby(){
+    this.started=false;
+    this.seats=this.seats.filter(s=>s.kind!=="remote"||s.online);
+    showScreen("lobby");lobbyBroadcast();
+  }
+};
+function netNote(id,t){const el=$(id);if(el)el.textContent=t||""}
+function linkFor(code){return location.href.split("#")[0]+"#sala="+code}
+const onlineReady=()=>!!(window.firebase&&(FIREBASE_CONFIG||window.__fbMock));
+let FB=null;
+async function fbInit(){
+  if(FB)return FB;
+  if(!onlineReady())throw new Error("nofb");
+  if(!firebase.apps||!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG||{});
+  const cred=await firebase.auth().signInAnonymously();
+  FB={db:firebase.database(),uid:cred.user.uid};
+  return FB;
+}
+const fbErr=e=>{const c=String(e&&(e.code||e.message)||"");
+  if(/permission|PERMISSION/.test(c))return "O servidor recusou o pedido. Tenta outra vez daqui a pouco.";
+  if(/operation-not-allowed|admin-restricted/.test(c))return "O acesso anónimo não está ligado no Firebase.";
+  if(/network/.test(c))return "Sem ligação à internet. Tenta outra vez.";
+  return "Não consegui ligar ao servidor de salas. Tenta outra vez.";};
+function countGame(kind,players){
+  if(window.__fast||!onlineReady())return;
+  const d=new Date(),ym=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+  fbInit().then(()=>FB.db.ref(`stats/${ym}/${kind}${players}`).transaction(c=>(typeof c==="number"?c:0)+1)).catch(()=>{});
+}
+function sub(ref,ev,fn){ref.on(ev,fn,e=>console.warn(ev,e&&e.message));ROOM.subs.push(()=>ref.off(ev,fn))}
+function unsubAll(){for(const f of ROOM.subs)try{f()}catch(e){}ROOM.subs=[]}
+const roomRef=(...p)=>FB.db.ref(["rooms",ROOM.code,...p].join("/"));
+
+/* ---------- quem cria a sala ---------- */
+function mkConn(uid){
+  return{uid,closed:false,
+    send(m){if(this.closed||!ROOM.code)return;roomRef("down",uid).push({m:JSON.stringify(m)}).catch(()=>{})},
+    close(){this.closed=true}};
+}
+function connFor(uid){let c=ROOM.conns[uid];if(!c||c.closed){c=mkConn(uid);ROOM.conns[uid]=c}return c}
+async function hostRoom(){
+  const name=cleanName($("myName").value);
+  if(!name){netNote("netNote","Escreve o teu nome primeiro.");$("myName").focus();return}
+  store.set("pp-name",name);
+  netNote("netNote","A criar a sala…");
+  try{await fbInit()}catch(e){netNote("netNote",fbErr(e));return}
+  let code=null;
+  for(let i=0;i<6&&!code;i++){
+    const c=Array.from({length:5},()=>ALPH[Math.floor(Math.random()*ALPH.length)]).join("");
+    const hr=FB.db.ref(`rooms/${c}/host`);
+    try{const s=await hr.get();if(s.exists())continue;await hr.set(FB.uid);code=c}catch(e){if(i===5){netNote("netNote",fbErr(e));return}}
+  }
+  if(!code){netNote("netNote","Não consegui criar a sala. Tenta outra vez.");return}
+  unsubAll();
+  Object.assign(ROOM,{role:"host",code,started:false,leaving:false,conns:{},me:0,seats:[{kind:"local",name,online:true}]});
+  if(ROOM.game.cleanOpts)ROOM.opts=ROOM.game.cleanOpts(ROOM.opts);
+  const room=roomRef();
+  room.onDisconnect().remove();
+  let first=true;
+  sub(FB.db.ref(".info/connected"),"value",s=>{
+    if(s.val()!==true||ROOM.role!=="host"||ROOM.code!==code)return;
+    if(first){first=false;return}
+    roomRef("host").set(FB.uid).catch(()=>{});room.onDisconnect().remove();
+  });
+  sub(roomRef("clients"),"child_removed",s=>{
+    const uid=s.key;
+    setTimeout(()=>{
+      if(ROOM.role!=="host"||ROOM.code!==code)return;
+      roomRef("clients",uid).get().then(x=>{
+        if(x.exists())return;
+        const c=ROOM.conns[uid];if(c&&!c.closed){c.close();hostClose(c)}
+      }).catch(()=>{});
+    },2500);
+  });
+  sub(roomRef("up"),"child_added",s=>{
+    const v=s.val();s.ref.remove().catch(()=>{});
+    if(!v||typeof v.m!=="string"||typeof v.from!=="string")return;
+    let d;try{d=JSON.parse(v.m)}catch(e){return}
+    hostData(connFor(v.from),d);
+  });
+  netNote("netNote","");
+  showScreen("lobby");lobbyBroadcast();
+}
+function uniqueName(name,except){
+  let n=name,i=2;
+  const taken=()=>ROOM.seats.some(s=>s!==except&&s.name.toLowerCase()===n.toLowerCase());
+  while(taken())n=`${name.slice(0,12)} ${i++}`;
+  return n;
+}
+function hostData(c,d){
+  if(!d||typeof d!=="object")return;
+  const G=ROOM.game;
+  if(d.t==="hello"){
+    const name=cleanName(d.name)||"Amigo",token=String(d.token||"").replace(/[^a-z0-9]/gi,"").slice(0,40);
+    let s=ROOM.seats.find(x=>x.kind==="remote"&&x.token&&x.token===token);
+    if(ROOM.started){
+      if(s){s.conn=c;s.online=true;c._seat=s;c.send({t:"welcome",code:ROOM.code});G.back(s);return}
+      c.send({t:"full",msg:"A partida já começou. Espera pela próxima e volta a entrar."});
+      setTimeout(()=>c.close(),800);return;
+    }
+    if(!s){
+      if(ROOM.seats.length>=G.maxp){
+        const bot=ROOM.seats.find(x=>x.kind==="bot");
+        if(bot)ROOM.seats=ROOM.seats.filter(x=>x!==bot);
+        else{c.send({t:"full",msg:"A sala está cheia."});setTimeout(()=>c.close(),800);return}
+      }
+      s={kind:"remote",token};ROOM.seats.push(s);
+    }
+    s.name=uniqueName(name,s);s.conn=c;s.online=true;c._seat=s;
+    c.send({t:"welcome",code:ROOM.code});
+    lobbyBroadcast();
+    return;
+  }
+  if(d.t==="leave"){hostClose(c,true);return}
+  if(ROOM.started){const s=ROOM.seats.find(x=>x.conn===c&&x.kind==="remote");if(s&&s.online)G.msg(s,d)}
+}
+function hostClose(c){
+  const s=ROOM.seats.find(x=>x.conn===c&&x.kind==="remote");
+  if(!s)return;
+  if(ROOM.started){if(s.online){s.online=false;ROOM.game.drop(s)}return}
+  ROOM.seats=ROOM.seats.filter(x=>x!==s);lobbyBroadcast();
+}
+function lobbyBroadcast(){
+  const pub=ROOM.seats.map(s=>({name:s.name,kind:s.kind}));
+  ROOM.seats.forEach((s,i)=>{if(s.kind==="remote"&&s.conn&&s.online)try{s.conn.send({t:"lobby",code:ROOM.code,seats:pub,you:i,opts:ROOM.opts||null})}catch(e){}});
+  ROOM.lobby={code:ROOM.code,seats:pub,you:0};
+  renderLobby();
+}
+function addBot(){
+  const G=ROOM.game;
+  if(ROOM.role!=="host"||ROOM.started||ROOM.seats.length>=G.maxp)return;
+  if(ROOM.seats.filter(s=>s.kind==="bot").length>=G.maxBots)return;
+  const used=new Set(ROOM.seats.map(s=>s.name));
+  const name=G.botNames.find(n=>!used.has(n))||"Computador";
+  ROOM.seats.push({kind:"bot",name,online:true});lobbyBroadcast();
+}
+function removeSeat(i){
+  if(ROOM.role!=="host"||ROOM.started)return;
+  const s=ROOM.seats[i];if(!s||s.kind==="local")return;
+  if(s.kind==="remote"&&s.conn){try{s.conn.send({t:"full",msg:"Quem criou a sala tirou-te da sala."})}catch(e){}const c=s.conn;setTimeout(()=>c.close(),500)}
+  ROOM.seats.splice(i,1);lobbyBroadcast();
+}
+function hostStart(){
+  const G=ROOM.game;
+  if(ROOM.role!=="host"||ROOM.started||ROOM.seats.length<G.minp)return;
+  ROOM.started=true;
+  for(const s of ROOM.seats)if(s.kind==="remote"&&s.online)s.conn.send({t:"start"});
+  countGame(G.id,ROOM.seats.length);
+  showScreen("game");
+  G.start(ROOM.seats);
+}
+
+/* ---------- quem entra ---------- */
+async function joinRoom(){
+  const name=cleanName($("myName").value),code=cleanCode($("joinCode").value);
+  if(!name){netNote("netNote","Escreve o teu nome primeiro.");$("myName").focus();return}
+  if(code.length!==5){netNote("netNote","O código da sala tem 5 letras.");$("joinCode").focus();return}
+  store.set("pp-name",name);
+  clearTimeout(ROOM.joinT);unsubAll();
+  netNote("netNote","1/2 A ligar ao servidor…");
+  try{await fbInit()}catch(e){netNote("netNote",fbErr(e));return}
+  ROOM.leaving=false;ROOM.code=code;ROOM.role=null;
+  try{
+    const h=await roomRef("host").get();
+    if(!h.exists()){netNote("netNote","Não encontrei essa sala. Confirma o código e se quem a criou ainda tem o jogo aberto.");return}
+  }catch(e){netNote("netNote",fbErr(e));return}
+  netNote("netNote","2/2 A entrar na sala…");
+  const me=roomRef("clients",FB.uid),down=roomRef("down",FB.uid),up=roomRef("up");
+  try{const old=await down.get();const jobs=[];old.forEach(ch=>{jobs.push(ch.ref.remove())});await Promise.all(jobs)}catch(e){}
+  ROOM.conn={send(m){up.push({from:FB.uid,m:JSON.stringify(m)}).catch(()=>{})}};
+  const hello=()=>{me.set(true).catch(()=>{});me.onDisconnect().remove();ROOM.conn.send({t:"hello",name,token:FB.uid})};
+  sub(down,"child_added",s=>{
+    const v=s.val();s.ref.remove().catch(()=>{});
+    if(!v||typeof v.m!=="string")return;
+    let d;try{d=JSON.parse(v.m)}catch(e){return}
+    clientData(d);
+  });
+  let first=true;
+  sub(FB.db.ref(".info/connected"),"value",s=>{
+    if(s.val()!==true)return;
+    if(first){first=false;return}
+    if(ROOM.role==="client"&&!ROOM.leaving)hello();
+  });
+  let hadHost=true;
+  sub(roomRef("host"),"value",s=>{
+    clearTimeout(ROOM.hostT);
+    if(s.exists()){
+      if(!hadHost&&ROOM.role==="client"&&!ROOM.leaving)hello();
+      hadHost=true;netNote("lbNote","");return;
+    }
+    hadHost=false;
+    if(ROOM.role!=="client")return;
+    netNote("lbNote","Quem criou a sala perdeu a ligação. À espera…");
+    if(ROOM.game.hostLost)ROOM.game.hostLost(true);
+    ROOM.hostT=setTimeout(()=>{
+      if(ROOM.leaving||ROOM.role!=="client")return;
+      notice("Ligação perdida","Quem criou a sala saiu ou ficou sem internet.").then(()=>leaveRoom());
+    },30000);
+  });
+  ROOM.joinT=setTimeout(()=>{if(ROOM.role!=="client"&&ROOM.code===code)netNote("netNote","A sala não respondeu. Confirma que quem a criou tem o jogo aberto e tenta outra vez.")},15000);
+  hello();
+}
+function clientData(d){
+  if(!d||typeof d!=="object")return;
+  switch(d.t){
+    case "welcome":
+      clearTimeout(ROOM.joinT);
+      sstore.set("ip-room",ROOM.code);
+      if(ROOM.role!=="client"){ROOM.role="client";netNote("netNote","");showScreen("lobby")}
+      break;
+    case "lobby":
+      ROOM.lobby={code:cleanCode(d.code),seats:(d.seats||[]).slice(0,ROOM.game.maxp).map(s=>({name:cleanName(s.name),kind:s.kind})),you:+d.you};
+      ROOM.me=+d.you;if(ROOM.game.cleanOpts)ROOM.opts=ROOM.game.cleanOpts(d.opts);
+      if($("lobby").hidden)showScreen("lobby");
+      renderLobby();break;
+    case "full":
+      ROOM.leaving=true;
+      netNote("netNote",String(d.msg||"Não foi possível entrar.").slice(0,120));
+      unsubAll();ROOM.role=null;showScreen("setup");break;
+    case "closed":
+      if(ROOM.role!=="client")break;
+      ROOM.leaving=true;
+      notice("A partida terminou","Quem criou a sala saiu do jogo.").then(()=>leaveRoom());
+      break;
+    case "start":showScreen("game");if(ROOM.game.hostLost)ROOM.game.hostLost(false);break;
+    default:if(ROOM.game.hostLost)ROOM.game.hostLost(false);ROOM.game.client(d);
+  }
+}
+function leaveRoom(){
+  ROOM.leaving=true;clearTimeout(ROOM.hostT);clearTimeout(ROOM.joinT);
+  const role=ROOM.role,code=ROOM.code;
+  if(FB&&code){
+    if(role==="client"){try{ROOM.conn.send({t:"leave"})}catch(e){}FB.db.ref(`rooms/${code}/clients/${FB.uid}`).remove().catch(()=>{})}
+    if(role==="host"){
+      for(const s of ROOM.seats)if(s.kind==="remote"&&s.online&&s.conn)try{s.conn.send({t:"closed"})}catch(e){}
+      const r=FB.db.ref(`rooms/${code}`);setTimeout(()=>r.remove().catch(()=>{}),1500);
+    }
+  }
+  if(ROOM.game.stop)ROOM.game.stop();
+  unsubAll();
+  Object.assign(ROOM,{role:null,conn:null,seats:[],conns:{},lobby:null,started:false,code:null});
+  sstore.set("ip-room","");
+  try{history.replaceState(null,"",location.href.split("#")[0])}catch(e){}
+  showScreen("setup");
+}
+function renderLobby(){
+  const L=ROOM.lobby;if(!L)return;
+  const G=ROOM.game,host=ROOM.role==="host";
+  $("lbCode").textContent=L.code;
+  $("roster").innerHTML=L.seats.map((s,i)=>`<li><span class="rn">${esc(s.name)}${i===L.you?' <em>(tu)</em>':""}</span><span class="rk">${i===0?"criou a sala":s.kind==="bot"?"computador":"amigo"}</span>${host&&i>0?`<button class="btn ghost sm" type="button" data-rm="${i}" aria-label="Tirar ${esc(s.name)}">Tirar</button>`:""}</li>`).join("")
+    +Array.from({length:Math.max(0,Math.min(G.maxp,Math.max(4,L.seats.length+1))-L.seats.length)},()=>`<li class="free"><span class="rn">Lugar livre</span></li>`).join("");
+  $("hostCtl").hidden=!host;
+  $("addBot").disabled=L.seats.length>=G.maxp||L.seats.filter(s=>s.kind==="bot").length>=G.maxBots;
+  $("startBtn").disabled=L.seats.length<G.minp;
+  if(G.renderOpts&&$("lbOpts"))G.renderOpts($("lbOpts"),ROOM.opts,host);
+  $("lbHelp").textContent=host?(L.seats.length<G.minp?G.lobbyHelpFew:"Quando estiverem todos, começa. Mantém esta página aberta durante a partida."):`À espera que ${L.seats[0]?L.seats[0].name:"quem criou a sala"} comece a partida.`;
+}
+function initRoomUI(){
+  const G=ROOM.game;
+  $("roster").addEventListener("click",e=>{const b=e.target.closest("[data-rm]");if(b)removeSeat(+b.dataset.rm)});
+  $("addBot").addEventListener("click",addBot);
+  $("startBtn").addEventListener("click",()=>{unlockAudio();hostStart()});
+  $("leaveBtn").addEventListener("click",leaveRoom);
+  $("hostBtn").addEventListener("click",()=>{unlockAudio();hostRoom()});
+  $("joinBtn").addEventListener("click",()=>{unlockAudio();joinRoom()});
+  $("joinCode").addEventListener("keydown",e=>{if(e.key==="Enter")joinRoom()});
+  const copyLink=async()=>{const url=linkFor(ROOM.code);try{await navigator.clipboard.writeText(url);netNote("lbNote","Link copiado.")}catch(e){netNote("lbNote",url)}};
+  $("copyBtn").addEventListener("click",copyLink);
+  $("shareBtn").addEventListener("click",async()=>{
+    const url=linkFor(ROOM.code);
+    if(navigator.share){try{await navigator.share({title:G.title,text:`Entra na minha sala do ${G.title} (código ${ROOM.code})`,url});return}catch(e){if(e&&e.name==="AbortError")return}}
+    copyLink();
+  });
+  $("shareBtn").hidden=!navigator.share;
+  window.addEventListener("beforeunload",e=>{if(ROOM.role==="host"&&ROOM.started){e.preventDefault();e.returnValue=""}});
+  $("myName").value=store.get("pp-name")||"";
+  const m=location.hash.match(/sala=([A-Za-z0-9]{5})/);
+  if(m){$("joinCode").value=cleanCode(m[1]);$("joinArea").classList.add("fromlink");netNote("netNote","Escreve o teu nome e carrega em Entrar.");setTimeout(()=>($("myName").value?$("joinBtn"):$("myName")).focus(),50);
+    if($("myName").value&&sstore.get("ip-room")===cleanCode(m[1])&&onlineReady())setTimeout(joinRoom,0)}
+  if(!onlineReady())$("onlineMode").classList.add("nopeer");
+}
+
+/* ================= ECRÃ (comum aos jogos de rondas) =================
+   som, tema, relógio, avisos, reações, regras e botão de sair.
+   Cada jogo pode definir ROOM.game.onScreen(nome) para limpar o que é seu. */
+const REACTS=["😂","😱","🤥","👏","🙄","🔥"];
+const TT=ms=>window.__fast?Math.max(30,ms/25):ms;
+
+/* relógio da ronda */
+const TIMER={endAt:0,t:null};
+function startTick(ms){
+  TIMER.endAt=performance.now()+ms;
+  if(TIMER.t)return;
+  let last=null;
+  TIMER.t=setInterval(()=>{
+    const s=Math.max(0,Math.ceil((TIMER.endAt-performance.now())/1000));
+    if(s!==last){last=s;$("gTimer").textContent=s+" s";$("gTimer").classList.toggle("low",s<=10);if(s<=5&&s>0)playSfx("tick")}
+  },200);
+}
+function stopTick(){clearInterval(TIMER.t);TIMER.t=null;const t=$("gTimer");if(t)t.textContent=""}
+
+/* som (sintetizado, sem ficheiros) */
+let AC=null,muted=store.get("pp-mute")==="1";
+function unlockAudio(){try{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=="running")AC.resume()}catch(e){}}
+function tone(f,d,o={}){if(muted||!AC||AC.state!=="running")return;const t=AC.currentTime+(o.at||0),os=AC.createOscillator(),g=AC.createGain();os.type=o.type||"sine";os.frequency.setValueAtTime(f,t);if(o.f2)os.frequency.exponentialRampToValueAtTime(o.f2,t+d);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(o.v||.1,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);os.connect(g).connect(AC.destination);os.start(t);os.stop(t+d+.02)}
+const SFX={
+  send:()=>tone(660,.09,{type:"triangle",v:.1,f2:990}),
+  tick:()=>tone(1200,.05,{type:"square",v:.03}),
+  round:()=>{tone(523,.12,{type:"triangle",v:.09});tone(784,.18,{type:"triangle",v:.09,at:.1})},
+  vote:()=>{tone(392,.1,{type:"triangle",v:.08});tone(523,.14,{type:"triangle",v:.08,at:.09})},
+  lie:()=>{tone(220,.28,{type:"sawtooth",v:.06,f2:150})},
+  truth:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,.2,{type:"triangle",v:.09,at:i*.08}))},
+  win:()=>{[523,659,784,659,784,1047].forEach((f,i)=>tone(f,.22,{type:"triangle",v:.09,at:i*.12}))},
+  end:()=>{[392,523,659].forEach((f,i)=>tone(f,.25,{type:"triangle",v:.08,at:i*.12}))}
+};
+function playSfx(k){try{SFX[k]&&SFX[k]()}catch(e){}}
+function setMute(m){muted=m;store.set("pp-mute",m?"1":"0");$("mute").setAttribute("aria-pressed",String(!m));$("mute").textContent=m?"🔇":"🔊";$("mute").title=m?"Som desligado":"Som ligado"}
+
+function showScreen(n){
+  for(const id of ["setup","lobby","game"])$(id).hidden=id!==n;
+  $("exitBtn").hidden=n!=="game";$("hubLink").hidden=n!=="setup";
+  if(n!=="game")stopTick();
+  $("reactBtn").hidden=n!=="game";$("reacts").hidden=true;
+  if(ROOM.game&&ROOM.game.onScreen)ROOM.game.onScreen(n);
+}
+function setTheme(t,save){
+  if(t==="light")document.documentElement.dataset.ppTheme="light";else delete document.documentElement.dataset.ppTheme;
+  if(save)store.set("pp-tema",t);
+  const tb=$("themeBtn");tb.textContent=t==="light"?"☾":"☀";tb.title=t==="light"?"Tema escuro":"Tema claro";tb.setAttribute("aria-label",tb.title);
+  const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==="light"?"#f4eee3":"#13201f";
+}
+function notice(title,text){return new Promise(res=>{$("mTitle").textContent=title;$("mBody").textContent=text;$("mActions").innerHTML=`<button class="btn" type="button">Voltar ao início</button>`;$("modal").hidden=false;$("mActions").firstChild.onclick=()=>{$("modal").hidden=true;res()}})}
+function openSheet(title,html){$("rulesTitle").textContent=title;$("rulesBody").innerHTML=html;$("rulesModal").hidden=false}
+function flash(t){const a=$("alert");a.textContent=t;a.hidden=false;a.classList.remove("show");void a.offsetWidth;a.classList.add("show");clearTimeout(a._t);a._t=setTimeout(()=>a.hidden=true,2600)}
+function bubble(from,r){
+  const li=[...$("chips").children].find(x=>x.querySelector(".cn")&&x.querySelector(".cn").textContent===from);
+  const b=document.createElement("div");b.className="bubble";b.textContent=r;
+  const rc=(li||$("chips")).getBoundingClientRect();b.style.left=(rc.left+rc.width/2)+"px";b.style.top=(rc.top+4)+"px";
+  document.body.appendChild(b);setTimeout(()=>b.remove(),2600);
+}
+/* reencaminha uma reação para todos (no motor de quem criou a sala) */
+function relayReact(seats,seat,d){
+  if(typeof d.r!=="string"||!REACTS.includes(d.r))return;
+  seats.forEach(s=>{if(s.kind!=="bot")ROOM.sendTo(s,{t:"react",from:seat.name,r:d.r})});
+}
+function privacyHTML(extra){return `<ul>
+  <li><b>Não pedimos conta, email nem dados pessoais.</b> Não há publicidade nem cookies de análise.</li>
+  <li><b>O nome e o que escreves no jogo</b> só são mostrados aos jogadores da tua sala. O nome fica guardado no teu aparelho para a próxima vez.</li>
+  <li><b>As salas</b> usam o Firebase, da Google. Cada aparelho recebe um identificador anónimo, sem nome nem email. As jogadas passam pelos servidores da Google na Bélgica e apagam-se quando a sala fecha. Para o serviço funcionar, a Google trata o endereço de internet (IP) do aparelho.</li>
+  <li><b>Contagem de partidas:</b> guardamos só quantas partidas se jogam por mês e com quantos jogadores, sem saber quem jogou.</li>
+  <li><b>No teu aparelho</b> ficam guardadas as preferências (nome, tema, som)${extra||""}. Podes apagá-las limpando os dados do site no browser.</li>
+  <li><b>O site</b> está alojado na Netlify, que regista dados técnicos de acesso, como o IP, para o servir.</li>
+</ul>`}
+function initUI(o){
+  setTheme(document.documentElement.dataset.ppTheme==="light"?"light":"dark",false);
+  setMute(muted);
+  $("themeBtn").addEventListener("click",()=>setTheme(document.documentElement.dataset.ppTheme==="light"?"dark":"light",true));
+  $("mute").addEventListener("click",()=>{setMute(!muted);if(!muted){unlockAudio();setTimeout(()=>playSfx("send"),50)}});
+  $("rulesBtn").addEventListener("click",()=>openSheet("Como se joga",o.rules));
+  $("privBtn").addEventListener("click",()=>openSheet("Privacidade",o.privacy));
+  $("rulesClose").addEventListener("click",()=>$("rulesModal").hidden=true);
+  $("rulesModal").addEventListener("click",e=>{if(e.target===$("rulesModal"))$("rulesModal").hidden=true});
+  $("exitBtn").addEventListener("click",()=>{
+    const host=ROOM.role==="host"&&ROOM.started;
+    $("mTitle").textContent="Sair?";$("mBody").textContent=host?"Se saíres, a partida acaba para todos.":"Vais sair da sala.";
+    $("mActions").innerHTML=`<button class="btn" type="button" id="exitYes">Sair</button><button class="btn ghost" type="button" id="exitNo">Ficar</button>`;
+    $("modal").hidden=false;
+    $("exitYes").onclick=()=>{$("modal").hidden=true;leaveRoom()};$("exitNo").onclick=()=>$("modal").hidden=true;
+  });
+  $("reacts").innerHTML=REACTS.map(r=>`<button type="button" data-r="${r}">${r}</button>`).join("");
+  $("reactBtn").addEventListener("click",()=>{const R=$("reacts");R.hidden=!R.hidden;if(!R.hidden){const b=$("reactBtn").getBoundingClientRect();R.style.right=Math.max(8,innerWidth-b.right)+"px";R.style.top=(b.bottom+6)+"px"}});
+  $("reacts").addEventListener("click",e=>{const b=e.target.closest("[data-r]");if(!b)return;$("reacts").hidden=true;ROOM.send({t:"react",r:b.dataset.r})});
+  document.addEventListener("click",e=>{if(!$("reacts").hidden&&!e.target.closest("#reacts,#reactBtn"))$("reacts").hidden=true});
+  initRoomUI();
+  showScreen("setup");
+}
+
+/* ================= PERGUNTAS =================
+   q: a pergunta, com ____ no lugar da resposta
+   a: a resposta verdadeira (mostrada no fim)
+   ok: outras formas de escrever a verdade (quem as escrever é avisado para inventar outra coisa)
+   d: mentiras "da casa", para os computadores e para encher a lista quando há poucos jogadores */
+const QUESTIONS=[
+{id:1,c:"Portugal",q:"O Mosteiro dos Jerónimos foi pago em grande parte com um imposto sobre ____.",a:"as especiarias",ok:["especiaria","pimenta","comércio das especiarias","comércio da pimenta","vintena da pimenta"],d:["o vinho do Porto","os casamentos","o sal"]},
+{id:2,c:"Comida",q:"Os pastéis de Belém foram inventados por ____.",a:"monges do Mosteiro dos Jerónimos",ok:["monges","frades","padres","monges dos Jerónimos","frades dos Jerónimos","monges de Belém","religiosos"],d:["um pasteleiro francês","uma freira de Aveiro","o cozinheiro do rei D. Manuel"]},
+{id:3,c:"Animais",q:"Os polvos têm ____ corações.",a:"três",ok:["3"],d:["dois","cinco","oito"]},
+{id:4,c:"Portugal",q:"O nome «Portugal» vem de ____, uma antiga povoação junto à foz do Douro.",a:"Portus Cale",ok:["Portucale","Porto Cale","Portocale"],d:["Portus Gallus","Porta Calida","Portum Algar"]},
+{id:5,c:"Comida",q:"As primeiras cenouras cultivadas não eram cor de laranja: eram sobretudo ____.",a:"roxas",ok:["roxo","púrpura","roxas e amarelas","amarelas","amarelo","violeta","lilás"],d:["azuis","às riscas","transparentes"]},
+{id:6,c:"Mundo",q:"A Torre Eiffel fica até cerca de 15 cm mais alta ____.",a:"no verão",ok:["verão","com o calor","calor","quando está calor","no pino do verão"],d:["à noite","quando chove","no inverno"]},
+{id:7,c:"Animais",q:"Os flamingos são cor-de-rosa por causa ____.",a:"do que comem",ok:["comida","da comida","alimentação","da alimentação","o que comem","camarão","camarões","dos camarões","algas","das algas","do camarão","marisco"],d:["do sol","de um vírus que apanham em pequenos","da água salgada"]},
+{id:8,c:"Comida",q:"Encontraram potes de mel com milhares de anos em túmulos egípcios e o mel ainda estava ____.",a:"bom para comer",ok:["comestível","bom","bom a comer","comível","em bom estado","bom estado","próprio para consumo","perfeito"],d:["fluorescente","morno","azul"]},
+{id:9,c:"Animais",q:"Por baixo do pelo branco, os ursos-polares têm a pele ____.",a:"preta",ok:["negra","escura","preto","negro"],d:["cor-de-rosa","azul","às riscas"]},
+{id:10,c:"Mundo",q:"Em Londres, «Big Ben» é o nome ____.",a:"do sino",ok:["sino","o sino","do sino grande","sino grande"],d:["do relógio","do arquiteto","do primeiro guarda da torre"]},
+{id:11,c:"Tecnologia",q:"Antes de se chamar Google, o motor de busca chamava-se ____.",a:"BackRub",ok:["back rub"],d:["SearchBox","Googol","PageFinder"]},
+{id:12,c:"Portugal",q:"O 10 de Junho, Dia de Portugal, assinala a data da morte de ____.",a:"Camões",ok:["Luís de Camões","Luís Vaz de Camões"],d:["D. Afonso Henriques","Vasco da Gama","Pedro Álvares Cabral"]},
+{id:13,c:"Portugal",q:"Antes do 25 de Abril, a ponte sobre o Tejo em Lisboa chamava-se Ponte ____.",a:"Salazar",ok:["Oliveira Salazar","Ponte Salazar"],d:["D. Carlos","Marquês de Pombal","Tejo Imperial"]},
+{id:14,c:"Portugal",q:"O Cristo-Rei de Almada foi construído para agradecer Portugal não ter entrado na ____.",a:"Segunda Guerra Mundial",ok:["segunda guerra","2.ª guerra mundial","II guerra mundial","2 guerra mundial","2ª guerra","II guerra","guerra"],d:["Guerra Civil de Espanha","Guerra Colonial","Primeira Guerra Mundial"]},
+{id:15,c:"Comida",q:"A maior parte do bacalhau que se come em Portugal vem da ____.",a:"Noruega",ok:[],d:["Terra Nova","Escócia","Gronelândia"]},
+{id:16,c:"Mundo",q:"O animal nacional da Escócia é o ____.",a:"unicórnio",ok:[],d:["veado","lobo","dragão"]},
+{id:17,c:"Animais",q:"Nos cavalos-marinhos, quem fica «grávido» é ____.",a:"o macho",ok:["macho","o pai","pai","os machos"],d:["a avó","o mais velho do grupo","quem perder a luta"]},
+{id:18,c:"Animais",q:"As abelhas dizem às outras onde estão as flores através de uma ____.",a:"dança",ok:["bailado","dancinha"],d:["canção","pegada de cheiro","fila indiana"]},
+{id:19,c:"Mundo",q:"A língua mais falada no hemisfério sul é o ____.",a:"português",ok:[],d:["espanhol","inglês","suaíli"]},
+{id:20,c:"Portugal",q:"Segundo a lenda, Lisboa foi fundada por ____.",a:"Ulisses",ok:["Odisseu"],d:["Hércules","Júlio César","Viriato"]},
+{id:21,c:"Portugal",q:"Na lenda do Galo de Barcelos, o galo cantou para salvar um peregrino quando já estava ____.",a:"assado",ok:["cozinhado","morto","no prato","cozido","frito","assado no prato","na mesa"],d:["empalhado","pintado de vermelho","a dormir"]},
+{id:22,c:"Comida",q:"Durante muito tempo, na Europa, os tomates eram considerados ____.",a:"venenosos",ok:["venenoso","veneno","tóxicos","tóxico","perigosos","mortais"],d:["sagrados","comida de cavalo","um remédio para a calvície"]},
+{id:23,c:"Comida",q:"O croissant nasceu na ____.",a:"Áustria",ok:["Viena"],d:["Bélgica","Suíça","Turquia"]},
+{id:24,c:"História",q:"Napoleão não era assim tão baixo: media cerca de ____.",a:"1,69 m",ok:["1,69","169","1.69","1,68","1,70","1,7","170","169 cm","1 metro e 69","1,68 m","1,70 m"],d:["1,85 m","1,55 m","1,92 m"]},
+{id:25,c:"Animais",q:"Os golfinhos dormem com ____ do cérebro acordado.",a:"metade",ok:["meio","50%","um lado","um hemisfério","uma metade","50","meio cérebro"],d:["um quarto","a ponta","dois terços"]},
+{id:26,c:"Animais",q:"O animal com a dentada mais forte do mundo é o ____.",a:"crocodilo",ok:["crocodilo de água salgada","crocodilo marinho","crocodilos"],d:["tubarão-branco","hipopótamo","leão"]},
+{id:27,c:"Comida",q:"A Coca-Cola começou por ser vendida como ____.",a:"remédio",ok:["medicamento","xarope","tónico","medicina","um remédio","remédio para dores de cabeça","tónico medicinal"],d:["tinta","detergente","perfume"]},
+{id:28,c:"Portugal",q:"O terramoto de Lisboa de 1755 aconteceu no Dia de ____.",a:"Todos-os-Santos",ok:["todos os santos","1 de novembro"],d:["Natal","Santo António","Páscoa"]},
+{id:29,c:"Portugal",q:"D. Sebastião desapareceu na batalha de ____.",a:"Alcácer-Quibir",ok:["Alcácer Quibir","Alcácer Kibir","Alcácer","Alcacer Quibir"],d:["Aljubarrota","Ourique","Toro"]},
+{id:30,c:"Portugal",q:"D. Afonso Henriques ganhou a batalha de São Mamede contra a própria ____.",a:"mãe",ok:["mãe dele","D. Teresa","Teresa","Dona Teresa"],d:["irmã","avó","mulher"]},
+{id:31,c:"Comida",q:"Diz a lenda que o café foi descoberto por um pastor que viu as suas ____ muito agitadas.",a:"cabras",ok:["cabra","cabritos","bodes"],d:["ovelhas","galinhas","vacas"]},
+{id:32,c:"Comida",q:"O ketchup começou por ser um molho de ____.",a:"peixe",ok:["peixe fermentado","anchovas","anchova"],d:["cenoura","morango","pimento"]},
+{id:33,c:"Animais",q:"Os gatos não conseguem sentir o sabor ____.",a:"doce",ok:["do doce","açúcar","do açúcar","adocicado","a doce","dos doces"],d:["salgado","amargo","a peixe"]},
+{id:34,c:"Animais",q:"A girafa tem no pescoço o mesmo número de ossos que ____.",a:"uma pessoa",ok:["humano","humanos","pessoa","pessoas","nós","um humano","o homem","ser humano","7","sete","um ser humano"],d:["uma galinha","uma cobra","uma avestruz"]},
+{id:35,c:"Mundo",q:"O nome «Brasil» vem de ____.",a:"uma árvore",ok:["árvore","pau-brasil","pau brasil","madeira","uma madeira"],d:["um rio","um navegador","uma palavra tupi para «praia»"]},
+{id:36,c:"Palavras",q:"A palavra «robô» vem do checo e queria dizer ____.",a:"trabalho forçado",ok:["trabalho","escravo","servo","trabalhador","servidão","trabalho obrigatório","escravatura"],d:["homem de ferro","boneco","sem alma"]},
+{id:37,c:"História",q:"Antes de haver borrachas, os erros a lápis apagavam-se com ____.",a:"miolo de pão",ok:["pão","miolo","migalhas","pão duro","pão seco"],d:["cera de vela","casca de batata","pó de giz"]},
+{id:38,c:"Arte",q:"A Mona Lisa não tem ____.",a:"sobrancelhas",ok:["sobrancelha","pestanas","pestana","pelos nas sobrancelhas"],d:["queixo","nariz","mãos"]},
+{id:39,c:"História",q:"Os vikings nunca usaram capacetes com ____.",a:"cornos",ok:["chifres","corninhos","cornos de animal","hastes","chavelhos"],d:["ferro","correias","proteção para o nariz"]},
+{id:40,c:"Animais",q:"As impressões digitais dos coalas são quase iguais às ____.",a:"dos humanos",ok:["humanos","humanas","das pessoas","pessoas","nossas","humano","dos seres humanos"],d:["dos cangurus","dos ursos","das lontras"]},
+{id:41,c:"Espaço",q:"Em Vénus, um dia dura mais do que um ____.",a:"ano em Vénus",ok:["ano","ano venusiano","ano de Vénus"],d:["século","ano na Terra","ano em Marte"]},
+{id:42,c:"Tecnologia",q:"A primeira coisa vendida no eBay foi um ____ avariado.",a:"apontador laser",ok:["laser","ponteiro laser","apontador","ponteiro"],d:["telemóvel","Game Boy","rato de computador"]},
+{id:43,c:"Empresas",q:"Em número de unidades, a LEGO é o maior fabricante de ____ do mundo.",a:"pneus",ok:["pneu","rodas","pneus de borracha"],d:["chapéus","volantes","escadas"]},
+{id:44,c:"Animais",q:"Os cães da raça chow-chow têm a língua ____.",a:"azul-escura",ok:["azul","azul escuro","preta","roxa","negra","roxo","preto","azul arroxeada","azul-arroxeada","roxa escura","azul e preta"],d:["às bolinhas","verde","amarela"]},
+{id:45,c:"Ciência",q:"Os tubarões já existiam antes das ____.",a:"árvores",ok:["árvore","florestas"],d:["montanhas","bactérias","algas"]},
+{id:46,c:"Portugal",q:"Em muitas terras portuguesas, as prendas de Natal eram trazidas pelo ____.",a:"Menino Jesus",ok:["menino","Jesus","Deus Menino","Menino Deus"],d:["Rei Mago Baltasar","galo da missa","padre da freguesia"]},
+{id:47,c:"Comida",q:"A francesinha foi criada no Porto por um emigrante inspirado no ____.",a:"croque-monsieur",ok:["croque monsieur","croque","tosta mista francesa"],d:["hambúrguer americano","pastel de carne belga","bife à Wellington"]},
+{id:48,c:"Comida",q:"Diz-se que a alheira foi inventada por ____ que queriam fingir que comiam porco.",a:"judeus",ok:["cristãos-novos","cristãos novos","os judeus","judeus portugueses","judeus em Portugal"],d:["monges","soldados","vegetarianos"]},
+{id:49,c:"Portugal",q:"No Santo António, em Lisboa, oferece-se um vaso de ____ com uma quadra.",a:"manjerico",ok:["manjericos","manjericão"],d:["alecrim","salsa","sardinheiras"]},
+{id:50,c:"Comida",q:"A poncha da Madeira faz-se com aguardente, mel e ____.",a:"limão",ok:["sumo de limão","laranja","sumo de laranja","limões"],d:["canela","vinho da Madeira","café"]},
+{id:51,c:"Portugal",q:"O ponto mais alto de Portugal fica na ilha do ____.",a:"Pico",ok:["montanha do Pico"],d:["Faial","Porto Santo","Corvo"]},
+{id:52,c:"Portugal",q:"O rio Tejo nasce em ____.",a:"Espanha",ok:["Serra de Albarracín","Albarracín","Aragão","Teruel","Serra de Albarracin"],d:["Castelo Branco","Abrantes","Serra da Estrela"]},
+{id:53,c:"Animais",q:"Os elefantes são dos poucos mamíferos que não conseguem ____.",a:"saltar",ok:["pular","dar saltos","dar um salto"],d:["nadar","dormir de pé","andar para trás"]},
+{id:54,c:"Animais",q:"As borboletas sentem o sabor das coisas com ____.",a:"as patas",ok:["patas","pés","os pés","pernas","as pernas"],d:["as asas","os olhos","a barriga"]},
+{id:55,c:"Ciência",q:"Para os botânicos, a banana é uma ____.",a:"baga",ok:["bagas"],d:["noz","semente","raiz"]},
+{id:56,c:"História",q:"O fogo de artifício foi inventado na ____.",a:"China",ok:[],d:["Índia","Pérsia","Itália"]},
+{id:57,c:"Arte",q:"O azul-ultramarino das pinturas antigas fazia-se moendo uma pedra chamada ____.",a:"lápis-lazúli",ok:["lápis lazúli","lapislazuli","lazurite","lápis"],d:["turquesa","safira","ametista"]},
+{id:58,c:"Palavras",q:"A palavra «azulejo» vem do árabe e quer dizer ____.",a:"pedra polida",ok:["pequena pedra polida","pedrinha polida","pedra lisa","pedrinha lisa"],d:["azul","telha do sol","parede bonita"]},
+{id:59,c:"Desporto",q:"Eusébio, o Pantera Negra, nasceu em ____.",a:"Moçambique",ok:["Maputo","Lourenço Marques","Mafalala"],d:["Angola","Cabo Verde","Guiné-Bissau"]},
+{id:60,c:"Expressões",q:"«Ir para o maneta» vem de um general de Napoleão a quem faltava ____.",a:"um braço",ok:["braço","mão","uma mão","o braço","a mão"],d:["um olho","uma perna","uma orelha"]},
+{id:61,c:"Expressões",q:"«Ficar a ver navios» lembra o povo que esperava, no alto de Lisboa, o regresso de ____.",a:"D. Sebastião",ok:["Sebastião","Dom Sebastião","rei D. Sebastião","o rei"],d:["Vasco da Gama","Pedro Álvares Cabral","Fernão de Magalhães"]},
+{id:62,c:"Mundo",q:"Na Suíça é proibido ter só um ____, porque se sente sozinho.",a:"porquinho-da-índia",ok:["porquinho da índia","porquinhos-da-índia","porquinhos da índia","cobaia","porquinho"],d:["cão","gato","hamster"]},
+{id:63,c:"História",q:"Cleópatra viveu mais perto no tempo da ____ do que da construção das pirâmides de Gizé.",a:"chegada do homem à Lua",ok:["chegada à Lua","ida à Lua","alunagem","viagem à Lua","homem na Lua","Lua","Apollo 11","iPhone","internet","invenção da internet","invenção do iPhone"],d:["invenção da escrita","domesticação do cão","última era do gelo"]},
+{id:64,c:"História",q:"A Universidade de Oxford é mais antiga do que o Império ____.",a:"Asteca",ok:["Azteca","Astecas","Aztecas","Inca","Incas","Otomano"],d:["Romano","Chinês","Persa"]},
+{id:65,c:"História",q:"Em França, a guilhotina foi usada pela última vez em ____.",a:"1977",ok:["77"],d:["1902","1939","1958"]},
+{id:66,c:"Mundo",q:"Na Finlândia há um campeonato de corrida a carregar ____ às costas.",a:"a mulher",ok:["mulher","mulheres","esposa","a esposa","a namorada","namorada","as mulheres"],d:["uma rena","um frigorífico","um tronco de bétula"]},
+{id:67,c:"Mundo",q:"No Japão, num festival, os bebés são postos a chorar por ____.",a:"lutadores de sumo",ok:["sumo","sumotoris","lutadores","lutadores de sumô"],d:["palhaços","dragões de papel","avós com máscaras"]},
+{id:68,c:"Mundo",q:"Em Inglaterra, há uma corrida em que se persegue um ____ a rolar por uma colina abaixo.",a:"queijo",ok:["queijo redondo"],d:["barril de cerveja","pneu","presunto"]},
+{id:69,c:"Mundo",q:"Na Tailândia, há um festival em que se oferece um banquete aos ____.",a:"macacos",ok:["macaco"],d:["tigres","patos","crocodilos"]},
+{id:70,c:"Portugal",q:"Na Festa dos Tabuleiros, em Tomar, as raparigas levam à cabeça tabuleiros feitos de ____.",a:"pão",ok:["pães","pão e flores","flores e pão"],d:["sardinhas","garrafas de vinho","laranjas"]},
+{id:71,c:"Animais",q:"As lontras-marinhas dormem de ____ para não se afastarem umas das outras.",a:"mãos dadas",ok:["patas dadas","mãos","patas","dar as mãos","de mãos dadas"],d:["barriga para baixo","olhos abertos","cabeça na água"]},
+{id:72,c:"Animais",q:"Em experiências, os pombos aprenderam a distinguir quadros de Monet de quadros de ____.",a:"Picasso",ok:[],d:["Van Gogh","Da Vinci","Rembrandt"]},
+{id:73,c:"Animais",q:"Os corvos conseguem lembrar-se durante anos das ____.",a:"caras das pessoas",ok:["caras","rostos","caras humanas","pessoas","caras de pessoas","rostos humanos","pessoas que lhes fizeram mal","caras de quem lhes fez mal"],d:["músicas","matrículas dos carros","horas do dia"]},
+{id:74,c:"Animais",q:"Os cavalos não conseguem ____.",a:"vomitar",ok:["respirar pela boca","arrotar"],d:["nadar","dormir de pé","ver cores"]},
+{id:75,c:"Ciência",q:"Às vezes a água quente congela mais depressa do que a fria. Chama-se efeito ____.",a:"Mpemba",ok:["efeito Mpemba"],d:["Leidenfrost","Doppler","Kelvin"]},
+{id:76,c:"Ciência",q:"Um relâmpago é cerca de ____ vezes mais quente do que a superfície do Sol.",a:"cinco",ok:["5","4","quatro","6","seis"],d:["duas","vinte","cem"]},
+{id:77,c:"Espaço",q:"A Lua afasta-se da Terra cerca de ____ por ano.",a:"4 cm",ok:["3,8 cm","4","3,8","quatro centímetros","4 centímetros","3.8 cm","38 mm","3,8 centímetros","quatro cm"],d:["1 metro","2 mm","15 cm"]},
+{id:78,c:"Palavras",q:"A palavra «salário» vem do ____, com que se pagava aos soldados romanos.",a:"sal",ok:[],d:["salame","ouro","salmão"]},
+{id:79,c:"Invenções",q:"O micro-ondas foi inventado quando um engenheiro reparou que lhe tinha derretido ____ no bolso.",a:"um chocolate",ok:["chocolate","barra de chocolate","uma barra de chocolate","tablete de chocolate","uma tablete"],d:["um pente de plástico","um gelado","um lápis de cera"]},
+{id:80,c:"Invenções",q:"Os post-its nasceram de uma ____ que não colava bem.",a:"cola",ok:["cola fraca","adesivo","super cola","supercola"],d:["receita de bolo","tinta invisível","impressora"]},
+{id:81,c:"Tecnologia",q:"A primeira webcam da história servia para vigiar uma ____.",a:"máquina de café",ok:["cafeteira","café","máquina do café","cafeteira de café"],d:["porta de entrada","gaiola de hamster","impressora"]},
+{id:82,c:"Invenções",q:"O velcro foi inventado depois de um engenheiro ver ____ agarrados ao pelo do cão.",a:"frutos de bardana",ok:["sementes","bardana","carrapichos","picos","plantas","pegamassos","sementes com picos","ouriços","frutos com ganchos","frutos","sementes de bardana"],d:["pastilhas elásticas","lagartas","algas"]},
+{id:83,c:"Curiosidades",q:"O inventor da lata das Pringles foi enterrado ____.",a:"dentro de uma lata de Pringles",ok:["numa lata de Pringles","dentro de uma lata","lata de Pringles","numa lata","Pringles","lata","nas Pringles"],d:["com um pacote de batatas","no armazém da fábrica","de pé"]},
+{id:84,c:"Empresas",q:"A Nintendo começou por vender ____.",a:"cartas de jogar",ok:["cartas","baralhos","baralho de cartas","hanafuda","cartas de jogo","baralhos de cartas"],d:["guarda-chuvas","brinquedos de madeira","máquinas de costura"]},
+{id:85,c:"Empresas",q:"A Nokia começou por ser uma fábrica de ____.",a:"papel",ok:["pasta de papel","celulose","papel e celulose"],d:["relógios","bicicletas","rádios"]},
+{id:86,c:"Animais",q:"O sangue do polvo é de cor ____.",a:"azul",ok:["azulado","azul-claro"],d:["verde","amarela","laranja"]},
+{id:87,c:"Animais",q:"O hipopótamo produz uma espécie de suor de cor ____.",a:"vermelha",ok:["vermelho","rosa","cor-de-rosa","avermelhada","laranja","alaranjada","rosado"],d:["azul","verde","preta"]},
+{id:88,c:"Portugal",q:"O Cabo da Roca é o ponto mais ____ da Europa continental.",a:"ocidental",ok:["a oeste","oeste","ocidente","a ocidente"],d:["setentrional","alto","oriental"]},
+{id:89,c:"Portugal",q:"Os Açores têm ____ ilhas.",a:"nove",ok:["9"],d:["sete","onze","doze"]}
+];
+
+/* ================= PETA =================
+   Cada ronda: aparece uma pergunta verdadeira com um espaço em branco.
+   1) cada um escreve uma resposta falsa que pareça verdade (a "peta");
+   2) todas as respostas aparecem misturadas com a verdadeira e cada um vota na que acha verdadeira;
+   3) acertar na verdade dá 2 pontos; cada pessoa que cai na tua peta dá-te 1 ponto. A última pergunta vale a dobrar.
+   Quem criou a sala corre o motor; os outros só recebem o que podem ver (a verdade só é revelada no fim da ronda). */
+const ROUNDS=7,T_WRITE=75,T_VOTE=35,STEP_MS=3600,BOARD_MS=5500,MAXLEN=60,MINOPTS=5;
+const PT_TRUTH=2,PT_FOOL=1;
+const STOP=new Set(["o","a","os","as","um","uma","uns","umas","de","do","da","dos","das","d","dom","dona","e","em","no","na","nos","nas","ao","aos","à","às","que"]);
+const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g," ").trim().split(" ").filter(w=>w&&!STOP.has(w)).map(w=>w.length>3&&w.endsWith("s")?w.slice(0,-1):w).join(" ");
+const cleanAns=s=>String(s||"").replace(/[\u0000-\u001f<>]/g,"").replace(/\s+/g," ").trim().slice(0,MAXLEN);
+const isTruth=(t,q)=>{const k=norm(t);return!!k&&[q.a,...(q.ok||[])].some(x=>norm(x)===k)};
+
+/* ---------- motor (só em quem criou a sala) ---------- */
+let G=null;
+function pickQuestions(n){
+  let seen=[];try{seen=JSON.parse(store.get("peta-vistas")||"[]")}catch(e){}
+  if(!Array.isArray(seen))seen=[];
+  let pool=QUESTIONS.filter(q=>!seen.includes(q.id));
+  if(pool.length<n){seen=[];pool=QUESTIONS.slice()}
+  const qs=shuffle(pool.slice()).slice(0,n);
+  store.set("peta-vistas",JSON.stringify(seen.concat(qs.map(q=>q.id))));
+  return qs;
+}
+function petaStart(seats){
+  petaStop();
+  G={seats,n:seats.length,scores:seats.map(()=>0),fooled:seats.map(()=>0),found:seats.map(()=>0),round:0,qs:pickQuestions(ROUNDS),timers:[],id:Math.random()};
+  nextRound();
+}
+function petaStop(){if(G){for(const t of G.timers)clearTimeout(t);G.dead=true}G=null}
+function later(ms,fn){const g=G;const t=setTimeout(()=>{if(G===g&&!g.dead)fn()},ms);g.timers.push(t);return t}
+const active=()=>G.seats.map((s,i)=>i).filter(i=>G.seats[i].online!==false);
+function nextRound(){
+  G.round++;
+  if(G.round>ROUNDS)return endGame();
+  Object.assign(G,{q:G.qs[G.round-1],phase:"write",answers:{},votes:{},err:{},options:null,reveal:null,final:G.round===ROUNDS});
+  G.deadline=Date.now()+TT(T_WRITE*1000);
+  G.phaseT=later(TT(T_WRITE*1000)+300,toVote);
+  /* os computadores escolhem uma das mentiras da casa */
+  const dec=shuffle(G.q.d.slice());
+  G.seats.forEach((s,i)=>{if(s.kind!=="bot")return;const lie=dec.shift()||"não sei";later(TT(4000+Math.random()*14000),()=>{if(G.phase==="write"){G.answers[i]=lie;afterWrite()}})});
+  broadcast();
+}
+function afterWrite(){
+  if(G.phase!=="write")return;
+  if(active().every(i=>G.answers[i]!=null))toVote();else broadcast();
+}
+function toVote(){
+  if(!G||G.phase!=="write")return;
+  clearTimeout(G.phaseT);
+  const opts=[{text:G.q.a,truth:true,authors:[],k:norm(G.q.a)}];
+  for(const [i,t] of Object.entries(G.answers)){
+    const k=norm(t),o=opts.find(x=>!x.truth&&x.k===k);
+    if(o)o.authors.push(+i);else opts.push({text:t,authors:[+i],k});
+  }
+  for(const d of shuffle(G.q.d.slice())){
+    if(opts.length>=MINOPTS)break;
+    const k=norm(d);if(opts.some(o=>o.k===k))continue;
+    opts.push({text:d,house:true,authors:[],k});
+  }
+  shuffle(opts).forEach((o,i)=>o.id=i);
+  Object.assign(G,{options:opts,phase:"vote",votes:{}});
+  G.deadline=Date.now()+TT(T_VOTE*1000);
+  G.phaseT=later(TT(T_VOTE*1000)+300,toReveal);
+  G.seats.forEach((s,i)=>{
+    if(s.kind!=="bot")return;
+    later(TT(3000+Math.random()*12000),()=>{
+      if(G.phase!=="vote")return;
+      const can=G.options.filter(o=>!o.authors.includes(i));
+      const tr=can.find(o=>o.truth);
+      G.votes[i]=(Math.random()<.35?tr:can[Math.floor(Math.random()*can.length)]).id;
+      afterVote();
+    });
+  });
+  broadcast();
+}
+function afterVote(){
+  if(G.phase!=="vote")return;
+  if(active().every(i=>G.votes[i]!=null))toReveal();else broadcast();
+}
+function toReveal(){
+  if(!G||G.phase!=="vote")return;
+  clearTimeout(G.phaseT);
+  const mult=G.final?2:1,delta=G.seats.map(()=>0),names=i=>G.seats[i].name;
+  const voters=o=>Object.keys(G.votes).filter(i=>G.votes[i]===o.id).map(Number);
+  for(const [i,id] of Object.entries(G.votes)){
+    const o=G.options[id];if(!o)continue;
+    if(o.truth){delta[i]+=PT_TRUTH*mult;G.found[i]++}
+    else for(const a of o.authors){delta[a]+=PT_FOOL*mult;G.fooled[a]++}
+  }
+  const lies=G.options.filter(o=>!o.truth&&voters(o).length).sort((a,b)=>voters(a).length-voters(b).length||Math.random()-.5);
+  const truth=G.options.find(o=>o.truth);
+  const steps=lies.map(o=>({text:o.text,kind:o.house?"house":"lie",by:o.authors.map(names),who:voters(o).map(names),pts:voters(o).length*PT_FOOL*mult}))
+    .concat([{text:truth.text,kind:"truth",by:[],who:voters(truth).map(names),pts:PT_TRUTH*mult}]);
+  const nobody=G.options.filter(o=>!o.truth&&!o.house&&o.authors.length&&!voters(o).length).map(o=>({text:o.text,by:o.authors.map(names)}));
+  delta.forEach((d,i)=>G.scores[i]+=d);
+  Object.assign(G,{phase:"reveal",reveal:{steps,delta,nobody,mult},revStart:Date.now()});
+  later(TT(steps.length*STEP_MS+BOARD_MS),nextRound);
+  broadcast();
+}
+function endGame(){
+  G.phase="end";
+  const order=G.seats.map((s,i)=>i).sort((a,b)=>G.scores[b]-G.scores[a]);
+  const best=arr=>{const m=Math.max(...arr);return m>0?G.seats.map((s,i)=>i).filter(i=>arr[i]===m).map(i=>G.seats[i].name):[]};
+  G.end={rank:order.map(i=>({name:G.seats[i].name,score:G.scores[i],me:i})),liar:best(G.fooled),liarN:Math.max(...G.fooled),det:best(G.found),detN:Math.max(...G.found)};
+  broadcast();
+}
+function viewFor(i){
+  const g=G,ph=g.phase;
+  return{t:"v",gid:g.id,phase:ph,round:Math.min(g.round,ROUNDS),total:ROUNDS,final:!!g.final,me:i,host:i===0,
+    players:g.seats.map((s,j)=>({name:s.name,score:g.scores[j],bot:s.kind==="bot",off:s.online===false,done:ph==="write"?g.answers[j]!=null:ph==="vote"?g.votes[j]!=null:false})),
+    q:g.q?{c:g.q.c,q:g.q.q,id:g.q.id}:null,
+    left:(ph==="write"||ph==="vote")?Math.max(0,g.deadline-Date.now()):0,
+    mine:ph==="write"?(g.answers[i]||null):null,err:g.err[i]||null,
+    opts:ph==="vote"?g.options.filter(o=>!o.authors.includes(i)).map(o=>({id:o.id,text:o.text})):null,
+    myLie:ph==="vote"?(g.answers[i]||null):null,
+    vote:ph==="vote"?(g.votes[i]!=null?g.votes[i]:null):null,
+    rev:ph==="reveal"?Object.assign({},g.reveal,{at:Date.now()-g.revStart}):null,
+    truth:(ph==="reveal"||ph==="end")&&g.q?g.q.a:null,
+    end:ph==="end"?g.end:null};
+}
+function broadcast(){if(!G)return;G.seats.forEach((s,i)=>{if(s.kind!=="bot")ROOM.sendTo(s,viewFor(i))})}
+function petaMsg(seat,d){
+  if(!G||!d)return;
+  const i=G.seats.indexOf(seat);if(i<0)return;
+  if(d.t==="ans"&&G.phase==="write"){
+    const t=cleanAns(d.text);
+    if(!norm(t)){G.err[i]="Escreve uma resposta.";ROOM.sendTo(seat,viewFor(i));return}
+    if(isTruth(t,G.q)){G.err[i]=`«${t}» é mesmo a resposta certa! Inventa uma mentira.`;ROOM.sendTo(seat,viewFor(i));return}
+    G.err[i]=null;G.answers[i]=t;afterWrite();return;
+  }
+  if(d.t==="unans"&&G.phase==="write"){delete G.answers[i];broadcast();return}
+  if(d.t==="vote"&&G.phase==="vote"&&G.votes[i]==null){
+    const o=G.options[+d.id];if(!o||o.authors.includes(i))return;
+    G.votes[i]=o.id;afterVote();return;
+  }
+  if(d.t==="react"){relayReact(G.seats,seat,d);return}
+  if(i===0&&d.t==="again"&&G.phase==="end"){ROOM.started=false;ROOM.seats=ROOM.seats.filter(s=>s.kind!=="remote"||s.online);hostStart();return}
+  if(i===0&&d.t==="lobby"&&G.phase==="end"){petaStop();ROOM.backToLobby();return}
+}
+
+/* ---------- ecrã do jogador ---------- */
+const UI={v:null,key:null,revTimers:[]};
+function petaClient(d){
+  if(d.t==="react"){bubble(d.from,d.r);return}
+  if(d.t!=="v")return;
+  if($("game").hidden)showScreen("game");
+  render(d);
+}
+function render(v){
+  const prev=UI.v;UI.v=v;
+  $("gRound").textContent=v.phase==="end"?"Fim do jogo":`Pergunta ${v.round} de ${v.total}${v.final?" · vale a dobrar":""}`;
+  renderChips(v);
+  if(v.q){
+    $("qCat").textContent=v.q.c;
+    const filled=v.phase==="end"||(v.phase==="reveal"&&UI.truthShown===v.gid+":"+v.round);
+    $("qText").innerHTML=esc(v.q.q).replace("____",filled&&v.truth?`<span class="blank fill">${esc(v.truth)}</span>`:`<span class="blank">______</span>`);
+  }
+  $("qcard").hidden=v.phase==="end";
+  /* relógio */
+  if(v.phase==="write"||v.phase==="vote")startTick(v.left);else stopTick();
+  const key=`${v.gid}:${v.round}:${v.phase}`;
+  const fresh=key!==UI.key;UI.key=key;
+  if(v.phase==="write")panelWrite(v,fresh);
+  else if(v.phase==="vote")panelVote(v,fresh);
+  else if(v.phase==="reveal"){if(fresh)panelReveal(v)}
+  else if(v.phase==="end"){if(fresh)panelEnd(v);else endButtons(v)}
+  if(fresh&&(v.phase==="write"||v.phase==="vote")){playSfx(v.phase==="write"?"round":"vote");if(v.phase==="write"&&v.final&&prev)flash("Última pergunta: pontos a dobrar!")}
+}
+function renderChips(v){
+  const showDone=v.phase==="write"||v.phase==="vote";
+  $("chips").innerHTML=v.players.map((p,j)=>`<li class="${j===v.me?"me":""}${p.off?" off":""}${showDone&&p.done?" done":""}"><span class="cn">${esc(p.name)}</span><b>${p.score}</b>${showDone?(p.off?`<i class="st" title="sem ligação">⏸</i>`:p.done?`<i class="st" title="pronto">✓</i>`:`<i class="think" title="a pensar"></i>`):""}</li>`).join("");
+}
+function waitLine(v,verb){
+  const pend=v.players.filter(p=>!p.done&&!p.off&&!p.bot).map(p=>p.name);
+  const meIdx=v.me;const others=pend.filter(n=>n!==v.players[meIdx].name);
+  if(!others.length)return "";
+  return `À espera de ${others.length>3?others.length+" pessoas":others.join(", ").replace(/, ([^,]*)$/," e $1")} ${verb}`;
+}
+function panelWrite(v,fresh){
+  const P=$("panel");
+  if(fresh){
+    P.innerHTML=`<form id="ansForm" class="ansform" autocomplete="off"><label class="eyebrow" for="ans">A tua peta</label><div class="ansrow"><input id="ans" maxlength="${MAXLEN}" enterkeyhint="send" placeholder="Algo que pareça verdade"><button class="btn" type="submit">Enviar</button></div></form>
+    <div id="sent" class="sent" hidden><div class="eyebrow">A tua peta</div><p id="sentTxt"></p><button class="btn ghost sm" type="button" id="changeBtn">Mudar</button></div>
+    <p class="note" id="ansNote" role="status"></p><p class="wait" id="waitTxt"></p>`;
+    $("ansForm").addEventListener("submit",e=>{e.preventDefault();const t=cleanAns($("ans").value);if(!t){$("ansNote").textContent="Escreve uma resposta.";return}unlockAudio();$("ansNote").textContent="";ROOM.send({t:"ans",text:t});playSfx("send")});
+    $("changeBtn").addEventListener("click",()=>{ROOM.send({t:"unans"});$("ans").value=UI.v.mine||"";$("sent").hidden=true;$("ansForm").hidden=false;setTimeout(()=>$("ans").focus(),30)});
+    if(matchMedia("(min-width:760px)").matches)setTimeout(()=>{const a=$("ans");if(a)a.focus()},60);
+  }
+  const has=!!v.mine;
+  $("ansForm").hidden=has;$("sent").hidden=!has;
+  if(has)$("sentTxt").textContent=v.mine;
+  $("ansNote").textContent=v.err||"";$("ansNote").classList.toggle("bad",!!v.err);
+  $("waitTxt").textContent=has?waitLine(v,"para votar."):"Inventa uma resposta falsa. Se alguém cair nela, ganhas pontos.";
+}
+function panelVote(v,fresh){
+  const P=$("panel");
+  if(fresh){
+    P.innerHTML=`<div class="eyebrow">Qual é a verdade?</div><div class="opts" id="opts">${v.opts.map(o=>`<button class="opt" type="button" data-id="${o.id}">${esc(o.text)}</button>`).join("")}</div>${v.myLie?`<p class="mine">A tua peta («${esc(v.myLie)}») não aparece na tua lista.</p>`:""}<p class="wait" id="waitTxt"></p>`;
+    $("opts").addEventListener("click",e=>{const b=e.target.closest(".opt");if(!b||UI.v.vote!=null)return;unlockAudio();ROOM.send({t:"vote",id:+b.dataset.id});b.classList.add("picked");$("opts").classList.add("locked");playSfx("send")});
+  }
+  if(v.vote!=null){$("opts").classList.add("locked");const b=$("opts").querySelector(`[data-id="${v.vote}"]`);if(b)b.classList.add("picked")}
+  $("waitTxt").textContent=v.vote!=null?(waitLine(v,"para revelar.")||"A revelar…"):"Escolhe a resposta que achas verdadeira.";
+}
+function clearRev(){for(const t of UI.revTimers)clearTimeout(t);UI.revTimers=[]}
+function panelReveal(v){
+  clearRev();
+  const r=v.rev,P=$("panel"),round=v.gid+":"+v.round;
+  P.innerHTML=`<div class="rev" id="rev"></div>`;
+  const step=TT(STEP_MS),startAt=Math.min(r.steps.length,Math.floor(r.at/step));
+  const at=(ms,fn)=>UI.revTimers.push(setTimeout(()=>{if(UI.key===`${v.gid}:${v.round}:reveal`)fn()},Math.max(0,ms)));
+  const showStep=(s,i)=>{
+    const box=document.createElement("div");box.className="rstep";
+    box.innerHTML=`<p class="rtext">${esc(s.text)}</p><div class="rwho">${s.who.length?s.who.map(n=>`<span>${esc(n)}</span>`).join(""):'<em>Ninguém acertou</em>'}</div><div class="rverdict"></div>`;
+    $("rev").replaceChildren(box);
+    at(TT(1000),()=>box.classList.add("whoin"));
+    at(TT(2000),()=>{
+      const vd=box.querySelector(".rverdict");
+      if(s.kind==="truth"){box.classList.add("truth");vd.innerHTML=`<b>É a verdade!</b>${s.who.length?`<span>+${s.pts} para quem acertou</span>`:""}`;playSfx("truth");UI.truthShown=round;render(UI.v)}
+      else if(s.kind==="house"){box.classList.add("lie");vd.innerHTML=`<b>Peta da casa!</b><span>Esta não foi ninguém.</span>`;playSfx("lie")}
+      else{box.classList.add("lie");vd.innerHTML=`<b>Peta de ${esc(s.by.join(" e "))}!</b><span>+${s.pts} ${s.by.length>1?"para cada um":"pontos"}</span>`;playSfx("lie")}
+    });
+  };
+  r.steps.forEach((s,i)=>{if(i<startAt)return;at(TT(i*STEP_MS)-r.at,()=>showStep(s,i))});
+  at(TT(r.steps.length*STEP_MS)-r.at,()=>{UI.truthShown=round;render(UI.v);showBoard(v)});
+  if(startAt>=r.steps.length){UI.truthShown=round;showBoard(v)}
+}
+function showBoard(v){
+  const r=v.rev,order=v.players.map((p,i)=>i).sort((a,b)=>v.players[b].score-v.players[a].score);
+  $("panel").innerHTML=`<div class="eyebrow">Pontuação</div><ol class="board">${order.map(i=>{const p=v.players[i],d=r.delta[i];return`<li class="${i===v.me?"me":""}"><span class="cn">${esc(p.name)}</span>${d?`<em>+${d}</em>`:""}<b>${p.score}</b></li>`}).join("")}</ol>${r.nobody.length?`<p class="mine">Ninguém caiu em: ${r.nobody.map(n=>`«${esc(n.text)}» (${esc(n.by.join(" e "))})`).join(", ")}</p>`:""}<p class="wait">${v.round<v.total?"Próxima pergunta já a seguir…":"A contar os pontos…"}</p>`;
+}
+function panelEnd(v){
+  clearRev();
+  const e=v.end,top=e.rank[0].score,winners=e.rank.filter(r=>r.score===top).map(r=>r.name);
+  $("panel").innerHTML=`<div class="win"><div class="eyebrow">${winners.length>1?"Empate!":"Ganhou"}</div><h2>${esc(winners.join(" e "))}</h2></div>
+    <ol class="board final">${e.rank.map(r=>`<li class="${r.me===v.me?"me":""}"><span class="pos">${1+e.rank.filter(x=>x.score>r.score).length}</span><span class="cn">${esc(r.name)}</span><b>${r.score}</b></li>`).join("")}</ol>
+    <div class="awards">${e.liar.length?`<p><span>🤥 Maior mentiroso</span>${esc(e.liar.join(" e "))} · enganou ${e.liarN} ${e.liarN===1?"vez":"vezes"}</p>`:""}${e.det.length?`<p><span>🔎 Melhor detetive</span>${esc(e.det.join(" e "))} · acertou ${e.detN} ${e.detN===1?"vez":"vezes"}</p>`:""}</div>
+    <div class="choices" id="endBtns"></div><p class="wait" id="endWait"></p>`;
+  endButtons(v);
+  playSfx(winners.includes(v.players[v.me].name)?"win":"end");
+}
+function endButtons(v){
+  const b=$("endBtns");if(!b)return;
+  if(v.host){b.innerHTML=`<button class="btn" type="button" id="againBtn">Jogar outra vez</button><button class="btn ghost" type="button" id="lobbyBtn">Voltar à sala</button>`;
+    $("againBtn").onclick=()=>{unlockAudio();ROOM.send({t:"again"})};$("lobbyBtn").onclick=()=>ROOM.send({t:"lobby"});$("endWait").textContent=""}
+  else{b.innerHTML="";$("endWait").textContent=`À espera que ${v.players[0].name} comece outra partida.`}
+}
+const RULES=`<ul>
+  <li>Aparece uma <b>pergunta verdadeira</b> com um espaço em branco.</li>
+  <li>Cada um escreve uma <b>peta</b>: uma resposta falsa que pareça verdade. Se escreveres a resposta certa, o jogo avisa-te para inventares outra.</li>
+  <li>Depois aparecem todas as respostas misturadas com a verdadeira. <b>Vota na que achas verdadeira</b> (a tua não aparece).</li>
+  <li><b>Acertar na verdade: +${PT_TRUTH}.</b> <b>Cada pessoa que cai na tua peta: +${PT_FOOL}.</b></li>
+  <li>São ${ROUNDS} perguntas e <b>a última vale a dobrar</b>. Ganha quem tiver mais pontos.</li>
+  <li>Quando há poucos jogadores, o jogo junta umas petas "da casa" para baralhar.</li>
+</ul>`;
+const PRIVACY=privacyHTML(" e as perguntas que já te saíram, para não se repetirem");
+
+ROOM.game={id:"peta",title:"Peta",maxp:8,minp:2,maxBots:3,botNames:["Tia Rosa","Sr. Américo","Avó Lurdes"],
+  lobbyHelpFew:"Envia o link aos teus amigos. Se fores só tu, junta o computador. Fica melhor com 3 ou mais pessoas.",
+  start:petaStart,msg:petaMsg,client:petaClient,stop:()=>{petaStop();clearRev();stopTick()},
+  back(seat){ROOM.sendTo(seat,{t:"start"});if(G)ROOM.sendTo(seat,viewFor(G.seats.indexOf(seat)));if(G)broadcast()},
+  drop(seat){if(!G)return;if(G.phase==="write")afterWrite();else if(G.phase==="vote")afterVote();else broadcast()},
+  hostLost(on){$("lost").hidden=!on},
+  onScreen(n){if(n!=="game"){clearRev();UI.key=null}}
+};
+
+initUI({rules:RULES,privacy:PRIVACY});
+
+</script>
+</body>
+</html>
