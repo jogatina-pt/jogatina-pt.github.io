@@ -23,7 +23,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Peta">
 <meta name="theme-color" content="#f4eee3">
-<link rel="preload" href="../fonts/bowlby-one.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
 <style>
@@ -603,7 +603,7 @@ function initRoomUI(){
     copyLink();
   });
   $("shareBtn").hidden=!navigator.share;
-  window.addEventListener("beforeunload",e=>{if(ROOM.role==="host"&&ROOM.started){e.preventDefault();e.returnValue=""}});
+  window.addEventListener("beforeunload",e=>{if(ROOM.role==="host"&&ROOM.started&&!ROOM.leaving){e.preventDefault();e.returnValue=""}});
   $("myName").value=store.get("pp-name")||"";
   const m=location.hash.match(/sala=([A-Za-z0-9]{5})/);
   if(m){$("joinCode").value=cleanCode(m[1]);$("joinArea").classList.add("fromlink");netNote("netNote","Escreve o teu nome e carrega em Entrar.");setTimeout(()=>($("myName").value?$("joinBtn"):$("myName")).focus(),50);
@@ -647,7 +647,12 @@ const SFX={
 function playSfx(k){try{SFX[k]&&SFX[k]()}catch(e){}}
 function setMute(m){muted=m;store.set("pp-mute",m?"1":"0");$("mute").setAttribute("aria-pressed",String(!m));$("mute").textContent=m?"🔇":"🔊";$("mute").title=m?"Som desligado":"Som ligado"}
 
+/* manter o ecrã ligado na sala e durante a partida (se o telemóvel de quem criou a sala adormece, a sala para) */
+let WL=null;
+async function keepAwake(on){try{if(on&&!WL&&navigator.wakeLock&&!document.hidden){WL=await navigator.wakeLock.request("screen");WL.addEventListener("release",()=>{WL=null})}else if(!on&&WL){const w=WL;WL=null;await w.release()}}catch(e){}}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&($("game")&&!$("game").hidden||$("lobby")&&!$("lobby").hidden))keepAwake(true)});
 function showScreen(n){
+  keepAwake(n!=="setup");
   for(const id of ["setup","lobby","game"])$(id).hidden=id!==n;
   $("exitBtn").hidden=n!=="game";$("hubLink").hidden=!(n==="setup"||n==="lobby");
   if(n!=="game")stopTick();
@@ -1234,6 +1239,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   const leave=()=>{try{if(!isFs())return;const p=(D.exitFullscreen||D.webkitExitFullscreen).call(D);if(p&&p.catch)p.catch(()=>{})}catch(e){}};
   const JFS={can,isFs,wanted:get,enter,leave,framed:!!TOP};
   window.JFS=JFS;
+  /* rodar o ecrã: dentro da moldura tem de ser a página de fora a pedir */
+  JFS.lockOr=o=>{const sc=(TOP||window).screen;return sc.orientation&&sc.orientation.lock?sc.orientation.lock(o):Promise.reject()};
+  JFS.unlockOr=()=>{try{const sc=(TOP||window).screen;sc.orientation&&sc.orientation.unlock&&sc.orientation.unlock()}catch(e){}};
   /* ir para o menu (passa pela moldura se for caso disso) */
   JFS.home=()=>{const a=document.createElement("a");a.href=new URL("../",location.href).href;a.style.display="none";document.body.appendChild(a);a.click();a.remove()};
 

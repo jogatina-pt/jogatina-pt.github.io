@@ -262,6 +262,8 @@ const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},se
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const FAST=()=>window.__fast?20:1;
 let sel=new Set((store.get("testa-baralhos")||"animais,comida,portugal,mimica").split(",")),secs=+store.get("testa-tempo")||60,history=[];
+sel=new Set([...sel].filter(id=>DECKS.some(d=>d.id===id)));if(!sel.size)sel=new Set(["animais","comida"]);
+if(![45,60,90].includes(secs))secs=60;
 /* som */
 let AC=null,muted=store.get("pp-mute")==="1";
 function unlock(){try{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=="running")AC.resume()}catch(e){}}
@@ -292,6 +294,10 @@ function buildPile(){
 }
 function markSeen(w){let s=[];try{s=JSON.parse(store.get("testa-vistas")||"[]")}catch(e){}s.push(w);store.set("testa-vistas",JSON.stringify(s.slice(-600)))}
 
+/* ecrã sempre ligado durante a ronda (com o telemóvel na testa ninguém lhe toca) */
+let WL=null;
+async function keepAwake(on){try{if(on&&!WL&&navigator.wakeLock){WL=await navigator.wakeLock.request("screen");WL.addEventListener("release",()=>{WL=null})}else if(!on&&WL){const w=WL;WL=null;await w.release()}}catch(e){}}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&R)keepAwake(true)});
 /* ---------- sensores ---------- */
 const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 let motionOK=false,neutral=true,lastAct=0;
@@ -314,7 +320,8 @@ async function start(){
   unlock();
   await askMotion();
   fsMine=false;try{if(window.JFS&&JFS.can&&!JFS.isFs()){fsMine=true;await JFS.enter()}}catch(e){}
-  try{if(screen.orientation&&screen.orientation.lock)await screen.orientation.lock("landscape")}catch(e){}
+  try{if(window.JFS&&JFS.lockOr)await JFS.lockOr("landscape");else if(screen.orientation&&screen.orientation.lock)await screen.orientation.lock("landscape")}catch(e){}
+  keepAwake(true);
   R={pile:buildPile(),done:[],score:0,phase:"count",left:secs,word:null,timers:[]};
   $("play").hidden=false;$("play").className="";
   $("hint").textContent=motionOK?"Põe o telemóvel na testa. Baixo = acertei · Cima = passo":"Toca à direita se acertaste, à esquerda para passar";
@@ -351,8 +358,8 @@ function finish(){
   const r=R;R=null;
   $("play").hidden=true;
   try{if(fsMine&&window.JFS&&!JFS.wanted())JFS.leave()}catch(e){}fsMine=false;
-  try{screen.orientation&&screen.orientation.unlock&&screen.orientation.unlock()}catch(e){}
-  history.push(r.score);sfx("end");
+  try{if(window.JFS&&JFS.unlockOr)JFS.unlockOr();else screen.orientation&&screen.orientation.unlock&&screen.orientation.unlock()}catch(e){}
+  history.push(r.score);sfx("end");keepAwake(false);
   $("setup").hidden=true;$("result").hidden=false;
   $("result").innerHTML=`<div class="result"><div class="eyebrow">Fim da ronda</div><div class="big">${r.score} ${r.score===1?"ponto":"pontos"}</div>
     <ul class="wl">${r.done.map(d=>`<li class="${d.ok?"ok":"pass"}">${d.ok?"✓":"✗"} ${esc(d.w)}</li>`).join("")||"<li>Nenhuma palavra</li>"}</ul>
@@ -386,6 +393,9 @@ setTheme(document.documentElement.dataset.ppTheme==="light"?"light":"dark");setM
   const leave=()=>{try{if(!isFs())return;const p=(D.exitFullscreen||D.webkitExitFullscreen).call(D);if(p&&p.catch)p.catch(()=>{})}catch(e){}};
   const JFS={can,isFs,wanted:get,enter,leave,framed:!!TOP};
   window.JFS=JFS;
+  /* rodar o ecrã: dentro da moldura tem de ser a página de fora a pedir */
+  JFS.lockOr=o=>{const sc=(TOP||window).screen;return sc.orientation&&sc.orientation.lock?sc.orientation.lock(o):Promise.reject()};
+  JFS.unlockOr=()=>{try{const sc=(TOP||window).screen;sc.orientation&&sc.orientation.unlock&&sc.orientation.unlock()}catch(e){}};
   /* ir para o menu (passa pela moldura se for caso disso) */
   JFS.home=()=>{const a=document.createElement("a");a.href=new URL("../",location.href).href;a.style.display="none";document.body.appendChild(a);a.click();a.remove()};
 
