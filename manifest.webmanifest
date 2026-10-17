@@ -107,6 +107,18 @@
      "type": "image/png"
     }
    ]
+  },
+  {
+   "name": "Voa Voa",
+   "short_name": "Voa Voa",
+   "url": "voa/",
+   "icons": [
+    {
+     "src": "voa/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
   }
  ]
 }

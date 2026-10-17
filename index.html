@@ -9,7 +9,7 @@
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
 <meta property="og:title" content="Jogatina: jogos para jogar com amigos">
-<meta property="og:description" content="Panela de Pressão, Peta, Conversa de Tasca, Senhor Branco, Mais Uma!, Adivinha na Testa e Cobrinha. Grátis, sem conta, cada um no seu telemóvel.">
+<meta property="og:description" content="Panela de Pressão, Peta, Conversa de Tasca, Senhor Branco, Mais Uma!, Adivinha na Testa, Cobrinha e Voa Voa. Grátis, sem conta, cada um no seu telemóvel.">
 <meta property="og:url" content="https://jogatina-pt.github.io/">
 <meta property="og:image" content="https://jogatina-pt.github.io/og.jpg">
 <meta property="og:image:width" content="1200">
@@ -166,7 +166,7 @@ header.top{flex:none}
 .game p{position:relative;margin:0;font-size:clamp(11.5px,3vw,14px);line-height:1.25;font-weight:700;max-width:64%;color:#1b1b1b}
 .game .tag{position:relative;z-index:1;align-self:flex-start;white-space:nowrap;background:#151515;color:#fff;font-family:var(--display);letter-spacing:.06em;font-size:13px;border-radius:999px;padding:2px 9px}
 .game.panela{--gc:#ffb26b}.game.peta{--gc:#ff9ec0}.game.tasca{--gc:#b9e07f}.game.branco{--gc:#9cc3ff}.game.maisuma{--gc:#ffd23f}.game.testa{--gc:#c9b3ff}.game.cobra{--gc:#bfe39a}
-.game.cobra{grid-column:1/-1}.game.cobra p{max-width:62%}.game.cobra .pic{max-width:120px;width:28%}
+.game.voa{--gc:#9fdcff}
 .game.maisuma .pic{width:46%;max-width:150px;right:2px;bottom:-24px}
 :root:not([data-pp-theme="light"]) .game{filter:saturate(.9) brightness(.95)}
 .foot{flex:none;margin:0;text-align:center;font-size:12px}
@@ -177,7 +177,6 @@ header.top{flex:none}
 .isheet h3{margin:0;font-size:28px}.isheet ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-weight:700}
 @media (min-width:760px){
   .games{grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr}
-  .game.cobra{grid-column:span 2}
   .game .pic{max-width:140px}
 }
 @media (min-width:760px) and (min-height:600px){.game .pic{max-width:150px}}
@@ -278,6 +277,7 @@ header.top{flex:none}
 </g></svg></div></a>
     <a class="game testa" href="testa/"><h3>Adivinha na Testa</h3><p>Adivinha o que és: pistas ou perguntas de sim ou não.</p><span class="tag">2+ · 1 ou vários</span><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M5 9l5 4M59 9l-5 4M3 25h6M61 25h-6" stroke="#151515" stroke-width="2.6" stroke-linecap="round"/><g transform="rotate(-12 32 25)"><rect x="12" y="11" width="40" height="27" rx="5" fill="#151515"/><rect x="16" y="14.5" width="32" height="20" rx="2" fill="#fff"/><text x="32" y="29.5" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="14" fill="#6d3fd6">GALO</text></g></svg></div></a>
     <a class="game cobra" href="cobra/"><h3>Cobrinha</h3><p>A dos telemóveis antigos. Bates o recorde?</p><span class="tag">sozinho · arcada</span><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="3" y="3" width="58" height="42" rx="6" fill="#a8c27c" stroke="#151515" stroke-width="2.6"/><g fill="#22341a"><rect x="12" y="30" width="5" height="5"/><rect x="18" y="30" width="5" height="5"/><rect x="24" y="30" width="5" height="5"/><rect x="24" y="24" width="5" height="5"/><rect x="24" y="18" width="5" height="5"/><rect x="30" y="18" width="5" height="5"/><rect x="36" y="18" width="5" height="5"/><rect x="42" y="18" width="6" height="6"/><rect x="51" y="30" width="2" height="2"/><rect x="49" y="32" width="2" height="2"/><rect x="53" y="32" width="2" height="2"/><rect x="51" y="34" width="2" height="2"/></g><rect x="44" y="19.5" width="2" height="2" fill="#a8c27c"/></svg></div></a>
+    <a class="game voa" href="voa/"><h3>Voa Voa</h3><p>Toca para voar. Passas quantos pilares?</p><span class="tag">sozinho · arcada</span><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="40" y="0" width="14" height="16" fill="#f7fbff" stroke="#151515" stroke-width="2.4"/><rect x="38" y="13" width="18" height="5" fill="#f2c94c" stroke="#151515" stroke-width="2.4"/><rect x="40" y="33" width="14" height="15" fill="#f7fbff" stroke="#151515" stroke-width="2.4"/><rect x="38" y="30" width="18" height="5" fill="#f2c94c" stroke="#151515" stroke-width="2.4"/><path d="M44 4l3 3-3 3-3-3zM44 38l3 3-3 3-3-3z" fill="#2a62c4"/><g transform="rotate(-14 20 26)"><circle cx="20" cy="27" r="10" fill="#6b3f22" stroke="#151515" stroke-width="2.4"/><ellipse cx="20" cy="30" rx="6" ry="4.5" fill="#e8b98a" stroke="#151515" stroke-width="1.8"/><circle cx="17" cy="24" r="1.6" fill="#151515"/><circle cx="23" cy="24" r="1.6" fill="#151515"/><path d="M12 17a8 5 0 0 1 16 0z" fill="#d23a6e" stroke="#151515" stroke-width="2"/><path d="M20 12v-3M13 8h14" stroke="#151515" stroke-width="2.4" stroke-linecap="round"/></g><path d="M3 34h6M1 40h8" stroke="#151515" stroke-width="2.2" stroke-linecap="round"/></svg></div></a>
   </nav>
   <p class="foot">Feito em Portugal. As salas usam o Firebase (Google) e apagam-se quando acabam.</p>
 </div>
