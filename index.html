@@ -187,7 +187,7 @@ header.top{flex:none}
 <div class="wrap">
   <header class="top">
     <div class="brand"><h1>Joga<span>tina</span></h1></div>
-    <div class="tools"><button class="btn sm" id="installBtn" type="button" hidden>📲 Instalar</button><button class="btn ghost sm ico" id="themeBtn" type="button" aria-label="Tema escuro" title="Tema escuro">☾</button></div>
+    <div class="tools"><button class="btn sm" id="installBtn" type="button" hidden>📲 Atalho</button><button class="btn ghost sm ico" id="themeBtn" type="button" aria-label="Tema escuro" title="Tema escuro">☾</button></div>
   </header>
   <section class="hero" aria-label="Boas-vindas">
     <svg class="mascot girafa" viewBox="0 0 200 270" role="img" aria-label="Girafa de óculos a ler um livro">
@@ -276,7 +276,7 @@ header.top{flex:none}
   </nav>
   <p class="foot">Feito em Portugal. As salas usam o Firebase (Google) e apagam-se quando acabam.</p>
 </div>
-<div class="isheet" id="iosSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-label="Instalar a app"><h3>Instalar a app</h3><ol><li>Abre este site no Safari.</li><li>Toca no botão Partilhar (o quadrado com a seta para cima).</li><li>Escolhe «Adicionar ao ecrã principal».</li></ol><p class="note" style="margin:0">Fica com um ícone como as outras apps e abre sem barras do navegador. Também podes fazer isto dentro de cada jogo para teres um atalho só desse jogo.</p><button class="btn" type="button">Percebi</button></div></div>
+<div class="isheet" id="iosSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-label="Criar atalho"><h3>Criar atalho</h3><ol><li>Abre este site no Safari.</li><li>Toca no botão Partilhar (o quadrado com a seta para cima).</li><li>Escolhe «Adicionar ao ecrã principal».</li></ol><p class="note" style="margin:0">Fica com um ícone no ecrã inicial, como as outras apps, e abre sem barras do navegador. Também podes fazer isto dentro de cada jogo para teres um atalho só desse jogo.</p><button class="btn" type="button">Percebi</button></div></div>
 <script>
 const tb=document.getElementById("themeBtn");
 function setTheme(t,save){if(t==="light")document.documentElement.dataset.ppTheme="light";else delete document.documentElement.dataset.ppTheme;if(save)try{localStorage.setItem("pp-tema",t)}catch(e){}tb.textContent=t==="light"?"☾":"☀";tb.title=t==="light"?"Tema escuro":"Tema claro";tb.setAttribute("aria-label",tb.title);const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==="light"?"#f4eee3":"#13201f"}
@@ -305,7 +305,7 @@ tb.addEventListener("click",()=>setTheme(document.documentElement.dataset.ppThem
   };
   btn.addEventListener("click",async()=>{
     if(ev){ev.prompt();let r=null;try{r=await ev.userChoice}catch(e){}ev=null;if(r&&r.outcome==="accepted")btn.hidden=true;return}
-    sheet.querySelector("h3").textContent=ios?"Instalar no iPhone":"Instalar a app";
+    sheet.querySelector("h3").textContent="Criar atalho";
     sheet.querySelector("ol").innerHTML=steps().map(s=>"<li>"+s+"</li>").join("");
     sheet.hidden=false;
   });
@@ -329,6 +329,8 @@ tb.addEventListener("click",()=>setTheme(document.documentElement.dataset.ppThem
   const leave=()=>{try{if(!isFs())return;const p=(D.exitFullscreen||D.webkitExitFullscreen).call(D);if(p&&p.catch)p.catch(()=>{})}catch(e){}};
   const JFS={can,isFs,wanted:get,enter,leave,framed:!!TOP};
   window.JFS=JFS;
+  /* ir para o menu (passa pela moldura se for caso disso) */
+  JFS.home=()=>{const a=document.createElement("a");a.href=new URL("../",location.href).href;a.style.display="none";document.body.appendChild(a);a.click();a.remove()};
 
   /* ---- links do site ---- */
   const sameSite=a=>{
@@ -343,8 +345,12 @@ tb.addEventListener("click",()=>setTheme(document.documentElement.dataset.ppThem
     addEventListener("click",e=>{if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey)return;const a=e.target.closest&&e.target.closest("a[href]");const h=sameSite(a);if(!h)return;e.preventDefault();TOP.JFS.go(h)},false);
   }else{
     JFS.shell=true;
-    const HOME=location.href.split("#")[0],baseTitle=document.title;let fr=null,bk=null;
-    const close=()=>{if(!fr)return;fr.remove();fr=null;if(bk){bk.remove();bk=null}document.documentElement.style.overflow="";document.title=baseTitle};
+    const HOME=location.href.split("#")[0],baseTitle=document.title;let fr=null,bk=null,syncT=0;
+    /* a zona da câmara e da barra de baixo fica com a mesma cor e padrão do jogo que está aberto */
+    const meta=document.querySelector('meta[name="theme-color"]');
+    const sync=()=>{try{const d=fr.contentDocument;if(!d||!d.body)return;const pl=d.getElementById("play");const el=pl&&!pl.hidden?pl:d.body;const cs=getComputedStyle(el);let bg=cs.backgroundColor;if(el===d.body&&(bg==="rgba(0, 0, 0, 0)"||bg==="transparent"))bg=getComputedStyle(d.documentElement).backgroundColor;
+      bk.style.backgroundColor=bg;bk.style.backgroundImage=cs.backgroundImage;bk.style.backgroundSize=cs.backgroundSize;if(meta)meta.content=bg}catch(e){}};
+    const close=()=>{if(!fr)return;clearInterval(syncT);fr.remove();fr=null;if(bk){bk.remove();bk=null}document.documentElement.style.overflow="";document.title=baseTitle};
     const show=href=>{
       if(href.split("#")[0]===HOME){close();return}
       if(!fr){
@@ -352,7 +358,7 @@ tb.addEventListener("click",()=>setTheme(document.documentElement.dataset.ppThem
         fr.allow="fullscreen; web-share; clipboard-write; accelerometer; gyroscope; autoplay; screen-wake-lock";fr.setAttribute("allowfullscreen","");
         /* dentro de uma moldura o env(safe-area-inset-*) vale 0, por isso é a moldura que fica fora da câmara e dos cantos */fr.style.cssText="position:absolute;top:env(safe-area-inset-top,0px);right:env(safe-area-inset-right,0px);bottom:env(safe-area-inset-bottom,0px);left:env(safe-area-inset-left,0px);width:calc(100% - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));height:calc(100% - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));border:0;background:var(--bg,#f4eee3)";bk=document.createElement("div");bk.style.cssText="position:fixed;inset:0;z-index:2147483000;background:var(--bg,#f4eee3)";document.body.appendChild(bk);
         fr.src=href;bk.appendChild(fr);document.documentElement.style.overflow="hidden";
-        fr.addEventListener("load",()=>{try{document.title=fr.contentDocument.title}catch(e){}});
+        fr.addEventListener("load",()=>{try{document.title=fr.contentDocument.title}catch(e){}sync()});syncT=setInterval(sync,300);
       }else{try{fr.contentWindow.location.replace(href)}catch(e){fr.src=href}}
     };
     JFS.go=href=>{
@@ -363,6 +369,12 @@ tb.addEventListener("click",()=>setTheme(document.documentElement.dataset.ppThem
     };
     addEventListener("popstate",e=>{const s=e.state;if(s&&s.jf)show(s.jf);else close()});
     if(history.state&&history.state.jf)history.replaceState(null,"",HOME);
+    /* jogo aberto diretamente (atalho, link de convite): o botão "voltar" do telemóvel leva ao menu em vez de sair do site */
+    if(!document.querySelector("nav.games")&&document.querySelector('a[href="../"]')){
+      const HUB=new URL("../",location.href).href,ref=(document.referrer||"").split("#")[0];
+      if(ref!==HUB&&!(history.state&&history.state.jg)){const here=location.href;try{history.replaceState({jhub:1},"",HUB);history.pushState({jg:1},"",here)}catch(e){}}
+      addEventListener("popstate",e=>{if(e.state&&e.state.jhub)location.replace(HUB)});
+    }
     /* em ecrã completo, os links do site abrem na moldura */
     addEventListener("click",e=>{if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey)return;if(!isFs()&&!fr&&!get())return;const a=e.target.closest&&e.target.closest("a[href]");const h=sameSite(a);if(!h)return;e.preventDefault();JFS.go(h)},false);
   }
