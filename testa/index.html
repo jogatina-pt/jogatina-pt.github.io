@@ -126,7 +126,7 @@ h1,h2,h3{font-family:var(--display);letter-spacing:.03em;font-weight:400}
 .btn:not(:disabled):active{transform:translate(3px,3px);box-shadow:0 0 0 var(--stroke)}
 .btn.ghost{background:var(--surface)}
 input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
-.mode,.roster li,.sheet,.qcard,.bcard,.wordcard,.mucard,.rstep,.board li,.opt,.sub,.wcard,.sent,.jbox,.yourturn,.outbox,.words p,.roles li,.others li,.tally li,.drink,.yn2 p,.rulebar,.vol li,.chips li,.seg button,.age{border:3px solid var(--stroke)!important;box-shadow:4px 4px 0 var(--stroke)}
+.mode,.roster li,.sheet,.qcard,.bcard,.wordcard,.mucard,.rstep,.board li,.opt,.sub,.wcard,.sent,.jbox,.yourturn,.outbox,.words p,.roles li,.others li,.tally li,.drink,.yn2 p,.rulebar,.vol li,.chips li,.seg button,.age,.foreheads li{border:3px solid var(--stroke)!important;box-shadow:4px 4px 0 var(--stroke)}
 .roster li.free{box-shadow:none;border-style:dashed!important}
 .chips li,.seg button,.vol li{box-shadow:2px 2px 0 var(--stroke)}
 .qcard,.bcard,.wordcard,.mucard{border-radius:18px;box-shadow:6px 6px 0 var(--stroke)}
@@ -158,6 +158,9 @@ input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
 .seg button.on{background:var(--accent);color:var(--accent-ink)}
 .how{background:var(--surface);border:3px solid var(--stroke);box-shadow:4px 4px 0 var(--stroke);border-radius:16px;padding:10px 12px;max-width:520px;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:center;font-size:13.5px;line-height:1.3}
 .how b{font-size:22px}
+.modeswitch{display:flex;gap:8px;flex-wrap:wrap}
+.modeswitch a,.modeswitch span{border:3px solid var(--stroke);box-shadow:2px 2px 0 var(--stroke);border-radius:999px;padding:6px 14px;font-weight:800;font-size:14px;text-decoration:none;color:var(--ink);background:var(--surface)}
+.modeswitch span{background:var(--accent);color:var(--accent-ink)}
 .history{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
 .history li{background:var(--surface);border:3px solid var(--stroke);border-radius:999px;padding:3px 10px;font-weight:800;font-size:13px;box-shadow:2px 2px 0 var(--stroke)}
 /* ecrã de jogo, por cima de tudo */
@@ -212,6 +215,7 @@ input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
 <ellipse cx="184" cy="122" rx="14" ry="9" fill="#5a3a24"/>
 <path d="M176 100q4 6 0 14" fill="none" stroke="#fff3c4" stroke-width="3" opacity=".7"/>
 </g></svg></div>
+    <div class="modeswitch"><span>📱 Um telemóvel</span><a href="../quemsou/">👥 Cada um no seu</a></div>
     <div class="how">
       <b>🤳</b><span>Põe o telemóvel na testa, com o ecrã virado para os amigos. Eles dão pistas.</span>
       <b>⬇️</b><span>Acertaste? <b style="font-size:inherit">Inclina para baixo.</b></span>
