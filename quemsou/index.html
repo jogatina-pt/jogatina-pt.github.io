@@ -224,8 +224,13 @@ input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shado
 .foreheads li.done b::after{content:" ✓";color:var(--good)}
 .foreheads li.off{opacity:.5}
 .foreheads li .ans{font-style:normal;font-size:12px;font-weight:800;color:var(--accent)}
-.answers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
-.answers .opt{text-align:center;padding:11px 6px;font-size:15px}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.answers .opt{text-align:center;padding:20px 8px;font-size:22px;font-family:var(--display);font-weight:400;letter-spacing:.04em}
+.answers .opt.sim{background:#c8f2d8;color:#151515}.answers .opt.nao{background:#ffd3cf;color:#151515}
+.lastans{border:3px solid var(--stroke);box-shadow:4px 4px 0 var(--stroke);border-radius:16px;padding:10px 14px;font-family:var(--display);font-size:24px;letter-spacing:.04em;text-align:center;color:#151515;animation:pop .4s cubic-bezier(.2,1.6,.4,1)}
+.lastans.sim{background:#c8f2d8}.lastans.nao{background:#ffd3cf}
+.lastans b{font-weight:400;font-size:30px}
+.log li span{font-size:12px}
 .answers .opt.picked{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 18%,var(--surface))}
 .tally{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
 .tally li{background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:4px 12px;font-weight:800;font-size:14px}
@@ -789,13 +794,13 @@ const DECKS=[
 
 /* ================= QUEM SOU EU? (Adivinha na Testa, cada um no seu telemóvel) =================
    Cada jogador recebe uma palavra secreta. Vê as palavras de todos menos a sua.
-   À vez, quem joga faz em voz alta uma pergunta de sim ou não; os outros respondem (no telemóvel ou em voz alta).
-   Na sua vez pode passar, arriscar um palpite ou desistir. Palpite certo: sai do jogo com pontos
+   À vez, quem joga faz em voz alta uma pergunta de sim ou não; o primeiro a responder no telemóvel (Sim ou Não)
+   passa logo a vez ao seguinte. Antes da resposta, quem joga pode arriscar um palpite ou desistir. Palpite certo: sai do jogo com pontos
    (quanto mais cedo, mais pontos). Palpite errado: perde a vez. Se o palpite não bater certo à letra,
    os outros decidem se aceitam (ex.: «gato» para «Gato preto»). */
 const T_JUDGE=20,GUESSLEN=40,LOGN=6;
-const ANS=[["sim","Sim 👍"],["nao","Não 👎"],["talvez","Mais ou menos 🤏"],["naosei","Não sei 🤷"]];
-const ANSL={sim:"Sim",nao:"Não",talvez:"Mais ou menos",naosei:"Não sei"};
+const ANS=[["sim","Sim 👍"],["nao","Não 👎"]];
+const ANSL={sim:"Sim",nao:"Não"};
 const STOPW=new Set(["o","a","os","as","um","uma","de","do","da","dos","das","e"]);
 const normW=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g," ").trim().split(" ").filter(w=>w&&!STOPW.has(w)).map(w=>w.length>3&&w.endsWith("s")?w.slice(0,-1):w).join(" ");
 const cleanTxt=(s,n)=>String(s||"").replace(/[\u0000-\u001f<>]/g,"").replace(/\s+/g," ").trim().slice(0,n);
@@ -828,12 +833,12 @@ function newRound(){
   const n=G.seats.length;
   G.round++;
   G.r={words:pickWords(n),order:shuffle(G.seats.map((s,i)=>i)),pos:-1,done:G.seats.map(()=>null),turns:G.seats.map(()=>0),
-       ans:{},judge:null,log:[],phase:"play",finished:0};
+       judge:null,log:[],phase:"play",finished:0};
   nextTurn();
 }
 const active=i=>G.r.done[i]===null;
 function nextTurn(){
-  const R=G.r;R.ans={};R.judge=null;R.phase="play";
+  const R=G.r;R.judge=null;R.phase="play";
   const left=G.seats.map((s,i)=>i).filter(active);
   if(left.length<=1||!left.some(isOn)){endRound();return}
   for(let k=0;k<R.order.length;k++){
@@ -883,12 +888,11 @@ function viewFor(i){
   return{t:"v",gid:g.id,round:g.round,phase:R.phase,me:i,host:i===0,
     players:g.seats.map((s,j)=>({name:s.name,score:g.scores[j],off:s.online===false,turn:j===turn,
       done:R.done[j]?{how:R.done[j].how,place:R.done[j].place,pts:R.done[j].pts}:null,
-      word:(j!==i||R.done[j]||over)?R.words[j]:null,ans:turn!=null&&j!==turn?R.ans[j]||null:null})),
-    turn,myAns:R.ans[i]||null,
-    tally:turn!=null?ANS.map(([k])=>({k,n:Object.values(R.ans).filter(a=>a===k).length})).filter(x=>x.n):[],
+      word:(j!==i||R.done[j]||over)?R.words[j]:null})),
+    turn,tkey:turn!=null?R.turns[turn]+":"+turn:null,
     judge:R.judge?{i:R.judge.i,name:nm(R.judge.i),text:R.judge.text,word:R.judge.i===i?null:R.words[R.judge.i],my:R.judge.votes[i]||null,
       n:Object.keys(R.judge.votes).length,of:judges().length}:null,
-    log:R.log.slice(-LOGN).reverse().map(e=>({k:e.k,name:nm(e.i),me:e.i===i,text:e.text||null,w:e.k==="ok"||e.k==="give"?e.w:null,pts:e.pts||0})),
+    log:R.log.slice(-LOGN).reverse().map(e=>({k:e.k,name:nm(e.i),me:e.i===i,by:e.by!=null?nm(e.by):null,byMe:e.by===i,a:e.a||null,text:e.text||null,w:e.k==="ok"||e.k==="give"?e.w:null,pts:e.pts||0})),
     left:G.deadline&&R.phase==="play"?Math.max(0,G.deadline-Date.now()):0,timed:g.opts.tempo!=="0"};
 }
 function broadcast(){if(!G)return;G.seats.forEach((s,i)=>{if(s.kind!=="bot")ROOM.sendTo(s,viewFor(i))})}
@@ -896,7 +900,7 @@ function qsMsg(seat,d){
   if(!G||!d)return;
   const i=G.seats.indexOf(seat),R=G.r;if(i<0)return;
   const turn=R.order[R.pos];
-  if(d.t==="ans"&&R.phase==="play"&&i!==turn&&ANSL[d.a]){R.ans[i]=d.a;broadcast();return}
+  if(d.t==="ans"&&R.phase==="play"&&i!==turn&&ANSL[d.a]&&d.turn===R.turns[turn]+":"+turn){addLog({k:"ans",i:turn,by:i,a:d.a});nextTurn();return}
   if(d.t==="pass"&&R.phase==="play"&&i===turn){addLog({k:"pass",i});nextTurn();return}
   if(d.t==="give"&&R.phase==="play"&&i===turn){finish(i,"give");addLog({k:"give",i,w:R.words[i]});nextTurn();return}
   if(d.t==="guess"&&R.phase==="play"&&i===turn){
@@ -939,6 +943,7 @@ function logHTML(v){
   const line=e=>{const n=e.me?"Tu":esc(e.name);
     if(e.k==="ok")return`🎉 <b>${n}</b> ${e.me?"acertaste":"acertou"}: <b>${esc(e.w)}</b> (+${e.pts})`;
     if(e.k==="err")return`❌ <b>${n}</b> ${e.me?"tentaste":"tentou"} «${esc(e.text)}» e ${e.me?"erraste":"errou"}`;
+    if(e.k==="ans")return`💬 ${e.me?"A tua pergunta":"Pergunta de <b>"+n+"</b>"}: <b>${ANSL[e.a]}</b> <span>(respondeu ${e.byMe?"tu":esc(e.by)})</span>`;
     if(e.k==="pass")return`➡️ <b>${n}</b> ${e.me?"passaste":"passou"} a vez`;
     if(e.k==="tempo")return`⏱️ Acabou o tempo de <b>${n}</b>`;
     if(e.k==="give")return`🏳️ <b>${n}</b> ${e.me?"desististe":"desistiu"}: era <b>${esc(e.w)}</b>`;
@@ -953,7 +958,7 @@ function render(v){
   $("chips").innerHTML=v.players.map((p,j)=>`<li class="${j===v.me?"me":""}${p.off?" off":""}${p.turn?" turnnow":""}"><span class="cn">${esc(p.name)}</span><b>${p.score}</b>${p.turn?'<i class="st">❓</i>':p.done&&p.done.how==="ok"?'<i class="st">✓</i>':""}</li>`).join("");
   $("foreheads").innerHTML=v.players.map((p,j)=>{
     const me=j===v.me,cls=[me&&!p.word?"me":"",p.turn?"turn":"",p.done&&p.done.how==="ok"?"done":"",p.off?"off":""].join(" ");
-    return`<li class="${cls}"><span class="who">${me?"Tu":esc(p.name)}${p.turn?" · a perguntar":""}</span><b>${p.word?esc(p.word):"???"}</b>${p.ans?`<em class="ans">${ANSL[p.ans]}</em>`:""}</li>`}).join("");
+    return`<li class="${cls}"><span class="who">${me?"Tu":esc(p.name)}${p.turn?" · a perguntar":""}</span><b>${p.word?esc(p.word):"???"}</b></li>`}).join("");
   if(v.phase==="play"&&v.timed)startTick(v.left);else stopTick();
   const myTurn=v.turn===v.me,P=$("panel");
   const key=`${v.gid}:${v.round}:${v.phase}:${v.turn}:${v.log.length?v.log[0].k+v.log[0].name:""}`,fresh=key!==UI.key;UI.key=key;
@@ -969,17 +974,16 @@ function render(v){
     }
     return;
   }
-  const meDone=v.players[v.me].done;
+  const meDone=v.players[v.me].done,L=v.log[0];
+  const last=fresh?(L&&L.k==="ans"?`<div class="lastans ${L.a}">${L.me?"A tua pergunta":esc(L.name)}: <b>${ANSL[L.a].toUpperCase()}</b></div>`:""):(UI.last||"");
+  UI.last=last;
   if(myTurn){
     if(fresh){UI.guessing=false;playSfx("vote");try{navigator.vibrate&&navigator.vibrate(150)}catch(e){}}
-    if(!fresh&&$("myTurnBox")){ /* só atualiza as respostas */
-      $("tallyBox").innerHTML=tallyHTML(v);return}
-    P.innerHTML=`<div class="yourturn" id="myTurnBox"><b>É a tua vez!</b><p>Faz em voz alta uma pergunta de sim ou não sobre a tua palavra. Ex.: «Sou um animal?», «Como-se?»</p>
-      <div id="tallyBox">${tallyHTML(v)}</div>
-      <div class="rowbtns"><button class="btn" type="button" id="passBtn">Passar a vez</button><button class="btn ghost" type="button" id="guessOpen">Já sei!</button></div>
+    else if($("myTurnBox"))return;
+    P.innerHTML=`${last}<div class="yourturn" id="myTurnBox"><b>É a tua vez!</b><p>Faz em voz alta uma pergunta de sim ou não sobre a tua palavra. Ex.: «Sou um animal?», «Como-se?» Quando alguém responder, passa a vez.</p>
+      <div class="rowbtns"><button class="btn" type="button" id="guessOpen">Já sei!</button></div>
       <div class="ansrow" id="guessRow" ${UI.guessing?"":"hidden"}><input id="guessIn" maxlength="${GUESSLEN}" placeholder="Eu sou…" autocomplete="off" enterkeyhint="send"><button class="btn" type="button" id="guessBtn">Arriscar</button></div>
       <button class="linkbtn" type="button" id="giveBtn">Desistir e ver a minha palavra</button></div>${logHTML(v)}`;
-    $("passBtn").onclick=()=>{unlockAudio();$("passBtn").disabled=true;ROOM.send({t:"pass"})};
     $("guessOpen").onclick=()=>{UI.guessing=true;$("guessRow").hidden=false;$("guessIn").focus()};
     const send=()=>{const t=cleanTxt($("guessIn").value,GUESSLEN);if(!normW(t))return;$("guessBtn").disabled=true;ROOM.send({t:"guess",text:t});playSfx("send")};
     $("guessBtn").onclick=send;$("guessIn").addEventListener("keydown",e=>{if(e.key==="Enter")send()});
@@ -987,17 +991,13 @@ function render(v){
     return;
   }
   const tp=v.players[v.turn];
-  if(!fresh&&$("ansList")){$("ansList").querySelectorAll(".opt").forEach(b=>b.classList.toggle("picked",b.dataset.a===v.myAns));return}
-  P.innerHTML=`${meDone&&meDone.how==="ok"?`<p class="wait">Já acertaste! Agora ajuda os outros.</p>`:""}
+  if(!fresh&&$("ansList"))return;
+  P.innerHTML=`${last}${meDone&&meDone.how==="ok"?`<p class="wait">Já acertaste! Agora ajuda os outros.</p>`:""}
     <p class="lead">Vez de <b>${esc(tp.name)}</b>. A palavra é <b>${esc(tp.word||"")}</b>.</p>
-    <p class="wait" style="margin:0">Responde à pergunta (também podem responder em voz alta):</p>
-    <div class="opts answers" id="ansList">${ANS.map(([k,l])=>`<button type="button" class="opt${v.myAns===k?" picked":""}" data-a="${k}">${l}</button>`).join("")}</div>${logHTML(v)}`;
-  $("ansList").addEventListener("click",e=>{const b=e.target.closest(".opt");if(!b)return;unlockAudio();ROOM.send({t:"ans",a:b.dataset.a});$("ansList").querySelectorAll(".opt").forEach(x=>x.classList.toggle("picked",x===b))});
-  if(fresh&&prev&&prev.log.length!==v.log.length&&v.log[0]&&v.log[0].k==="ok")playSfx("truth");
-}
-function tallyHTML(v){
-  if(!v.tally.length)return`<p class="wait" style="margin:0">As respostas dos outros aparecem aqui.</p>`;
-  return`<ul class="tally">${v.tally.map(t=>`<li class="${t.k}">${ANSL[t.k]}: ${t.n}</li>`).join("")}</ul>`;
+    <p class="wait" style="margin:0">Ouve a pergunta e responde. Basta um responder: a vez passa logo ao seguinte.</p>
+    <div class="opts answers" id="ansList">${ANS.map(([k,l])=>`<button type="button" class="opt ${k}" data-a="${k}">${l}</button>`).join("")}</div>${logHTML(v)}`;
+  $("ansList").addEventListener("click",e=>{const b=e.target.closest(".opt");if(!b||$("ansList").classList.contains("locked"))return;unlockAudio();ROOM.send({t:"ans",a:b.dataset.a,turn:v.tkey});$("ansList").classList.add("locked");b.classList.add("picked");playSfx("send")});
+  if(fresh&&prev&&prev.log.length&&v.log[0]&&v.log[0].k==="ok"&&prev.log[0]!==v.log[0])playSfx("truth");
 }
 function drawOver(v){
   const order=v.players.map((p,i)=>i).sort((a,b)=>{const A=v.players[a].done,B=v.players[b].done;const pa=A&&A.place?A.place:99,pb=B&&B.place?B.place:99;return pa-pb});
@@ -1018,8 +1018,8 @@ function overButtons(v){
 const RULES=`<ul>
   <li>Cada um recebe uma <b>palavra secreta</b>: um animal, uma comida, uma profissão… Vês as palavras de <b>todos menos a tua</b>, como se a tivesses colada na testa.</li>
   <li>À vez, quem joga faz em voz alta <b>uma pergunta de sim ou não</b> sobre a sua palavra («Sou um animal?», «Sou maior do que um carro?»).</li>
-  <li>Os outros respondem: em voz alta ou nos botões do telemóvel (Sim, Não, Mais ou menos, Não sei). Quem está a perguntar vê as respostas.</li>
-  <li>Depois, ou <b>passa a vez</b>, ou <b>arrisca</b> escrevendo o que acha que é. Se errar, perde a vez.</li>
+  <li>Os outros respondem só <b>Sim</b> ou <b>Não</b>, no botão do telemóvel. Basta um responder: a resposta aparece a todos e <b>a vez passa logo</b> ao seguinte.</li>
+  <li>Antes de alguém responder, quem joga pode <b>arriscar</b>: escreve o que acha que é. Se errar, perde a vez.</li>
   <li>Se o palpite não for exatamente igual (por exemplo «gato» para «Gato preto»), os outros decidem se aceitam.</li>
   <li>Quem acertar primeiro ganha mais pontos: com 4 jogadores, o 1.º ganha 3, o 2.º ganha 2 e o 3.º ganha 1. A ronda acaba quando só falta um.</li>
 </ul>`;
