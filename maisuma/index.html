@@ -268,7 +268,7 @@ input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
     <label class="age"><input type="checkbox" id="age18"> Tenho 18 anos ou mais</label>
     <label class="field"><span class="eyebrow">O teu nome</span><input id="myName" maxlength="14" autocomplete="nickname" placeholder="Ex.: Ivo"></label>
     <div class="mode" id="onlineMode">
-      <div class="eyebrow">Para 3 a 12 pessoas na mesma mesa, cada uma com o seu telemóvel</div>
+      <div class="eyebrow">Para 2 a 12 pessoas na mesma mesa, cada uma com o seu telemóvel</div>
       <div class="choices"><button class="btn" id="hostBtn" type="button">Criar sala</button></div>
       <div class="join" id="joinArea"><input id="joinCode" placeholder="Código" maxlength="5" autocapitalize="characters" autocomplete="off" spellcheck="false" aria-label="Código da sala"><button class="btn ghost" id="joinBtn" type="button">Entrar</button></div>
       <p class="note" id="netNote" role="status"></p>
@@ -1068,8 +1068,8 @@ const RULES=`<ul>
   <li>De vez em quando há <b>pausa para água</b>. Ninguém é obrigado a beber álcool: dá para jogar com água, sumo ou cerveja sem álcool.</li>
   <li>Qualquer pessoa pode passar à próxima carta. Quem criou a sala termina a noite e vê os prémios.</li>
 </ul><p class="note">Só para maiores de 18. Bebe com moderação. Quem conduz não bebe.</p>`;
-ROOM.game={id:"maisuma",title:"Mais Uma!",maxp:12,minp:3,maxBots:0,botNames:[],
-  lobbyHelpFew:"São precisas pelo menos 3 pessoas. Envia o link a quem está contigo.",
+ROOM.game={id:"maisuma",title:"Mais Uma!",maxp:12,minp:2,maxBots:0,botNames:[],
+  lobbyHelpFew:"São precisas pelo menos 2 pessoas. Envia o link a quem está contigo.",
   start:muStart,msg:muMsg,client:muClient,stop:()=>{muStop();stopTick()},cleanOpts,renderOpts,
   back(seat){ROOM.sendTo(seat,{t:"start"});if(G)broadcast()},
   drop(seat){if(!G)return;if(G.phase==="ask"&&allIn())reveal();else broadcast()},
