@@ -119,6 +119,18 @@
      "type": "image/png"
     }
    ]
+  },
+  {
+   "name": "Poker do Oeste",
+   "short_name": "Poker",
+   "url": "poker/",
+   "icons": [
+    {
+     "src": "poker/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
   }
  ]
 }
