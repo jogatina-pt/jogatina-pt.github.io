@@ -830,7 +830,7 @@ function brancoStart(seats){
 function brancoStop(){if(G){clearTimers();G.dead=true}G=null}
 const isOn=i=>G.seats[i].online!==false;
 function counts(n,o){
-  let inf=o.inf==="auto"?(n<=6?1:n<=8?2:3):+o.inf,sb=o.sb==="1"?1:0;
+  let inf=o.inf==="auto"?(n<=6?1:n<=8?2:3):+o.inf,sb=o.sb==="1"||o.inf==="0"?1:0;
   const max=Math.max(1,Math.floor((n-1)/2));
   while(inf+sb>max){if(inf>1)inf--;else if(sb>0)sb--;else inf--}
   return{inf:Math.max(sb?0:1,inf),sb};
@@ -983,15 +983,16 @@ function brancoMsg(seat,d){
 }
 
 /* ---------- opções da sala ---------- */
-function cleanOpts(o){o=o||{};return{mode:o.mode==="dist"?"dist":"sala",inf:["auto","1","2","3"].includes(String(o.inf))?String(o.inf):"auto",sb:o.sb==="0"?"0":"1"}}
+function cleanOpts(o){o=o||{};return{mode:o.mode==="dist"?"dist":"sala",inf:["auto","0","1","2","3"].includes(String(o.inf))?String(o.inf):"auto",sb:o.sb==="0"&&String(o.inf)!=="0"?"0":"1"}}
 function renderOpts(el,o,host){
   o=cleanOpts(o);
   const seg=(k,items)=>`<div class="seg" role="group">${items.map(([v,l])=>`<button type="button" class="${o[k]===v?"on":""}" data-k="${k}" data-v="${v}" ${host?"":"disabled"} aria-pressed="${o[k]===v}">${l}</button>`).join("")}</div>`;
   el.innerHTML=`<div class="optrow"><span class="eyebrow">Onde estão</span>${seg("mode",[["sala","Na mesma sala"],["dist","À distância"]])}</div>
-    <div class="optrow"><span class="eyebrow">Infiltrados</span>${seg("inf",[["auto","Automático"],["1","1"],["2","2"],["3","3"]])}</div>
+    <div class="optrow"><span class="eyebrow">Infiltrados</span>${seg("inf",[["auto","Automático"],["0","0"],["1","1"],["2","2"],["3","3"]])}</div>
     <div class="optrow"><span class="eyebrow">Senhor Branco</span>${seg("sb",[["1","Sim"],["0","Não"]])}</div>
-    <p class="note">${o.mode==="sala"?"Na mesma sala: as pistas dizem-se em voz alta e o telemóvel diz de quem é a vez.":"À distância: cada um escreve a sua pista no jogo, à vez."}</p>`;
+    <p class="note">${o.inf==="0"?"Sem infiltrados: só o Senhor Branco está a fingir. ":""}${o.mode==="sala"?"Na mesma sala: as pistas dizem-se em voz alta e o telemóvel diz de quem é a vez.":"À distância: cada um escreve a sua pista no jogo, à vez."}</p>`;
   if(host)el.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const n=Object.assign({},o);n[b.dataset.k]=b.dataset.v;ROOM.opts=cleanOpts(n);lobbyBroadcast()});
+  if(o.inf==="0"){const nb=el.querySelector('[data-k="sb"][data-v="0"]');if(nb)nb.disabled=true}
   const ab=$("addBot");if(ab)ab.hidden=true;
 }
 
@@ -1021,7 +1022,7 @@ function render(v){
   const P=$("panel");
   if(v.phase==="ready"){
     P.innerHTML=`<p class="lead">${v.sb?"Não tens palavra nesta ronda.":"Decora a tua palavra."} Quando estiveres pronto, carrega no botão.</p>
-      <p class="mine">Nesta ronda: ${v.c.inf} ${v.c.inf===1?"infiltrado":"infiltrados"}${v.c.sb?" e 1 Senhor Branco":""}.</p>
+      <p class="mine">Nesta ronda: ${v.c.inf===0?"sem infiltrados, só 1 Senhor Branco":`${v.c.inf} ${v.c.inf===1?"infiltrado":"infiltrados"}${v.c.sb?" e 1 Senhor Branco":""}`}.</p>
       ${v.ready?`<p class="wait">À espera dos outros (${v.players.filter(p=>p.done).length} de ${v.players.filter(p=>!p.off).length}).</p>`:'<button class="btn" type="button" id="readyBtn">Já vi, vamos lá</button>'}`;
     const b=$("readyBtn");if(b)b.onclick=()=>{unlockAudio();ROOM.send({t:"ready"});b.disabled=true};
     if(fresh)playSfx("round");
@@ -1094,7 +1095,7 @@ function drawOver(v){
   const won=r.delta[v.me]>0;
   $("panel").innerHTML=`<div class="win"><div class="eyebrow">Fim da ronda</div><h2>${title}</h2></div>
     ${v.guess&&v.guess.ok?`<p class="lead">Adivinhou «${esc(v.guess.text)}».</p>`:""}
-    <div class="words"><p><span>Palavra dos civis</span><b>${esc(r.words.civ)}</b></p><p><span>Palavra dos infiltrados</span><b>${esc(r.words.inf)}</b></p></div>
+    <div class="words"><p><span>Palavra dos civis</span><b>${esc(r.words.civ)}</b></p>${v.c&&v.c.inf===0?"":`<p><span>Palavra dos infiltrados</span><b>${esc(r.words.inf)}</b></p>`}</div>
     <ul class="roles">${r.roles.map((x,j)=>`<li class="${x.name===me?"me":""}"><span class="cn">${esc(x.name)}</span>${roleTag(x.role)}${r.delta[j]?`<b>+${r.delta[j]}</b>`:""}</li>`).join("")}</ul>
     <div class="eyebrow">Pontuação total</div>
     <ol class="board">${v.players.map((p,i)=>i).sort((a,b)=>v.players[b].score-v.players[a].score).map(i=>`<li class="${i===v.me?"me":""}"><span class="cn">${esc(v.players[i].name)}</span><b>${v.players[i].score}</b></li>`).join("")}</ol>
