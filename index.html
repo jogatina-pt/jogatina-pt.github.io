@@ -183,6 +183,12 @@ header.top{flex:none}
 @media (max-height:700px){.game p{display:none}.game h3{margin-top:2px}}
 @media (max-height:700px){.hero .mascot{height:88px}.hero .tagline{display:none}.hero .bubble-say{font-size:16px}.game h3{font-size:20px}.game p{font-size:11px}.games{gap:8px}}
 @media (max-width:380px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:29px}#installBtn{padding:4px 8px}}
+/* cartões: o texto adapta-se ao espaço que cada cartão tem (nunca fica cortado) */
+.game{container-type:size}
+@container (max-height:150px){.game p{display:none}}
+@container (max-height:118px){.game h3{font-size:19px}}
+@container (max-height:84px){.game .tag{display:none}}
+@container (max-width:150px){.game p{display:none}}
 @media (prefers-reduced-motion:reduce){.game{transition:none}}
 </style>
 </head>
