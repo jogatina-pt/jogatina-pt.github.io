@@ -382,7 +382,7 @@ function hostData(c,d){
       }
       s={kind:"remote",token};ROOM.seats.push(s);
     }
-    s.name=uniqueName(name,s);s.conn=c;s.online=true;c._seat=s;
+    s.name=uniqueName(name,s);s.conn=c;s.online=true;c._seat=s;s.extra=d.extra&&typeof d.extra==="object"?d.extra:null;
     c.send({t:"welcome",code:ROOM.code});
     lobbyBroadcast();
     return;
@@ -444,7 +444,7 @@ async function joinRoom(){
   const me=roomRef("clients",FB.uid),down=roomRef("down",FB.uid),up=roomRef("up");
   try{const old=await down.get();const jobs=[];old.forEach(ch=>{jobs.push(ch.ref.remove())});await Promise.all(jobs)}catch(e){}
   ROOM.conn={send(m){up.push({from:FB.uid,m:JSON.stringify(m)}).catch(()=>{})}};
-  const hello=()=>{me.set(true).catch(()=>{});me.onDisconnect().remove();ROOM.conn.send({t:"hello",name,token:FB.uid})};
+  const hello=()=>{me.set(true).catch(()=>{});me.onDisconnect().remove();ROOM.conn.send({t:"hello",name,token:FB.uid,extra:ROOM.game.helloExtra?ROOM.game.helloExtra():null})};
   sub(down,"child_added",s=>{
     const v=s.val();s.ref.remove().catch(()=>{});
     if(!v||typeof v.m!=="string")return;
@@ -745,7 +745,106 @@ const QUESTIONS=[
 {id:86,c:"Animais",q:"O sangue do polvo é de cor ____.",a:"azul",ok:["azulado","azul-claro"],d:["verde","amarela","laranja"]},
 {id:87,c:"Animais",q:"O hipopótamo produz uma espécie de suor de cor ____.",a:"vermelha",ok:["vermelho","rosa","cor-de-rosa","avermelhada","laranja","alaranjada","rosado"],d:["azul","verde","preta"]},
 {id:88,c:"Portugal",q:"O Cabo da Roca é o ponto mais ____ da Europa continental.",a:"ocidental",ok:["a oeste","oeste","ocidente","a ocidente"],d:["setentrional","alto","oriental"]},
-{id:89,c:"Portugal",q:"Os Açores têm ____ ilhas.",a:"nove",ok:["9"],d:["sete","onze","doze"]}
+{id:89,c:"Portugal",q:"Os Açores têm ____ ilhas.",a:"nove",ok:["9"],d:["sete","onze","doze"]},
+{id:90,c:"Animais",q:"Os flamingos costumam dormir apoiados numa só ____.",a:"pata",ok:["perna","patinha"],d:["asa","pedra","pena"]},
+{id:91,c:"Animais",q:"O coração do camarão fica na ____.",a:"cabeça",ok:["cabeca"],d:["cauda","barriga","pata"]},
+{id:92,c:"Animais",q:"Os coalas comem quase só folhas de ____.",a:"eucalipto",ok:["eucaliptos"],d:["bambu","acácia","pinheiro"]},
+{id:93,c:"Animais",q:"Em inglês, a um grupo de corujas chama-se «parliament», que quer dizer ____.",a:"parlamento",ok:[],d:["conselho","assembleia de bruxas","biblioteca"]},
+{id:94,c:"Animais",q:"Os gatos passam cerca de ____ da vida a dormir.",a:"dois terços",ok:["70%","2/3","70 por cento","setenta por cento","2 terços"],d:["um quarto","10%","90%"]},
+{id:95,c:"Animais",q:"O único mamífero que consegue voar a sério é o ____.",a:"morcego",ok:["morcegos"],d:["esquilo-voador","lémure-voador","ornitorrinco"]},
+{id:96,c:"Animais",q:"O ornitorrinco é um mamífero que põe ____.",a:"ovos",ok:["ovo"],d:["pérolas","tinta","raízes"]},
+{id:97,c:"Animais",q:"Na natureza, as girafas dormem só cerca de ____ por dia.",a:"duas horas",ok:["2 horas","meia hora","30 minutos","1 hora","uma hora","2h"],d:["12 horas","8 horas","um dia inteiro"]},
+{id:98,c:"Animais",q:"Os golfinhos chamam-se uns aos outros por ____.",a:"assobios que funcionam como nomes",ok:["nomes","assobios","assobio","nome","assobios próprios","nomes próprios"],d:["gestos","cores","bolhas"]},
+{id:99,c:"Animais",q:"O olho de uma avestruz é maior do que o seu ____.",a:"cérebro",ok:["cerebro"],d:["coração","estômago","fígado"]},
+{id:100,c:"Animais",q:"O beija-flor é a única ave que consegue voar ____.",a:"para trás",ok:["de marcha atrás","às arrecuas","de costas","para tras"],d:["de olhos fechados","a dormir","em círculos"]},
+{id:101,c:"Animais",q:"Os tubarões não têm ____ no corpo.",a:"ossos",ok:["osso","esqueleto de osso","nenhum osso"],d:["escamas","dentes","sangue"]},
+{id:102,c:"Animais",q:"A língua de uma baleia-azul pode pesar tanto como um ____.",a:"elefante",ok:["elefantes"],d:["frigorífico","porco","sofá"]},
+{id:103,c:"Animais",q:"Os mosquitos que nos picam são só os ____.",a:"fêmeas",ok:["femeas","as fêmeas","fêmea"],d:["crias","velhos","machos"]},
+{id:104,c:"Animais",q:"A orca é, na verdade, uma espécie de ____.",a:"golfinho",ok:["golfinhos","delfim"],d:["tubarão","foca","morsa"]},
+{id:105,c:"Animais",q:"O animal mais rápido do mundo é o ____.",a:"falcão-peregrino",ok:["falcão","falcao","falcão peregrino","falcao peregrino"],d:["veleiro","águia-real","andorinha"]},
+{id:106,c:"Corpo",q:"O osso mais pequeno do corpo humano fica no ____.",a:"ouvido",ok:["ouvidos","orelha"],d:["dedo mindinho","nariz","pé"]},
+{id:107,c:"Corpo",q:"Os bebés nascem com mais ____ do que os adultos.",a:"ossos",ok:["osso"],d:["dentes","cabelos","dedos"]},
+{id:108,c:"Corpo",q:"A única parte do corpo sem vasos sanguíneos, que recebe oxigénio diretamente do ar, é a ____.",a:"córnea",ok:["cornea","córnea do olho"],d:["pestana","língua","orelha"]},
+{id:109,c:"Corpo",q:"As impressões digitais formam-se antes de ____.",a:"nascermos",ok:["nascer","nascimento","do nascimento","nascer o bebé"],d:["aprendermos a andar","termos dentes de leite","fazermos 5 anos"]},
+{id:110,c:"Corpo",q:"Os humanos partilham cerca de 98% do ADN com os ____.",a:"chimpanzés",ok:["chimpanze","chimpanzés","bonobos","macacos"],d:["cães","golfinhos","porcos"]},
+{id:111,c:"Corpo",q:"O coração humano bate cerca de ____ vezes por dia.",a:"100 mil",ok:["100000","100 000","cem mil","100.000"],d:["mil","um milhão","10 mil"]},
+{id:112,c:"Ciência",q:"Os diamantes são feitos de ____.",a:"carbono",ok:[],d:["vidro","quartzo","silício"]},
+{id:113,c:"Ciência",q:"O único metal líquido à temperatura ambiente é o ____.",a:"mercúrio",ok:["mercurio"],d:["chumbo","alumínio","estanho"]},
+{id:114,c:"Espaço",q:"Em Marte, o pôr do sol é de cor ____.",a:"azul",ok:["azulado"],d:["verde","roxa","laranja"]},
+{id:115,c:"Espaço",q:"Uma colher de chá de uma estrela de neutrões pesaria cerca de ____.",a:"mil milhões de toneladas",ok:["mil milhoes de toneladas","um bilião de toneladas","milhares de milhões de toneladas","1000 milhões de toneladas","biliões de toneladas"],d:["um quilo","uma tonelada","o mesmo que um carro"]},
+{id:116,c:"Espaço",q:"Há mais árvores na Terra do que ____ na Via Láctea.",a:"estrelas",ok:["estrela","sóis"],d:["grãos de areia","gotas de água no mar","átomos num corpo humano"]},
+{id:117,c:"Espaço",q:"Os astronautas na Estação Espacial Internacional veem cerca de ____ nasceres do sol por dia.",a:"16",ok:["dezasseis","dezesseis"],d:["1","3","100"]},
+{id:118,c:"Espaço",q:"Saturno é tão pouco denso que, numa banheira gigante, ____.",a:"flutuava",ok:["boiava","flutuaria","boiaria","flutuava na água","boiava na água"],d:["evaporava","fazia ondas do tamanho da Terra","congelava a água"]},
+{id:119,c:"Ciência",q:"O som viaja cerca de ____ vezes mais depressa na água do que no ar.",a:"quatro",ok:["4","4 vezes"],d:["dez","cem","duas"]},
+{id:120,c:"História",q:"As primeiras escovas de dentes com cerdas foram feitas com pelos de ____.",a:"porco",ok:["javali","porcos","pelo de porco","pelos de porco"],d:["cabra","coelho","camelo"]},
+{id:121,c:"História",q:"Os antigos romanos usavam ____ para branquear os dentes.",a:"urina",ok:["xixi","mijo","chichi"],d:["leite de burra","azeite","vinho branco"]},
+{id:122,c:"História",q:"Durante séculos, a tinta púrpura foi caríssima porque se fazia com ____.",a:"caracóis marinhos",ok:["caracóis","búzios","moluscos","conchas","murex","caracois"],d:["pétalas de rosa","asas de borboleta","sangue de dragão"]},
+{id:123,c:"História",q:"O Taj Mahal foi construído para ser um ____.",a:"túmulo",ok:["tumulo","mausoléu","mausoleu","tumulo para a mulher"],d:["palácio de verão","templo","forte"]},
+{id:124,c:"História",q:"Ao contrário do que se diz, a Grande Muralha da China não se vê ____.",a:"do espaço a olho nu",ok:["do espaço","da lua","do espaco","a olho nu do espaço"],d:["de avião","de helicóptero","do alto das montanhas"]},
+{id:125,c:"História",q:"O primeiro animal a dar a volta à Terra em órbita foi uma ____.",a:"cadela",ok:["cão","cao","laika","a laika","cadela laika"],d:["macaca","rata","gata"]},
+{id:126,c:"História",q:"Nos Jogos Olímpicos da Grécia Antiga, os atletas competiam ____.",a:"nus",ok:["sem roupa","pelados","nuzinhos"],d:["de olhos vendados","a cavalo","de noite"]},
+{id:127,c:"História",q:"Na Idade Média, em França, chegaram a levar a julgamento ____.",a:"animais",ok:["porcos","porco","um porco","bichos"],d:["fantasmas","árvores","estátuas"]},
+{id:128,c:"Portugal",q:"O Mosteiro da Batalha foi construído para celebrar a vitória em ____.",a:"Aljubarrota",ok:["batalha de aljubarrota"],d:["Ourique","Alcácer-Quibir","Toro"]},
+{id:129,c:"Portugal",q:"A Torre de Belém foi construída para ____.",a:"defender a entrada do Tejo",ok:["defender lisboa","defender o tejo","defesa","defender a cidade","proteger lisboa","defender a barra do tejo","proteger o tejo","defender"],d:["guardar especiarias","receber embaixadores","observar as estrelas"]},
+{id:130,c:"Portugal",q:"O nome «Algarve» vem do árabe e quer dizer ____.",a:"o ocidente",ok:["ocidente","oeste","poente","o oeste"],d:["terra do sol","praia","laranjal"]},
+{id:131,c:"Portugal",q:"Além do português, Portugal reconhece oficialmente o ____.",a:"mirandês",ok:["mirandes","língua mirandesa"],d:["galego","barranquenho","algarvio"]},
+{id:132,c:"Portugal",q:"No Mosteiro de Alcobaça estão os túmulos de D. Pedro e de ____.",a:"Inês de Castro",ok:["Inês","Ines","D. Inês","Dona Inês"],d:["D. Leonor","Rainha Santa Isabel","D. Teresa"]},
+{id:133,c:"Portugal",q:"Nas Sete Cidades, nos Açores, há uma lagoa azul e outra ____.",a:"verde",ok:[],d:["vermelha","amarela","cor-de-rosa"]},
+{id:134,c:"Portugal",q:"O Santuário do Bom Jesus do Monte, com a sua escadaria famosa, fica em ____.",a:"Braga",ok:[],d:["Viana do Castelo","Guimarães","Lamego"]},
+{id:135,c:"Comida",q:"Por dentro, o pastel de Tentúgal leva ____.",a:"doce de ovos",ok:["ovos moles","doce de ovo","ovos","creme de ovos"],d:["amêndoa","chila","creme de leite"]},
+{id:136,c:"Comida",q:"Os fios de ovos foram levados por portugueses para a Tailândia, onde se chamam ____.",a:"foi thong",ok:["foi tong","foithong"],d:["pad thai","mochi","tom yum"]},
+{id:137,c:"Comida",q:"A palavra japonesa «tempura» terá vindo dos portugueses, que comiam fritos nos dias de ____.",a:"jejum",ok:["têmporas","temporas","quaresma","dias de jejum","temporas da igreja"],d:["festa","casamento","verão"]},
+{id:138,c:"Palavras",q:"Por influência portuguesa, «pão» em japonês diz-se ____.",a:"pan",ok:["pão","pao","pan"],d:["mochi","bento","ramen"]},
+{id:139,c:"Palavras",q:"A palavra inglesa «marmalade» vem do português ____.",a:"marmelada",ok:[],d:["mel","morango","manteiga"]},
+{id:140,c:"Palavras",q:"A palavra «bife» vem do inglês ____.",a:"beef",ok:[],d:["buffet","buffalo","bif"]},
+{id:141,c:"Palavras",q:"A palavra «óculos» vem do latim «oculus», que quer dizer ____.",a:"olho",ok:["olhos"],d:["vidro","lente","luz"]},
+{id:142,c:"Palavras",q:"Diz-se que «OK» começou como uma abreviatura de brincadeira de ____.",a:"«all correct» mal escrito",ok:["all correct","oll korrect","tudo certo","oll korrect all correct"],d:["«zero killed»","«oh kay»","«old kettle»"]},
+{id:143,c:"Expressões",q:"«Não há fome que não dê em ____.»",a:"fartura",ok:[],d:["sono","ressaca","dieta"]},
+{id:144,c:"Expressões",q:"«Quem não tem cão, caça com ____.»",a:"gato",ok:["o gato"],d:["rato","pato","fisga"]},
+{id:145,c:"Expressões",q:"«Em casa de ferreiro, espeto de ____.»",a:"pau",ok:[],d:["ouro","prata","plástico"]},
+{id:146,c:"Expressões",q:"«Água mole em pedra dura, tanto bate até que ____.»",a:"fura",ok:["a fura"],d:["parte","seca","molha"]},
+{id:147,c:"Expressões",q:"«Casa roubada, ____ na porta.»",a:"trancas",ok:["tranca"],d:["cadeado","cão","polícia"]},
+{id:148,c:"Expressões",q:"«Para quem é, ____ basta.»",a:"bacalhau",ok:[],d:["pão","sopa","sardinha"]},
+{id:149,c:"Mundo",q:"A capital da Austrália é ____.",a:"Camberra",ok:["Canberra","Canbera"],d:["Sydney","Melbourne","Perth"]},
+{id:150,c:"Mundo",q:"O país com mais fusos horários é a ____.",a:"França",ok:["franca"],d:["Rússia","China","Austrália"]},
+{id:151,c:"Mundo",q:"O Canadá tem mais ____ do que todos os outros países juntos.",a:"lagos",ok:["lago"],d:["ursos","montanhas","florestas"]},
+{id:152,c:"Mundo",q:"No Butão, o Governo mede o sucesso do país com a ____.",a:"Felicidade Interna Bruta",ok:["felicidade","felicidade nacional bruta","fib","índice de felicidade","felicidade das pessoas"],d:["Contagem de Sorrisos","Paz Nacional","Riqueza dos Monges"]},
+{id:153,c:"Mundo",q:"A Estátua da Liberdade foi oferecida aos Estados Unidos pela ____.",a:"França",ok:["franca","os franceses"],d:["Inglaterra","Espanha","Holanda"]},
+{id:154,c:"Mundo",q:"Até 2025, a Islândia era dos poucos sítios do mundo onde não havia ____.",a:"mosquitos",ok:["mosquito"],d:["vulcões","cavalos","renas"]},
+{id:155,c:"Mundo",q:"Medido desde a base no fundo do mar, a montanha mais alta do mundo é o ____.",a:"Mauna Kea",ok:["Mauna Kea no Havaí","Mauna Loa"],d:["Evereste","Kilimanjaro","Monte Branco"]},
+{id:156,c:"Mundo",q:"A Rússia tem mais área do que ____.",a:"Plutão",ok:["plutao","o planeta anão Plutão"],d:["a Lua","África","Marte"]},
+{id:157,c:"Mundo",q:"Sem contar com a Antártida, o deserto mais seco do mundo é o ____.",a:"Atacama",ok:["deserto do atacama"],d:["Saara","Gobi","Kalahari"]},
+{id:158,c:"Mundo",q:"Por ter tão pouca chuva, a Antártida é, tecnicamente, um ____.",a:"deserto",ok:["deserto gelado"],d:["oceano gelado","país","glaciar a flutuar"]},
+{id:159,c:"Desporto",q:"Antes das bolas de couro, o futebol medieval jogava-se muitas vezes com uma ____.",a:"bexiga de porco",ok:["bexiga","bexiga de animal","bexiga de porco cheia de ar"],d:["cabeça de couve","melancia","pedra embrulhada"]},
+{id:160,c:"Desporto",q:"No golfe, fazer um buraco com três pancadas abaixo do par chama-se ____.",a:"albatroz",ok:["albatross"],d:["águia","condor","falcão"]},
+{id:161,c:"Desporto",q:"Na maratona olímpica de 1904, o primeiro a cortar a meta tinha feito parte do percurso de ____.",a:"carro",ok:["automóvel","automovel","boleia","à boleia","carro a boleia"],d:["bicicleta","cavalo","barco"]},
+{id:162,c:"Cinema",q:"O primeiro grande filme com falas chamava-se «O Cantor de ____».",a:"Jazz",ok:[],d:["Fado","Ópera","Blues"]},
+{id:163,c:"Cinema",q:"Antes de se chamar Mickey, o rato da Disney ia chamar-se ____.",a:"Mortimer",ok:[],d:["Marvin","Morris","Melvin"]},
+{id:164,c:"Música",q:"A canção «Parabéns a você», na versão inglesa, já esteve protegida por ____.",a:"direitos de autor",ok:["copyright","direitos","direitos autorais"],d:["um segredo de Estado","uma patente de bolo","um contrato com a Igreja"]},
+{id:165,c:"Música",q:"A guitarra portuguesa tem ____ cordas.",a:"doze",ok:["12"],d:["seis","oito","dez"]},
+{id:166,c:"Curiosidades",q:"O nome completo da Barbie é Barbara Millicent ____.",a:"Roberts",ok:[],d:["Smith","Johnson","Miller"]},
+{id:167,c:"Tecnologia",q:"A primeira mensagem SMS da história dizia «____».",a:"Merry Christmas",ok:["feliz natal","bom natal","merry xmas"],d:["Hello world","Testing","Olá, mãe"]},
+{id:168,c:"Tecnologia",q:"O primeiro vídeo publicado no YouTube foi filmado num ____.",a:"jardim zoológico",ok:["zoo","zoologico","jardim zoologico"],d:["casamento","estádio","aquário"]},
+{id:169,c:"Tecnologia",q:"Antes de se chamar «Gosto», o botão do Facebook ia chamar-se ____.",a:"«Awesome»",ok:["awesome","incrível","fantástico","espetacular","incrivel"],d:["«Fixe»","«Top»","«Yes»"]},
+{id:170,c:"Tecnologia",q:"A maçã da Apple tem uma dentada para não ser confundida com ____.",a:"uma cereja",ok:["cereja","tomate","um tomate"],d:["uma laranja","uma bola","uma pera"]},
+{id:171,c:"Curiosidades",q:"As notas de euro não mostram monumentos verdadeiros, mostram ____.",a:"pontes e janelas inventadas",ok:["pontes e janelas","janelas e pontes","pontes","janelas","portas e pontes","portais e pontes","pontes e portais"],d:["retratos de reis","animais","mapas antigos"]},
+{id:172,c:"Curiosidades",q:"Segundo os finlandeses, o Pai Natal vive na ____.",a:"Lapónia",ok:["laponia","rovaniemi","finlândia","finlandia"],d:["Gronelândia","Islândia","Sibéria"]},
+{id:173,c:"Curiosidades",q:"O cubo mágico foi inventado por um professor de ____.",a:"arquitetura",ok:["arquitectura","design","desenho","escultura"],d:["matemática","física","música"]},
+{id:174,c:"Curiosidades",q:"A Torre Eiffel foi pensada para ser ____.",a:"temporária",ok:["temporaria","desmontada","provisória","provisoria","demolida","desmontada depois"],d:["um farol","um hotel","uma prisão"]},
+{id:175,c:"Comida",q:"Diz a lenda que as batatas fritas finas nasceram de um cozinheiro irritado com um cliente que se queixava das ____.",a:"batatas demasiado grossas",ok:["batatas grossas","grossas","batatas muito grossas","fritas grossas"],d:["batatas frias","batatas com pele","batatas cozidas"]},
+{id:176,c:"Comida",q:"O amendoim não é um fruto seco: é uma ____.",a:"leguminosa",ok:["legume","feijão","feijao","leguminosas"],d:["raiz","fruta tropical","semente de árvore"]},
+{id:177,c:"Comida",q:"O morango é o único fruto com as sementes ____.",a:"por fora",ok:["fora","do lado de fora","à vista","de fora"],d:["azuis","em fila","venenosas"]},
+{id:178,c:"Comida",q:"O wasabi verdadeiro é feito a partir de ____ de uma planta.",a:"a raiz",ok:["raiz","rizoma","caule"],d:["as flores","as folhas secas","as sementes"]},
+{id:179,c:"Comida",q:"Os aztecas usavam as sementes de cacau como ____.",a:"dinheiro",ok:["moeda","moedas","dinheiro vivo"],d:["tinta de guerra","sabão","cola"]},
+{id:180,c:"Comida",q:"A pimenta preta e a pimenta branca vêm da mesma ____.",a:"planta",ok:["baga","árvore","fruta","semente","trepadeira"],d:["mina","região da Índia","fábrica"]},
+{id:181,c:"Comida",q:"A pizza Margherita recebeu este nome em honra de uma ____.",a:"rainha",ok:["rainha margarida","princesa","rainha de itália","rainha italiana"],d:["flor","cozinheira","atriz"]},
+{id:182,c:"Comida",q:"Diz-se que o queijo mais roubado do mundo é o ____.",a:"parmesão",ok:["parmesao","parmigiano","parmigiano reggiano"],d:["camembert","cheddar","queijo da serra"]},
+{id:183,c:"Animais",q:"Os elefantes também conseguem «ouvir» com os ____.",a:"pés",ok:["pes","patas"],d:["olhos","cauda","dentes"]},
+{id:184,c:"Animais",q:"Por baixo do pelo, a pele de um tigre é ____.",a:"às riscas",ok:["as riscas","riscada","listrada","riscas","com riscas"],d:["cor-de-rosa","azul","às bolinhas"]},
+{id:185,c:"Palavras",q:"A palavra «hipopótamo» vem do grego e quer dizer ____.",a:"cavalo do rio",ok:["cavalo de rio","cavalo-do-rio","cavalo fluvial","cavalo dos rios"],d:["boca gigante","porco gordo","rei do lago"]},
+{id:186,c:"Animais",q:"O dragão-de-komodo vive na ____.",a:"Indonésia",ok:["indonesia"],d:["China","Austrália","Tailândia"]},
+{id:187,c:"Animais",q:"O peixe-palhaço consegue mudar de ____.",a:"sexo",ok:["género","genero","macho para fêmea","sexo durante a vida"],d:["cor","forma","número de barbatanas"]},
+{id:188,c:"Animais",q:"As ovelhas conseguem reconhecer ____ durante anos.",a:"caras",ok:["rostos","caras humanas","caras de pessoas","pessoas","caras de ovelhas"],d:["números","letras","as horas"]}
 ];
 
 /* ================= PETA =================
@@ -763,18 +862,20 @@ const isTruth=(t,q)=>{const k=norm(t);return!!k&&[q.a,...(q.ok||[])].some(x=>nor
 
 /* ---------- motor (só em quem criou a sala) ---------- */
 let G=null;
-function pickQuestions(n){
-  let seen=[];try{seen=JSON.parse(store.get("peta-vistas")||"[]")}catch(e){}
-  if(!Array.isArray(seen))seen=[];
-  let pool=QUESTIONS.filter(q=>!seen.includes(q.id));
-  if(pool.length<n){seen=[];pool=QUESTIONS.slice()}
-  const qs=shuffle(pool.slice()).slice(0,n);
-  store.set("peta-vistas",JSON.stringify(seen.concat(qs.map(q=>q.id))));
-  return qs;
+/* perguntas já vistas: as deste aparelho e as que os outros jogadores trazem quando entram na sala */
+function seenHere(){let s=[];try{s=JSON.parse(store.get("peta-vistas")||"[]")}catch(e){}return Array.isArray(s)?s.filter(x=>typeof x==="number"):[]}
+function markSeen(id){const s=seenHere();if(!s.includes(id)){s.push(id);store.set("peta-vistas",JSON.stringify(s.slice(-400)))}}
+function pickQuestions(n,seats){
+  const seen=new Set(seenHere());
+  for(const s of seats||[])if(s.extra&&Array.isArray(s.extra.seen))s.extra.seen.slice(-400).forEach(x=>{if(typeof x==="number")seen.add(x)});
+  let pool=QUESTIONS.filter(q=>!seen.has(q.id));
+  /* se já se viu quase tudo, recomeça pelas que saíram há mais tempo */
+  if(pool.length<n){const order=seenHere();pool=QUESTIONS.slice().sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id)).slice(0,Math.max(n,Math.floor(QUESTIONS.length/2)))}
+  return shuffle(pool.slice()).slice(0,n);
 }
 function petaStart(seats){
   petaStop();
-  G={seats,n:seats.length,scores:seats.map(()=>0),fooled:seats.map(()=>0),found:seats.map(()=>0),round:0,qs:pickQuestions(ROUNDS),timers:[],id:Math.random()};
+  G={seats,n:seats.length,scores:seats.map(()=>0),fooled:seats.map(()=>0),found:seats.map(()=>0),round:0,qs:pickQuestions(ROUNDS,seats),timers:[],id:Math.random()};
   nextRound();
 }
 function petaStop(){if(G){for(const t of G.timers)clearTimeout(t);G.dead=true}G=null}
@@ -895,6 +996,7 @@ function petaClient(d){
   if(d.t==="react"){bubble(d.from,d.r);return}
   if(d.t!=="v")return;
   if($("game").hidden)showScreen("game");
+  if(d.q&&typeof d.q.id==="number")markSeen(d.q.id);
   render(d);
 }
 function render(v){
@@ -1007,6 +1109,7 @@ const PRIVACY=privacyHTML(" e as perguntas que já te saíram, para não se repe
 
 ROOM.game={id:"peta",title:"Peta",maxp:8,minp:2,maxBots:3,botNames:["Tia Rosa","Sr. Américo","Avó Lurdes"],
   lobbyHelpFew:"Envia o link aos teus amigos. Se fores só tu, junta o computador. Fica melhor com 3 ou mais pessoas.",
+  helloExtra:()=>({seen:seenHere().slice(-300)}),
   start:petaStart,msg:petaMsg,client:petaClient,stop:()=>{petaStop();clearRev();stopTick()},
   back(seat){ROOM.sendTo(seat,{t:"start"});if(G)ROOM.sendTo(seat,viewFor(G.seats.indexOf(seat)));if(G)broadcast()},
   drop(seat){if(!G)return;if(G.phase==="write")afterWrite();else if(G.phase==="vote")afterVote();else broadcast()},

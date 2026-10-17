@@ -399,7 +399,7 @@ function hostData(c,d){
       }
       s={kind:"remote",token};ROOM.seats.push(s);
     }
-    s.name=uniqueName(name,s);s.conn=c;s.online=true;c._seat=s;
+    s.name=uniqueName(name,s);s.conn=c;s.online=true;c._seat=s;s.extra=d.extra&&typeof d.extra==="object"?d.extra:null;
     c.send({t:"welcome",code:ROOM.code});
     lobbyBroadcast();
     return;
@@ -461,7 +461,7 @@ async function joinRoom(){
   const me=roomRef("clients",FB.uid),down=roomRef("down",FB.uid),up=roomRef("up");
   try{const old=await down.get();const jobs=[];old.forEach(ch=>{jobs.push(ch.ref.remove())});await Promise.all(jobs)}catch(e){}
   ROOM.conn={send(m){up.push({from:FB.uid,m:JSON.stringify(m)}).catch(()=>{})}};
-  const hello=()=>{me.set(true).catch(()=>{});me.onDisconnect().remove();ROOM.conn.send({t:"hello",name,token:FB.uid})};
+  const hello=()=>{me.set(true).catch(()=>{});me.onDisconnect().remove();ROOM.conn.send({t:"hello",name,token:FB.uid,extra:ROOM.game.helloExtra?ROOM.game.helloExtra():null})};
   sub(down,"child_added",s=>{
     const v=s.val();s.ref.remove().catch(()=>{});
     if(!v||typeof v.m!=="string")return;
