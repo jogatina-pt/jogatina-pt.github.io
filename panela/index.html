@@ -670,7 +670,7 @@ function deckCounts(n){
   for(const t of ["ing_cebola","ing_alho","ing_tomate","ing_pimento"])c[t]+=2*k;
   return c;
 }
-const extraValves=n=>n>=5?3:2;
+const extraValves=n=>Math.max(3,n);
 function newGame(seats,{online=false}={}){
   const players=seats.map((s,i)=>({id:i,name:s.name,kind:s.kind,conn:s.conn||null,online:s.kind==="remote"?!!s.online:false,token:s.token||null,alive:true,hand:[]}));
   const n=players.length,counts=deckCounts(n);
@@ -682,7 +682,7 @@ function newGame(seats,{online=false}={}){
   shuffle(pool);
   S={players,deck:pool,discard:[],log:[],cur:Math.floor(Math.random()*n),dir:1,thinking:null,active:null,busy:null,deadline:0,online,
      turnsLeft:1,owed:0,ended:null,deckVer:0,turns:0};
-  log(`Começou a partida com ${n-1} panela${n>2?"s":""} escondida${n>2?"s":""} no baralho.`);
+  log(`Começou a partida com ${n-1} panela${n>2?"s":""} e ${extraValves(n)} válvulas escondidas no baralho.`);
   for(const p of players)toPlayer(p,{t:"start"});
   return gameLoop();
 }
