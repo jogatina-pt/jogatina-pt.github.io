@@ -143,6 +143,18 @@
      "type": "image/png"
     }
    ]
+  },
+  {
+   "name": "Papa-Tremoços",
+   "short_name": "Papa-Tremoços",
+   "url": "papa/",
+   "icons": [
+    {
+     "src": "papa/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
   }
  ]
 }
