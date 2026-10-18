@@ -191,6 +191,18 @@
      "type": "image/png"
     }
    ]
+  },
+  {
+   "name": "Canastra",
+   "short_name": "Canastra",
+   "url": "canastra/",
+   "icons": [
+    {
+     "src": "canastra/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
   }
  ]
 }
