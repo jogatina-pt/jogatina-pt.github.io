@@ -191,14 +191,17 @@ header.top{flex:none}
 /* fundo em raios na cor do jogo escolhido */
 html{--hub:#ffd23f}
 .burst{--bgx:color-mix(in srgb,var(--hub) 26%,var(--bg));position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:var(--bgx);transform:translateZ(0)}
-.burst::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 58%,transparent 0,var(--bgx) 75%),repeating-conic-gradient(from 0deg at 50% 58%,color-mix(in srgb,var(--hub) 40%,transparent) 0 7deg,transparent 7deg 18deg)}
-.burst::after{content:"";position:absolute;inset:0;background-image:var(--dots);background-size:13px 13px;opacity:.7}
+.burst::before{content:"";position:absolute;inset:0;background:repeating-conic-gradient(from 0deg at 50% 58%,rgba(255,255,255,.5) 0 7deg,transparent 7deg 18deg);-webkit-mask:radial-gradient(circle at 50% 58%,#000 0,transparent 75%);mask:radial-gradient(circle at 50% 58%,#000 0,transparent 75%);will-change:transform}
+.burst::after{content:"";position:absolute;inset:0;background-image:var(--dots);background-size:13px 13px;opacity:.7;will-change:transform}
 :root:not([data-pp-theme="light"]) .burst{--bgx:color-mix(in srgb,var(--hub) 12%,var(--bg))}
-:root:not([data-pp-theme="light"]) .burst::before{opacity:.45}
+:root:not([data-pp-theme="light"]) .burst::before{opacity:.12}
 @keyframes burstSpin{to{transform:rotate(360deg)}}
 body{background:transparent!important;background-image:none!important}
 html{background:var(--bg)}
-/* cartão escolhido: o desenho salta e fica a flutuar */
+html.sda .game{animation:cardTilt linear both;animation-timeline:view(inline);animation-range:cover 0% cover 100%}
+@keyframes cardTilt{0%{transform:scale(.9) rotate(3deg);opacity:.7}50%{transform:none;opacity:1}100%{transform:scale(.9) rotate(-3deg);opacity:.7}}
+/* cartão escolhido: o desenho salta e fica a flutuar (parado enquanto se desliza) */
+.games.mv .game.on .pic>svg,.games.mv .game.on .play{animation-play-state:paused}
 .game.on .pic>svg{will-change:transform}.game.on .pic>svg:not(.macaco-mini){animation:picPop .5s cubic-bezier(.2,1.6,.4,1) both,picFloat 4.5s ease-in-out .5s infinite}
 .game.on .pic .macaco-mini{animation:picPop .5s cubic-bezier(.2,1.6,.4,1) both}
 @keyframes picPop{0%{transform:scale(.6) rotate(-8deg)}100%{transform:scale(1) rotate(0)}}
@@ -207,7 +210,7 @@ html{background:var(--bg)}
 .game.on .pic::before{opacity:.6}
 .game.on h3{animation:titIn .4s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes titIn{0%{transform:translateY(8px);opacity:.3}100%{transform:none;opacity:1}}
-.game.on .play{animation:playPulse 1.8s ease-in-out .6s infinite}
+.game.on .play{will-change:transform;animation:playPulse 1.8s ease-in-out .6s infinite}
 @keyframes playPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 .arrow{position:absolute;top:calc(50% - 30px);z-index:3;width:46px;height:46px;border-radius:50%;border:3px solid var(--stroke);background:var(--surface);color:var(--ink);box-shadow:3px 3px 0 var(--stroke);font-size:22px;display:none;place-items:center;cursor:pointer}
 .arrow.l{left:18px}.arrow.r{right:18px}
@@ -403,15 +406,17 @@ tb.addEventListener("click",()=>setTheme(document.documentElement.dataset.ppThem
   function settle(){if(shown===cur&&cards[cur]&&cards[cur].classList.contains("on"))return;const first=shown<0;shown=cur;cards.forEach((c,i)=>c.classList.toggle("on",i===cur));
     const c=cards[cur];if(c)document.documentElement.style.setProperty("--hub",getComputedStyle(c).getPropertyValue("--gc").trim());
     const t=db[cur];if(t)dots.scrollTo({left:t.offsetLeft+t.offsetWidth/2-dots.clientWidth/2,behavior:first?"auto":"smooth"})}
-  box.addEventListener("scroll",()=>{clearTimeout(settleT);settleT=setTimeout(settle,140)},{passive:true});
+  box.addEventListener("scroll",()=>{if(!box.classList.contains("mv"))box.classList.add("mv");clearTimeout(settleT);settleT=setTimeout(()=>{box.classList.remove("mv");settle()},140)},{passive:true});
   const blip=f=>{try{if(localStorage.getItem("pp-mute")==="1")return;const A=window.__hubAC||(window.__hubAC=new(window.AudioContext||window.webkitAudioContext)());if(A.state!=="running")return;const t=A.currentTime,o=A.createOscillator(),g=A.createGain();o.type="square";o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*1.5,t+.05);g.gain.setValueAtTime(.025,t);g.gain.exponentialRampToValueAtTime(.0001,t+.09);o.connect(g).connect(A.destination);o.start(t);o.stop(t+.1)}catch(e){}};
   const wake=()=>{userMoved=true;try{const A=window.__hubAC||(window.__hubAC=new(window.AudioContext||window.webkitAudioContext)());if(A.state!=="running")A.resume()}catch(e){}};
   ["pointerdown","keydown","wheel"].forEach(ev=>addEventListener(ev,wake,{passive:true}));
   const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
   const center=i=>cards[i].offsetLeft+cards[i].offsetWidth/2-box.clientWidth/2;
   const go=(i,smooth=true)=>{if(!cards.length)return;i=Math.max(0,Math.min(cards.length-1,i));box.scrollTo({left:center(i),behavior:smooth?"smooth":"auto"})};
-  function upd(){raf=0;const mid=box.scrollLeft+box.clientWidth/2;let best=0,bd=1e9;
-    cards.forEach((c,i)=>{const cc=c.offsetLeft+c.offsetWidth/2,dx=(cc-mid)/(c.offsetWidth+14),d=Math.min(1,Math.abs(dx));const k=d.toFixed(3)+Math.max(-1,Math.min(1,dx)).toFixed(3);if(c._k!==k){c._k=k;c.style.transform=`scale(${1-d*.1}) rotate(${Math.max(-1,Math.min(1,dx))*3}deg)`;c.style.opacity=1-d*.3}if(Math.abs(dx)<bd){bd=Math.abs(dx);best=i}});
+  let geo=[],cw=1;const SDA=window.CSS&&CSS.supports&&CSS.supports("animation-timeline","view()");if(SDA)document.documentElement.classList.add("sda");
+  function measure(){geo=cards.map(c=>c.offsetLeft+c.offsetWidth/2);cw=(cards[0]?cards[0].offsetWidth:300)+14}
+  function upd(){raf=0;if(geo.length!==cards.length)measure();const mid=box.scrollLeft+box.clientWidth/2;let best=0,bd=1e9;
+    cards.forEach((c,i)=>{const dx=(geo[i]-mid)/cw,d=Math.min(1,Math.abs(dx));if(SDA){if(Math.abs(dx)<bd){bd=Math.abs(dx);best=i}return}const k=d.toFixed(3)+Math.max(-1,Math.min(1,dx)).toFixed(3);if(c._k!==k){c._k=k;c.style.transform=`scale(${1-d*.1}) rotate(${Math.max(-1,Math.min(1,dx))*3}deg)`;c.style.opacity=1-d*.3}if(Math.abs(dx)<bd){bd=Math.abs(dx);best=i}});
     if(best!==cur){const was=cur;cur=best;db.forEach((b,i)=>{b.classList.toggle("on",i===cur);b.setAttribute("aria-selected",String(i===cur))});
       clearTimeout(settleT);settleT=setTimeout(settle,was<0?0:140);
       if(was>=0&&userMoved)blip(560+cur*25);prev.disabled=cur===0;next.disabled=cur===cards.length-1;ls.set("hub-jogo",cards[cur]?cards[cur].classList[1]:"")}}
@@ -421,12 +426,12 @@ tb.addEventListener("click",()=>setTheme(document.documentElement.dataset.ppThem
     all.forEach(c=>{c.hidden=f!=="all"&&!c.dataset.m.split(" ").includes(f)});
     cards=all.filter(c=>!c.hidden);
     dots.innerHTML=cards.map((c,i)=>`<button type="button" role="tab" style="--c:${getComputedStyle(c).getPropertyValue("--gc").trim()}" aria-label="${c.querySelector("h3").textContent}" data-i="${i}">${c.querySelector(".pic").innerHTML}<span>${c.querySelector("h3").textContent}</span></button>`).join("");
-    db=[...dots.children];cur=-1;
+    db=[...dots.children];cur=-1;geo=[];
     const want=keep?cards.findIndex(c=>c.classList[1]===keep):0;
     requestAnimationFrame(()=>{go(Math.max(0,want),false);upd()});
   }
   box.addEventListener("scroll",()=>{if(!raf)raf=requestAnimationFrame(upd)},{passive:true});
-  addEventListener("resize",()=>{go(cur<0?0:cur,false);upd()});
+  addEventListener("resize",()=>{measure();go(cur<0?0:cur,false);upd()});
   dots.addEventListener("click",e=>{const b=e.target.closest("[data-i]");if(b)go(+b.dataset.i)});
   fl.addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(b&&b.dataset.f!==filt)applyFilter(b.dataset.f)});
   prev.onclick=()=>go(cur-1);next.onclick=()=>go(cur+1);
