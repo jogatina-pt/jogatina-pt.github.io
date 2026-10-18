@@ -182,6 +182,10 @@ input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
 .acts{display:flex;gap:6px}
 .acts .btn{flex:1;padding:8px 6px;font-size:15px}
 .acts .btn.on{background:#e0483e;color:#fff}
+#noteBtn.on{background:#ffd23f;color:#151515}#noteBtn{flex:1.6}#noteBtn b{font-family:var(--display);font-weight:400;font-size:17px}
+.cell .nts{position:absolute;inset:auto 2px 2px 2px;z-index:2;display:flex;flex-wrap:wrap;gap:2px;justify-content:center;pointer-events:none}
+.cell .nts i{font-style:normal;width:clamp(11px,3.4vw,17px);height:clamp(11px,3.4vw,17px);border-radius:50%;border:1.5px solid #151515;color:#fff;font-size:clamp(7px,2.2vw,10px);font-weight:900;display:grid;place-items:center;line-height:1}
+.tk.on.note{outline:3px dashed #151515;outline-offset:1px}
 #accuseBtn{flex:1.6}
 .clues{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
 .clues li{border:2.5px solid var(--stroke);border-radius:12px;padding:8px 10px;background:var(--surface);font-weight:700;font-size:14.5px;line-height:1.35;cursor:pointer;box-shadow:2px 2px 0 var(--stroke)}
@@ -227,7 +231,7 @@ input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
     <div class="bar"><button class="btn ghost sm" type="button" id="backBtn">← Casos</button><span class="case" id="hCase"></span><span class="chip" id="hDiff"></span><span class="chip" id="hTime">0:00</span></div>
     <div class="board" id="board" role="grid" aria-label="Planta da casa"></div>
     <div class="tokens" id="tokens" role="toolbar" aria-label="Escolhe quem vais colocar"></div>
-    <div class="acts"><button class="btn ghost" type="button" id="markBtn" title="Marcar onde ninguém está">✕ Marcar</button><button class="btn ghost" type="button" id="hintBtn">💡 Ajuda</button><button class="btn ghost" type="button" id="clearBtn" aria-label="Limpar">🧽</button><button class="btn" type="button" id="accuseBtn" disabled>Acusar!</button></div>
+    <div class="acts"><button class="btn ghost" type="button" id="noteBtn" title="Notas: apontar onde o suspeito escolhido pode estar">✏️ Notas</button><button class="btn ghost" type="button" id="markBtn" title="Marcar onde ninguém está" aria-label="Marcar onde ninguém está">✕</button><button class="btn ghost" type="button" id="hintBtn" aria-label="Ajuda">💡</button><button class="btn ghost" type="button" id="clearBtn" aria-label="Limpar">🧽</button><button class="btn" type="button" id="accuseBtn" disabled>Acusar!</button></div>
     <div class="eyebrow">Pistas (toca para riscar)</div>
     <ul class="clues" id="clues"></ul>
   </section>
@@ -396,7 +400,7 @@ const ICON={
 const face=(col,txt)=>`<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="${col}" stroke="#151515" stroke-width="3"/><circle cx="14.5" cy="17" r="2.4" fill="#151515"/><circle cx="25.5" cy="17" r="2.4" fill="#151515"/><path d="M14 25q6 4 12 0" fill="none" stroke="#151515" stroke-width="2.4" stroke-linecap="round"/><text x="20" y="38.5" text-anchor="middle" font-family="Bangers,Impact,sans-serif" font-size="11" fill="#fff" stroke="#151515" stroke-width="2.5" paint-order="stroke">${txt}</text></svg>`;
 const victimFace='<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4c5 0 8 3.5 8 8s-3 8-8 8-8-3.5-8-8 3-8 8-8zM8 38c0-9 5-15 12-15s12 6 12 15" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="4 3" stroke-linecap="round"/><circle cx="20" cy="20" r="18.5" fill="none" stroke="#151515" stroke-width="2"/></svg>';
 /* ---------- estado do jogo ---------- */
-let P=null,G=null,sel=0,markMode=false,timerI=0;
+let P=null,G=null,sel=0,markMode=false,noteMode=false,timerI=0;
 const STATS=(()=>{try{return JSON.parse(store.get("crime-stats")||"{}")}catch(e){return{}}})();
 STATS.solved=STATS.solved||0;STATS.best=STATS.best||{};STATS.daily=STATS.daily||{};
 const saveStats=()=>store.set("crime-stats",JSON.stringify(STATS));
@@ -405,18 +409,19 @@ function startCase(diff,seed,daily){
   $("loading").hidden=false;
   setTimeout(()=>{
     P=generate(diff,seed);P.daily=daily||null;
-    G={place:Array(P.n).fill(null),marks:{},used:{},hints:0,t0:Date.now(),t:0,done:false,locked:{}};
-    restore();sel=0;markMode=false;$("loading").hidden=true;
+    G={place:Array(P.n).fill(null),marks:{},notes:{},used:{},hints:0,t0:Date.now(),t:0,done:false,locked:{}};
+    restore();sel=0;markMode=false;noteMode=false;$("loading").hidden=true;
     show("play");render();saveCur();
     clearInterval(timerI);timerI=setInterval(tick,1000);tick();
   },30);
 }
-function saveCur(){if(!P)return;store.set("crime-cur",JSON.stringify({diff:P.diff,seed:P.seed,daily:P.daily,place:G.place,marks:G.marks,used:G.used,hints:G.hints,t:elapsedF(),done:G.done,locked:G.locked}))}
-function restore(){try{const c=JSON.parse(store.get("crime-cur")||"null");if(c&&c.seed===P.seed&&c.diff===P.diff&&!c.done){G.place=c.place;G.marks=c.marks||{};G.used=c.used||{};G.hints=c.hints||0;G.t=c.t||0;G.locked=c.locked||{};G.t0=Date.now()}}catch(e){}}
+function saveCur(){if(!P)return;store.set("crime-cur",JSON.stringify({diff:P.diff,seed:P.seed,daily:P.daily,place:G.place,marks:G.marks,notes:G.notes,used:G.used,hints:G.hints,t:elapsedF(),done:G.done,locked:G.locked}))}
+function restore(){try{const c=JSON.parse(store.get("crime-cur")||"null");if(c&&c.seed===P.seed&&c.diff===P.diff&&!c.done){G.place=c.place;G.marks=c.marks||{};G.notes=c.notes||{};G.used=c.used||{};G.hints=c.hints||0;G.t=c.t||0;G.locked=c.locked||{};G.t0=Date.now()}}catch(e){}}
 const elapsedF=()=>G.t+(G.done||G.paused?0:(Date.now()-G.t0)/1000),elapsed=()=>Math.floor(elapsedF());
 const fmt=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
 function tick(){if(!G)return;$("hTime").textContent=fmt(elapsed());if(!G.done&&elapsed()%5===0)saveCur()}
 /* ---------- desenho ---------- */
+const initial=i=>i<P.n-1?P.people[i][0].replace(/^(Dona|Sr\.|Tia|Tio|Padre|Prima) /,"")[0]:"V";
 const who=i=>i<P.n-1?{name:P.people[i][0],col:PCOL[i],svg:face(PCOL[i],P.people[i][0].replace(/^(Dona|Sr\.|Tia|Tio|Padre|Prima) /,"")[0])}:{name:"Vítima",col:"#555",svg:victimFace};
 function render(){
   const n=P.n,H=P.H;
@@ -434,16 +439,17 @@ function render(){
       (firstCell[rm]===k?`<span class="rl">${P.rooms[rm].slice(2)}</span>`:"")+
       (o?`<svg class="ob" viewBox="0 0 64 64" aria-hidden="true">${ICON[o]}</svg>`:"")+
       (G.marks[k]&&p===undefined?'<span class="x">✕</span>':"")+
+      (p===undefined&&!G.marks[k]&&G.notes[k]&&G.notes[k].length?`<span class="nts">${G.notes[k].slice().sort((a,b)=>a-b).map(i=>`<i style="background:${who(i).col}">${initial(i)}</i>`).join("")}</span>`:"")+
       (p!==undefined?`<span class="tok ${bad.has(p)?"bad":""} ${G.locked[p]?"lock":""}">${who(p).svg}</span>`:"")+
       `</button>`;
   }
   const bd=$("board");bd.style.setProperty("--n",n);bd.innerHTML=h;
   /* fichas */
-  $("tokens").innerHTML=[...Array(n).keys()].map(i=>{const w=who(i);return`<button type="button" class="tk ${sel===i&&!markMode?"on":""} ${G.place[i]?"placed":""}" data-i="${i}" style="--c:${w.col}">${w.svg}<span>${w.name}</span></button>`}).join("");
+  $("tokens").innerHTML=[...Array(n).keys()].map(i=>{const w=who(i);return`<button type="button" class="tk ${sel===i&&!markMode?(noteMode?"on note":"on"):""} ${G.place[i]?"placed":""}" data-i="${i}" style="--c:${w.col}">${w.svg}<span>${w.name}</span></button>`}).join("");
   /* pistas */
   $("clues").innerHTML=P.clues.map((cl,i)=>`<li class="${G.used[i]?"used":""}" data-c="${i}">${clueText(cl,P)}</li>`).join("")+
     `<li class="rule">A vítima, ${P.victim[0]}, estava no único lugar que sobrou. O assassino é quem estava sozinho com ela na mesma divisão.</li>`;
-  $("markBtn").classList.toggle("on",markMode);
+  $("markBtn").classList.toggle("on",markMode);$("noteBtn").classList.toggle("on",noteMode&&!markMode);$("noteBtn").innerHTML=noteMode&&!markMode?`✏️ Notas: <b>${initial(sel)}</b>`:"✏️ Notas";
   const all=G.place.every(Boolean);$("accuseBtn").disabled=!all||G.done;
 }
 /* ---------- interação ---------- */
@@ -451,17 +457,20 @@ $("board").addEventListener("click",e=>{
   const b=e.target.closest(".cell");if(!b||!G||G.done)return;const k=b.dataset.k,[r,c]=k.split(",").map(Number);
   const cur=G.place.findIndex(p=>p&&p[0]===r&&p[1]===c);
   if(markMode){if(cur<0){G.marks[k]=!G.marks[k];sfx("mark")}render();saveCur();return}
+  if(noteMode){if(P.H.obj[r][c]&&OBJ[P.H.obj[r][c]].b){toast("Aqui ninguém pode estar.");return}if(cur>=0){toast("Já tens alguém neste quadrado.");return}
+    const a=G.notes[k]||(G.notes[k]=[]),j=a.indexOf(sel);if(j>=0)a.splice(j,1);else a.push(sel);if(!a.length)delete G.notes[k];delete G.marks[k];sfx("mark");render();saveCur();return}
   if(P.H.obj[r][c]&&OBJ[P.H.obj[r][c]].b){toast(`Ninguém pode estar em cima ${OBJ[P.H.obj[r][c]].g==="f"?"da":"do"} ${OBJ[P.H.obj[r][c]].n}.`);return}
   if(cur>=0&&G.locked[cur]){toast("Esta foi dada pela pista: está certa.");return}
   if(cur===sel){G.place[sel]=null;sfx("off")}
-  else{if(cur>=0)G.place[cur]=null;G.place[sel]=[r,c];delete G.marks[k];sfx("on");
+  else{if(cur>=0)G.place[cur]=null;G.place[sel]=[r,c];delete G.marks[k];delete G.notes[k];for(const q in G.notes){G.notes[q]=G.notes[q].filter(x=>x!==sel);if(!G.notes[q].length)delete G.notes[q]}sfx("on");
     const nx=[...Array(P.n).keys()].find(i=>!G.place[i]);if(nx!==undefined)sel=nx}
   render();saveCur();
 });
 $("tokens").addEventListener("click",e=>{const b=e.target.closest(".tk");if(!b)return;sel=+b.dataset.i;markMode=false;render()});
+$("noteBtn").onclick=()=>{if(markMode){markMode=false;noteMode=true}else noteMode=!noteMode;render()};
 $("clues").addEventListener("click",e=>{const li=e.target.closest("[data-c]");if(!li)return;const i=li.dataset.c;G.used[i]=!G.used[i];render();saveCur()});
 $("markBtn").onclick=()=>{markMode=!markMode;render()};
-$("clearBtn").onclick=()=>{if(!G||G.done)return;if(!confirm("Limpar a planta toda?"))return;G.place=G.place.map((p,i)=>G.locked[i]?p:null);G.marks={};render();saveCur()};
+$("clearBtn").onclick=()=>{if(!G||G.done)return;if(!confirm("Limpar a planta toda?"))return;G.place=G.place.map((p,i)=>G.locked[i]?p:null);G.marks={};G.notes={};render();saveCur()};
 $("hintBtn").onclick=()=>{
   if(!G||G.done)return;const all=[...P.sol,P.V];
   /* primeiro corrige uma ficha errada; senão revela uma que falta */
@@ -469,7 +478,7 @@ $("hintBtn").onclick=()=>{
   if(i<0)i=G.place.findIndex((p,k)=>!p);
   if(i<0){toast("Está tudo no sítio certo. Agora acusa!");return}
   const s=all[i];G.place.forEach((p,k)=>{if(k!==i&&p&&p[0]===s[0]&&p[1]===s[1]&&!G.locked[k])G.place[k]=null});
-  G.place[i]=s.slice();G.locked[i]=true;G.hints++;sfx("hint");toast(`Pista: ${who(i).name} estava aqui.`);render();saveCur();
+  G.place[i]=s.slice();G.locked[i]=true;delete G.notes[s[0]+","+s[1]];for(const q in G.notes){G.notes[q]=G.notes[q].filter(x=>x!==i);if(!G.notes[q].length)delete G.notes[q]}G.hints++;sfx("hint");toast(`Pista: ${who(i).name} estava aqui.`);render();saveCur();
 };
 $("accuseBtn").onclick=()=>{
   if(!G||G.done)return;
@@ -508,7 +517,7 @@ function menu(){
 $("dailyBtn").onclick=()=>{unlock();const d=today();startCase("m",hashStr("crime"+d),d)};
 document.querySelectorAll("[data-new]").forEach(b=>b.onclick=()=>{unlock();startCase(b.dataset.new,(Math.random()*2**31)>>>0)});
 $("backBtn").onclick=()=>{saveCur();menu()};
-$("rulesBtn").onclick=()=>showOv(`<div class="panel rules"><h2>Como se joga</h2><ol><li>Há uma pessoa por <b>linha</b> e uma por <b>coluna</b> (como no Sudoku).</li><li>Ninguém pode estar em cima de mesas, plantas, televisões, estantes… Cadeiras, sofás, camas e tapetes podem.</li><li>Lê as pistas e coloca cada suspeito: escolhe a ficha em baixo e toca no quadrado.</li><li>A <b>vítima</b> fica no único lugar que sobrar.</li><li>O <b>assassino</b> é o único suspeito que estava na mesma divisão que a vítima.</li></ol><p class="note">Usa o ✕ para marcar onde ninguém pode estar e toca numa pista para a riscar.</p><button class="btn" type="button" data-a="close">Percebi</button></div>`);
+$("rulesBtn").onclick=()=>showOv(`<div class="panel rules"><h2>Como se joga</h2><ol><li>Há uma pessoa por <b>linha</b> e uma por <b>coluna</b> (como no Sudoku).</li><li>Ninguém pode estar em cima de mesas, plantas, televisões, estantes… Cadeiras, sofás, camas e tapetes podem.</li><li>Lê as pistas e coloca cada suspeito: escolhe a ficha em baixo e toca no quadrado.</li><li>A <b>vítima</b> fica no único lugar que sobrar.</li><li>O <b>assassino</b> é o único suspeito que estava na mesma divisão que a vítima.</li></ol><p class="note">Com <b>✏️ Notas</b> ligado, tocar num quadrado põe (ou tira) uma bolinha do suspeito escolhido: assim apontas todos os sítios onde ele pode estar. O <b>✕</b> marca onde ninguém pode estar e tocar numa pista risca-a.</p><button class="btn" type="button" data-a="close">Percebi</button></div>`);
 /* ---------- som ---------- */
 let AC=null,muted=store.get("pp-mute")==="1";
 function unlock(){try{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=="running")AC.resume()}catch(e){}}
