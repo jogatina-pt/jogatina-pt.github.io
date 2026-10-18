@@ -203,6 +203,8 @@ body.myturn .tablecn{box-shadow:4px 4px 0 var(--stroke),0 0 0 3px #ffd23f}
 .optrow{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
 
 .cd.jk{align-items:center;padding-left:0}.cd.empty{padding:0}
+
+.score span small{display:block;font-size:11px;font-weight:800;opacity:.75}
 /* ===== Estilo banda desenhada (comum a todos os jogos) ===== */
 @font-face{font-family:"Bangers";font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/bangers.woff2) format("woff2")}
 :root{--display:"Bangers","Bowlby One",Impact,sans-serif;--stroke:#151515;--pop:#ffd23f;--pop-ink:#151515;
@@ -972,7 +974,7 @@ function viewFor(i){
   return{t:"v",gid:G.id,me:i,host:i===0,n,round:C.round,names:G.seats.map(s=>s.name),bots:G.seats.map((s,k)=>s.kind==="bot"),off:G.seats.map((s,k)=>!online(k)),
     hand:T.hands[i],counts:T.hands.map(h=>h.length),melds,top:T.discard[T.discard.length-1]||null,pileN:T.discard.length,deckN:T.deck.length,
     morto:!!T.mortos,mortoTaken:T.mortoTaken,turn:T.turn,phase:T.phase,drawn:T.turn===i?T.drawn:null,last:T.last,scores:C.scores,target:C.opts.target,
-    canEmpty:CN.canEmpty(T,t),result:T.result,history:C.history,left:G.deadline&&!T.result?Math.max(0,G.deadline-Date.now()):0,moves:T.moves};
+    canEmpty:CN.canEmpty(T,t),live:[0,1].map(k=>{const x=CN.teamTable(T,k);return x.pts+x.can}),result:T.result,history:C.history,left:G.deadline&&!T.result?Math.max(0,G.deadline-Date.now()):0,moves:T.moves};
 }
 function broadcast(){if(!G)return;G.seats.forEach((s,i)=>{if(s.kind!=="bot")ROOM.sendTo(s,viewFor(i))})}
 function cnMsg(seat,d){
@@ -1037,7 +1039,7 @@ function render(v){
   /* tira da seleção cartas que já não estão na mão */
   const ids=new Set(v.hand.map(c=>c.i));for(const s of [...UI.sel])if(!ids.has(s))UI.sel.delete(s);
   $("tName").textContent=`Mão ${v.round}`+(v.target?` · até ${v.target}`:"");
-  $("score").innerHTML=[t,1-t].map(k=>`<div class="ts ${k===t?"us":""}"><span>${esc(teamName(v,k))}</span><b>${v.scores[k]}</b></div>`).join("");
+  $("score").innerHTML=[t,1-t].map(k=>`<div class="ts ${k===t?"us":""}"><span>${esc(teamName(v,k))}<small>${v.result?"":`+${v.live[k]} na mesa`}</small></span><b>${v.scores[k]}</b></div>`).join("");
   /* jogadores */
   const order=[];for(let k=1;k<v.n;k++)order.push((me+k)%v.n);
   $("chips").innerHTML=order.map(p=>`<li class="${v.turn===p&&!v.result?"turn":""} ${p%2===t?"mate":""}"><span class="cn">${esc(v.names[p])}</span><span class="cc">🂠 ${v.counts[p]}</span>${p%2===t&&v.n===4?'<em>parceiro</em>':""}${v.off[p]?'<em class="off">sem ligação</em>':""}</li>`).join("");
@@ -1103,6 +1105,7 @@ const RULES=`<ul>
   <li>Um jogo com 7 ou mais cartas é uma <b>canastra</b>: <b>limpa</b> se não tiver coringa (+200) ou <b>suja</b> se tiver (+100).</li>
   <li><b>Morto</b> (se estiver ligado): quem fica sem cartas pela primeira vez apanha o morto da equipa (11 cartas) e continua. A equipa que não apanhar o morto perde 100.</li>
   <li><b>Bater</b>: ficar sem cartas, mas só depois de a equipa ter pelo menos uma canastra (+100). A mão também acaba se o monte acabar.</li>
+  <li>Os pontos entram no marcador <b>no fim de cada mão</b>. Durante a mão, o «+ na mesa» mostra quanto cada equipa já tem baixado (cartas e canastras), antes de descontar as cartas que ficarem na mão.</li>
   <li>Pontos das cartas: joker 50, 2 vale 20, ás 15, do 8 ao rei 10, do 3 ao 7 5. As cartas na mesa contam a favor; as que ficam na mão contam contra.</li>
 </ul>`;
 ROOM.game={id:"canastra",title:"Canastra",maxp:4,minp:2,maxBots:3,botNames:BOTN,
