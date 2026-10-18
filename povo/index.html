@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Diz o Povo</title>
+<meta name="description" content="Adivinha as respostas mais populares: sozinho, a dois no mesmo telemóvel ou em equipas com um apresentador. Grátis, sem conta e sem publicidade.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_PT">
+<meta property="og:site_name" content="Jogatina">
+<meta property="og:title" content="Diz o Povo: adivinhas o que o povo respondeu?">
+<meta property="og:description" content="Adivinha as respostas mais populares. A dois, em equipas ou sozinho.">
+<meta property="og:url" content="https://jogatina-pt.github.io/povo/">
+<meta property="og:image" content="https://jogatina-pt.github.io/povo/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Diz o Povo">
+<meta name="theme-color" content="#f4eee3">
+<link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
+<script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
+<style>
+/* ipgames: base comum (mesma família visual da Panela de Pressão) */
+@font-face{font-family:"Bowlby One";font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/bowlby-one.woff2) format("woff2")}
+@font-face{font-family:"Figtree";font-style:normal;font-weight:300 900;font-display:swap;src:url(../fonts/figtree.woff2) format("woff2")}
+[hidden]{display:none!important}
+:root{
+  --bg:#13201f; --surface:#1b2d2b; --surface-2:#223835; --line:#2f4744;
+  --ink:#eef2ea; --muted:#9fb5af; --title:#f1ece2; --enamel:#f1ece2; --card-ink:#1b2422;
+  --accent:#ff8a3d; --accent-ink:#1d130b; --steam:#8fd3c8; --danger:#ff5a4f; --good:#5fd08a;
+  --display:"Bowlby One", Impact, "Arial Black", sans-serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme:dark;
+}
+:root[data-pp-theme="light"]{
+  --bg:#f4eee3; --surface:#fffaf1; --surface-2:#ebe1cf; --line:#d8cab2;
+  --ink:#1f2a28; --muted:#5b6965; --title:#1f2a28; --enamel:#fffdf8; --card-ink:#1b2422;
+  --accent:#e8731f; --steam:#1d7a6e; --danger:#c8352b; --good:#1f8a4c;
+  color-scheme:light;
+}
+html,body{margin:0}
+html{height:100%}
+html,body{background:var(--bg);color:var(--ink)}
+body{min-height:100%;box-sizing:border-box;overflow-x:hidden;font-family:var(--body);font-size:15px;line-height:1.45;padding:max(8px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column}
+.wrap{width:100%;max-width:820px;margin:0 auto;flex:1;display:flex;flex-direction:column;gap:12px}
+h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:.01em;text-wrap:balance;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid var(--steam);outline-offset:2px}
+a{color:inherit}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:11px 20px;font-weight:800;font-size:15px;text-decoration:none;line-height:1.1}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn.ico{min-width:36px;padding-inline:9px;font-size:15px;line-height:1}
+.btn.ico[aria-pressed="false"]{opacity:.45;filter:grayscale(1)}
+#exitBtn{border-color:var(--danger);color:var(--danger)}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;flex:none}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.brand h1{font-size:clamp(24px,6vw,34px);line-height:1;color:var(--title)}
+.brand h1 span{color:var(--accent)}
+.brand a.home{font-size:13px;color:var(--muted);text-decoration:none;font-weight:700;white-space:nowrap}
+.tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+input{font:inherit;font-size:16px;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;box-sizing:border-box;min-width:0}
+input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shadow:inset 0 0 0 1.5px var(--steam)}
+.setup{display:flex;flex-direction:column;gap:16px;align-items:flex-start;flex:1;padding-block:12px 24px}
+.setup h2{font-size:clamp(34px,10vw,60px);line-height:.95;color:var(--title)}
+.setup h2 span{color:var(--accent);display:block}
+.setup p{max-width:58ch;color:var(--muted);margin:0}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:6px;width:100%;max-width:360px}
+.mode{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;width:100%;max-width:440px;box-sizing:border-box}
+.join{display:flex;gap:8px}
+.join input{text-transform:uppercase;letter-spacing:.2em;font-weight:800;flex:1}
+.join.fromlink input{border-color:var(--accent)}
+.note{font-size:13.5px;color:var(--steam);margin:0;min-height:1.2em}
+.note.bad{color:var(--danger);font-weight:700}
+.nopeer-msg{display:none;color:var(--muted)}
+.mode.nopeer .nopeer-msg{display:block}
+.mode.nopeer .choices,.mode.nopeer .join{display:none}
+.lobby .code{font-size:clamp(44px,14vw,80px);letter-spacing:.12em;color:var(--accent)}
+.roster{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;width:100%;max-width:420px}
+.roster li{display:flex;align-items:center;gap:10px;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;min-height:24px}
+.roster li.free{border-style:dashed;background:transparent;color:var(--muted)}
+.roster .rn{font-weight:800;flex:1;min-width:0;overflow-wrap:anywhere}
+.roster .rn em{font-style:normal;font-weight:600;color:var(--muted)}
+.roster .rk{font-size:12px;color:var(--muted)}
+.roster li.free .rn{font-weight:400}
+.linkbtn{background:none;border:0;padding:4px 2px;color:var(--muted);font-size:13px;text-decoration:underline;text-underline-offset:3px}
+.foot{font-size:13px;color:var(--muted);margin:4px 0 0}
+.modal{position:fixed;inset:0;background:rgba(8,14,13,.72);display:grid;place-items:center;padding:16px;z-index:33;box-sizing:border-box}
+.sheet{box-sizing:border-box;background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:20px;max-width:460px;width:100%;max-height:calc(100dvh - 32px);overflow:auto;display:flex;flex-direction:column;gap:14px}
+.sheet h3{font-size:24px;color:var(--title)}
+.sheet .body{color:var(--muted)}
+.sheet .actions{display:flex;gap:8px;flex-wrap:wrap}
+.sheet ul{padding-left:18px;margin:0;display:flex;flex-direction:column;gap:6px}
+.sheet li b{color:var(--ink)}
+.alert{position:fixed;left:50%;top:max(12px,env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:40;max-width:min(92vw,520px);width:max-content;box-sizing:border-box;background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:15px;padding:12px 16px;border-radius:14px;box-shadow:0 12px 28px rgba(0,0,0,.3);text-align:center;pointer-events:none}
+.alert.show{animation:alertin .35s cubic-bezier(.2,1.5,.4,1)}
+@keyframes alertin{from{transform:translate(-50%,-20px) scale(.9);opacity:0}to{transform:translateX(-50%);opacity:1}}
+.bubble{position:fixed;transform:translate(-50%,-100%);font-size:30px;pointer-events:none;animation:bub 2.6s ease forwards;z-index:26}
+@keyframes bub{0%{opacity:0;transform:translate(-50%,-80%) scale(.6)}12%{opacity:1;transform:translate(-50%,-100%) scale(1.1)}20%{transform:translate(-50%,-100%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-150%)}}
+.reacts{position:fixed;z-index:35;display:grid;grid-template-columns:repeat(3,auto);gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:8px;box-shadow:0 12px 28px rgba(0,0,0,.3)}
+.reacts button{font-size:24px;background:var(--surface-2);border:0;border-radius:10px;padding:4px 9px}
+@media (prefers-reduced-motion:reduce){.alert.show,.bubble{animation:none}}
+.roster li.free.more{border:0!important;background:transparent;padding:2px 6px;min-height:0;font-size:13px}
+
+/* ===== Estilo banda desenhada (comum a todos os jogos) ===== */
+@font-face{font-family:"Bangers";font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/bangers.woff2) format("woff2")}
+:root{--display:"Bangers","Bowlby One",Impact,sans-serif;--stroke:#151515;--pop:#ffd23f;--pop-ink:#151515;
+  --dots:radial-gradient(rgba(21,21,21,.09) 1.3px,transparent 1.6px)}
+:root:not([data-pp-theme="light"]){--stroke:#050807;--dots:radial-gradient(rgba(255,255,255,.06) 1.3px,transparent 1.6px)}
+body{background-image:var(--dots);background-size:13px 13px}
+h1,h2,h3{font-family:var(--display);letter-spacing:.03em;font-weight:400}
+.brand h1{font-size:clamp(30px,8vw,42px);-webkit-text-stroke:1.5px var(--stroke);text-shadow:3px 3px 0 var(--stroke);color:var(--title)}
+.brand h1 span{color:var(--accent)}
+.setup h2{font-size:clamp(40px,12vw,72px);line-height:.92;text-shadow:3px 3px 0 color-mix(in srgb,var(--stroke) 25%,transparent)}
+.btn{border:3px solid var(--stroke)!important;box-shadow:3px 3px 0 var(--stroke);font-family:var(--display);font-size:19px;letter-spacing:.06em;font-weight:400;padding:9px 20px;transition:transform .08s,box-shadow .08s}
+.btn.sm{font-size:15px;padding:4px 11px;box-shadow:2px 2px 0 var(--stroke)}
+.btn.ico{font-family:var(--body)}
+.btn:not(:disabled):active{transform:translate(3px,3px);box-shadow:0 0 0 var(--stroke)}
+.btn.ghost{background:var(--surface)}
+input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
+.mode,.roster li,.sheet,.qcard,.bcard,.wordcard,.mucard,.rstep,.board li,.opt,.sub,.wcard,.sent,.jbox,.yourturn,.outbox,.words p,.roles li,.others li,.tally li,.drink,.yn2 p,.rulebar,.vol li,.chips li,.seg button,.age,.foreheads li{border:3px solid var(--stroke)!important;box-shadow:4px 4px 0 var(--stroke)}
+.roster li.free{box-shadow:none;border-style:dashed!important}
+.chips li,.seg button,.vol li{box-shadow:2px 2px 0 var(--stroke)}
+.qcard,.bcard,.wordcard,.mucard{border-radius:18px;box-shadow:6px 6px 0 var(--stroke)}
+.opt:not(:disabled):active,.sub:not(:disabled):active,.wcard:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--stroke)}
+.lobby .code{-webkit-text-stroke:2px var(--stroke);text-shadow:4px 4px 0 var(--stroke);letter-spacing:.14em}
+.win h2,.winbox h2,.outbox h2{-webkit-text-stroke:1.5px var(--stroke);text-shadow:3px 3px 0 var(--stroke)}
+.eyebrow{letter-spacing:.12em}
+.alert{border:3px solid var(--stroke);box-shadow:5px 5px 0 var(--stroke);font-family:var(--display);font-size:20px;letter-spacing:.05em}
+.setup .mascot{width:min(42vw,170px);height:auto;align-self:flex-end;margin:-8px 0 -18px;filter:drop-shadow(4px 4px 0 rgba(0,0,0,.12))}
+.hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;width:100%}
+.bubble-say{position:relative;background:#fff;color:#151515;border:3px solid #151515;border-radius:18px;padding:8px 12px;font-family:var(--display);font-size:20px;letter-spacing:.04em;box-shadow:3px 3px 0 #151515;max-width:16ch}
+.bubble-say::after{content:"";position:absolute;bottom:-14px;right:22px;border:8px solid transparent;border-top:12px solid #151515}
+
+.macaco-mini{width:100%;height:auto;display:block}
+
+:root,:root[data-pp-theme="light"]{--accent:#1b2a6b;--accent-ink:#fff}
+:root:not([data-pp-theme="light"]){--accent:#8fa2ff;--accent-ink:#0a1030}
+[hidden]{display:none!important}
+.brand h1 span{color:#4f6bff}:root:not([data-pp-theme="light"]) .brand h1 span{color:#8fa2ff}
+.wrap{max-width:560px;gap:10px}
+.mode{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center;text-align:left;width:100%;border:3px solid var(--stroke);box-shadow:4px 4px 0 var(--stroke);border-radius:18px;padding:12px 14px;background:var(--surface);color:var(--ink);cursor:pointer;font:inherit}
+.mode .ic{grid-row:span 2;font-size:34px}.mode b{font-family:var(--display);font-weight:400;font-size:26px;letter-spacing:.04em;line-height:1}.mode small{font-weight:700;color:var(--muted);font-size:13px}
+.mode:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--stroke)}
+.mode.duo{background:#ffd23f;color:#151515}.mode.duo small{color:#4a3a00}
+.tv{background:#1b2a6b;border:4px solid #151515;border-radius:22px;box-shadow:6px 6px 0 var(--stroke);padding:12px;color:#fff;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.tv::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(255,255,255,.08) 1.5px,transparent 2px) 0 0/12px 12px;pointer-events:none}
+.tv>*{position:relative}
+.rnd{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:#cfd7ff}
+.potb{background:#ffd23f;color:#151515;border:3px solid #151515;border-radius:999px;padding:1px 12px;font-family:var(--display);font-size:22px;letter-spacing:.04em}
+.q{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(22px,6.4vw,30px);line-height:1.05;letter-spacing:.02em;text-align:center;color:#fff;text-shadow:2px 2px 0 #151515}
+.board{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.slot{display:flex;align-items:center;gap:6px;min-height:44px;border:3px solid #151515;border-radius:10px;background:linear-gradient(#2f45a8,#22348a);color:#fff;padding:4px 8px;font-weight:900;perspective:400px}
+.slot .n{width:24px;height:24px;border-radius:50%;background:#ffd23f;color:#151515;display:grid;place-items:center;font-size:13px;border:2px solid #151515;flex:none}
+.slot .t{flex:1;min-width:0;font-size:14px;line-height:1.1;overflow-wrap:anywhere}
+.slot .p{font-family:var(--display);font-weight:400;font-size:20px;background:#151515;color:#ffd23f;border-radius:6px;padding:0 6px}
+.slot.on{background:linear-gradient(#ffe27a,#ffc93c);color:#151515}
+.slot.on .n{background:#151515;color:#ffd23f}
+.slot.miss{background:#3a4374;color:#c9cff0}.slot.miss .p{color:#c9cff0}
+.slot.host{background:#2a3570;cursor:pointer;color:#e8ecff;border-style:dashed}.slot.host .t{opacity:.85}
+.slot.flip{animation:flip .5s ease}
+@keyframes flip{0%{transform:rotateX(90deg)}100%{transform:none}}
+.strikes{display:flex;gap:6px;justify-content:center}.strikes i{font-style:normal;font-weight:900;font-size:22px;width:34px;height:34px;display:grid;place-items:center;border-radius:8px;border:3px solid #151515;background:#2f45a8;color:#5566b5}.strikes i.on{background:#e0483e;color:#fff}
+.scores{display:flex;gap:8px}.sc{flex:1;border:3px solid var(--stroke);border-radius:14px;padding:4px 10px;background:var(--surface);display:flex;justify-content:space-between;align-items:center;gap:6px;box-shadow:2px 2px 0 var(--stroke);min-width:0}
+.sc span{font-weight:800;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sc b{font-family:var(--display);font-weight:400;font-size:26px}
+.sc.on{background:#ffd23f;color:#151515;transform:translateY(-2px)}
+.log{min-height:2.6em;margin:0;text-align:center;font-weight:800;font-size:15px}
+.ansf{display:flex;gap:8px}.ansf input{flex:1;min-width:0;font:inherit;font-size:17px;font-weight:700;padding:12px 14px;border:3px solid var(--stroke);border-radius:14px;background:var(--surface);color:var(--ink)}
+.ansf .btn{flex:none}
+.hostbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}.hostbar .lbl{font-weight:900;width:100%;text-align:center}
+.xbtn{background:#e0483e!important;color:#fff!important;font-size:20px}
+.hostnote{margin:0;text-align:center;font-size:12.5px;color:var(--muted);font-weight:700}
+.bigx{position:fixed;inset:0;display:grid;place-items:center;z-index:95;pointer-events:none;font-size:min(40vw,240px);font-weight:900;color:#e0483e;-webkit-text-stroke:6px #151515;text-shadow:8px 8px 0 #151515;letter-spacing:-.05em}
+.bigx.go{animation:bx .9s ease forwards}@keyframes bx{0%{transform:scale(.3);opacity:0}25%{transform:scale(1.1);opacity:1}70%{opacity:1}100%{transform:scale(1);opacity:0}}
+.toast{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:90;background:#151515;color:#fff;border-radius:14px;padding:10px 16px;font-weight:800;max-width:min(92vw,420px);text-align:center}
+.ov{position:fixed;inset:0;z-index:80;background:rgba(10,6,2,.55);display:grid;place-items:center;padding:16px;overflow:auto}
+.panel{box-sizing:border-box;background:#fffaf1;color:#151515;border:3px solid #151515;box-shadow:6px 6px 0 #151515;border-radius:20px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px;width:min(380px,100%);text-align:center}
+.panel h2{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(30px,8vw,42px);line-height:.95;letter-spacing:.03em;color:#151515}
+.panel p{margin:0;font-weight:700;color:#333}.panel .btn{width:100%}.panel .small{font-size:13px;color:#666}.panel .eyebrow{color:#555}
+.row2{display:flex;gap:8px;width:100%}.row2 .btn{flex:1}
+.final{display:flex;gap:8px;width:100%}.final div{flex:1;border:3px solid #151515;border-radius:14px;padding:6px;background:#fff}.final div.win{background:#ffd23f}.final span{display:block;font-weight:800;font-size:13px}.final b{font-family:var(--display);font-weight:400;font-size:34px}
+.newrec{font-family:var(--display);font-size:22px;color:#d23a6e;letter-spacing:.05em}
+.rules ol{margin:0;padding-left:20px;text-align:left;display:flex;flex-direction:column;gap:5px;font-weight:600}
+.note{font-size:12.5px;color:#555}
+.field{display:flex;flex-direction:column;gap:4px;font-weight:800;font-size:13px}.field input{font:inherit;font-size:17px;font-weight:700;padding:10px 12px;border:3px solid var(--stroke);border-radius:12px;background:var(--surface);color:var(--ink)}
+.gtop{display:flex;gap:8px;align-items:center}
+@media (max-width:380px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:26px;white-space:nowrap}.brand a.home{font-size:0}.brand a.home::before{content:"← menu";font-size:12px}.tools{gap:5px}.tools .btn.sm{padding:4px 8px}.slot .t{font-size:12.5px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><h1>Diz o <span>Povo</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="tools">
+      <button class="btn ghost sm ico" id="rulesBtn" type="button" aria-label="Regras" title="Regras">?</button>
+      <button class="btn ghost sm ico" id="mute" type="button" aria-pressed="true" aria-label="Som" title="Som">🔊</button>
+      <button class="btn ghost sm ico" id="themeBtn" type="button" aria-label="Tema escuro" title="Tema escuro">☾</button>
+    </div>
+  </header>
+  <section id="menuScr" class="setup">
+    <p class="foot" style="text-align:left;margin:0">Adivinha as respostas mais populares. Há <b id="mCount"></b> perguntas, e quanto mais gente daria a resposta, mais pontos vale.</p>
+    <button class="mode duo" type="button" id="mDuo"><span class="ic">🆚</span><b>A dois</b><small>No mesmo telemóvel: disputa, jogo e roubo</small></button>
+    <button class="mode" type="button" id="mHost"><span class="ic">🎤</span><b>Com apresentador</b><small>Equipas: um lê e revela, os outros respondem em voz alta</small></button>
+    <button class="mode" type="button" id="mSolo"><span class="ic">🙋</span><b>Sozinho</b><small>5 perguntas, 3 erros em cada uma</small></button>
+    <p class="foot" id="mRec"></p>
+    <p class="foot">Os pontos são estimativas nossas, não vêm de um inquérito real.</p>
+  </section>
+  <section id="setupScr" class="setup" hidden>
+    <h2 id="setupTitle" style="margin:0">A dois</h2>
+    <p id="setupInfo" style="margin:0;font-weight:600"></p>
+    <label class="field"><span id="n1lbl">Jogador 1</span><input id="n1" maxlength="16" autocomplete="off"></label>
+    <label class="field"><span id="n2lbl">Jogador 2</span><input id="n2" maxlength="16" autocomplete="off"></label>
+    <button class="btn" type="button" id="setupGo">Começar!</button>
+    <button class="btn ghost" type="button" id="setupBack">Voltar</button>
+  </section>
+  <section id="gameScr" hidden style="display:flex;flex-direction:column;gap:10px">
+    <div class="scores" id="scores"></div>
+    <div class="tv">
+      <div class="rnd"><span id="gRound"></span><span class="potb" id="pot">0</span></div>
+      <h2 class="q" id="gQ"></h2>
+      <ol class="board" id="board"></ol>
+      <div class="strikes" id="strikes"></div>
+    </div>
+    <p class="log" id="log" aria-live="polite"></p>
+    <form class="ansf" id="ansForm" autocomplete="off"><input id="ans" maxlength="40" autocomplete="off" autocapitalize="none" enterkeyhint="send" aria-label="Resposta"><button class="btn" id="ansBtn" type="submit">Responder</button></form>
+    <div class="hostbar" id="hostBar" hidden></div>
+    <p class="hostnote" id="hostNote" hidden>Toca numa resposta quando alguém a disser.</p>
+    <button class="btn" type="button" id="nextBtn" hidden>Próxima ▶</button>
+    <div class="gtop"><button class="btn ghost sm" type="button" id="giveBtn">Desisto desta</button><button class="btn ghost sm" type="button" id="quitBtn" style="margin-left:auto">Sair</button></div>
+  </section>
+</div>
+<div class="ov" id="ov" hidden></div>
+<div class="bigx" id="bigx" hidden>✕</div>
+<div class="toast" id="toast" hidden></div>
+<script>
+/* ================= PERGUNTAS =================
+   "Pergunta|resposta=pontos=alternativa,alternativa|…"  (pontos estimados por nós, não é um inquérito real) */
+const QS=`Diz uma coisa que se leva para a praia.|toalha=30=toalhas|chapéu de sol=20=guarda-sol,sombrinha,chapéu-de-sol|protetor solar=18=protetor,creme,bronzeador,creme solar|óculos de sol=10=óculos|geleira=8=mala térmica,arca|bola=6=raquetes,frescobol|livro=4=revista
+Diz uma coisa que se come no Natal.|bacalhau=40=bacalhau com todos|bolo-rei=18=bolo rei|rabanadas=12=fatias douradas|polvo=9|peru=8|filhoses=6=sonhos,coscorões|arroz-doce=4=arroz doce
+Diz uma coisa que se faz ao domingo de manhã.|dormir=32=ficar na cama,descansar,dormir até tarde|ir à missa=20=missa,igreja|tomar café=14=café,pequeno-almoço|passear=11=caminhar,caminhada,dar uma volta|ler o jornal=9=jornal|ver futebol=6=futebol|limpar a casa=4=limpezas,arrumar
+Diz uma coisa que se leva sempre na carteira.|cartão de cidadão=35=bi,cc,identificação,cartão cidadão|cartão multibanco=25=multibanco,cartão,cartão de crédito,cartão de débito|dinheiro=18=notas,moedas,trocos|fotografias=8=fotos|talões=6=recibos,faturas|chaves=4|senhas=4=cupões,vales
+Diz um animal que se vê numa quinta.|vaca=26=boi|galinha=22=galo,pintainho|porco=16|ovelha=12=carneiro|cavalo=10|cabra=7=bode|pato=4|burro=3
+Diz uma coisa que se pede num café.|bica=36=café,expresso,cimbalino|galão=18|pastel de nata=14=nata,pastel|tosta mista=11=tosta|água=8|torrada=7|sumo=6=laranjada
+Diz uma desculpa para chegar atrasado.|trânsito=38=fila,engarrafamento,acidente|despertador=20=adormeci,acordei tarde,alarme|transportes=12=comboio,autocarro,metro|filhos=10=crianças,miúdos|estacionamento=8=estacionar,lugar|doença=6=doente,mal disposto|chuva=6=tempo,mau tempo
+Diz uma coisa que há numa casa de banho.|sanita=28=retrete,wc|chuveiro=20=banheira,duche|lavatório=14=lava-mãos|toalha=12=toalhas|espelho=10|papel higiénico=10=papel|escova de dentes=6=escova,pasta de dentes
+Diz uma profissão que usa farda.|polícia=32=psp,gnr,agente|bombeiro=22|militar=14=soldado,tropa,exército|enfermeiro=10=enfermeira,médico|piloto=8=hospedeira,comissário de bordo|carteiro=7=ctt|cozinheiro=7=chef
+Diz uma coisa que se faz num casamento.|dançar=30=dança,baile|comer=25=jantar,banquete,almoço|chorar=12|beber=10=brindar,brinde|dar prendas=9=prenda,envelope,presentes|tirar fotografias=8=fotos,fotografias|atirar o ramo=6=ramo,bouquet
+Diz uma cidade portuguesa.|Lisboa=30|Porto=28|Coimbra=12|Braga=10|Faro=8|Aveiro=7|Évora=5
+Diz um desporto que se vê na televisão.|futebol=55=bola|ténis=10|Fórmula 1=9=f1,fórmula um,corridas,automobilismo|ciclismo=8=volta a portugal,bicicleta|basquetebol=7=basket,basquete|andebol=6|motociclismo=5=motogp,motas
+Diz uma coisa que a avó diz sempre.|come mais=35=comer,estás magro,estás magrinha,come|leva um casaco=20=casaco,agasalha-te,vais ter frio|tem juízo=14=juízo,porta-te bem|quando é que casas=12=namorada,namorado,casar|no meu tempo=10=antigamente|vai à missa=5=missa|tem cuidado=4=cuidado
+Diz uma coisa que se leva para um piquenique.|sandes=30=sanduíche,sandocha,sandes mistas|toalha=18=manta|fruta=14=maçã,melancia|bebidas=12=sumo,água,vinho,cerveja|cesto=10=cesta,geleira|bolo=8=bolos|guardanapos=4=pratos,copos
+Diz uma coisa que se guarda no frigorífico.|leite=24|manteiga=16|queijo=14|ovos=12|fiambre=10|iogurtes=10=iogurte|cerveja=8=bebidas|fruta=6=legumes
+Diz um sítio onde é falta de educação usar o telemóvel.|cinema=28|mesa=20=jantar,refeição,almoço|igreja=14=missa,funeral|aulas=12=escola,exame,teste|reunião=10=trabalho|teatro=10=concerto|hospital=6
+Diz uma coisa que se compra no supermercado todas as semanas.|pão=26|leite=22|fruta=16|água=10|ovos=8|papel higiénico=8=papel|carne=6=frango|iogurtes=4
+Diz um doce português.|pastel de nata=32=nata,pastel de belém|arroz-doce=16=arroz doce|ovos moles=12|bolo-rei=10=bolo rei|baba de camelo=10|pão de ló=10|toucinho do céu=6|serradura=4
+Diz uma coisa que se faz num dia de chuva.|ver filmes=30=filmes,séries,televisão,tv|dormir=18=ficar na cama|ler=14=livro|jogar=12=jogos,playstation,cartas,jogos de tabuleiro|cozinhar=10=fazer bolos,bolos|ficar em casa=10=casa|ir ao centro comercial=6=shopping,compras
+Diz uma coisa que se vê na praia além da areia.|mar=26=água,ondas|nadador-salvador=16=nadador salvador,banheiro|gaivotas=14|guarda-sóis=12=chapéus de sol,sombrinhas|bolas de Berlim=10=bolas,vendedor|conchas=10|surfistas=6=pranchas,barcos|toalhas=6
+Diz um presente típico para o Dia do Pai.|gravata=24|perfume=20=after shave,colónia|ferramentas=14=berbequim,caixa de ferramentas|camisa=12=roupa|vinho=10=garrafa|carteira=10|meias=6|relógio=4
+Diz uma coisa que se faz antes de dormir.|lavar os dentes=34=dentes,escovar os dentes|ver o telemóvel=22=telemóvel,redes sociais,instagram|ler=14=livro|vestir o pijama=10=pijama|rezar=8=oração|beber água=6=água|pôr o despertador=6=despertador,alarme
+Diz um ingrediente da francesinha.|queijo=24|fiambre=16=presunto|bife=16=carne,vitela|molho=14|salsicha=12=linguiça|pão=10|ovo=8
+Diz uma coisa que há num arraial dos Santos Populares.|sardinhas=34=sardinha|manjericos=18=manjerico|bifanas=12=bifana|balões=10=bandeirinhas,enfeites|música=10=bailarico,dança,pimba|cerveja=10=imperial,vinho|fogo de artifício=6=fogo,foguetes
+Diz uma coisa que se esquece muitas vezes em casa.|chaves=36|telemóvel=20|carteira=14|guarda-chuva=10=chapéu de chuva|óculos=8|carregador=6|almoço=6=marmita,lancheira
+Diz uma razão para ligar à mãe.|pedir uma receita=26=receita,comida|saber como está=22=saudades,falar,conversar|pedir dinheiro=16=dinheiro|dar os parabéns=12=aniversário,parabéns|pedir um conselho=10=conselho,ajuda|avisar que chegou=8=cheguei,cheguei bem|lavar a roupa=6=roupa
+Diz um meio de transporte.|carro=30|autocarro=18|comboio=14|avião=12|metro=10|bicicleta=8|mota=8=moto,motorizada,scooter
+Diz uma coisa que se encontra numa mala de senhora.|batom=22=maquilhagem,pintura|carteira=20|telemóvel=16|chaves=14|lenços=10=lenço|espelho=10|pastilhas=8=chicletes,rebuçados
+Diz uma coisa que se faz quando está muito calor.|ir à praia=28=praia,piscina,mergulho|beber água=20=água,bebida fresca|ligar o ar condicionado=16=ar condicionado,ventoinha|comer um gelado=14=gelado|tomar banho=10=duche,banho|abanar-se=6=leque|andar de calções=6=calções,roupa fresca
+Diz uma coisa que se diz ao atender o telefone.|estou=30=está,estou sim|olá=20|quem fala=14=quem é|sim=12|diga=10=diz|bom dia=8=boa tarde,boa noite|então=6
+Diz uma fruta.|maçã=24|banana=20|laranja=16|morango=12|pera=10|uva=8=uvas|melancia=6|pêssego=4
+Diz uma coisa que se leva numa viagem de avião.|passaporte=28=cartão de cidadão,documentos,identificação|mala=22=bagagem,mochila|bilhete=14=cartão de embarque|telemóvel=12|auscultadores=10=fones,phones|livro=8|almofada de pescoço=6=almofada
+Diz uma coisa que os estudantes odeiam.|exames=32=testes,exame,teste|trabalhos de casa=22=tpc,trabalhos|acordar cedo=16=acordar,madrugar|matemática=12|professores=8=professor,stôr|aulas=6|filas da cantina=4=cantina
+Diz uma coisa que se faz no ginásio.|correr=24=passadeira,cardio|levantar pesos=24=pesos,musculação,halteres|abdominais=14|bicicleta=12=spinning,cycling|alongar=10=alongamentos|nadar=8=natação,piscina|tirar selfies=8=fotos,selfies
+Diz uma coisa que se vê num funeral.|flores=30=coroa de flores|caixão=24|padre=14|pessoas a chorar=12=choro,lágrimas|roupa preta=10=preto|velas=6|cemitério=4
+Diz uma coisa que não pode faltar numa festa de anos.|bolo=40|velas=20|prendas=14=presentes|balões=10|música=8|amigos=4=convidados|parabéns a você=4=cantar os parabéns,parabéns
+Diz uma coisa que se diz quando se espirra.|santinho=60=santo|saúde=20|Deus te abençoe=10=deus|atchim=6|desculpe=4=desculpa
+Diz uma coisa que se faz no carnaval.|mascarar-se=40=máscara,fantasia,disfarce|desfile=20=desfiles,corso|dançar=12=samba|ir a uma festa=10=festa,baile|atirar serpentinas=8=serpentinas,confettis|comer=6|beber=4
+Diz uma coisa que se faz num restaurante.|comer=40|beber=16=vinho|pagar a conta=14=pagar,conta|pedir=12=fazer o pedido|conversar=8=falar|deixar gorjeta=6=gorjeta|reclamar=4
+Diz um sítio onde se espera muito tempo.|Finanças=24|centro de saúde=20=médico,hospital,urgências|loja do cidadão=16=registos|trânsito=12=fila,filas|consulta=10=dentista|aeroporto=10|supermercado=8=caixa
+Diz uma coisa que tem rodas.|carro=36|bicicleta=20|autocarro=12|mota=10=moto|comboio=8|skate=8=patins|carrinho de bebé=6=carrinho
+Diz uma coisa que se põe no café.|açúcar=50|leite=24|adoçante=12|canela=6|nada=4|chocolate=4
+Diz uma coisa que se faz na passagem de ano.|comer passas=36=passas,uvas|brindar=20=champanhe,espumante,beber|ver o fogo de artifício=14=fogo,foguetes|fazer desejos=10=desejos|saltar da cadeira=8=saltar|dançar=6=festa|dar beijinhos=6=beijos,abraços
+Diz uma coisa que se encontra numa cozinha.|fogão=26|frigorífico=22|micro-ondas=14|lava-loiça=10=banca|panelas=10=tachos|forno=10|facas=8=talheres
+Diz uma coisa que as pessoas fazem quando não conseguem dormir.|contar ovelhas=30=ovelhas|ver o telemóvel=22=telemóvel|ver televisão=14=televisão,tv|ler=12=livro|beber leite=10=leite,chá|levantar-se=6=andar pela casa|tomar um comprimido=6=comprimido
+Diz uma cor.|azul=28|vermelho=24|verde=16|amarelo=12|preto=8|branco=7|rosa=5
+Diz uma coisa que se faz no Natal.|abrir prendas=34=prendas,presentes|jantar com a família=20=família,consoada|montar a árvore=14=árvore,pinheiro|missa do galo=10=missa|comer=10=comer bacalhau|fazer o presépio=8=presépio|cantar=4
+Diz um sítio onde se vai de férias em Portugal.|Algarve=48|Madeira=14|Açores=12|Gerês=8|Porto=6|Lisboa=6|Serra da Estrela=6
+Diz uma coisa que se diz a um bebé.|que fofo=26=fofinho,lindo,que lindo|gugu dada=22=gugu|olá bebé=14=olá|cuti cuti=12|anda cá=10=anda|faz adeus=8=adeus,tchau|papá=8=mamã
+Diz uma coisa que se faz numa esplanada.|beber=26=cerveja,imperial,café|apanhar sol=22=sol|conversar=18=falar,conversa|comer=12=petiscar,tremoços|ler o jornal=8=jornal|ver pessoas a passar=8=ver gente,observar|fumar=6
+Diz um petisco português.|tremoços=22|caracóis=20|bifana=14|pica-pau=12|moelas=10|pastéis de bacalhau=10=bolinhos de bacalhau,pastel de bacalhau|amendoins=6|chouriço assado=6=chouriço
+Diz uma coisa que irrita ao conduzir.|trânsito=30=filas|condutores lentos=18=lentos,devagar|buzinas=12=buzinar|não pôr o pisca=10=pisca|semáforos=10=sinais vermelhos|estacionar=10=estacionamento|obras=10
+Diz uma coisa que se faz quando se está doente.|ficar na cama=32=cama,descansar,dormir|tomar medicamentos=24=comprimidos,remédios,ben-u-ron|ir ao médico=16=médico,urgências|beber chá=12=chá|comer canja=8=canja,sopa|ver televisão=8=tv
+Diz uma coisa que se vê no céu.|sol=26|nuvens=22|estrelas=16|lua=14|aviões=10=avião|pássaros=8=gaivotas|arco-íris=4
+Diz uma coisa que se pode partir.|copo=24=copos|prato=18=pratos|ecrã do telemóvel=14=telemóvel,ecrã|perna=12=braço,osso|coração=10|vidro=8=janela|espelho=8|unha=6
+Diz uma coisa que se diz quando o Benfica, o Porto ou o Sporting perde.|árbitro=36=roubo,fomos roubados|azar=16|para a próxima=14|treinador=12=despedir o treinador|jogaram mal=10|não interessa=6|vou desligar a televisão=6=desligar
+Diz um instrumento musical.|guitarra=30=viola|piano=24|bateria=14|violino=10|flauta=8|acordeão=8=concertina|saxofone=6
+Diz uma coisa que se faz num aniversário.|soprar as velas=34=velas|cantar os parabéns=24=parabéns,cantar|abrir prendas=16=prendas,presentes|comer bolo=12=bolo|festa=8|tirar fotografias=6=fotos
+Diz uma coisa que se faz de manhã antes de sair de casa.|tomar banho=28=banho,duche|tomar o pequeno-almoço=22=pequeno-almoço,comer|vestir=16=vestir-me|lavar os dentes=14=dentes|tomar café=10=café|pentear=6=cabelo|ver o telemóvel=4
+Diz uma coisa que se leva para a escola.|mochila=28|livros=20=livro,manuais|cadernos=16=caderno|estojo=14=canetas,lápis|lanche=12=sandes,merenda|garrafa de água=6=água|telemóvel=4
+Diz um animal de estimação.|cão=40|gato=30|peixe=10|periquito=8=pássaro,canário|hamster=6|tartaruga=4|coelho=2
+Diz uma coisa que se faz numa praia fluvial.|nadar=30=tomar banho,mergulhar|piquenique=22=comer,merendar|apanhar sol=18=sol|andar de canoa=12=canoa,caiaque,barco|pescar=8=pesca|saltar da ponte=6=saltar|grelhar=4=churrasco
+Diz uma coisa que se faz no Dia dos Namorados.|jantar fora=36=jantar,restaurante|dar flores=20=flores,rosas|dar chocolates=14=chocolates|dar um presente=12=prenda,presente|ir ao cinema=8=cinema|dar um beijo=6=beijo|escrever um postal=4=postal,carta
+Diz uma coisa que se pede ao Pai Natal.|brinquedos=28=brinquedo|telemóvel=18|consola=16=playstation,jogos|bicicleta=12|dinheiro=10|roupa=8|paz=8=saúde,amor
+Diz uma coisa que se vê numa aldeia.|igreja=24|café=18=tasca|velhotes=16=idosos,velhos,avós|animais=14=galinhas,vacas,cães|campos=12=hortas,vinhas|festa da aldeia=10=festa|fontanário=6=fonte,chafariz
+Diz uma coisa que tem botões.|camisa=28|comando=24=comando da televisão|telemóvel=16|casaco=12|elevador=10|teclado=6|calças=4
+Diz uma coisa que se faz numa viagem de carro longa.|ouvir música=30=música,rádio|parar na estação de serviço=20=parar,comer,estação de serviço|dormir=16|conversar=12=falar|jogar ao jogo das matrículas=8=jogos,jogar|discutir o caminho=8=perder-se,gps|perguntar se já chegámos=6=já chegámos
+Diz uma coisa que se faz quando se ganha o Euromilhões.|comprar uma casa=30=casa,moradia|viajar=24=viagem,férias|comprar um carro=16=carro|despedir-me=12=deixar de trabalhar,despedir|ajudar a família=10=família,dar à família|dar uma festa=4=festa|investir=4=poupar,banco
+Diz uma coisa que se faz numa sala de espera.|ver o telemóvel=34=telemóvel|ler revistas=24=revista,revistas,ler|esperar=14|conversar=10=falar|olhar para o relógio=8=relógio|dormitar=6=dormir|ver televisão=4
+Diz um sabor de gelado.|chocolate=32|morango=20|baunilha=16|nata=10|limão=8|pistáchio=6|manga=4|caramelo=4
+Diz uma coisa que se vê numa feira popular.|carrosséis=26=carrossel,diversões|algodão doce=20=algodão|farturas=18|pipocas=12|carrinhos de choque=10=carrinhos|roda gigante=8=roda|tiro ao alvo=6=tiro
+Diz uma coisa que se encontra num quarto.|cama=36|guarda-roupa=18=roupeiro,armário|mesa de cabeceira=14=mesinha|candeeiro=10=luz|almofada=10|espelho=6|tapete=6
+Diz uma coisa que se faz no Halloween.|mascarar-se=34=fantasia,disfarce,máscara|pedir doces=26=doces,doce ou travessura,pão por deus|esculpir abóboras=14=abóbora,abóboras|ver filmes de terror=12=filmes de terror,terror|ir a uma festa=10=festa|assustar=4
+Diz uma coisa que se diz a quem vai fazer um exame.|boa sorte=50=sorte|vais conseguir=16=consegues,vais passar|estuda=10=estudaste|calma=10=não te enerves,não fiques nervoso|força=8|parte uma perna=6
+Diz uma coisa que se põe numa salada.|alface=30|tomate=26|cebola=14|azeite=10|cenoura=8|pepino=6|atum=6
+Diz uma bebida.|água=26|cerveja=20|vinho=18|café=12|sumo=10|leite=8|chá=6
+Diz uma coisa que se partilha com os amigos.|comida=24=petiscos|segredos=20=segredo|bebidas=14=cerveja|fotografias=12=fotos|boleia=10=carro|casa=10=sofá|contas=10=conta,despesas
+Diz uma coisa que se arruma numa mala de viagem.|roupa=36|escova de dentes=16=escova|sapatos=14=calçado,chinelos|carregador=12|fato de banho=10=bikini,biquíni,calções de banho|pijama=8|livro=4
+Diz uma coisa de que as pessoas têm medo.|aranhas=24=aranha|escuro=18|morrer=14=morte|cobras=12=cobra|alturas=12|palhaços=10|dentista=10
+Diz uma coisa que se faz no Algarve no verão.|ir à praia=40=praia|sair à noite=20=discoteca,festas,noite|comer marisco=12=marisco,peixe|bronzear=10=apanhar sol|fazer desportos aquáticos=8=surf,jet ski,mota de água|passear de barco=6=barco|ir ao Zoomarine=4=parque aquático,slide
+Diz um familiar que aparece sempre nos almoços de família.|tia=24|primo=22=prima,primos|avó=18=avô,avós|tio=16|sobrinho=10=sobrinha|cunhado=6=cunhada|sogra=4
+Diz uma coisa que se vê num estádio de futebol.|jogadores=26|bola=20|adeptos=16=público,claque|árbitro=14|baliza=10|cachecóis=8=bandeiras|relvado=6=relva
+Diz uma coisa redonda.|bola=34|lua=16|roda=14=pneu|relógio=10|moeda=10|prato=8|pizza=8
+Diz uma coisa que se faz quando se chega a casa do trabalho.|tirar os sapatos=24=sapatos,descalçar|sentar no sofá=22=sofá,descansar|tomar banho=16=banho,duche|fazer o jantar=16=jantar,cozinhar|ver televisão=12=tv|beber uma cerveja=6=cerveja|ir ao frigorífico=4=frigorífico
+Diz uma coisa que se dá a alguém que está no hospital.|flores=36|chocolates=18=bombons|fruta=14|revistas=12=livro,livros|um abraço=8=abraço,beijinho|um peluche=6=peluche|um postal=6=postal,cartão
+Diz uma coisa que se faz numa noite de verão.|jantar na esplanada=24=esplanada,jantar fora|passear=20=dar uma volta,caminhar|ir a festas=16=festa,arraial,discoteca|ver as estrelas=14=estrelas|comer gelado=12=gelado|fazer um churrasco=10=churrasco,grelhados|ir à praia=4=praia
+Diz uma coisa que se diz quando alguém chega atrasado.|finalmente=28|já não era sem tempo=18=até que enfim|estás atrasado=16=atrasado,chegaste tarde|onde estiveste=12|vale mais tarde que nunca=10|o que aconteceu=10|tens relógio=6=relógio
+Diz uma coisa que se pode encontrar numa garagem.|carro=38|ferramentas=18|bicicleta=14|caixas=10=tralha,caixotes|arca congeladora=8=arca,congelador|pneus=6|mota=6
+Diz uma série ou programa de que os portugueses gostam.|telenovelas=30=novelas,novela|futebol=20=jogos,bola|telejornal=16=notícias,jornal|concursos=12=preço certo,o preço certo|reality shows=10=big brother,casa dos segredos|séries=8=netflix|programas da manhã=4
+Diz uma coisa que se faz na casa da avó.|comer=40=almoço,jantar,petiscos|dormir a sesta=16=sesta,dormir|ver televisão=12=tv|ouvir histórias=10=histórias,conversar|jogar às cartas=8=cartas,sueca|apanhar fruta=8=quintal,fruta|levar dinheiro=6=dinheiro,mesada
+Diz uma coisa que se ouve numa tasca.|conversa sobre futebol=30=futebol,bola|televisão=20=tv,jogo|copos a bater=14=brindes,copos,brindar|pedidos=12=mais uma,outra imperial|gargalhadas=10=risos,rir|discussões=8=política,discutir|sueca=6=cartas`;
+
+/* ================= DIZ O POVO (respostas mais populares, offline) =================
+   Modos: sozinho (5 perguntas, 3 erros cada), a dois num telemóvel (disputa, jogo e roubo) e com apresentador (equipas).
+   As respostas escritas são reconhecidas por alternativas, sem acentos, plurais ou artigos e com pequenos erros. */
+const $=id=>document.getElementById(id);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const BANK=QS.trim().split("\n").map((l,id)=>{const [q,...as]=l.split("|");return{id,q,a:as.map(x=>{const [t,p,al]=x.split("=");return{t,p:+p,al:[t,...(al?al.split(","):[])]}}).sort((a,b)=>b.p-a.p)}});
+/* ---------- reconhecer respostas ---------- */
+const STOP=new Set("o a os as um uma uns umas de do da dos das no na nos nas em ao aos à às e com para por pelo pela que se meu minha eu é".split(" "));
+const deacc=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"");
+function stem(w){if(w.length>6&&/zinh[oa]$/.test(w))w=w.slice(0,-5)+w.slice(-1);else if(w.length>6&&/inh[oa]$/.test(w))w=w.slice(0,-4)+w.slice(-1);if(w.length>=4&&/(oes|aes)$/.test(w))return w.slice(0,-3)+"ao";if(w.length>4&&/[rzl]es$/.test(w))return w.slice(0,-2);if(w.length>3&&w.endsWith("s"))return w.slice(0,-1);return w}
+const toks=s=>deacc(String(s).toLowerCase()).replace(/[^a-z0-9 ]+/g," ").split(/\s+/).filter(w=>w&&!STOP.has(w)).map(stem);
+function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let p=Array.from({length:n+1},(_,i)=>i);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
+const tol=n=>n>=8?2:n>=5?1:0;
+/* devolve {i,score} da melhor resposta (score>=60 aceita; 35..59 é "parecida") */
+function match(q,text){
+  const K=toks(text),ks=K.join(" ");if(!ks)return null;let best=null;
+  q.a.forEach((ans,i)=>{let sc=0;
+    for(const al of ans.al){const A=toks(al),as=A.join(" ");if(!as)continue;
+      if(as===ks)sc=Math.max(sc,100);
+      else if(A.every(w=>K.includes(w)))sc=Math.max(sc,82);
+      else if(lev(as,ks)<=tol(as.length))sc=Math.max(sc,75);
+      else if(K.length&&K.every(w=>A.includes(w))&&K.join("").length>=4)sc=Math.max(sc,66);
+      else if(A.length===1&&K.some(w=>lev(w,A[0])<=tol(A[0].length)&&A[0].length>=4))sc=Math.max(sc,64);
+      else if(K.some(w=>w.length>=4&&A.some(x=>x.length>=4&&(x.startsWith(w.slice(0,4))||lev(w,x)<=tol(x.length)+1))))sc=Math.max(sc,40);
+    }
+    if(sc&&(!best||sc>best.score))best={i,score:sc}});
+  return best;
+}
+/* ---------- baralho sem repetir ---------- */
+function pickQ(){let used=[];try{used=JSON.parse(store.get("povo-used")||"[]")}catch(e){}
+  let pool=BANK.filter(q=>!used.includes(q.id));if(pool.length<6){used=[];pool=BANK}
+  const q=pool[Math.floor(Math.random()*pool.length)];used.push(q.id);store.set("povo-used",JSON.stringify(used));return q}
+/* ---------- estado ---------- */
+let S=null;const MULT=[1,1,2,3];
+function newGame(mode,names){
+  S={mode,players:names.map(n=>({name:n,score:0})),round:0,rounds:mode==="solo"?5:4,q:null,rev:[],strikes:0,pot:0,ctrl:0,phase:"",face:[],log:"",hist:[]};
+  nextRound();
+}
+function nextRound(){
+  if(S.round>=S.rounds){return endGame()}
+  S.q=pickQ();S.rev=S.q.a.map(()=>false);S.strikes=0;S.pot=0;S.face=[];S.hist=[];S.mult=S.mode==="solo"?1:MULT[S.round];S.round++;
+  if(S.mode==="solo"){S.phase="play";S.ctrl=0;say("Escreve as respostas que achas que o povo deu.")}
+  else if(S.mode==="duo"){S.faceFirst=(S.round-1)%2;S.phase="face";S.ctrl=S.faceFirst;say(`Disputa! ${S.players[S.faceFirst].name} responde primeiro.`)}
+  else{S.phase="pick";say("As equipas disputam a pergunta. Quem joga?")}
+  show("game");render();sfx("round");focusInput();
+}
+const pts=i=>S.q.a[i].p*S.mult;
+const allRev=()=>S.rev.every(Boolean);
+function reveal(i){S.rev[i]=true;S.pot+=pts(i);flash(i);sfx("ding");buzz(15)}
+function say(t){S.log=t}
+function award(p){if(p!=null)S.players[p].score+=S.pot;const got=S.pot;S.pot=0;return got}
+/* ---------- jogar uma resposta (sozinho e a dois) ---------- */
+let pending=null;
+function submit(text){
+  if(!S||!text.trim())return;
+  const m=match(S.q,text);
+  if(m&&m.score>=60){if(S.rev[m.i]){say(`«${S.q.a[m.i].t}» já está no quadro!`);sfx("dup");render();return}return hit(m.i,text)}
+  if(m&&m.score>=35&&!S.rev[m.i]){pending={i:m.i,text};askCount(m.i,text);return}
+  miss(text);
+}
+function askCount(i,text){
+  const who=S.mode==="duo"?`<p class="small">${S.players[1-curPlayer()].name}, és tu que decides.</p>`:"";
+  showOv(`<div class="panel"><h2>Isto conta?</h2><p>Escreveste <b>«${esc(text)}»</b>. Conta como <b>«${S.q.a[i].t}»</b>?</p>${who}<div class="row2"><button class="btn" type="button" data-a="yes">Conta ✓</button><button class="btn ghost" type="button" data-a="no">Não conta ✗</button></div></div>`);
+}
+const curPlayer=()=>S.phase==="face"?(S.face.length===0?S.faceFirst:1-S.faceFirst):S.phase==="steal"?1-S.ctrl:S.ctrl;
+function hit(i,text){
+  const p=curPlayer();reveal(i);
+  if(S.mode==="solo"){if(allRev()){say(`Limpaste o quadro! +${S.pot}`);finishQ()}else say(`Boa! «${S.q.a[i].t}» vale ${pts(i)}.`);render();return}
+  if(S.phase==="face"){S.face.push({p,i});
+    if(i===0||S.face.length===2){
+      const hits=S.face.filter(f=>f.i>=0);const win=hits.length?hits.reduce((a,b)=>S.q.a[a.i].p>=S.q.a[b.i].p?a:b).p:S.faceFirst;
+      S.ctrl=win;S.phase="play";say(i===0&&S.face.length===1?`A resposta mais dada! ${S.players[win].name} joga a pergunta.`:`${S.players[win].name} ganhou a disputa e joga a pergunta.`);
+    }else{say(`Boa! Agora ${S.players[1-S.faceFirst].name}: consegues uma resposta mais popular?`)}
+    if(allRev())roundEnd(S.ctrl);render();return}
+  if(S.phase==="play"){if(allRev()){roundEnd(S.ctrl,`${S.players[S.ctrl].name} limpou o quadro!`)}else say(`Boa! Continua, ${S.players[S.ctrl].name}.`);render();return}
+  if(S.phase==="steal"){roundEnd(1-S.ctrl,`${S.players[1-S.ctrl].name} roubou os pontos!`);render()}
+}
+function miss(text){
+  const p=curPlayer();sfx("x");buzz([60,40,60]);
+  if(S.mode==="solo"){S.strikes++;bigX(S.strikes);if(S.strikes>=3){say("Três erros!");finishQ()}else say(`«${esc(text)}» não está no quadro.`);render();return}
+  if(S.phase==="face"){S.face.push({p,i:-1});bigX(1);
+    if(S.face.length===2){const hits=S.face.filter(f=>f.i>=0);S.ctrl=hits.length?hits[0].p:S.faceFirst;S.phase="play";say(hits.length?`${S.players[S.ctrl].name} ganhou a disputa e joga a pergunta.`:`Ninguém acertou. ${S.players[S.ctrl].name} joga a pergunta.`)}
+    else say(`Não está no quadro. Agora ${S.players[1-S.faceFirst].name}!`);render();return}
+  if(S.phase==="play"){S.strikes++;bigX(S.strikes);if(S.strikes>=3){S.phase="steal";say(`Três erros! ${S.players[1-S.ctrl].name}, tens uma tentativa para roubar ${S.pot} pontos.`)}else say(`Não está no quadro. Ainda tens ${3-S.strikes} ${3-S.strikes===1?"vida":"vidas"}.`);render();return}
+  if(S.phase==="steal"){roundEnd(S.ctrl,`Falhou o roubo! Os pontos ficam para ${S.players[S.ctrl].name}.`);render()}
+}
+function finishQ(){S.players[0].score+=S.pot;S.phase="done";sfx(S.pot>=60?"win":"round")}
+function roundEnd(p,msg){const got=award(p);S.phase="done";if(msg)say(msg+` +${got}`);else say(`${S.players[p].name} ganha ${got} pontos.`);sfx("win")}
+/* ---------- apresentador ---------- */
+function snap(){S.hist.push(JSON.stringify({rev:S.rev,strikes:S.strikes,pot:S.pot,ctrl:S.ctrl,phase:S.phase,log:S.log,sc:S.players.map(p=>p.score)}))}
+function undo(){const h=S.hist.pop();if(!h)return;const o=JSON.parse(h);S.rev=o.rev;S.strikes=o.strikes;S.pot=o.pot;S.ctrl=o.ctrl;S.phase=o.phase;S.log=o.log;o.sc.forEach((v,i)=>S.players[i].score=v);render()}
+function hostTap(i){
+  if(S.rev[i]||S.phase==="done")return;
+  if(S.phase==="pick"){toast("Primeiro escolhe a equipa que joga.");return}
+  snap();reveal(i);
+  if(S.phase==="steal"){roundEnd(1-S.ctrl,`${S.players[1-S.ctrl].name} roubou os pontos!`)}
+  else if(allRev())roundEnd(S.ctrl,`${S.players[S.ctrl].name} limpou o quadro!`);
+  render();
+}
+function hostX(){
+  if(S.phase==="pick"||S.phase==="done")return;snap();sfx("x");buzz([60,40,60]);
+  if(S.phase==="steal"){roundEnd(S.ctrl,`Falhou o roubo! Os pontos ficam para ${S.players[S.ctrl].name}.`)}
+  else{S.strikes++;bigX(S.strikes);if(S.strikes>=3){S.phase="steal";say(`Três erros! Roubo para ${S.players[1-S.ctrl].name}: uma só resposta.`)}else say(`Errado! ${3-S.strikes} ${3-S.strikes===1?"vida":"vidas"} para ${S.players[S.ctrl].name}.`)}
+  render();
+}
+/* ---------- fim ---------- */
+function endGame(){
+  S.phase="over";const ps=S.players;
+  if(S.mode==="solo"){const sc=ps[0].score,best=+(store.get("povo-rec")||0),rec=sc>best;if(rec)store.set("povo-rec",String(sc));
+    showOv(`<div class="panel"><div class="eyebrow">Fim do jogo</div><h2>${sc} pontos</h2>${rec?'<div class="newrec">★ Novo recorde! ★</div>':`<p>Recorde: ${best}</p>`}<p>Em ${S.rounds} perguntas.</p><button class="btn" type="button" data-a="again">Jogar outra vez</button><button class="btn ghost" type="button" data-a="menu">Menu</button></div>`)}
+  else{const w=ps[0].score===ps[1].score?null:ps[0].score>ps[1].score?0:1;
+    showOv(`<div class="panel"><div class="eyebrow">Fim do jogo</div><h2>${w==null?"Empate!":`Ganhou ${esc(ps[w].name)}!`}</h2><div class="final">${ps.map((p,i)=>`<div class="${i===w?"win":""}"><span>${esc(p.name)}</span><b>${p.score}</b></div>`).join("")}</div><button class="btn" type="button" data-a="again">Jogar outra vez</button><button class="btn ghost" type="button" data-a="menu">Menu</button></div>`)}
+  sfx("win");
+}
+/* ---------- desenho ---------- */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function render(){
+  if(!S||!S.q)return;const host=S.mode==="host",done=S.phase==="done";
+  $("gRound").textContent=S.mode==="solo"?`Pergunta ${S.round} de ${S.rounds}`:`Ronda ${S.round} de ${S.rounds}`+(S.mult>1?` · pontos ×${S.mult}`:"");
+  $("gQ").textContent=S.q.q;
+  $("board").innerHTML=S.q.a.map((a,i)=>{const r=S.rev[i];const cls=r?"on":done?"miss":host?"host":"";
+    return`<li class="slot ${cls}" data-i="${i}"><span class="n">${i+1}</span>${r||done||host?`<span class="t">${a.t}</span><span class="p">${a.p*S.mult}</span>`:`<span class="t"></span>`}</li>`}).join("");
+  $("pot").textContent=S.pot;
+  $("strikes").innerHTML=[0,1,2].map(k=>`<i class="${k<S.strikes?"on":""}">✕</i>`).join("");
+  $("scores").innerHTML=S.mode==="solo"?`<div class="sc on"><span>Pontos</span><b>${S.players[0].score}</b></div>`:S.players.map((p,i)=>{const act=(S.phase==="face"&&curPlayer()===i)||((S.phase==="play"||S.phase==="pick")&&S.ctrl===i&&S.phase!=="pick")||(S.phase==="steal"&&1-S.ctrl===i);return`<div class="sc ${act?"on":""}"><span>${esc(p.name)}</span><b>${p.score}</b></div>`}).join("");
+  $("log").innerHTML=S.log;
+  const typing=!host&&!done;$("ansForm").hidden=!typing;
+  if(typing){const p=curPlayer();$("ans").placeholder=S.mode==="solo"?"Escreve uma resposta…":`${S.players[p].name}, escreve…`;$("ansBtn").textContent=S.phase==="steal"?"Roubar!":"Responder"}
+  $("hostBar").hidden=!host||done;
+  if(host&&!done){$("hostBar").innerHTML=S.phase==="pick"?`<span class="lbl">Quem joga?</span>${S.players.map((p,i)=>`<button class="btn" type="button" data-ctrl="${i}">${esc(p.name)}</button>`).join("")}`:
+    `<span class="lbl">${S.phase==="steal"?`Roubo: ${esc(S.players[1-S.ctrl].name)}`:`Joga: ${esc(S.players[S.ctrl].name)}`}</span><button class="btn xbtn" type="button" id="xBtn">✕ Errado</button><button class="btn ghost sm" type="button" id="undoBtn" ${S.hist.length?"":"disabled"}>↶ Desfazer</button>`}
+  $("nextBtn").hidden=!done;$("nextBtn").textContent=S.round>=S.rounds?"Ver resultado ▶":S.mode==="solo"?"Próxima pergunta ▶":"Próxima ronda ▶";
+  $("giveBtn").hidden=!(S.mode==="solo"&&!done);
+  $("hostNote").hidden=!host||done;
+}
+function flash(i){requestAnimationFrame(()=>{const el=document.querySelector(`.slot[data-i="${i}"]`);if(el){el.classList.remove("flip");void el.offsetWidth;el.classList.add("flip")}})}
+function bigX(n){const el=$("bigx");el.textContent="✕".repeat(Math.max(1,Math.min(3,n)));el.hidden=false;el.classList.remove("go");void el.offsetWidth;el.classList.add("go");clearTimeout(bigX.t);bigX.t=setTimeout(()=>el.hidden=true,900)}
+let tt=0;function toast(t){const el=$("toast");el.textContent=t;el.hidden=false;clearTimeout(tt);tt=setTimeout(()=>el.hidden=true,2200)}
+function focusInput(){if(window.matchMedia("(pointer:fine)").matches)setTimeout(()=>{const i=$("ans");if(i&&!$("ansForm").hidden)i.focus()},50)}
+/* ---------- ecrãs ---------- */
+const ov=$("ov");function showOv(h){ov.innerHTML=h;ov.hidden=false}
+function show(s){for(const id of ["menuScr","setupScr","gameScr"])$(id).hidden=id!==s+"Scr";keepAwake(s==="game")}
+let setupMode="duo";
+function setup(mode){setupMode=mode;const saved=(()=>{try{return JSON.parse(store.get("povo-nomes-"+mode)||"null")}catch(e){return null}})()||(mode==="duo"?["Jogador 1","Jogador 2"]:["Equipa Azul","Equipa Laranja"]);
+  $("setupTitle").textContent=mode==="duo"?"A dois":"Com apresentador";
+  $("setupInfo").innerHTML=mode==="duo"?"Passam o telemóvel um ao outro. Cada ronda começa com uma disputa: quem der a resposta mais popular joga a pergunta. Com 3 erros, o outro pode roubar os pontos.":"Um de vocês é o apresentador e fica com o telemóvel: vê as respostas, lê a pergunta e toca nas respostas que as equipas disserem em voz alta. <b>Não deixes os outros ver o ecrã!</b>";
+  $("n1").value=saved[0];$("n2").value=saved[1];$("n1lbl").textContent=mode==="duo"?"Jogador 1":"Equipa 1";$("n2lbl").textContent=mode==="duo"?"Jogador 2":"Equipa 2";show("setup")}
+$("mSolo").onclick=()=>{unlock();newGame("solo",["Tu"])};
+$("mDuo").onclick=()=>{unlock();setup("duo")};
+$("mHost").onclick=()=>{unlock();setup("host")};
+$("setupBack").onclick=()=>show("menu");
+$("setupGo").onclick=()=>{const n=[$("n1").value.trim()||($("n1lbl").textContent),$("n2").value.trim()||($("n2lbl").textContent)].map(x=>x.slice(0,16));store.set("povo-nomes-"+setupMode,JSON.stringify(n));newGame(setupMode,n)};
+$("ansForm").addEventListener("submit",e=>{e.preventDefault();const v=$("ans").value;$("ans").value="";submit(v);focusInput()});
+$("board").addEventListener("click",e=>{const li=e.target.closest(".slot");if(!li||!S)return;if(S.mode==="host")hostTap(+li.dataset.i)});
+$("hostBar").addEventListener("click",e=>{const c=e.target.closest("[data-ctrl]");if(c){snap();S.ctrl=+c.dataset.ctrl;S.phase="play";say(`${S.players[S.ctrl].name} joga. Toca nas respostas certas ou em ✕.`);sfx("round");render();return}
+  if(e.target.closest("#xBtn"))hostX();else if(e.target.closest("#undoBtn"))undo()});
+$("nextBtn").onclick=()=>{nextRound()};
+$("giveBtn").onclick=()=>{if(!S||S.phase==="done")return;say("Desististe desta pergunta.");finishQ();render()};
+$("quitBtn").onclick=()=>{if(!S||S.phase==="over"){show("menu");return}showOv(`<div class="panel"><h2>Sair do jogo?</h2><p>Perdes os pontos desta partida.</p><button class="btn" type="button" data-a="menu">Sair</button><button class="btn ghost" type="button" data-a="close">Continuar a jogar</button></div>`)};
+ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a;ov.hidden=true;
+  if(a==="yes"&&pending){const p=pending;pending=null;hit(p.i,p.text)}else if(a==="no"&&pending){const p=pending;pending=null;miss(p.text)}
+  else if(a==="again"){newGame(S.mode,S.players.map(p=>p.name))}else if(a==="menu"){S=null;show("menu");menuInfo()}
+  focusInput()});
+function menuInfo(){const r=+(store.get("povo-rec")||0);$("mRec").textContent=r?`Recorde a solo: ${r} pontos`:"";$("mCount").textContent=BANK.length}
+$("rulesBtn").onclick=()=>showOv(`<div class="panel rules"><h2>Como se joga</h2><ol><li>Cada pergunta tem as respostas mais populares, com pontos: quanto mais gente as daria, mais valem.</li><li>Tens <b>3 erros</b> por pergunta.</li><li><b>A dois:</b> a disputa decide quem joga; se esse jogador fizer 3 erros, o outro pode <b>roubar</b> os pontos com uma só resposta.</li><li>As rondas 3 e 4 valem a dobrar e a triplicar.</li></ol><p class="note">Os pontos são estimativas nossas do que o povo diria, não vêm de um inquérito real.</p><button class="btn" type="button" data-a="close">Percebi</button></div>`);
+/* ---------- som ---------- */
+let AC=null,muted=store.get("pp-mute")==="1";
+function unlock(){try{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=="running")AC.resume()}catch(e){}}
+function tone(f,d,o={}){if(muted||!AC||AC.state!=="running")return;const t=AC.currentTime+(o.at||0),os=AC.createOscillator(),g=AC.createGain();os.type=o.type||"triangle";os.frequency.setValueAtTime(f,t);if(o.f2)os.frequency.exponentialRampToValueAtTime(o.f2,t+d);g.gain.setValueAtTime(o.v||.05,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);os.connect(g).connect(AC.destination);os.start(t);os.stop(t+d+.02)}
+const SFX={ding:()=>{tone(988,.12,{type:"square",v:.04});tone(1319,.25,{type:"square",v:.04,at:.1})},x:()=>{tone(130,.45,{type:"sawtooth",v:.08});tone(98,.45,{type:"square",v:.05})},dup:()=>tone(440,.12),
+  round:()=>[523,659,784].forEach((f,i)=>tone(f,.12,{at:i*.09,type:"square",v:.035})),win:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.15,{at:i*.1,type:"square",v:.04}))};
+const sfx=k=>{unlock();try{SFX[k]()}catch(e){}};
+const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
+function setMute(m){muted=m;store.set("pp-mute",m?"1":"0");$("mute").textContent=m?"🔇":"🔊";$("mute").setAttribute("aria-pressed",String(!m))}
+function setTheme(t,sv){if(t==="light")document.documentElement.dataset.ppTheme="light";else delete document.documentElement.dataset.ppTheme;if(sv)store.set("pp-tema",t);const tb=$("themeBtn");tb.textContent=t==="light"?"☾":"☀";tb.title=t==="light"?"Tema escuro":"Tema claro"}
+let WL=null;
+async function keepAwake(on){try{if(on&&!WL&&navigator.wakeLock&&!document.hidden){WL=await navigator.wakeLock.request("screen");WL.addEventListener("release",()=>{WL=null})}else if(!on&&WL){const w=WL;WL=null;await w.release()}}catch(e){}}
+$("mute").addEventListener("click",()=>{setMute(!muted);unlock()});
+$("themeBtn").addEventListener("click",()=>setTheme(document.documentElement.dataset.ppTheme==="light"?"dark":"light",true));
+setTheme(document.documentElement.dataset.ppTheme==="light"?"light":"dark");setMute(muted);
+show("menu");menuInfo();
+
+</script>
+<script>/* ===== Ecrã completo (menu e todos os jogos) =====
+   O navegador sai do ecrã completo sempre que muda de página. Para não sair ao andar entre jogos,
+   quando se está em ecrã completo os links do site abrem por cima, numa moldura (iframe) que ocupa o ecrã todo:
+   a página de fora nunca muda e o ecrã completo mantém-se. O endereço e o botão "voltar" continuam a funcionar.
+   A escolha fica guardada; se mesmo assim se mudar de página, volta a entrar no primeiro toque. */
+(function(){
+  const TOP=(()=>{try{return window.top!==window&&window.top.JFS&&window.top.JFS.shell?window.top:null}catch(e){return null}})();
+  const D=TOP?TOP.document:document,de=D.documentElement;
+  const can=!!(D.fullscreenEnabled||D.webkitFullscreenEnabled);
+  const isFs=()=>!!(D.fullscreenElement||D.webkitFullscreenElement);
+  const get=()=>{try{return localStorage.getItem("pp-fs")==="1"}catch(e){return false}};
+  const set=v=>{try{localStorage.setItem("pp-fs",v?"1":"0")}catch(e){}};
+  const enter=()=>{try{const p=(de.requestFullscreen||de.webkitRequestFullscreen).call(de,{navigationUI:"hide"});if(p&&p.catch)return p.catch(()=>{});return Promise.resolve()}catch(e){return Promise.resolve()}};
+  const leave=()=>{try{if(!isFs())return;const p=(D.exitFullscreen||D.webkitExitFullscreen).call(D);if(p&&p.catch)p.catch(()=>{})}catch(e){}};
+  const JFS={can,isFs,wanted:get,enter,leave,framed:!!TOP};
+  window.JFS=JFS;
+  /* rodar o ecrã: dentro da moldura tem de ser a página de fora a pedir */
+  JFS.lockOr=o=>{const sc=(TOP||window).screen;return sc.orientation&&sc.orientation.lock?sc.orientation.lock(o):Promise.reject()};
+  JFS.unlockOr=()=>{try{const sc=(TOP||window).screen;sc.orientation&&sc.orientation.unlock&&sc.orientation.unlock()}catch(e){}};
+  /* ir para o menu (passa pela moldura se for caso disso) */
+  JFS.home=()=>{const a=document.createElement("a");a.href=new URL("../",location.href).href;a.style.display="none";document.body.appendChild(a);a.click();a.remove()};
+
+  /* ---- links do site ---- */
+  const sameSite=a=>{
+    if(!a||a.target&&a.target!=="_self"||a.hasAttribute("download"))return null;
+    let u;try{u=new URL(a.href,location.href)}catch(e){return null}
+    if(u.origin!==location.origin)return null;
+    if(u.href.split("#")[0]===location.href.split("#")[0])return null; /* só muda o # */
+    return u.href;
+  };
+  if(TOP){
+    /* dentro da moldura: os links vão para a página de fora tratar */
+    addEventListener("click",e=>{if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey)return;const a=e.target.closest&&e.target.closest("a[href]");const h=sameSite(a);if(!h)return;e.preventDefault();TOP.JFS.go(h)},false);
+  }else{
+    JFS.shell=true;
+    const HOME=location.href.split("#")[0],baseTitle=document.title;let fr=null,bk=null,syncT=0;
+    /* a zona da câmara e da barra de baixo fica com a mesma cor e padrão do jogo que está aberto */
+    const meta=document.querySelector('meta[name="theme-color"]');
+    const sync=()=>{try{const d=fr.contentDocument;if(!d||!d.body)return;const pl=d.getElementById("play");const el=pl&&!pl.hidden?pl:d.body;const cs=getComputedStyle(el);let bg=cs.backgroundColor;if(el===d.body&&(bg==="rgba(0, 0, 0, 0)"||bg==="transparent"))bg=getComputedStyle(d.documentElement).backgroundColor;
+      bk.style.backgroundColor=bg;bk.style.backgroundImage=cs.backgroundImage;bk.style.backgroundSize=cs.backgroundSize;if(meta)meta.content=bg}catch(e){}};
+    const close=()=>{if(!fr)return;clearInterval(syncT);fr.remove();fr=null;if(bk){bk.remove();bk=null}document.documentElement.style.overflow="";document.title=baseTitle};
+    const show=href=>{
+      if(href.split("#")[0]===HOME){close();return}
+      if(!fr){
+        fr=document.createElement("iframe");fr.id="jfsFrame";fr.title="Jogo";
+        fr.allow="fullscreen; web-share; clipboard-write; accelerometer; gyroscope; autoplay; screen-wake-lock";fr.setAttribute("allowfullscreen","");
+        /* dentro de uma moldura o env(safe-area-inset-*) vale 0, por isso é a moldura que fica fora da câmara e dos cantos */fr.style.cssText="position:absolute;top:env(safe-area-inset-top,0px);right:env(safe-area-inset-right,0px);bottom:env(safe-area-inset-bottom,0px);left:env(safe-area-inset-left,0px);width:calc(100% - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));height:calc(100% - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));border:0;background:var(--bg,#f4eee3)";bk=document.createElement("div");bk.style.cssText="position:fixed;inset:0;z-index:2147483000;background:var(--bg,#f4eee3)";document.body.appendChild(bk);
+        fr.src=href;bk.appendChild(fr);document.documentElement.style.overflow="hidden";
+        fr.addEventListener("load",()=>{try{document.title=fr.contentDocument.title}catch(e){}sync()});syncT=setInterval(sync,300);
+      }else{try{fr.contentWindow.location.replace(href)}catch(e){fr.src=href}}
+    };
+    JFS.go=href=>{
+      const st=history.state&&history.state.jf?history.state:null;
+      if(href.split("#")[0]===HOME){if(st&&st.i>0)history.go(-st.i);else close();return}
+      const i=(st?st.i:0)+1;
+      history.pushState({jf:href,i},"",href);show(href);
+    };
+    addEventListener("popstate",e=>{const s=e.state;if(s&&s.jf)show(s.jf);else close()});
+    if(history.state&&history.state.jf)history.replaceState(null,"",HOME);
+    /* jogo aberto diretamente (atalho, link de convite): o botão "voltar" do telemóvel leva ao menu em vez de sair do site */
+    if(!document.querySelector("nav.games")&&document.querySelector('a[href="../"]')){
+      const HUB=new URL("../",location.href).href,ref=(document.referrer||"").split("#")[0];
+      if(ref!==HUB&&!(history.state&&history.state.jg)){const here=location.href;try{history.replaceState({jhub:1},"",HUB);history.pushState({jg:1},"",here)}catch(e){}}
+      addEventListener("popstate",e=>{if(e.state&&e.state.jhub)location.replace(HUB)});
+    }
+    /* em ecrã completo, os links do site abrem na moldura */
+    addEventListener("click",e=>{if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey)return;if(!isFs()&&!fr&&!get())return;const a=e.target.closest&&e.target.closest("a[href]");const h=sameSite(a);if(!h)return;e.preventDefault();JFS.go(h)},false);
+  }
+  if(!can)return;
+
+  /* ---- botão ---- */
+  const IN='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg>';
+  const OUT='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"/></svg>';
+  let btn=document.getElementById("fsBtn");
+  if(btn){const c=btn.cloneNode(false);c.removeAttribute("aria-pressed");btn.replaceWith(c);btn=c} /* a Panela tinha o seu; passa a usar este */
+  else{
+    const tools=document.querySelector("header .tools");if(!tools)return;
+    btn=document.createElement("button");btn.className="btn ghost sm ico";btn.id="fsBtn";btn.type="button";
+    const tb=document.getElementById("themeBtn");tools.insertBefore(btn,tb||null);
+  }
+  const st=document.createElement("style");
+  st.textContent="#fsBtn{display:inline-grid;place-items:center}#fsBtn[hidden]{display:none}#fsBtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;display:block}";
+  document.head.appendChild(st);
+  const upd=()=>{const f=isFs();btn.innerHTML=f?OUT:IN;btn.title=f?"Sair do ecrã completo":"Ecrã completo";btn.setAttribute("aria-label",btn.title);if(window.dispatchEvent)setTimeout(()=>dispatchEvent(new Event("resize")),250)};
+  upd();D.addEventListener("fullscreenchange",upd);D.addEventListener("webkitfullscreenchange",upd);
+  btn.hidden=false;
+  btn.addEventListener("click",()=>{const f=isFs();set(!f);f?leave():enter()});
+  if(TOP)return;
+  /* guardar a escolha */
+  let leaving=false;addEventListener("pagehide",()=>{leaving=true});
+  const onChange=()=>{if(!isFs()&&!leaving&&document.visibilityState==="visible")set(false)};
+  document.addEventListener("fullscreenchange",onChange);document.addEventListener("webkitfullscreenchange",onChange);
+  /* se mesmo assim mudou de página: volta a entrar no primeiro toque */
+  if(get()&&!isFs()){
+    const off=()=>{removeEventListener("click",once,true);removeEventListener("touchend",once,true)};
+    const once=e=>{if(e.target&&e.target.closest&&e.target.closest("#fsBtn"))return;off();if(!isFs())enter()};
+    addEventListener("click",once,true);addEventListener("touchend",once,true);
+  }
+})();
+</script><script>if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("../sw.js",{scope:"../"}).catch(()=>{}))</script></body>
+</html>

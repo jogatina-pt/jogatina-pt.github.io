@@ -179,6 +179,18 @@
      "type": "image/png"
     }
    ]
+  },
+  {
+   "name": "Diz o Povo",
+   "short_name": "Diz o Povo",
+   "url": "povo/",
+   "icons": [
+    {
+     "src": "povo/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
   }
  ]
 }
