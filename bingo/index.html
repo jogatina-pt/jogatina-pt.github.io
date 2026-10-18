@@ -194,6 +194,7 @@ input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shado
 .cboard span{aspect-ratio:1;display:grid;place-items:center;border:1.5px solid var(--line);border-radius:6px;font-weight:800;font-size:clamp(11px,3.4vw,16px);color:var(--muted)}
 .cboard span.out{background:#d23a6e;color:#fff;border-color:#151515}
 .cboard span.last{background:#ffd23f;color:#151515}
+.bn.no{animation:shake .35s}@keyframes shake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
 /* ===== Estilo banda desenhada (comum a todos os jogos) ===== */
 @font-face{font-family:"Bangers";font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/bangers.woff2) format("woff2")}
 :root{--display:"Bangers","Bowlby One",Impact,sans-serif;--stroke:#151515;--pop:#ffd23f;--pop-ink:#151515;
@@ -311,7 +312,7 @@ input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
     <p class="winners" id="winners"></p>
     <div class="claims"><button class="btn claim" id="bLinha" type="button">Linha!</button><button class="btn claim bingo" id="bBingo" type="button">BINGO!</button></div>
     <div class="cards" id="cards"></div>
-    <div class="tools2"><button class="btn ghost sm" id="autoBtn" type="button"></button><button class="btn ghost sm voiceBtn" type="button" aria-pressed="true">🗣️ Voz</button><button class="btn ghost sm" id="pauseBtn" type="button" hidden>⏸ Pausa</button></div>
+    <div class="tools2"><button class="btn ghost sm voiceBtn" type="button" aria-pressed="true">🗣️ Voz</button><button class="btn ghost sm" id="pauseBtn" type="button" hidden>⏸ Pausa</button></div>
     <ul class="chips" id="chips"></ul>
     <div class="choices" id="endBox" hidden></div>
     <span id="gTimer" hidden></span>
@@ -824,17 +825,17 @@ function bgMsg(seat,d){
   if(i===0&&d.t==="lobby"){if(ROOM.code){bgStop();ROOM.backToLobby()}else leaveRoom();return}
 }
 /* ---------- opções ---------- */
-function cleanOpts(o){o=o||{};return{cards:["1","2","3"].includes(String(o.cards))?String(o.cards):"2",speed:["lento","normal","rapido"].includes(o.speed)?o.speed:"normal"}}
+function cleanOpts(o){o=o||{};return{cards:["1","2","3"].includes(String(o.cards))?String(o.cards):"2",speed:"lento"}}
 function segHTML(o,k,items,attr,dis){return`<div class="seg" role="group">${items.map(([v,l])=>`<button type="button" class="${String(o[k])===String(v)?"on":""}" ${attr}="${k}" data-v="${v}" ${dis?"disabled":""} aria-pressed="${String(o[k])===String(v)}">${l}</button>`).join("")}</div>`}
 function renderOpts(el,o,host){
   o=cleanOpts(o);
   el.innerHTML=`<div class="optrow"><span class="eyebrow">Cartões por jogador</span>${segHTML(o,"cards",[["1","1"],["2","2"],["3","3"]],"data-k",!host)}</div>
-    <div class="optrow"><span class="eyebrow">Velocidade das bolas</span>${segHTML(o,"speed",[["lento","Devagar"],["normal","Normal"],["rapido","Rápido"]],"data-k",!host)}</div>`;
+    <p class="note">As bolas saem devagar e cada um marca os números à mão.</p>`;
   if(host)el.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const n=Object.assign({},o);n[b.dataset.k]=b.dataset.v;ROOM.opts=cleanOpts(n);lobbyBroadcast()});
 }
 /* ---------- contra o computador ---------- */
-const LO={bots:store.get("bg-bots")||"3",cards:store.get("bg-cards")||"2",speed:store.get("bg-speed")||"normal"};
-function renderLocal(){$("localOpts").innerHTML=`<div class="optrow"><span class="eyebrow">Adversários</span>${segHTML(LO,"bots",[["1","1"],["3","3"],["6","6"]],"data-lk")}</div><div class="optrow"><span class="eyebrow">Os teus cartões</span>${segHTML(LO,"cards",[["1","1"],["2","2"],["3","3"]],"data-lk")}</div><div class="optrow"><span class="eyebrow">Velocidade</span>${segHTML(LO,"speed",[["lento","Devagar"],["normal","Normal"],["rapido","Rápido"]],"data-lk")}</div>`}
+const LO={bots:store.get("bg-bots")||"3",cards:store.get("bg-cards")||"2",speed:"lento"};
+function renderLocal(){$("localOpts").innerHTML=`<div class="optrow"><span class="eyebrow">Adversários</span>${segHTML(LO,"bots",[["1","1"],["3","3"],["6","6"]],"data-lk")}</div><div class="optrow"><span class="eyebrow">Os teus cartões</span>${segHTML(LO,"cards",[["1","1"],["2","2"],["3","3"]],"data-lk")}</div>`}
 $("localOpts").addEventListener("click",e=>{const b=e.target.closest("[data-lk]");if(!b)return;LO[b.dataset.lk]=b.dataset.v;store.set("bg-"+b.dataset.lk,b.dataset.v);renderLocal()});
 $("localBtn").addEventListener("click",()=>{
   unlockAudio();speakUnlock();const name=cleanName($("myName").value)||"Tu";store.set("pp-name",name);
@@ -847,12 +848,17 @@ $("localBtn").addEventListener("click",()=>{
 let voiceOn=store.get("bg-voz")!=="0",PTV=null;
 function pickVoice(){try{const vs=speechSynthesis.getVoices();PTV=vs.find(v=>/pt[-_]PT/i.test(v.lang))||vs.find(v=>/^pt/i.test(v.lang))||null}catch(e){}}
 try{speechSynthesis.onvoiceschanged=pickVoice;pickVoice()}catch(e){}
+const VZ={};let vzBad=false;
+function clip(k){if(!AC||vzBad)return Promise.reject();if(!VZ[k])VZ[k]=fetch("voz/"+k+".mp3").then(r=>{if(!r.ok)throw 0;return r.arrayBuffer()}).then(b=>new Promise((res,rej)=>AC.decodeAudioData(b,res,rej)));return VZ[k]}
+function preloadVoice(){if(!AC)return;let i=1;const next=()=>{if(i>90)return;clip(String(i++)).catch(()=>{}).finally(()=>setTimeout(next,40))};clip("linha").catch(()=>{});clip("bingo").catch(()=>{});next()}
+let curSrc=null;
+function playClip(k,fb){if(!voiceOn||muted)return;unlockAudio();clip(k).then(buf=>{try{if(curSrc)curSrc.stop()}catch(e){}const s=AC.createBufferSource(),g=AC.createGain();g.gain.value=1.1;s.buffer=buf;s.connect(g).connect(AC.destination);s.start();curSrc=s}).catch(()=>say(fb))}
 function say(t){if(!voiceOn||muted)return;try{const u=new SpeechSynthesisUtterance(String(t));u.lang="pt-PT";if(PTV)u.voice=PTV;u.rate=.95;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
-function speakUnlock(){try{const u=new SpeechSynthesisUtterance(" ");u.volume=0;speechSynthesis.speak(u)}catch(e){}}
+function speakUnlock(){setTimeout(preloadVoice,300);try{const u=new SpeechSynthesisUtterance(" ");u.volume=0;speechSynthesis.speak(u)}catch(e){}}
 function setVoice(on){voiceOn=on;store.set("bg-voz",on?"1":"0");document.querySelectorAll(".voiceBtn").forEach(b=>{b.textContent=on?"🗣️ Voz":"🤐 Sem voz";b.setAttribute("aria-pressed",String(on))})}
-document.addEventListener("click",e=>{if(e.target.closest(".voiceBtn")){setVoice(!voiceOn);speakUnlock();if(voiceOn)say("Voz ligada")}});
+document.addEventListener("click",e=>{if(e.target.closest(".voiceBtn")){setVoice(!voiceOn);speakUnlock();if(voiceOn)playClip("comecar","Voz ligada")}});
 /* ---------- ecrã do jogador ---------- */
-const UI={v:null,marks:new Set(),auto:store.get("bg-auto")!=="0",gid:null};
+const UI={v:null,marks:new Set(),gid:null};
 function bgClient(d){
   if(d.t==="react"){bubble(d.from,d.r);return}
   if(d.t==="err"){flash(d.msg);playSfx("lie");return}
@@ -865,16 +871,16 @@ function render(v){
   const prev=UI.v;UI.v=v;
   if(UI.gid!==v.gid){UI.gid=v.gid;UI.marks.clear()}
   const set=new Set(v.drawn),last=v.drawn[v.drawn.length-1];
-  if(UI.auto)v.drawn.forEach(n=>UI.marks.add(n));
   const newBall=last&&(!prev||prev.gid!==v.gid||prev.drawn.length!==v.drawn.length);
   $("ball").innerHTML=last?`<span class="bnum" style="--bc:${ballCol(last)}">${last}</span>`:`<span class="bnum wait">?</span>`;
-  if(newBall){$("ball").firstChild.classList.add("pop");say(last);playSfx("send")}
+  if(newBall){$("ball").firstChild.classList.add("pop");playClip(String(last),last)}
   $("ballN").textContent=`${v.drawn.length} de 90`;
   $("prevBalls").innerHTML=v.drawn.slice(-6,-1).reverse().map(n=>`<span style="--bc:${ballCol(n)}">${n}</span>`).join("");
   $("phase").innerHTML=v.phase==="over"?"Fim do jogo":v.phase==="linha"?"A jogar para a <b>LINHA</b>":"A jogar para o <b>BINGO</b>";
   /* cartões */
-  $("cards").innerHTML=v.cards.map((card,ci)=>{const line=card.some(r=>r.filter(Boolean).every(n=>set.has(n))),miss=card.flat().filter(n=>n&&!set.has(n)).length;
-    return`<div class="bcard ${miss===0?"full":line?"hasline":""}"><div class="bch"><span>Cartão ${ci+1}</span><span>${miss===0?"Completo!":miss===1?"Falta 1!":`Faltam ${miss}`}</span></div><div class="bgrid">${card.map(row=>row.map(n=>n?`<button type="button" class="bn ${UI.marks.has(n)?"mk":""} ${set.has(n)?"out":""} ${n===last?"last":""}" data-n="${n}">${n}</button>`:`<span class="bn empty"></span>`).join("")).join("")}</div></div>`}).join("");
+  const mk=n=>UI.marks.has(n)&&set.has(n);
+  $("cards").innerHTML=v.cards.map((card,ci)=>{const marked=card.flat().filter(n=>n&&mk(n)).length,line=card.some(r=>r.filter(Boolean).every(mk));
+    return`<div class="bcard ${marked===15?"full":line?"hasline":""}"><div class="bch"><span>Cartão ${ci+1}</span><span>${marked} de 15 marcados</span></div><div class="bgrid">${card.map(row=>row.map(n=>n?`<button type="button" class="bn ${mk(n)?"mk":""}" data-n="${n}">${n}</button>`:`<span class="bn empty"></span>`).join("")).join("")}</div></div>`}).join("");
   /* quem ganhou */
   const nm=i=>i===v.me?"Tu":esc(v.names[i]);
   const w=[];if(v.win.linha.length)w.push(`Linha: ${v.win.linha.map(nm).join(" e ")}`);if(v.win.bingo.length)w.push(`Bingo: ${v.win.bingo.map(nm).join(" e ")}`);
@@ -882,27 +888,26 @@ function render(v){
   $("chips").innerHTML=v.names.map((n,i)=>i===v.me?"":`<li><span class="cn">${esc(n)}</span><span class="cc">${v.near[i]===0?"🎉":v.near[i]<=2?`🔥 falta${v.near[i]>1?"m":""} ${v.near[i]}`:""}</span>${v.wins[i]?`<em>🏆${v.wins[i]}</em>`:""}</li>`).join("");
   $("bLinha").disabled=v.phase!=="linha";$("bBingo").disabled=v.phase==="over";
   $("pauseBtn").hidden=!v.host||v.phase==="over";$("pauseBtn").textContent=v.paused?"▶ Continuar":"⏸ Pausa";
-  $("autoBtn").textContent=UI.auto?"✔ Marcar sozinho":"✋ Marcar à mão";
   /* anúncios */
   const pl=prev&&prev.gid===v.gid?prev.win:{linha:[],bingo:[]};
-  if(v.win.linha.length>pl.linha.length){const ws=v.win.linha;announce("LINHA!",ws.map(nm).join(" e "),ws.includes(v.me));say("Linha! "+ws.map(i=>v.names[i]).join(" e "))}
-  if(v.win.bingo.length>pl.bingo.length){const ws=v.win.bingo;announce("BINGO!",ws.map(nm).join(" e "),ws.includes(v.me));say("Bingo! "+ws.map(i=>v.names[i]).join(" e "))}
+  if(v.win.linha.length>pl.linha.length){const ws=v.win.linha;announce("LINHA!",ws.map(nm).join(" e "),ws.includes(v.me));setTimeout(()=>playClip("linha","Linha!"),250)}
+  if(v.win.bingo.length>pl.bingo.length){const ws=v.win.bingo;announce("BINGO!",ws.map(nm).join(" e "),ws.includes(v.me));setTimeout(()=>playClip("bingo","Bingo!"),250)}
   $("endBox").hidden=v.phase!=="over";
   if(v.phase==="over"){$("endBox").innerHTML=v.host?`<button class="btn" type="button" data-bg="again">Jogar outra vez</button><button class="btn ghost" type="button" data-bg="lobby">${ROOM.code?"Voltar à sala":"Sair"}</button>`:`<p class="wait">À espera de ${esc(v.names[0])}…</p>`}
   if(v.left&&v.phase!=="over"&&!v.paused){const bar=$("tbar");bar.style.transition="none";bar.style.width="100%";void bar.offsetWidth;bar.style.transition=`width ${v.left}ms linear`;bar.style.width="0%"}
 }
 function announce(big,who,me){const el=$("bigmsg");el.innerHTML=`<b>${big}</b><span>${who}</span>`;el.className="bigmsg go"+(me?" me":"");el.hidden=false;clearTimeout(el._t);el._t=setTimeout(()=>el.hidden=true,2800);playSfx(me?"win":"truth");try{navigator.vibrate&&navigator.vibrate(me?[80,60,200]:60)}catch(e){}}
-$("cards").addEventListener("click",e=>{const b=e.target.closest("[data-n]");if(!b)return;const n=+b.dataset.n;if(UI.marks.has(n))UI.marks.delete(n);else UI.marks.add(n);b.classList.toggle("mk",UI.marks.has(n))});
+$("cards").addEventListener("click",e=>{const b=e.target.closest("[data-n]");if(!b||!UI.v)return;const n=+b.dataset.n;
+  if(UI.marks.has(n))UI.marks.delete(n);else{if(!UI.v.drawn.includes(n)){b.classList.remove("no");void b.offsetWidth;b.classList.add("no");flash(`O ${n} ainda não saiu.`);return}UI.marks.add(n);playSfx("send")}render(UI.v)});
 $("bLinha").onclick=()=>{unlockAudio();ROOM.send({t:"claim",k:"linha"})};
 $("bBingo").onclick=()=>{unlockAudio();ROOM.send({t:"claim",k:"bingo"})};
 $("pauseBtn").onclick=()=>ROOM.send({t:"pause"});
-$("autoBtn").onclick=()=>{UI.auto=!UI.auto;store.set("bg-auto",UI.auto?"1":"0");if(UI.v)render(UI.v)};
 $("endBox").addEventListener("click",e=>{const b=e.target.closest("[data-bg]");if(b)ROOM.send({t:b.dataset.bg})});
 /* ---------- cantar números (cartões em papel) ---------- */
-const CL={pool:[],drawn:[],t:null,on:false,speed:store.get("bg-cspeed")||"normal"};
+const CL={pool:[],drawn:[],t:null,on:false,speed:store.get("bg-cspeed")==="manual"?"manual":"lento"};
 function callerOpen(){unlockAudio();speakUnlock();showScreen("caller");callerReset(false);renderCaller()}
 function callerReset(ask){if(ask&&CL.drawn.length&&!confirm("Começar um jogo novo? Os números que já saíram são apagados."))return;clearInterval(CL.t);CL.on=false;CL.pool=shuffle(Array.from({length:90},(_,i)=>i+1));CL.drawn=[];renderCaller()}
-function callerNext(){if(!CL.pool.length){callerToggle(false);return}const n=CL.pool.pop();CL.drawn.push(n);say(n);playSfx("send");renderCaller(true)}
+function callerNext(){if(!CL.pool.length){callerToggle(false);return}const n=CL.pool.pop();CL.drawn.push(n);playClip(String(n),n);renderCaller(true)}
 function callerToggle(on){CL.on=on;clearInterval(CL.t);if(on){callerNext();CL.t=setInterval(callerNext,SPEEDS[CL.speed])}renderCaller()}
 function renderCaller(pop){
   const last=CL.drawn[CL.drawn.length-1],set=new Set(CL.drawn);
@@ -911,7 +916,7 @@ function renderCaller(pop){
   $("cPrev").innerHTML=CL.drawn.slice(-8,-1).reverse().map(n=>`<span style="--bc:${ballCol(n)}">${n}</span>`).join("");
   $("cBoard").innerHTML=Array.from({length:90},(_,i)=>i+1).map(n=>`<span class="${set.has(n)?"out":""} ${n===last?"last":""}">${n}</span>`).join("");
   $("cGo").textContent=CL.on?"⏸ Pausa":CL.drawn.length?"▶ Continuar":"▶ Começar";
-  $("cSpeed").innerHTML=segHTML(CL,"speed",[["lento","Devagar"],["normal","Normal"],["rapido","Rápido"],["manual","À mão"]],"data-ck");
+  $("cSpeed").innerHTML=segHTML(CL,"speed",[["lento","Sozinho, devagar"],["manual","Uma a uma, quando eu tocar"]],"data-ck");
   $("cOne").hidden=CL.speed!=="manual";$("cGo").hidden=CL.speed==="manual";
 }
 $("callerBtn").onclick=callerOpen;
@@ -922,7 +927,7 @@ $("cBack").onclick=()=>{callerToggle(false);showScreen("setup")};
 $("cSpeed").addEventListener("click",e=>{const b=e.target.closest("[data-ck]");if(!b)return;CL.speed=b.dataset.v;store.set("bg-cspeed",CL.speed);if(CL.on&&CL.speed!=="manual"){clearInterval(CL.t);CL.t=setInterval(callerNext,SPEEDS[CL.speed])}if(CL.speed==="manual"){clearInterval(CL.t);CL.on=false}renderCaller()});
 const RULES=`<ul>
   <li>Há <b>90 bolas</b>. Cada cartão tem 3 linhas e 15 números (5 em cada linha).</li>
-  <li>Quando sai um número que está no teu cartão, fica marcado (ou marca-o tu, se escolheres «marcar à mão»).</li>
+  <li>Quando sai um número que está no teu cartão, <b>toca nele para o marcares</b>. Atenção: só podes marcar números que já saíram.</li>
   <li>Primeiro joga-se para a <b>LINHA</b>: quando tiveres uma linha completa, carrega em <b>Linha!</b> antes que alguém cante primeiro.</li>
   <li>Depois joga-se para o <b>BINGO</b>: o cartão todo. Quem cantar primeiro ganha. Se dois cantarem na mesma bola, ganham os dois.</li>
   <li>Os jogadores do computador também cantam. Se te esqueceres de carregar no botão, podem passar-te à frente!</li>
