@@ -203,6 +203,18 @@
      "type": "image/png"
     }
    ]
+  },
+  {
+   "name": "Bingo",
+   "short_name": "Bingo",
+   "url": "bingo/",
+   "icons": [
+    {
+     "src": "bingo/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
   }
  ]
 }
