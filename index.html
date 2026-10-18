@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="pt-PT">
 <head>
+<script>try{if(localStorage.getItem("pp-estilo")==="moderno")document.documentElement.dataset.estilo="moderno"}catch(e){}</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Jogatina</title>
@@ -174,6 +175,12 @@ header.top{flex:none}
 .game.voa{--gc:#9fdcff}.game.poker{--gc:#f2c48a}
 .game.poker{grid-column:auto}
 :root:not([data-pp-theme="light"]) .game{filter:saturate(.9) brightness(.95)}
+.filters{flex:none;display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
+.filters button{border:2.5px solid var(--stroke);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 12px;font-weight:800;font-size:13px;cursor:pointer;box-shadow:2px 2px 0 var(--stroke)}
+.filters button.on{background:var(--accent);color:var(--accent-ink)}
+.game[hidden]{display:none!important}
+.estilo button{background:none;border:0;padding:0 3px;font:inherit;color:var(--muted);text-decoration:underline;cursor:pointer}
+.estilo button.on{color:var(--ink);font-weight:800;text-decoration:none}
 .dots{flex:none;display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;padding:0 16px}
 .dots button{width:10px;height:10px;border-radius:999px;border:2px solid var(--stroke);background:transparent;padding:0;transition:width .2s,background .2s;cursor:pointer}
 .dots button.on{background:var(--accent);width:26px}
@@ -216,7 +223,57 @@ header.top{flex:none}
 @media (prefers-reduced-motion:reduce){.hero .mascot *,.hero .mascot{animation-duration:.01s!important}}
 @media (prefers-reduced-motion:reduce){.game{transition:none}}
 </style>
-</head>
+<style>/* ===== Estilo "Moderno" (opcional): liso, cantos redondos, sombras suaves, sem contornos de banda desenhada.
+   Liga-se com <html data-estilo="moderno"> (escolhido no menu e guardado em pp-estilo). ===== */
+html[data-estilo="moderno"]{--display:"Figtree",system-ui,sans-serif;--stroke:transparent;--soft:0 10px 30px rgba(20,24,40,.12);--soft-sm:0 4px 14px rgba(20,24,40,.10);--hair:rgba(20,24,40,.08)}
+html[data-estilo="moderno"]:not([data-pp-theme="light"]){--soft:0 10px 30px rgba(0,0,0,.45);--soft-sm:0 4px 14px rgba(0,0,0,.35);--hair:rgba(255,255,255,.08)}
+html[data-estilo="moderno"] body{background-image:none!important;background:radial-gradient(120% 80% at 10% -10%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 60%),radial-gradient(90% 70% at 110% 110%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 60%),var(--bg)!important;background-attachment:fixed!important}
+html[data-estilo="moderno"] h1,html[data-estilo="moderno"] h2,html[data-estilo="moderno"] h3{font-family:"Figtree",system-ui,sans-serif!important;font-weight:900!important;letter-spacing:-.025em!important;-webkit-text-stroke:0!important;text-shadow:none!important}
+html[data-estilo="moderno"] .brand h1{background:linear-gradient(95deg,var(--ink,#151515) 20%,var(--accent,#e8731f));-webkit-background-clip:text;background-clip:text;color:transparent!important}
+html[data-estilo="moderno"] .brand h1 span{color:transparent!important}
+html[data-estilo="moderno"] .setup h2{letter-spacing:-.04em!important;line-height:.95}
+/* botões */
+html[data-estilo="moderno"] .btn{border:0!important;border-radius:999px!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800!important;letter-spacing:0!important;text-transform:none;box-shadow:0 8px 22px color-mix(in srgb,var(--accent) 35%,transparent)!important;background-image:linear-gradient(180deg,rgba(255,255,255,.18),transparent)}
+html[data-estilo="moderno"] .btn.ghost{background:color-mix(in srgb,var(--ink) 7%,transparent)!important;color:var(--ink)!important;box-shadow:none!important;background-image:none}
+html[data-estilo="moderno"] .btn.sm{box-shadow:none!important}
+html[data-estilo="moderno"] .btn:not(:disabled):active{transform:scale(.97)!important}
+/* caixas e listas */
+html[data-estilo="moderno"] :is(.mode,.roster li,.sheet,.qcard,.bcard,.wordcard,.mucard,.rstep,.board li,.opt,.sub,.wcard,.sent,.jbox,.yourturn,.outbox,.words p,.roles li,.others li,.tally li,.drink,.yn2 p,.rulebar,.vol li,.chips li,.seg button,.age,.foreheads li,.how,.deck,.history li,.wl li,.purse,.town,.resume,.raisebox,.panel,.box,.qrcard,.isheet .box,.lastans,.seat,.me,.log,.piles,.tip){border:1px solid var(--hair)!important;box-shadow:var(--soft-sm)!important;border-radius:18px}
+html[data-estilo="moderno"] .roster li.free{border:1.5px dashed var(--hair)!important;box-shadow:none!important}
+html[data-estilo="moderno"] :is(.chips li,.seg button,.vol li,.history li,.wl li,.filters button,.modeswitch a,.modeswitch span){border-radius:999px!important;box-shadow:none!important}
+html[data-estilo="moderno"] :is(.filters button,.modeswitch a,.modeswitch span){border:1px solid var(--hair)!important}
+html[data-estilo="moderno"] input{border:1.5px solid var(--hair)!important;box-shadow:none!important;border-radius:14px}
+html[data-estilo="moderno"] input:focus{border-color:var(--accent)!important;box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent)!important}
+html[data-estilo="moderno"] .lobby .code{-webkit-text-stroke:0!important;text-shadow:none!important;letter-spacing:.2em!important;font-family:ui-monospace,"SF Mono",Menlo,monospace!important;font-weight:800}
+html[data-estilo="moderno"] .alert{border:0!important;box-shadow:var(--soft)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;border-radius:16px}
+html[data-estilo="moderno"] .eyebrow{letter-spacing:.14em;opacity:.8}
+html[data-estilo="moderno"] .bubble-say{border:0!important;box-shadow:var(--soft)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:-.01em;border-radius:20px}
+html[data-estilo="moderno"] .bubble-say::after{border-top-color:#fff!important}
+html[data-estilo="moderno"] .mascot{filter:drop-shadow(0 10px 18px rgba(0,0,0,.18))!important}
+html[data-estilo="moderno"] .roomtag{border:1px solid var(--hair)!important;box-shadow:none!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:.04em}
+html[data-estilo="moderno"] .modal,html[data-estilo="moderno"] .qrwrap,html[data-estilo="moderno"] .ov,html[data-estilo="moderno"] .isheet{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+/* menu: cartões em vidro */
+html[data-estilo="moderno"] .game{border:0!important;border-radius:30px!important;box-shadow:0 18px 40px color-mix(in srgb,var(--gc) 45%,transparent),var(--soft-sm)!important;background:linear-gradient(160deg,color-mix(in srgb,var(--gc) 92%,#fff),var(--gc) 55%,color-mix(in srgb,var(--gc) 80%,#000))!important}
+html[data-estilo="moderno"] .game::before{display:none}
+html[data-estilo="moderno"] .game .pic{border:0!important;border-radius:22px;background:rgba(255,255,255,.38)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+html[data-estilo="moderno"] .game h3{text-shadow:none!important}
+html[data-estilo="moderno"] .game .tag{border:0!important;background:rgba(255,255,255,.72)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:0!important}
+html[data-estilo="moderno"] .game .play{font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:0!important;background:rgba(10,12,20,.88)!important;box-shadow:0 6px 16px rgba(0,0,0,.25)!important}
+html[data-estilo="moderno"] .dots button{border:0!important;background:color-mix(in srgb,var(--ink) 20%,transparent)}
+html[data-estilo="moderno"] .dots button.on{background:var(--accent)}
+html[data-estilo="moderno"] .filters button.on,html[data-estilo="moderno"] .modeswitch span{background:var(--ink)!important;color:var(--bg)!important}
+html[data-estilo="moderno"] .arrow{border:0!important;box-shadow:var(--soft)!important}
+/* poker */
+html[data-estilo="moderno"] .felt{outline:0!important;border:0!important;border-radius:32px!important;box-shadow:var(--soft),inset 0 0 0 10px rgba(0,0,0,.18),inset 0 0 60px rgba(0,0,0,.35)!important}
+html[data-estilo="moderno"] .card{border:0!important;box-shadow:0 4px 12px rgba(0,0,0,.3)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:900}
+html[data-estilo="moderno"] .seat{background:rgba(0,0,0,.22)!important;border:0!important;box-shadow:none!important}
+html[data-estilo="moderno"] .seat .act,html[data-estilo="moderno"] .seat .bet,html[data-estilo="moderno"] .seat .dl{border:0!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:0}
+html[data-estilo="moderno"] .town .go{border:0!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800}
+html[data-estilo="moderno"] .purse b,html[data-estilo="moderno"] .pot,html[data-estilo="moderno"] .me .info b,html[data-estilo="moderno"] .seat .ch{font-family:"Figtree",system-ui,sans-serif!important;font-weight:900!important;-webkit-text-stroke:0!important;text-shadow:none!important}
+/* cobrinha e voa voa: só a moldura */
+html[data-estilo="moderno"] .phone,html[data-estilo="moderno"] .stage{border:0!important;box-shadow:var(--soft)!important}
+html[data-estilo="moderno"] .key{border:0!important;box-shadow:0 3px 0 rgba(0,0,0,.35)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:900}
+</style></head>
 <body>
 <div class="wrap">
   <header class="top">
@@ -280,13 +337,14 @@ header.top{flex:none}
 </g>
 </g></svg>
   </section>
+  <div class="filters" id="filters" role="group" aria-label="Filtrar jogos"><button type="button" data-f="all" class="on">Todos</button><button type="button" data-f="online">🌐 Com amigos</button><button type="button" data-f="offline">📴 Sem internet</button></div>
   <div class="carousel"><button class="arrow l" type="button" id="prevG" aria-label="Jogo anterior">◀</button><button class="arrow r" type="button" id="nextG" aria-label="Jogo seguinte">▶</button>
   <nav class="games" id="games" aria-label="Jogos" tabindex="0">
-    <a class="game panela" href="panela/"><div class="pic" aria-hidden="true"><svg viewBox="0 0 48 44"><g stroke="#151515" stroke-width="2.4"><rect x="2" y="22" width="7" height="5" rx="2.5" fill="#8fa19c"/><rect x="39" y="22" width="7" height="5" rx="2.5" fill="#8fa19c"/><rect x="8" y="19" width="32" height="21" rx="5" fill="#dfe6e3"/><path d="M7 19q0-9 17-9t17 9z" fill="#8fa19c"/><rect x="21" y="5" width="6" height="5" rx="2" fill="#151515"/><rect x="32" y="5" width="4" height="6" rx="1.5" fill="#ffd23f"/></g><circle cx="18" cy="29" r="2.6" fill="#151515"/><circle cx="30" cy="29" r="2.6" fill="#151515"/><path d="M20 35q4 2.6 8 0" fill="none" stroke="#151515" stroke-width="2" stroke-linecap="round"/></svg></div><h3>Panela de Pressão</h3><p>Foge das panelas antes que rebentem!</p><div class="row"><span class="tag">2-6 · cartas</span><span class="play">Jogar ▶</span></div></a>
-    <a class="game peta" href="peta/"><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M6 6h34a5 5 0 0 1 5 5v15a5 5 0 0 1-5 5H20l-8 7v-7H6a5 5 0 0 1-5-5V11a5 5 0 0 1 5-5z" fill="#fff" stroke="#151515" stroke-width="2.4" stroke-linejoin="round"/><text x="23" y="24" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="15" fill="#151515">?!</text><path d="M34 20h24a4 4 0 0 1 4 4v11a4 4 0 0 1-4 4h-3v6l-7-6H34a4 4 0 0 1-4-4V24a4 4 0 0 1 4-4z" fill="#d23a6e" stroke="#151515" stroke-width="2.4" stroke-linejoin="round"/><circle cx="40" cy="30" r="2" fill="#fff"/><circle cx="46" cy="30" r="2" fill="#fff"/><circle cx="52" cy="30" r="2" fill="#fff"/></svg></div><h3>Peta</h3><p>Inventa mentiras e engana os amigos.</p><div class="row"><span class="tag">2-8 · bluff</span><span class="play">Jogar ▶</span></div></a>
-    <a class="game tasca" href="tasca/"><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="6" y="6" width="26" height="36" rx="4" fill="#1f2a28" stroke="#151515" stroke-width="2.4" transform="rotate(-8 19 24)"/><rect x="11" y="18" width="14" height="3" rx="1.5" fill="#fffaf1" transform="rotate(-8 19 24)"/><rect x="30" y="8" width="26" height="36" rx="4" fill="#fff" stroke="#151515" stroke-width="2.4" transform="rotate(9 43 26)"/><text x="44" y="32" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="12" fill="#4f7f23" transform="rotate(9 43 26)">AH!</text></svg></div><h3>Conversa de Tasca</h3><p>A resposta mais parva ganha.</p><div class="row"><span class="tag">3-8 · família/+18</span><span class="play">Jogar ▶</span></div></a>
-    <a class="game branco" href="branco/"><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="8" y="10" width="22" height="30" rx="4" fill="#2f5fb3" stroke="#151515" stroke-width="2.4" transform="rotate(-10 19 25)"/><rect x="21" y="5" width="22" height="30" rx="4" fill="#2f5fb3" stroke="#151515" stroke-width="2.4"/><rect x="34" y="10" width="22" height="30" rx="4" fill="#fff" stroke="#151515" stroke-width="2.4" transform="rotate(10 45 25)"/><text x="45" y="32" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="18" fill="#2f5fb3" transform="rotate(10 45 25)">?</text></svg></div><h3>Senhor Branco</h3><p>Descobre o impostor pelas pistas.</p><div class="row"><span class="tag">3-10 · dedução</span><span class="play">Jogar ▶</span></div></a>
-    <a class="game maisuma" href="maisuma/"><div class="pic" aria-hidden="true"><svg class="macaco-mini" viewBox="0 0 230 270" role="img" aria-label="Macaco de camisola às riscas a beber uma imperial">
+    <a class="game panela" href="panela/" data-m="online offline"><div class="pic" aria-hidden="true"><svg viewBox="0 0 48 44"><g stroke="#151515" stroke-width="2.4"><rect x="2" y="22" width="7" height="5" rx="2.5" fill="#8fa19c"/><rect x="39" y="22" width="7" height="5" rx="2.5" fill="#8fa19c"/><rect x="8" y="19" width="32" height="21" rx="5" fill="#dfe6e3"/><path d="M7 19q0-9 17-9t17 9z" fill="#8fa19c"/><rect x="21" y="5" width="6" height="5" rx="2" fill="#151515"/><rect x="32" y="5" width="4" height="6" rx="1.5" fill="#ffd23f"/></g><circle cx="18" cy="29" r="2.6" fill="#151515"/><circle cx="30" cy="29" r="2.6" fill="#151515"/><path d="M20 35q4 2.6 8 0" fill="none" stroke="#151515" stroke-width="2" stroke-linecap="round"/></svg></div><h3>Panela de Pressão</h3><p>Foge das panelas antes que rebentem!</p><div class="row"><span class="tag">2-6 · cartas</span><span class="play">Jogar ▶</span></div></a>
+    <a class="game peta" href="peta/" data-m="online"><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M6 6h34a5 5 0 0 1 5 5v15a5 5 0 0 1-5 5H20l-8 7v-7H6a5 5 0 0 1-5-5V11a5 5 0 0 1 5-5z" fill="#fff" stroke="#151515" stroke-width="2.4" stroke-linejoin="round"/><text x="23" y="24" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="15" fill="#151515">?!</text><path d="M34 20h24a4 4 0 0 1 4 4v11a4 4 0 0 1-4 4h-3v6l-7-6H34a4 4 0 0 1-4-4V24a4 4 0 0 1 4-4z" fill="#d23a6e" stroke="#151515" stroke-width="2.4" stroke-linejoin="round"/><circle cx="40" cy="30" r="2" fill="#fff"/><circle cx="46" cy="30" r="2" fill="#fff"/><circle cx="52" cy="30" r="2" fill="#fff"/></svg></div><h3>Peta</h3><p>Inventa mentiras e engana os amigos.</p><div class="row"><span class="tag">2-8 · bluff</span><span class="play">Jogar ▶</span></div></a>
+    <a class="game tasca" href="tasca/" data-m="online"><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="6" y="6" width="26" height="36" rx="4" fill="#1f2a28" stroke="#151515" stroke-width="2.4" transform="rotate(-8 19 24)"/><rect x="11" y="18" width="14" height="3" rx="1.5" fill="#fffaf1" transform="rotate(-8 19 24)"/><rect x="30" y="8" width="26" height="36" rx="4" fill="#fff" stroke="#151515" stroke-width="2.4" transform="rotate(9 43 26)"/><text x="44" y="32" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="12" fill="#4f7f23" transform="rotate(9 43 26)">AH!</text></svg></div><h3>Conversa de Tasca</h3><p>A resposta mais parva ganha.</p><div class="row"><span class="tag">3-8 · família/+18</span><span class="play">Jogar ▶</span></div></a>
+    <a class="game branco" href="branco/" data-m="online"><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="8" y="10" width="22" height="30" rx="4" fill="#2f5fb3" stroke="#151515" stroke-width="2.4" transform="rotate(-10 19 25)"/><rect x="21" y="5" width="22" height="30" rx="4" fill="#2f5fb3" stroke="#151515" stroke-width="2.4"/><rect x="34" y="10" width="22" height="30" rx="4" fill="#fff" stroke="#151515" stroke-width="2.4" transform="rotate(10 45 25)"/><text x="45" y="32" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="18" fill="#2f5fb3" transform="rotate(10 45 25)">?</text></svg></div><h3>Senhor Branco</h3><p>Descobre o impostor pelas pistas.</p><div class="row"><span class="tag">3-10 · dedução</span><span class="play">Jogar ▶</span></div></a>
+    <a class="game maisuma" href="maisuma/" data-m="online"><div class="pic" aria-hidden="true"><svg class="macaco-mini" viewBox="0 0 230 270" role="img" aria-label="Macaco de camisola às riscas a beber uma imperial">
 <defs><clipPath id="mcShirt2"><path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z"/></clipPath></defs>
 <g stroke="#151515" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
 <path d="M28 270C28 208 62 182 112 182C162 182 196 208 196 270Z" fill="#fffdf8"/>
@@ -316,13 +374,13 @@ header.top{flex:none}
 <path d="M176 100q4 6 0 14" fill="none" stroke="#fff3c4" stroke-width="3" opacity=".7"/>
 </g>
 </g></svg></div><h3>Mais Uma!</h3><p>Eu nunca, verdades e desafios.</p><div class="row"><span class="tag">2-12 · +18</span><span class="play">Jogar ▶</span></div></a>
-    <a class="game testa" href="testa/"><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M5 9l5 4M59 9l-5 4M3 25h6M61 25h-6" stroke="#151515" stroke-width="2.6" stroke-linecap="round"/><g transform="rotate(-12 32 25)"><rect x="12" y="11" width="40" height="27" rx="5" fill="#151515"/><rect x="16" y="14.5" width="32" height="20" rx="2" fill="#fff"/><text x="32" y="29.5" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="14" fill="#6d3fd6">GALO</text></g></svg></div><h3>Adivinha na Testa</h3><p>Adivinha o que és: pistas ou perguntas de sim ou não.</p><div class="row"><span class="tag">2+ · na testa</span><span class="play">Jogar ▶</span></div></a>
-    <a class="game cobra" href="cobra/"><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="3" y="3" width="58" height="42" rx="6" fill="#a8c27c" stroke="#151515" stroke-width="2.6"/><g fill="#22341a"><rect x="12" y="30" width="5" height="5"/><rect x="18" y="30" width="5" height="5"/><rect x="24" y="30" width="5" height="5"/><rect x="24" y="24" width="5" height="5"/><rect x="24" y="18" width="5" height="5"/><rect x="30" y="18" width="5" height="5"/><rect x="36" y="18" width="5" height="5"/><rect x="42" y="18" width="6" height="6"/><rect x="51" y="30" width="2" height="2"/><rect x="49" y="32" width="2" height="2"/><rect x="53" y="32" width="2" height="2"/><rect x="51" y="34" width="2" height="2"/></g><rect x="44" y="19.5" width="2" height="2" fill="#a8c27c"/></svg></div><h3>Cobrinha</h3><p>A dos telemóveis antigos. Bates o recorde?</p><div class="row"><span class="tag">a solo · arcada</span><span class="play">Jogar ▶</span></div></a>
-    <a class="game voa" href="voa/"><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="40" y="0" width="14" height="16" fill="#f7fbff" stroke="#151515" stroke-width="2.4"/><rect x="38" y="13" width="18" height="5" fill="#f2c94c" stroke="#151515" stroke-width="2.4"/><rect x="40" y="33" width="14" height="15" fill="#f7fbff" stroke="#151515" stroke-width="2.4"/><rect x="38" y="30" width="18" height="5" fill="#f2c94c" stroke="#151515" stroke-width="2.4"/><path d="M44 4l3 3-3 3-3-3zM44 38l3 3-3 3-3-3z" fill="#2a62c4"/><g transform="rotate(-14 20 26)"><circle cx="20" cy="27" r="10" fill="#6b3f22" stroke="#151515" stroke-width="2.4"/><ellipse cx="20" cy="30" rx="6" ry="4.5" fill="#e8b98a" stroke="#151515" stroke-width="1.8"/><circle cx="17" cy="24" r="1.6" fill="#151515"/><circle cx="23" cy="24" r="1.6" fill="#151515"/><path d="M12 17a8 5 0 0 1 16 0z" fill="#d23a6e" stroke="#151515" stroke-width="2"/><path d="M20 12v-3M13 8h14" stroke="#151515" stroke-width="2.4" stroke-linecap="round"/></g><path d="M3 34h6M1 40h8" stroke="#151515" stroke-width="2.2" stroke-linecap="round"/></svg></div><h3>Voa Voa</h3><p>Toca para voar. Passas quantos pilares?</p><div class="row"><span class="tag">a solo · arcada</span><span class="play">Jogar ▶</span></div></a>
-    <a class="game poker" href="poker/"><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><g stroke="#151515" stroke-width="2.4" stroke-linejoin="round"><rect x="26" y="14" width="20" height="28" rx="3" fill="#fffdf8" transform="rotate(14 36 28)"/><rect x="14" y="16" width="20" height="28" rx="3" fill="#fffdf8" transform="rotate(-10 24 30)"/><ellipse cx="32" cy="15" rx="26" ry="6" fill="#7a4a24"/><path d="M18 15q1-13 14-13q13 0 14 13z" fill="#7a4a24"/><path d="M19 11h26" stroke="#ffd23f" stroke-width="3.4"/></g><text x="21" y="36" font-family="Bangers, Impact, sans-serif" font-size="12" fill="#151515" transform="rotate(-10 24 30)">A♠</text><text x="34" y="36" font-family="Bangers, Impact, sans-serif" font-size="12" fill="#c8202a" transform="rotate(14 36 28)">A♥</text></svg></div><h3>Poker do Oeste</h3><p>Texas Hold'em contra cowboys ou com os amigos.</p><div class="row"><span class="tag">1-8 · cartas</span><span class="play">Jogar ▶</span></div></a>
+    <a class="game testa" href="testa/" data-m="online offline"><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M5 9l5 4M59 9l-5 4M3 25h6M61 25h-6" stroke="#151515" stroke-width="2.6" stroke-linecap="round"/><g transform="rotate(-12 32 25)"><rect x="12" y="11" width="40" height="27" rx="5" fill="#151515"/><rect x="16" y="14.5" width="32" height="20" rx="2" fill="#fff"/><text x="32" y="29.5" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="14" fill="#6d3fd6">GALO</text></g></svg></div><h3>Adivinha na Testa</h3><p>Adivinha o que és: pistas ou perguntas de sim ou não.</p><div class="row"><span class="tag">2+ · na testa</span><span class="play">Jogar ▶</span></div></a>
+    <a class="game cobra" href="cobra/" data-m="offline"><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="3" y="3" width="58" height="42" rx="6" fill="#a8c27c" stroke="#151515" stroke-width="2.6"/><g fill="#22341a"><rect x="12" y="30" width="5" height="5"/><rect x="18" y="30" width="5" height="5"/><rect x="24" y="30" width="5" height="5"/><rect x="24" y="24" width="5" height="5"/><rect x="24" y="18" width="5" height="5"/><rect x="30" y="18" width="5" height="5"/><rect x="36" y="18" width="5" height="5"/><rect x="42" y="18" width="6" height="6"/><rect x="51" y="30" width="2" height="2"/><rect x="49" y="32" width="2" height="2"/><rect x="53" y="32" width="2" height="2"/><rect x="51" y="34" width="2" height="2"/></g><rect x="44" y="19.5" width="2" height="2" fill="#a8c27c"/></svg></div><h3>Cobrinha</h3><p>A dos telemóveis antigos. Bates o recorde?</p><div class="row"><span class="tag">a solo · arcada</span><span class="play">Jogar ▶</span></div></a>
+    <a class="game voa" href="voa/" data-m="offline"><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="40" y="0" width="14" height="16" fill="#f7fbff" stroke="#151515" stroke-width="2.4"/><rect x="38" y="13" width="18" height="5" fill="#f2c94c" stroke="#151515" stroke-width="2.4"/><rect x="40" y="33" width="14" height="15" fill="#f7fbff" stroke="#151515" stroke-width="2.4"/><rect x="38" y="30" width="18" height="5" fill="#f2c94c" stroke="#151515" stroke-width="2.4"/><path d="M44 4l3 3-3 3-3-3zM44 38l3 3-3 3-3-3z" fill="#2a62c4"/><g transform="rotate(-14 20 26)"><circle cx="20" cy="27" r="10" fill="#6b3f22" stroke="#151515" stroke-width="2.4"/><ellipse cx="20" cy="30" rx="6" ry="4.5" fill="#e8b98a" stroke="#151515" stroke-width="1.8"/><circle cx="17" cy="24" r="1.6" fill="#151515"/><circle cx="23" cy="24" r="1.6" fill="#151515"/><path d="M12 17a8 5 0 0 1 16 0z" fill="#d23a6e" stroke="#151515" stroke-width="2"/><path d="M20 12v-3M13 8h14" stroke="#151515" stroke-width="2.4" stroke-linecap="round"/></g><path d="M3 34h6M1 40h8" stroke="#151515" stroke-width="2.2" stroke-linecap="round"/></svg></div><h3>Voa Voa</h3><p>Toca para voar. Passas quantos pilares?</p><div class="row"><span class="tag">a solo · arcada</span><span class="play">Jogar ▶</span></div></a>
+    <a class="game poker" href="poker/" data-m="online offline"><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><g stroke="#151515" stroke-width="2.4" stroke-linejoin="round"><rect x="26" y="14" width="20" height="28" rx="3" fill="#fffdf8" transform="rotate(14 36 28)"/><rect x="14" y="16" width="20" height="28" rx="3" fill="#fffdf8" transform="rotate(-10 24 30)"/><ellipse cx="32" cy="15" rx="26" ry="6" fill="#7a4a24"/><path d="M18 15q1-13 14-13q13 0 14 13z" fill="#7a4a24"/><path d="M19 11h26" stroke="#ffd23f" stroke-width="3.4"/></g><text x="21" y="36" font-family="Bangers, Impact, sans-serif" font-size="12" fill="#151515" transform="rotate(-10 24 30)">A♠</text><text x="34" y="36" font-family="Bangers, Impact, sans-serif" font-size="12" fill="#c8202a" transform="rotate(14 36 28)">A♥</text></svg></div><h3>Poker do Oeste</h3><p>Texas Hold'em contra cowboys ou com os amigos.</p><div class="row"><span class="tag">1-8 · cartas</span><span class="play">Jogar ▶</span></div></a>
   </nav>
   <div class="dots" id="dots" role="tablist" aria-label="Escolher jogo"></div></div>
-  <p class="foot">Feito em Portugal. As salas usam o Firebase (Google) e apagam-se quando acabam.</p>
+  <p class="foot"><span class="estilo" role="group" aria-label="Estilo da aplicação">Estilo: <button type="button" data-e="bd">Banda desenhada</button><button type="button" data-e="moderno">Moderno</button></span> · Feito em Portugal</p>
 </div>
 <div class="isheet" id="iosSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-label="Criar atalho"><h3>Criar atalho</h3><ol><li>Abre este site no Safari.</li><li>Toca no botão Partilhar (o quadrado com a seta para cima).</li><li>Escolhe «Adicionar ao ecrã principal».</li></ol><p class="note" style="margin:0">Fica com um ícone no ecrã inicial, como as outras apps, e abre sem barras do navegador. Também podes fazer isto dentro de cada jogo para teres um atalho só desse jogo.</p><button class="btn" type="button">Percebi</button></div></div>
 <script>
@@ -360,27 +418,40 @@ tb.addEventListener("click",()=>setTheme(document.documentElement.dataset.ppThem
   sheet.addEventListener("click",e=>{if(e.target===sheet||e.target.closest("button"))sheet.hidden=true});
 })();
 
-/* carrossel dos jogos */
+/* carrossel dos jogos (com filtro) */
 (function(){
-  const box=document.getElementById("games"),cards=[...box.querySelectorAll(".game")],dots=document.getElementById("dots"),prev=document.getElementById("prevG"),next=document.getElementById("nextG");
-  dots.innerHTML=cards.map((c,i)=>`<button type="button" role="tab" aria-label="${c.querySelector("h3").textContent}" data-i="${i}"></button>`).join("");
-  const db=[...dots.children];let cur=-1,raf=0;
+  const box=document.getElementById("games"),all=[...box.querySelectorAll(".game")],dots=document.getElementById("dots"),prev=document.getElementById("prevG"),next=document.getElementById("nextG"),fl=document.getElementById("filters");
+  let cards=all,db=[],cur=-1,raf=0,filt="all";
+  const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
   const center=i=>cards[i].offsetLeft+cards[i].offsetWidth/2-box.clientWidth/2;
-  const go=(i,smooth=true)=>{i=Math.max(0,Math.min(cards.length-1,i));box.scrollTo({left:center(i),behavior:smooth?"smooth":"auto"})};
+  const go=(i,smooth=true)=>{if(!cards.length)return;i=Math.max(0,Math.min(cards.length-1,i));box.scrollTo({left:center(i),behavior:smooth?"smooth":"auto"})};
   function upd(){raf=0;const mid=box.scrollLeft+box.clientWidth/2;let best=0,bd=1e9;
     cards.forEach((c,i)=>{const cc=c.offsetLeft+c.offsetWidth/2,dx=(cc-mid)/(c.offsetWidth+14),d=Math.min(1,Math.abs(dx));c.style.setProperty("--d",d.toFixed(3));c.style.setProperty("--s",Math.max(-1,Math.min(1,dx)).toFixed(3));if(Math.abs(dx)<bd){bd=Math.abs(dx);best=i}});
-    if(best!==cur){cur=best;db.forEach((b,i)=>{b.classList.toggle("on",i===cur);b.setAttribute("aria-selected",String(i===cur))});prev.disabled=cur===0;next.disabled=cur===cards.length-1;try{localStorage.setItem("hub-jogo",String(cur))}catch(e){}}}
+    if(best!==cur){cur=best;db.forEach((b,i)=>{b.classList.toggle("on",i===cur);b.setAttribute("aria-selected",String(i===cur))});prev.disabled=cur===0;next.disabled=cur===cards.length-1;ls.set("hub-jogo",cards[cur]?cards[cur].classList[1]:"")}}
+  function applyFilter(f,keep){
+    filt=f;ls.set("hub-filtro",f);
+    fl.querySelectorAll("[data-f]").forEach(b=>{b.classList.toggle("on",b.dataset.f===f);b.setAttribute("aria-pressed",String(b.dataset.f===f))});
+    all.forEach(c=>{c.hidden=f!=="all"&&!c.dataset.m.split(" ").includes(f)});
+    cards=all.filter(c=>!c.hidden);
+    dots.innerHTML=cards.map((c,i)=>`<button type="button" role="tab" aria-label="${c.querySelector("h3").textContent}" data-i="${i}"></button>`).join("");
+    db=[...dots.children];cur=-1;
+    const want=keep?cards.findIndex(c=>c.classList[1]===keep):0;
+    requestAnimationFrame(()=>{go(Math.max(0,want),false);upd()});
+  }
   box.addEventListener("scroll",()=>{if(!raf)raf=requestAnimationFrame(upd)},{passive:true});
   addEventListener("resize",()=>{go(cur<0?0:cur,false);upd()});
   dots.addEventListener("click",e=>{const b=e.target.closest("[data-i]");if(b)go(+b.dataset.i)});
+  fl.addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(b&&b.dataset.f!==filt)applyFilter(b.dataset.f)});
   prev.onclick=()=>go(cur-1);next.onclick=()=>go(cur+1);
   box.addEventListener("keydown",e=>{if(e.key==="ArrowRight"){e.preventDefault();go(cur+1)}if(e.key==="ArrowLeft"){e.preventDefault();go(cur-1)}});
-  /* roda do rato também anda para o lado */
   box.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.preventDefault();if(!box._w){box._w=1;go(cur+(e.deltaY>0?1:-1));setTimeout(()=>box._w=0,350)}}},{passive:false});
-  /* tocar num cartão de lado traz esse cartão para o meio em vez de abrir o jogo */
-  cards.forEach((c,i)=>c.addEventListener("click",e=>{if(i!==cur){e.preventDefault();e.stopImmediatePropagation();go(i)}},true));
-  let start=0;try{start=+localStorage.getItem("hub-jogo")||0}catch(e){}
-  requestAnimationFrame(()=>{go(start,false);upd()});
+  all.forEach(c=>c.addEventListener("click",e=>{const i=cards.indexOf(c);if(i!==cur){e.preventDefault();e.stopImmediatePropagation();go(i)}},true));
+  const f0=ls.get("hub-filtro");applyFilter(["all","online","offline"].includes(f0)?f0:"all",ls.get("hub-jogo"));
+  /* estilo da aplicação: banda desenhada ou moderno */
+  const es=document.querySelector(".estilo"),cur0=()=>document.documentElement.dataset.estilo==="moderno"?"moderno":"bd";
+  const mark=()=>es.querySelectorAll("[data-e]").forEach(b=>{b.classList.toggle("on",b.dataset.e===cur0());b.setAttribute("aria-pressed",String(b.dataset.e===cur0()))});
+  es.addEventListener("click",e=>{const b=e.target.closest("[data-e]");if(!b)return;if(b.dataset.e==="moderno")document.documentElement.dataset.estilo="moderno";else delete document.documentElement.dataset.estilo;ls.set("pp-estilo",b.dataset.e);mark();requestAnimationFrame(()=>{go(cur,false);upd()})});
+  mark();
 })();
 /* bonecos do menu */
 (function(){
