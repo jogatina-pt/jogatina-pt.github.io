@@ -198,6 +198,7 @@ html{--hub:#ffd23f}
 @keyframes burstSpin{to{transform:rotate(360deg)}}
 body{background:transparent!important;background-image:none!important}
 html{background:var(--bg)}
+.game .pic::before{content:"";position:absolute;inset:0;z-index:0;background:repeating-conic-gradient(rgba(255,255,255,.55) 0 8deg,transparent 8deg 20deg);opacity:.6;pointer-events:none}
 html.sda .game{animation:cardTilt linear both;animation-timeline:view(inline);animation-range:cover 0% cover 100%}
 @keyframes cardTilt{0%{transform:scale(.9) rotate(3deg);opacity:.7}50%{transform:none;opacity:1}100%{transform:scale(.9) rotate(-3deg);opacity:.7}}
 .arrow{position:absolute;top:calc(50% - 30px);z-index:3;width:46px;height:46px;border-radius:50%;border:3px solid var(--stroke);background:var(--surface);color:var(--ink);box-shadow:3px 3px 0 var(--stroke);font-size:22px;display:none;place-items:center;cursor:pointer}
@@ -395,9 +396,11 @@ tb.addEventListener("click",()=>setTheme(document.documentElement.dataset.ppThem
     const c=cards[cur];if(c)document.documentElement.style.setProperty("--hub",getComputedStyle(c).getPropertyValue("--gc").trim());
     const t=db[cur];if(t)dots.scrollTo({left:t.offsetLeft+t.offsetWidth/2-dots.clientWidth/2,behavior:first?"auto":"smooth"})}
   box.addEventListener("scroll",()=>{if(!box.classList.contains("mv"))box.classList.add("mv");clearTimeout(settleT);settleT=setTimeout(()=>{box.classList.remove("mv");settle()},140)},{passive:true});
-  const blip=f=>{try{if(localStorage.getItem("pp-mute")==="1")return;const A=window.__hubAC||(window.__hubAC=new(window.AudioContext||window.webkitAudioContext)());if(A.state!=="running")return;const t=A.currentTime,o=A.createOscillator(),g=A.createGain();o.type="square";o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*1.5,t+.05);g.gain.setValueAtTime(.025,t);g.gain.exponentialRampToValueAtTime(.0001,t+.09);o.connect(g).connect(A.destination);o.start(t);o.stop(t+.1)}catch(e){}};
-  const wake=()=>{userMoved=true;try{const A=window.__hubAC||(window.__hubAC=new(window.AudioContext||window.webkitAudioContext)());if(A.state!=="running")A.resume()}catch(e){}};
-  ["pointerdown","keydown","wheel"].forEach(ev=>addEventListener(ev,wake,{passive:true}));
+  const AC=()=>window.__hubAC||(window.__hubAC=new(window.AudioContext||window.webkitAudioContext)());
+  const beep=(A,f)=>{const t=A.currentTime,o=A.createOscillator(),g=A.createGain();o.type="square";o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*1.5,t+.05);g.gain.setValueAtTime(.03,t);g.gain.exponentialRampToValueAtTime(.0001,t+.09);o.connect(g).connect(A.destination);o.start(t);o.stop(t+.1)};
+  const blip=f=>{try{if(localStorage.getItem("pp-mute")==="1")return;const A=AC();if(A.state==="running")beep(A,f);else A.resume().then(()=>{if(A.state==="running")beep(A,f)}).catch(()=>{})}catch(e){}};
+  let unlocked=false;const wake=()=>{userMoved=true;if(unlocked)return;try{const A=AC();const b=A.createBuffer(1,1,22050),src=A.createBufferSource();src.buffer=b;src.connect(A.destination);src.start(0);A.resume().then(()=>{if(A.state==="running")unlocked=true}).catch(()=>{})}catch(x){}};
+  ["pointerdown","pointerup","touchstart","touchend","click","keydown","wheel"].forEach(ev=>addEventListener(ev,wake,{passive:true,capture:true}));
   const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
   const center=i=>cards[i].offsetLeft+cards[i].offsetWidth/2-box.clientWidth/2;
   const go=(i,smooth=true)=>{if(!cards.length)return;i=Math.max(0,Math.min(cards.length-1,i));box.scrollTo({left:center(i),behavior:smooth?"smooth":"auto"})};
