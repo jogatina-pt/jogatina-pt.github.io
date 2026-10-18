@@ -131,6 +131,18 @@
      "type": "image/png"
     }
    ]
+  },
+  {
+   "name": "Sobe a Serra",
+   "short_name": "Sobe a Serra",
+   "url": "carro/",
+   "icons": [
+    {
+     "src": "carro/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
   }
  ]
 }
