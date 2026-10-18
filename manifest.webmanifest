@@ -167,6 +167,18 @@
      "type": "image/png"
     }
    ]
+  },
+  {
+   "name": "Quem Matou?",
+   "short_name": "Quem Matou?",
+   "url": "crime/",
+   "icons": [
+    {
+     "src": "crime/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
   }
  ]
 }
