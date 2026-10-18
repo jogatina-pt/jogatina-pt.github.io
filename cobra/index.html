@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="pt-PT">
 <head>
-<script>try{if(localStorage.getItem("pp-estilo")==="moderno")document.documentElement.dataset.estilo="moderno"}catch(e){}</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Cobrinha</title>
@@ -176,56 +175,63 @@ header.top{flex:none}
 @media (max-height:640px){.keys{height:132px;gap:6px}.key{font-size:20px}.phone{padding:12px 12px 12px;gap:8px}}
 @media (prefers-reduced-motion:reduce){.key{transition:none}}
 </style>
-<style>/* ===== Estilo "Moderno" (opcional): liso, cantos redondos, sombras suaves, sem contornos de banda desenhada.
-   Liga-se com <html data-estilo="moderno"> (escolhido no menu e guardado em pp-estilo). ===== */
-html[data-estilo="moderno"]{--display:"Figtree",system-ui,sans-serif;--stroke:transparent;--soft:0 10px 30px rgba(20,24,40,.12);--soft-sm:0 4px 14px rgba(20,24,40,.10);--hair:rgba(20,24,40,.08)}
-html[data-estilo="moderno"]:not([data-pp-theme="light"]){--soft:0 10px 30px rgba(0,0,0,.45);--soft-sm:0 4px 14px rgba(0,0,0,.35);--hair:rgba(255,255,255,.08)}
-html[data-estilo="moderno"] body{background-image:none!important;background:radial-gradient(120% 80% at 10% -10%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 60%),radial-gradient(90% 70% at 110% 110%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 60%),var(--bg)!important;background-attachment:fixed!important}
-html[data-estilo="moderno"] h1,html[data-estilo="moderno"] h2,html[data-estilo="moderno"] h3{font-family:"Figtree",system-ui,sans-serif!important;font-weight:900!important;letter-spacing:-.025em!important;-webkit-text-stroke:0!important;text-shadow:none!important}
-html[data-estilo="moderno"] .brand h1{background:linear-gradient(95deg,var(--ink,#151515) 20%,var(--accent,#e8731f));-webkit-background-clip:text;background-clip:text;color:transparent!important}
-html[data-estilo="moderno"] .brand h1 span{color:transparent!important}
-html[data-estilo="moderno"] .setup h2{letter-spacing:-.04em!important;line-height:.95}
-/* botões */
-html[data-estilo="moderno"] .btn{border:0!important;border-radius:999px!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800!important;letter-spacing:0!important;text-transform:none;box-shadow:0 8px 22px color-mix(in srgb,var(--accent) 35%,transparent)!important;background-image:linear-gradient(180deg,rgba(255,255,255,.18),transparent)}
-html[data-estilo="moderno"] .btn.ghost{background:color-mix(in srgb,var(--ink) 7%,transparent)!important;color:var(--ink)!important;box-shadow:none!important;background-image:none}
+<script>try{if(localStorage.getItem("pp-estilo")==="moderno"){document.documentElement.dataset.estilo="moderno";delete document.documentElement.dataset.ppTheme;var m=document.querySelector('meta[name=theme-color]');if(m)m.content="#080c1a"}}catch(e){}</script><style>/* ===== Estilo "Moderno" (opcional): visual escuro de consola, vidro, brilho na cor do jogo, sem contornos de BD.
+   Liga-se com <html data-estilo="moderno"> (escolhido no menu e guardado em pp-estilo). Força sempre o tema escuro. ===== */
+html[data-estilo="moderno"]:root{--display:"Figtree",system-ui,sans-serif;--stroke:transparent;
+  --bg:#080c1a;--surface:rgba(255,255,255,.065);--surface-2:rgba(255,255,255,.11);--ink:#eef1ff;--title:#ffffff;--muted:#9aa3c4;--line:rgba(255,255,255,.12);
+  --enamel:#f4f6ff;--card-ink:#10142a;--hair:rgba(255,255,255,.1);--glass:rgba(255,255,255,.065);
+  --soft:0 18px 50px rgba(0,0,0,.55);--soft-sm:0 8px 24px rgba(0,0,0,.4);color-scheme:dark}
+html[data-estilo="moderno"] #themeBtn{display:none!important}
+html[data-estilo="moderno"] body{background-image:none!important;color:var(--ink);
+  background:radial-gradient(90% 55% at 50% -10%,color-mix(in srgb,var(--accent) 38%,transparent),transparent 70%),radial-gradient(70% 50% at 100% 110%,color-mix(in srgb,var(--accent) 22%,transparent),transparent 70%),linear-gradient(180deg,#0b1024,#05070f)!important;background-attachment:fixed!important}
+html[data-estilo="moderno"] h1,html[data-estilo="moderno"] h2,html[data-estilo="moderno"] h3{font-family:"Figtree",system-ui,sans-serif!important;font-weight:900!important;letter-spacing:-.03em!important;-webkit-text-stroke:0!important;text-shadow:none!important;color:#fff}
+html[data-estilo="moderno"] .brand h1{color:#fff!important;font-size:22px!important}
+html[data-estilo="moderno"] .brand h1 span,html[data-estilo="moderno"] .setup h2 span{color:color-mix(in srgb,var(--accent) 65%,#fff)!important}
+html[data-estilo="moderno"] header.top h1{color:#fff;-webkit-text-stroke:0!important;text-shadow:none!important}
+html[data-estilo="moderno"] .setup h2{letter-spacing:-.045em!important;line-height:.95;font-size:clamp(38px,11vw,64px)!important}
+html[data-estilo="moderno"] a.home{color:var(--muted)}
+/* botões: principal branco, secundário em vidro */
+html[data-estilo="moderno"] .btn{border:0!important;border-radius:999px!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:850!important;letter-spacing:-.01em!important;text-transform:none;background:#fff;color:#0a0f22;box-shadow:0 10px 28px rgba(255,255,255,.12)!important}
+html[data-estilo="moderno"] .btn.ghost{background:var(--glass);color:#fff;box-shadow:none!important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 html[data-estilo="moderno"] .btn.sm{box-shadow:none!important}
+html[data-estilo="moderno"] .btn:disabled{opacity:.4}
 html[data-estilo="moderno"] .btn:not(:disabled):active{transform:scale(.97)!important}
-/* caixas e listas */
-html[data-estilo="moderno"] :is(.mode,.roster li,.sheet,.qcard,.bcard,.wordcard,.mucard,.rstep,.board li,.opt,.sub,.wcard,.sent,.jbox,.yourturn,.outbox,.words p,.roles li,.others li,.tally li,.drink,.yn2 p,.rulebar,.vol li,.chips li,.seg button,.age,.foreheads li,.how,.deck,.history li,.wl li,.purse,.town,.resume,.raisebox,.panel,.box,.qrcard,.isheet .box,.lastans,.seat,.me,.log,.piles,.tip){border:1px solid var(--hair)!important;box-shadow:var(--soft-sm)!important;border-radius:18px}
-html[data-estilo="moderno"] .roster li.free{border:1.5px dashed var(--hair)!important;box-shadow:none!important}
-html[data-estilo="moderno"] :is(.chips li,.seg button,.vol li,.history li,.wl li,.filters button,.modeswitch a,.modeswitch span){border-radius:999px!important;box-shadow:none!important}
-html[data-estilo="moderno"] :is(.filters button,.modeswitch a,.modeswitch span){border:1px solid var(--hair)!important}
-html[data-estilo="moderno"] input{border:1.5px solid var(--hair)!important;box-shadow:none!important;border-radius:14px}
-html[data-estilo="moderno"] input:focus{border-color:var(--accent)!important;box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent)!important}
-html[data-estilo="moderno"] .lobby .code{-webkit-text-stroke:0!important;text-shadow:none!important;letter-spacing:.2em!important;font-family:ui-monospace,"SF Mono",Menlo,monospace!important;font-weight:800}
-html[data-estilo="moderno"] .alert{border:0!important;box-shadow:var(--soft)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;border-radius:16px}
-html[data-estilo="moderno"] .eyebrow{letter-spacing:.14em;opacity:.8}
-html[data-estilo="moderno"] .bubble-say{border:0!important;box-shadow:var(--soft)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:-.01em;border-radius:20px}
-html[data-estilo="moderno"] .bubble-say::after{border-top-color:#fff!important}
-html[data-estilo="moderno"] .mascot{filter:drop-shadow(0 10px 18px rgba(0,0,0,.18))!important}
-html[data-estilo="moderno"] .roomtag{border:1px solid var(--hair)!important;box-shadow:none!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:.04em}
-html[data-estilo="moderno"] .modal,html[data-estilo="moderno"] .qrwrap,html[data-estilo="moderno"] .ov,html[data-estilo="moderno"] .isheet{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-/* menu: cartões em vidro */
-html[data-estilo="moderno"] .game{border:0!important;border-radius:30px!important;box-shadow:0 18px 40px color-mix(in srgb,var(--gc) 45%,transparent),var(--soft-sm)!important;background:linear-gradient(160deg,color-mix(in srgb,var(--gc) 92%,#fff),var(--gc) 55%,color-mix(in srgb,var(--gc) 80%,#000))!important}
-html[data-estilo="moderno"] .game::before{display:none}
-html[data-estilo="moderno"] .game .pic{border:0!important;border-radius:22px;background:rgba(255,255,255,.38)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
-html[data-estilo="moderno"] .game h3{text-shadow:none!important}
-html[data-estilo="moderno"] .game .tag{border:0!important;background:rgba(255,255,255,.72)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:0!important}
-html[data-estilo="moderno"] .game .play{font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:0!important;background:rgba(10,12,20,.88)!important;box-shadow:0 6px 16px rgba(0,0,0,.25)!important}
-html[data-estilo="moderno"] .dots button{border:0!important;background:color-mix(in srgb,var(--ink) 20%,transparent)}
-html[data-estilo="moderno"] .dots button.on{background:var(--accent)}
-html[data-estilo="moderno"] .filters button.on,html[data-estilo="moderno"] .modeswitch span{background:var(--ink)!important;color:var(--bg)!important}
-html[data-estilo="moderno"] .arrow{border:0!important;box-shadow:var(--soft)!important}
+html[data-estilo="moderno"] .btn:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 70%,#fff);outline-offset:3px}
+/* painéis em vidro */
+html[data-estilo="moderno"] :is(.mode,.roster li,.sheet,.qcard,.bcard,.mucard,.rstep,.board li,.opt,.sub,.wcard,.sent,.jbox,.yourturn,.outbox,.words p,.roles li,.others li,.tally li,.drink,.yn2 p,.rulebar,.vol li,.chips li,.seg button,.age,.how,.deck,.history li,.wl li,.purse,.town,.resume,.raisebox,.box,.lastans,.log,.piles,.tip){border:1px solid var(--hair)!important;box-shadow:var(--soft-sm)!important;border-radius:20px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+html[data-estilo="moderno"] :is(.mode,.sheet,.yourturn,.outbox,.how,.purse,.resume,.raisebox,.box,.rulebar){background:var(--glass)!important;color:var(--ink)}
+html[data-estilo="moderno"] .sheet{background:rgba(18,22,44,.92)!important}
+html[data-estilo="moderno"] .roster li.free{border:1.5px dashed var(--hair)!important;box-shadow:none!important;background:transparent!important;backdrop-filter:none}
+html[data-estilo="moderno"] .roster li.free.more{border:0!important}
+html[data-estilo="moderno"] :is(.chips li,.seg button,.vol li,.history li,.wl li,.modeswitch a,.modeswitch span){border-radius:999px!important;box-shadow:none!important;border:1px solid var(--hair)!important}
+html[data-estilo="moderno"] :is(.seg button.on,.modeswitch span,.deck.on){background:#fff!important;color:#0a0f22!important;border-color:#fff!important}
+html[data-estilo="moderno"] .modeswitch a{background:var(--glass);color:#fff}
+html[data-estilo="moderno"] input{background:rgba(255,255,255,.06)!important;color:#fff!important;border:1px solid var(--hair)!important;box-shadow:none!important;border-radius:16px}
+html[data-estilo="moderno"] input::placeholder{color:rgba(255,255,255,.4)}
+html[data-estilo="moderno"] input:focus{border-color:color-mix(in srgb,var(--accent) 70%,#fff)!important;box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 25%,transparent)!important}
+html[data-estilo="moderno"] .lobby .code{-webkit-text-stroke:0!important;text-shadow:0 0 40px color-mix(in srgb,var(--accent) 60%,transparent)!important;letter-spacing:.22em!important;font-family:ui-monospace,"SF Mono",Menlo,monospace!important;font-weight:800;color:#fff!important}
+html[data-estilo="moderno"] .alert{border:0!important;box-shadow:var(--soft)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;border-radius:18px;background:#fff!important;color:#0a0f22!important}
+html[data-estilo="moderno"] .eyebrow{letter-spacing:.16em;color:var(--muted)}
+html[data-estilo="moderno"] .bubble-say{border:0!important;box-shadow:var(--soft)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;border-radius:20px}
+html[data-estilo="moderno"] .mascot{filter:drop-shadow(0 16px 30px rgba(0,0,0,.5))!important}
+html[data-estilo="moderno"] .roomtag{border:1px solid var(--hair)!important;box-shadow:none!important;background:var(--glass)!important;color:#fff!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:.04em}
+html[data-estilo="moderno"] :is(.modal,.qrwrap,.ov,.isheet){backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(3,5,12,.6)!important}
+html[data-estilo="moderno"] :is(.qrcard,.ov .panel){border:0!important;box-shadow:var(--soft)!important;border-radius:26px}
+html[data-estilo="moderno"] .wordcard,html[data-estilo="moderno"] .foreheads li{border:0!important;box-shadow:var(--soft-sm)!important;border-radius:20px}
+html[data-estilo="moderno"] .foot{color:var(--muted)}
 /* poker */
-html[data-estilo="moderno"] .felt{outline:0!important;border:0!important;border-radius:32px!important;box-shadow:var(--soft),inset 0 0 0 10px rgba(0,0,0,.18),inset 0 0 60px rgba(0,0,0,.35)!important}
-html[data-estilo="moderno"] .card{border:0!important;box-shadow:0 4px 12px rgba(0,0,0,.3)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:900}
-html[data-estilo="moderno"] .seat{background:rgba(0,0,0,.22)!important;border:0!important;box-shadow:none!important}
-html[data-estilo="moderno"] .seat .act,html[data-estilo="moderno"] .seat .bet,html[data-estilo="moderno"] .seat .dl{border:0!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:0}
-html[data-estilo="moderno"] .town .go{border:0!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800}
-html[data-estilo="moderno"] .purse b,html[data-estilo="moderno"] .pot,html[data-estilo="moderno"] .me .info b,html[data-estilo="moderno"] .seat .ch{font-family:"Figtree",system-ui,sans-serif!important;font-weight:900!important;-webkit-text-stroke:0!important;text-shadow:none!important}
-/* cobrinha e voa voa: só a moldura */
+html[data-estilo="moderno"] .felt{outline:0!important;border:0!important;border-radius:34px!important;box-shadow:var(--soft),inset 0 0 0 10px rgba(0,0,0,.25),inset 0 0 80px rgba(0,0,0,.45)!important}
+html[data-estilo="moderno"] .card{border:0!important;box-shadow:0 6px 16px rgba(0,0,0,.4)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:900}
+html[data-estilo="moderno"] .card.empty{border:1.5px dashed rgba(255,255,255,.25)!important;box-shadow:none!important}
+html[data-estilo="moderno"] .seat{background:rgba(0,0,0,.25)!important;border:0!important;box-shadow:none!important;backdrop-filter:none}
+html[data-estilo="moderno"] :is(.seat .act,.seat .bet,.seat .dl,.me .dl,.town .go){border:0!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:0}
+html[data-estilo="moderno"] .town{color:#fff;background:var(--glass)!important}
+html[data-estilo="moderno"] .town h3{color:#fff}html[data-estilo="moderno"] .town small{color:var(--muted)}
+html[data-estilo="moderno"] .town.done{background:color-mix(in srgb,#ffd23f 14%,transparent)!important}
+html[data-estilo="moderno"] :is(.purse b,.pot,.me .info b,.seat .ch,.rank){font-family:"Figtree",system-ui,sans-serif!important;font-weight:900!important;-webkit-text-stroke:0!important;text-shadow:none!important}
+/* cobrinha e voa voa: só a moldura (o ecrã de jogo fica como está) */
 html[data-estilo="moderno"] .phone,html[data-estilo="moderno"] .stage{border:0!important;box-shadow:var(--soft)!important}
-html[data-estilo="moderno"] .key{border:0!important;box-shadow:0 3px 0 rgba(0,0,0,.35)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:900}
+html[data-estilo="moderno"] .key{border:0!important;box-shadow:0 3px 0 rgba(0,0,0,.45)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:900}
 </style></head>
 <body>
 <div class="wrap">

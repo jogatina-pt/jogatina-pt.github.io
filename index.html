@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="pt-PT">
 <head>
-<script>try{if(localStorage.getItem("pp-estilo")==="moderno")document.documentElement.dataset.estilo="moderno"}catch(e){}</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Jogatina</title>
@@ -199,6 +198,55 @@ header.top{flex:none}
 .isheet .box{background:var(--surface);color:var(--ink);border:3px solid var(--stroke);box-shadow:6px 6px 0 var(--stroke);border-radius:20px;padding:16px 18px;max-width:420px;width:100%;display:flex;flex-direction:column;gap:10px}
 .isheet h3{margin:0;font-size:28px}.isheet ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-weight:700}
 @media (max-width:380px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:29px}#installBtn{padding:4px 8px}}
+/* ===== estilo moderno: menu tipo consola ===== */
+html:not([data-estilo="moderno"]) #ps{display:none}
+html[data-estilo="moderno"] body>.wrap{display:none!important}
+html[data-estilo="moderno"] body{overflow:hidden}
+.ps{position:fixed;inset:0;display:flex;flex-direction:column;color:#f3f5ff;font-family:"Figtree",system-ui,sans-serif;padding:max(10px,env(safe-area-inset-top)) 0 max(14px,env(safe-area-inset-bottom));overflow:hidden;--g:#4f7fff}
+.ps-bg{position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,#0a0f22 0%,#060812 100%);overflow:hidden}
+.ps-glow{position:absolute;inset:-20%;background:radial-gradient(60% 45% at 50% 42%,color-mix(in srgb,var(--g) 70%,transparent),transparent 70%),radial-gradient(50% 40% at 85% 95%,color-mix(in srgb,var(--g) 35%,transparent),transparent 70%);transition:background .6s ease;animation:psBreath 9s ease-in-out infinite}
+@keyframes psBreath{0%,100%{transform:scale(1)}50%{transform:scale(1.06) translateY(-1%)}}
+.ps-blur{position:absolute;left:50%;top:38%;width:160vmax;height:120vmax;transform:translate(-50%,-50%);filter:blur(60px) saturate(1.4);opacity:.32;display:grid;place-items:center;transition:opacity .5s}
+.ps-blur svg{width:70vmax;height:auto}
+.ps-bg::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 120%,rgba(0,0,0,.75),transparent 60%),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0 1px,transparent 1px 3px)}
+.ps>*:not(.ps-bg){position:relative;z-index:1}
+.ps-top{display:flex;justify-content:space-between;align-items:center;padding:4px 20px 6px}
+.ps-logo{font-weight:900;font-size:22px;letter-spacing:-.02em}.ps-logo b{color:color-mix(in srgb,var(--g) 60%,#fff);font-weight:900}
+.ps-right{display:flex;align-items:center;gap:10px}
+.ps-clock{font-weight:700;font-size:15px;opacity:.85;font-variant-numeric:tabular-nums}
+.ps-ic{width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.1);color:#fff;font-size:16px;display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(8px)}
+.ps-ic[hidden]{display:none}
+.ps-tabs{display:flex;gap:22px;padding:6px 20px 2px;overflow-x:auto;scrollbar-width:none}
+.ps-tabs button{background:none;border:0;color:rgba(255,255,255,.55);font:800 15px "Figtree",system-ui,sans-serif;padding:4px 0;cursor:pointer;position:relative;white-space:nowrap}
+.ps-tabs button.on{color:#fff}
+.ps-tabs button.on::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:3px;border-radius:3px;background:#fff}
+.ps-tiles{display:flex;gap:12px;align-items:flex-start;overflow-x:auto;scroll-snap-type:x mandatory;padding:16px 20px 30px;scrollbar-width:none;flex:none;scroll-padding-left:20px}
+.ps-tiles::-webkit-scrollbar,.ps-tabs::-webkit-scrollbar{display:none}
+.ps-tile{flex:none;scroll-snap-align:start;width:64px;height:64px;border-radius:16px;border:0;padding:0;background:linear-gradient(150deg,color-mix(in srgb,var(--c) 85%,#fff),var(--c) 60%,color-mix(in srgb,var(--c) 70%,#000));display:grid;place-items:center;cursor:pointer;position:relative;box-shadow:0 8px 20px rgba(0,0,0,.35);transition:width .25s cubic-bezier(.2,.9,.3,1.2),height .25s cubic-bezier(.2,.9,.3,1.2),box-shadow .25s,opacity .25s;opacity:.78}
+.ps-tile svg{width:68%;height:auto;pointer-events:none}
+.ps-tile .macaco-mini{width:auto!important;height:92%!important;align-self:end}
+.ps-tile.on{width:88px;height:88px;opacity:1;box-shadow:0 0 0 3px #fff,0 0 0 7px color-mix(in srgb,var(--c) 45%,transparent),0 14px 34px rgba(0,0,0,.5)}
+.ps-tile span{position:absolute;top:calc(100% + 8px);left:0;white-space:nowrap;font:800 13px "Figtree",system-ui,sans-serif;color:#fff;opacity:0;transition:opacity .2s;pointer-events:none}
+.ps-tile.on span{opacity:1}
+.ps-art{flex:1;min-height:0;display:grid;place-items:center;padding:0 20px}
+.ps-art .pic{width:min(72vw,360px,46vh);aspect-ratio:1/1;border-radius:34px;display:grid;place-items:center;background:linear-gradient(150deg,color-mix(in srgb,var(--g) 90%,#fff),var(--g) 55%,color-mix(in srgb,var(--g) 65%,#000));box-shadow:0 30px 70px color-mix(in srgb,var(--g) 40%,transparent),0 20px 40px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.4);overflow:hidden;position:relative;animation:psIn .45s cubic-bezier(.2,.9,.3,1.1) both}
+.ps-art .pic::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.35),transparent 40%);pointer-events:none}
+.ps-art .pic svg{width:64%;height:auto;filter:drop-shadow(0 12px 16px rgba(0,0,0,.25));animation:psFloat 5s ease-in-out infinite}
+.ps-art .pic .macaco-mini{width:auto!important;height:88%!important;align-self:end;animation:none}
+@keyframes psIn{from{opacity:0;transform:translateY(14px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes psFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}
+.ps-info{padding:10px 22px 4px;display:flex;flex-direction:column;gap:8px;animation:psIn .4s ease both}
+.ps-meta{display:flex;gap:8px;flex-wrap:wrap}
+.ps-meta span{font-weight:800;font-size:12px;letter-spacing:.04em;text-transform:uppercase;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:3px 10px;backdrop-filter:blur(6px)}
+.ps-title{margin:0;font:900 clamp(32px,9vw,52px)/1 "Figtree",system-ui,sans-serif;letter-spacing:-.035em;color:#fff;text-shadow:0 4px 30px rgba(0,0,0,.4)}
+.ps-desc{margin:0;color:rgba(255,255,255,.75);font-weight:600;font-size:15px;line-height:1.4;max-width:46ch}
+.ps-actions{display:flex;gap:10px;align-items:center;margin-top:6px}
+.ps-play{flex:1;max-width:320px;text-align:center;text-decoration:none;background:#fff;color:#0a0f22;font:900 18px "Figtree",system-ui,sans-serif;border-radius:999px;padding:14px 22px;box-shadow:0 10px 30px rgba(255,255,255,.18);transition:transform .12s}
+.ps-play:active{transform:scale(.97)}
+.ps-alt{width:50px;height:50px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:20px;cursor:pointer}
+@media (min-width:900px){.ps{display:grid;grid-template-columns:1.1fr 1fr;grid-template-rows:auto auto auto 1fr;column-gap:20px}.ps-top,.ps-tabs,.ps-tiles{grid-column:1/-1}.ps-art{grid-column:2;grid-row:4}.ps-info{grid-column:1;grid-row:4;justify-content:center;padding-left:60px}.ps-tile{width:84px;height:84px}.ps-tile.on{width:112px;height:112px}.ps-tiles{padding-left:60px}.ps-tabs,.ps-top{padding-left:60px;padding-right:60px}}
+@media (max-height:700px){.ps-art .pic{width:min(64vw,34vh)}.ps-tiles{z-index:2;padding:10px 20px 26px}.ps-tile{width:54px;height:54px}.ps-tile.on{width:72px;height:72px}.ps-desc{font-size:13.5px}.ps-title{font-size:32px}.ps-play{padding:11px 18px}}
+@media (prefers-reduced-motion:reduce){.ps-glow,.ps-art .pic svg{animation:none}}
 /* bonecos animados: tocar no macaco = bebe; tocar na girafa = vira a página */
 .hero .mascot{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s}
 .hero .mascot:active{transform:scale(.96)}
@@ -223,56 +271,63 @@ header.top{flex:none}
 @media (prefers-reduced-motion:reduce){.hero .mascot *,.hero .mascot{animation-duration:.01s!important}}
 @media (prefers-reduced-motion:reduce){.game{transition:none}}
 </style>
-<style>/* ===== Estilo "Moderno" (opcional): liso, cantos redondos, sombras suaves, sem contornos de banda desenhada.
-   Liga-se com <html data-estilo="moderno"> (escolhido no menu e guardado em pp-estilo). ===== */
-html[data-estilo="moderno"]{--display:"Figtree",system-ui,sans-serif;--stroke:transparent;--soft:0 10px 30px rgba(20,24,40,.12);--soft-sm:0 4px 14px rgba(20,24,40,.10);--hair:rgba(20,24,40,.08)}
-html[data-estilo="moderno"]:not([data-pp-theme="light"]){--soft:0 10px 30px rgba(0,0,0,.45);--soft-sm:0 4px 14px rgba(0,0,0,.35);--hair:rgba(255,255,255,.08)}
-html[data-estilo="moderno"] body{background-image:none!important;background:radial-gradient(120% 80% at 10% -10%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 60%),radial-gradient(90% 70% at 110% 110%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 60%),var(--bg)!important;background-attachment:fixed!important}
-html[data-estilo="moderno"] h1,html[data-estilo="moderno"] h2,html[data-estilo="moderno"] h3{font-family:"Figtree",system-ui,sans-serif!important;font-weight:900!important;letter-spacing:-.025em!important;-webkit-text-stroke:0!important;text-shadow:none!important}
-html[data-estilo="moderno"] .brand h1{background:linear-gradient(95deg,var(--ink,#151515) 20%,var(--accent,#e8731f));-webkit-background-clip:text;background-clip:text;color:transparent!important}
-html[data-estilo="moderno"] .brand h1 span{color:transparent!important}
-html[data-estilo="moderno"] .setup h2{letter-spacing:-.04em!important;line-height:.95}
-/* botões */
-html[data-estilo="moderno"] .btn{border:0!important;border-radius:999px!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800!important;letter-spacing:0!important;text-transform:none;box-shadow:0 8px 22px color-mix(in srgb,var(--accent) 35%,transparent)!important;background-image:linear-gradient(180deg,rgba(255,255,255,.18),transparent)}
-html[data-estilo="moderno"] .btn.ghost{background:color-mix(in srgb,var(--ink) 7%,transparent)!important;color:var(--ink)!important;box-shadow:none!important;background-image:none}
+<script>try{if(localStorage.getItem("pp-estilo")==="moderno"){document.documentElement.dataset.estilo="moderno";delete document.documentElement.dataset.ppTheme;var m=document.querySelector('meta[name=theme-color]');if(m)m.content="#080c1a"}}catch(e){}</script><style>/* ===== Estilo "Moderno" (opcional): visual escuro de consola, vidro, brilho na cor do jogo, sem contornos de BD.
+   Liga-se com <html data-estilo="moderno"> (escolhido no menu e guardado em pp-estilo). Força sempre o tema escuro. ===== */
+html[data-estilo="moderno"]:root{--display:"Figtree",system-ui,sans-serif;--stroke:transparent;
+  --bg:#080c1a;--surface:rgba(255,255,255,.065);--surface-2:rgba(255,255,255,.11);--ink:#eef1ff;--title:#ffffff;--muted:#9aa3c4;--line:rgba(255,255,255,.12);
+  --enamel:#f4f6ff;--card-ink:#10142a;--hair:rgba(255,255,255,.1);--glass:rgba(255,255,255,.065);
+  --soft:0 18px 50px rgba(0,0,0,.55);--soft-sm:0 8px 24px rgba(0,0,0,.4);color-scheme:dark}
+html[data-estilo="moderno"] #themeBtn{display:none!important}
+html[data-estilo="moderno"] body{background-image:none!important;color:var(--ink);
+  background:radial-gradient(90% 55% at 50% -10%,color-mix(in srgb,var(--accent) 38%,transparent),transparent 70%),radial-gradient(70% 50% at 100% 110%,color-mix(in srgb,var(--accent) 22%,transparent),transparent 70%),linear-gradient(180deg,#0b1024,#05070f)!important;background-attachment:fixed!important}
+html[data-estilo="moderno"] h1,html[data-estilo="moderno"] h2,html[data-estilo="moderno"] h3{font-family:"Figtree",system-ui,sans-serif!important;font-weight:900!important;letter-spacing:-.03em!important;-webkit-text-stroke:0!important;text-shadow:none!important;color:#fff}
+html[data-estilo="moderno"] .brand h1{color:#fff!important;font-size:22px!important}
+html[data-estilo="moderno"] .brand h1 span,html[data-estilo="moderno"] .setup h2 span{color:color-mix(in srgb,var(--accent) 65%,#fff)!important}
+html[data-estilo="moderno"] header.top h1{color:#fff;-webkit-text-stroke:0!important;text-shadow:none!important}
+html[data-estilo="moderno"] .setup h2{letter-spacing:-.045em!important;line-height:.95;font-size:clamp(38px,11vw,64px)!important}
+html[data-estilo="moderno"] a.home{color:var(--muted)}
+/* botões: principal branco, secundário em vidro */
+html[data-estilo="moderno"] .btn{border:0!important;border-radius:999px!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:850!important;letter-spacing:-.01em!important;text-transform:none;background:#fff;color:#0a0f22;box-shadow:0 10px 28px rgba(255,255,255,.12)!important}
+html[data-estilo="moderno"] .btn.ghost{background:var(--glass);color:#fff;box-shadow:none!important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 html[data-estilo="moderno"] .btn.sm{box-shadow:none!important}
+html[data-estilo="moderno"] .btn:disabled{opacity:.4}
 html[data-estilo="moderno"] .btn:not(:disabled):active{transform:scale(.97)!important}
-/* caixas e listas */
-html[data-estilo="moderno"] :is(.mode,.roster li,.sheet,.qcard,.bcard,.wordcard,.mucard,.rstep,.board li,.opt,.sub,.wcard,.sent,.jbox,.yourturn,.outbox,.words p,.roles li,.others li,.tally li,.drink,.yn2 p,.rulebar,.vol li,.chips li,.seg button,.age,.foreheads li,.how,.deck,.history li,.wl li,.purse,.town,.resume,.raisebox,.panel,.box,.qrcard,.isheet .box,.lastans,.seat,.me,.log,.piles,.tip){border:1px solid var(--hair)!important;box-shadow:var(--soft-sm)!important;border-radius:18px}
-html[data-estilo="moderno"] .roster li.free{border:1.5px dashed var(--hair)!important;box-shadow:none!important}
-html[data-estilo="moderno"] :is(.chips li,.seg button,.vol li,.history li,.wl li,.filters button,.modeswitch a,.modeswitch span){border-radius:999px!important;box-shadow:none!important}
-html[data-estilo="moderno"] :is(.filters button,.modeswitch a,.modeswitch span){border:1px solid var(--hair)!important}
-html[data-estilo="moderno"] input{border:1.5px solid var(--hair)!important;box-shadow:none!important;border-radius:14px}
-html[data-estilo="moderno"] input:focus{border-color:var(--accent)!important;box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent)!important}
-html[data-estilo="moderno"] .lobby .code{-webkit-text-stroke:0!important;text-shadow:none!important;letter-spacing:.2em!important;font-family:ui-monospace,"SF Mono",Menlo,monospace!important;font-weight:800}
-html[data-estilo="moderno"] .alert{border:0!important;box-shadow:var(--soft)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;border-radius:16px}
-html[data-estilo="moderno"] .eyebrow{letter-spacing:.14em;opacity:.8}
-html[data-estilo="moderno"] .bubble-say{border:0!important;box-shadow:var(--soft)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:-.01em;border-radius:20px}
-html[data-estilo="moderno"] .bubble-say::after{border-top-color:#fff!important}
-html[data-estilo="moderno"] .mascot{filter:drop-shadow(0 10px 18px rgba(0,0,0,.18))!important}
-html[data-estilo="moderno"] .roomtag{border:1px solid var(--hair)!important;box-shadow:none!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:.04em}
-html[data-estilo="moderno"] .modal,html[data-estilo="moderno"] .qrwrap,html[data-estilo="moderno"] .ov,html[data-estilo="moderno"] .isheet{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-/* menu: cartões em vidro */
-html[data-estilo="moderno"] .game{border:0!important;border-radius:30px!important;box-shadow:0 18px 40px color-mix(in srgb,var(--gc) 45%,transparent),var(--soft-sm)!important;background:linear-gradient(160deg,color-mix(in srgb,var(--gc) 92%,#fff),var(--gc) 55%,color-mix(in srgb,var(--gc) 80%,#000))!important}
-html[data-estilo="moderno"] .game::before{display:none}
-html[data-estilo="moderno"] .game .pic{border:0!important;border-radius:22px;background:rgba(255,255,255,.38)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
-html[data-estilo="moderno"] .game h3{text-shadow:none!important}
-html[data-estilo="moderno"] .game .tag{border:0!important;background:rgba(255,255,255,.72)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:0!important}
-html[data-estilo="moderno"] .game .play{font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:0!important;background:rgba(10,12,20,.88)!important;box-shadow:0 6px 16px rgba(0,0,0,.25)!important}
-html[data-estilo="moderno"] .dots button{border:0!important;background:color-mix(in srgb,var(--ink) 20%,transparent)}
-html[data-estilo="moderno"] .dots button.on{background:var(--accent)}
-html[data-estilo="moderno"] .filters button.on,html[data-estilo="moderno"] .modeswitch span{background:var(--ink)!important;color:var(--bg)!important}
-html[data-estilo="moderno"] .arrow{border:0!important;box-shadow:var(--soft)!important}
+html[data-estilo="moderno"] .btn:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 70%,#fff);outline-offset:3px}
+/* painéis em vidro */
+html[data-estilo="moderno"] :is(.mode,.roster li,.sheet,.qcard,.bcard,.mucard,.rstep,.board li,.opt,.sub,.wcard,.sent,.jbox,.yourturn,.outbox,.words p,.roles li,.others li,.tally li,.drink,.yn2 p,.rulebar,.vol li,.chips li,.seg button,.age,.how,.deck,.history li,.wl li,.purse,.town,.resume,.raisebox,.box,.lastans,.log,.piles,.tip){border:1px solid var(--hair)!important;box-shadow:var(--soft-sm)!important;border-radius:20px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+html[data-estilo="moderno"] :is(.mode,.sheet,.yourturn,.outbox,.how,.purse,.resume,.raisebox,.box,.rulebar){background:var(--glass)!important;color:var(--ink)}
+html[data-estilo="moderno"] .sheet{background:rgba(18,22,44,.92)!important}
+html[data-estilo="moderno"] .roster li.free{border:1.5px dashed var(--hair)!important;box-shadow:none!important;background:transparent!important;backdrop-filter:none}
+html[data-estilo="moderno"] .roster li.free.more{border:0!important}
+html[data-estilo="moderno"] :is(.chips li,.seg button,.vol li,.history li,.wl li,.modeswitch a,.modeswitch span){border-radius:999px!important;box-shadow:none!important;border:1px solid var(--hair)!important}
+html[data-estilo="moderno"] :is(.seg button.on,.modeswitch span,.deck.on){background:#fff!important;color:#0a0f22!important;border-color:#fff!important}
+html[data-estilo="moderno"] .modeswitch a{background:var(--glass);color:#fff}
+html[data-estilo="moderno"] input{background:rgba(255,255,255,.06)!important;color:#fff!important;border:1px solid var(--hair)!important;box-shadow:none!important;border-radius:16px}
+html[data-estilo="moderno"] input::placeholder{color:rgba(255,255,255,.4)}
+html[data-estilo="moderno"] input:focus{border-color:color-mix(in srgb,var(--accent) 70%,#fff)!important;box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 25%,transparent)!important}
+html[data-estilo="moderno"] .lobby .code{-webkit-text-stroke:0!important;text-shadow:0 0 40px color-mix(in srgb,var(--accent) 60%,transparent)!important;letter-spacing:.22em!important;font-family:ui-monospace,"SF Mono",Menlo,monospace!important;font-weight:800;color:#fff!important}
+html[data-estilo="moderno"] .alert{border:0!important;box-shadow:var(--soft)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;border-radius:18px;background:#fff!important;color:#0a0f22!important}
+html[data-estilo="moderno"] .eyebrow{letter-spacing:.16em;color:var(--muted)}
+html[data-estilo="moderno"] .bubble-say{border:0!important;box-shadow:var(--soft)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;border-radius:20px}
+html[data-estilo="moderno"] .mascot{filter:drop-shadow(0 16px 30px rgba(0,0,0,.5))!important}
+html[data-estilo="moderno"] .roomtag{border:1px solid var(--hair)!important;box-shadow:none!important;background:var(--glass)!important;color:#fff!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:.04em}
+html[data-estilo="moderno"] :is(.modal,.qrwrap,.ov,.isheet){backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(3,5,12,.6)!important}
+html[data-estilo="moderno"] :is(.qrcard,.ov .panel){border:0!important;box-shadow:var(--soft)!important;border-radius:26px}
+html[data-estilo="moderno"] .wordcard,html[data-estilo="moderno"] .foreheads li{border:0!important;box-shadow:var(--soft-sm)!important;border-radius:20px}
+html[data-estilo="moderno"] .foot{color:var(--muted)}
 /* poker */
-html[data-estilo="moderno"] .felt{outline:0!important;border:0!important;border-radius:32px!important;box-shadow:var(--soft),inset 0 0 0 10px rgba(0,0,0,.18),inset 0 0 60px rgba(0,0,0,.35)!important}
-html[data-estilo="moderno"] .card{border:0!important;box-shadow:0 4px 12px rgba(0,0,0,.3)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:900}
-html[data-estilo="moderno"] .seat{background:rgba(0,0,0,.22)!important;border:0!important;box-shadow:none!important}
-html[data-estilo="moderno"] .seat .act,html[data-estilo="moderno"] .seat .bet,html[data-estilo="moderno"] .seat .dl{border:0!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:0}
-html[data-estilo="moderno"] .town .go{border:0!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800}
-html[data-estilo="moderno"] .purse b,html[data-estilo="moderno"] .pot,html[data-estilo="moderno"] .me .info b,html[data-estilo="moderno"] .seat .ch{font-family:"Figtree",system-ui,sans-serif!important;font-weight:900!important;-webkit-text-stroke:0!important;text-shadow:none!important}
-/* cobrinha e voa voa: só a moldura */
+html[data-estilo="moderno"] .felt{outline:0!important;border:0!important;border-radius:34px!important;box-shadow:var(--soft),inset 0 0 0 10px rgba(0,0,0,.25),inset 0 0 80px rgba(0,0,0,.45)!important}
+html[data-estilo="moderno"] .card{border:0!important;box-shadow:0 6px 16px rgba(0,0,0,.4)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:900}
+html[data-estilo="moderno"] .card.empty{border:1.5px dashed rgba(255,255,255,.25)!important;box-shadow:none!important}
+html[data-estilo="moderno"] .seat{background:rgba(0,0,0,.25)!important;border:0!important;box-shadow:none!important;backdrop-filter:none}
+html[data-estilo="moderno"] :is(.seat .act,.seat .bet,.seat .dl,.me .dl,.town .go){border:0!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:800;letter-spacing:0}
+html[data-estilo="moderno"] .town{color:#fff;background:var(--glass)!important}
+html[data-estilo="moderno"] .town h3{color:#fff}html[data-estilo="moderno"] .town small{color:var(--muted)}
+html[data-estilo="moderno"] .town.done{background:color-mix(in srgb,#ffd23f 14%,transparent)!important}
+html[data-estilo="moderno"] :is(.purse b,.pot,.me .info b,.seat .ch,.rank){font-family:"Figtree",system-ui,sans-serif!important;font-weight:900!important;-webkit-text-stroke:0!important;text-shadow:none!important}
+/* cobrinha e voa voa: só a moldura (o ecrã de jogo fica como está) */
 html[data-estilo="moderno"] .phone,html[data-estilo="moderno"] .stage{border:0!important;box-shadow:var(--soft)!important}
-html[data-estilo="moderno"] .key{border:0!important;box-shadow:0 3px 0 rgba(0,0,0,.35)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:900}
+html[data-estilo="moderno"] .key{border:0!important;box-shadow:0 3px 0 rgba(0,0,0,.45)!important;font-family:"Figtree",system-ui,sans-serif!important;font-weight:900}
 </style></head>
 <body>
 <div class="wrap">
@@ -382,6 +437,22 @@ html[data-estilo="moderno"] .key{border:0!important;box-shadow:0 3px 0 rgba(0,0,
   <div class="dots" id="dots" role="tablist" aria-label="Escolher jogo"></div></div>
   <p class="foot"><span class="estilo" role="group" aria-label="Estilo da aplicação">Estilo: <button type="button" data-e="bd">Banda desenhada</button><button type="button" data-e="moderno">Moderno</button></span> · Feito em Portugal</p>
 </div>
+<div class="ps" id="ps" aria-label="Menu de jogos">
+  <div class="ps-bg" id="psBg"><div class="ps-glow"></div><div class="ps-blur" id="psBlur"></div></div>
+  <header class="ps-top">
+    <div class="ps-logo">Joga<b>tina</b></div>
+    <div class="ps-right"><span class="ps-clock" id="psClock"></span><button type="button" class="ps-ic" id="psInstall" aria-label="Criar atalho" title="Criar atalho">📲</button><button type="button" class="ps-ic" id="psFs" aria-label="Ecrã completo" title="Ecrã completo">⛶</button></div>
+  </header>
+  <nav class="ps-tabs" id="psTabs" aria-label="Filtrar jogos"><button type="button" data-f="all">Todos</button><button type="button" data-f="online">Com amigos</button><button type="button" data-f="offline">Sem internet</button></nav>
+  <div class="ps-tiles" id="psTiles" role="listbox" aria-label="Jogos"></div>
+  <div class="ps-art" id="psArt" aria-hidden="true"></div>
+  <section class="ps-info" id="psInfo" aria-live="polite">
+    <div class="ps-meta" id="psMeta"></div>
+    <h2 class="ps-title" id="psTitle"></h2>
+    <p class="ps-desc" id="psDesc"></p>
+    <div class="ps-actions"><a class="ps-play" id="psPlay" href="#">▶&nbsp; Jogar</a><button type="button" class="ps-alt" id="psBd" title="Voltar ao estilo banda desenhada">🎨</button></div>
+  </section>
+</div>
 <div class="isheet" id="iosSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-label="Criar atalho"><h3>Criar atalho</h3><ol><li>Abre este site no Safari.</li><li>Toca no botão Partilhar (o quadrado com a seta para cima).</li><li>Escolhe «Adicionar ao ecrã principal».</li></ol><p class="note" style="margin:0">Fica com um ícone no ecrã inicial, como as outras apps, e abre sem barras do navegador. Também podes fazer isto dentro de cada jogo para teres um atalho só desse jogo.</p><button class="btn" type="button">Percebi</button></div></div>
 <script>
 const tb=document.getElementById("themeBtn");
@@ -447,10 +518,45 @@ tb.addEventListener("click",()=>setTheme(document.documentElement.dataset.ppThem
   box.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.preventDefault();if(!box._w){box._w=1;go(cur+(e.deltaY>0?1:-1));setTimeout(()=>box._w=0,350)}}},{passive:false});
   all.forEach(c=>c.addEventListener("click",e=>{const i=cards.indexOf(c);if(i!==cur){e.preventDefault();e.stopImmediatePropagation();go(i)}},true));
   const f0=ls.get("hub-filtro");applyFilter(["all","online","offline"].includes(f0)?f0:"all",ls.get("hub-jogo"));
+  /* menu tipo consola (estilo moderno): constrói-se a partir dos mesmos cartões */
+  const ps=document.getElementById("ps"),tiles=document.getElementById("psTiles"),art=document.getElementById("psArt"),blur=document.getElementById("psBlur");
+  const MODES={online:"Com amigos",offline:"Sem internet"};
+  const data=all.map(a=>({el:a,id:a.classList[1],href:a.getAttribute("href"),title:a.querySelector("h3").textContent,desc:a.querySelector("p").textContent,tag:a.querySelector(".tag").textContent,m:a.dataset.m.split(" "),pic:a.querySelector(".pic").innerHTML,color:getComputedStyle(a).getPropertyValue("--gc").trim()||"#4f7fff"}));
+  let psList=data,psCur=0;
+  const blip=f=>{try{if(localStorage.getItem("pp-mute")==="1")return;const A=window.__psAC||(window.__psAC=new(window.AudioContext||window.webkitAudioContext)());if(A.state!=="running")A.resume();const t=A.currentTime,o=A.createOscillator(),g=A.createGain();o.type="sine";o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*1.5,t+.06);g.gain.setValueAtTime(.04,t);g.gain.exponentialRampToValueAtTime(.0001,t+.12);o.connect(g).connect(A.destination);o.start(t);o.stop(t+.14)}catch(e){}};
+  function psRenderTiles(){tiles.innerHTML=psList.map((d,i)=>`<button type="button" class="ps-tile" role="option" data-i="${i}" style="--c:${d.color}" aria-label="${d.title}">${d.pic}<span>${d.title}</span></button>`).join("")}
+  function psSelect(i,sound){
+    if(!psList.length)return;i=(i+psList.length)%psList.length;psCur=i;const d=psList[i];
+    tiles.querySelectorAll(".ps-tile").forEach((t,k)=>{t.classList.toggle("on",k===i);t.setAttribute("aria-selected",String(k===i))});
+    const t=tiles.children[i];if(t){const x=t.offsetLeft-20;tiles.scrollTo({left:Math.max(0,x-Math.max(0,(tiles.clientWidth-200)/2)),behavior:"smooth"})}
+    ps.style.setProperty("--g",d.color);
+    art.innerHTML=`<div class="pic">${d.pic}</div>`;blur.innerHTML=d.pic;
+    const info=document.getElementById("psInfo");info.style.animation="none";void info.offsetWidth;info.style.animation="";
+    document.getElementById("psMeta").innerHTML=[d.tag,...d.m.map(x=>MODES[x])].map(x=>`<span>${x}</span>`).join("");
+    document.getElementById("psTitle").textContent=d.title;document.getElementById("psDesc").textContent=d.desc;
+    const pl=document.getElementById("psPlay");pl.href=d.href;pl.setAttribute("aria-label","Jogar "+d.title);
+    ls.set("hub-jogo",d.id);if(sound)blip(660);
+  }
+  function psFilter(f,keep){
+    psList=data.filter(d=>f==="all"||d.m.includes(f));
+    document.querySelectorAll("#psTabs [data-f]").forEach(b=>b.classList.toggle("on",b.dataset.f===f));
+    psRenderTiles();const k=psList.findIndex(d=>d.id===keep);psSelect(k<0?0:k,false);
+  }
+  tiles.addEventListener("click",e=>{const t=e.target.closest(".ps-tile");if(!t)return;const i=+t.dataset.i;if(i===psCur){document.getElementById("psPlay").click();return}psSelect(i,true)});
+  document.getElementById("psTabs").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(!b)return;ls.set("hub-filtro",b.dataset.f);applyFilter(b.dataset.f);psFilter(b.dataset.f,psList[psCur]&&psList[psCur].id);blip(520)});
+  /* deslizar no desenho grande muda de jogo */
+  let sx=null;art.addEventListener("pointerdown",e=>{sx=e.clientX});art.addEventListener("pointerup",e=>{if(sx==null)return;const dx=e.clientX-sx;sx=null;if(Math.abs(dx)>40)psSelect(psCur+(dx<0?1:-1),true);else if(Math.abs(dx)<8)document.getElementById("psPlay").click()});
+  document.addEventListener("keydown",e=>{if(document.documentElement.dataset.estilo!=="moderno")return;if(e.key==="ArrowRight"){e.preventDefault();psSelect(psCur+1,true)}if(e.key==="ArrowLeft"){e.preventDefault();psSelect(psCur-1,true)}if(e.key==="Enter"&&document.activeElement===document.body)document.getElementById("psPlay").click()});
+  const ib=document.getElementById("installBtn"),pi=document.getElementById("psInstall");pi.hidden=ib.hidden;new MutationObserver(()=>{pi.hidden=ib.hidden}).observe(ib,{attributes:true});pi.onclick=()=>ib.click();
+  document.getElementById("psFs").onclick=()=>{const f=document.getElementById("fsBtn");if(f)f.click()};
+  if(!document.fullscreenEnabled&&!document.webkitFullscreenEnabled)document.getElementById("psFs").hidden=true;
+  const clk=()=>{const d=new Date();document.getElementById("psClock").textContent=d.toLocaleTimeString("pt-PT",{hour:"2-digit",minute:"2-digit"})};clk();setInterval(clk,15000);
+  document.getElementById("psBd").onclick=()=>{delete document.documentElement.dataset.estilo;ls.set("pp-estilo","bd");mark();applyFilter(filt,psList[psCur]&&psList[psCur].id)};
+  psFilter(["all","online","offline"].includes(ls.get("hub-filtro"))?ls.get("hub-filtro"):"all",ls.get("hub-jogo"));
   /* estilo da aplicação: banda desenhada ou moderno */
   const es=document.querySelector(".estilo"),cur0=()=>document.documentElement.dataset.estilo==="moderno"?"moderno":"bd";
   const mark=()=>es.querySelectorAll("[data-e]").forEach(b=>{b.classList.toggle("on",b.dataset.e===cur0());b.setAttribute("aria-pressed",String(b.dataset.e===cur0()))});
-  es.addEventListener("click",e=>{const b=e.target.closest("[data-e]");if(!b)return;if(b.dataset.e==="moderno")document.documentElement.dataset.estilo="moderno";else delete document.documentElement.dataset.estilo;ls.set("pp-estilo",b.dataset.e);mark();requestAnimationFrame(()=>{go(cur,false);upd()})});
+  es.addEventListener("click",e=>{const b=e.target.closest("[data-e]");if(!b)return;if(b.dataset.e==="moderno"){document.documentElement.dataset.estilo="moderno";delete document.documentElement.dataset.ppTheme;psFilter(filt,cards[cur]&&cards[cur].classList[1])}else delete document.documentElement.dataset.estilo;ls.set("pp-estilo",b.dataset.e);mark();requestAnimationFrame(()=>{go(cur,false);upd()})});
   mark();
 })();
 /* bonecos do menu */
