@@ -752,40 +752,40 @@ function initUI(o){
    para os infiltrados (sorteado). O Senhor Branco não recebe nenhuma. */
 const PAIRS=[
 /* comida e bebida */
-["bica","galão"],["francesinha","tosta mista"],["bacalhau","sardinha"],["pastel de nata","bola de Berlim"],["caldo verde","canja"],
-["bifana","prego"],["cozido à portuguesa","feijoada"],["arroz-doce","leite-creme"],["vinho verde","vinho do Porto"],["imperial","caneca"],
-["ginjinha","licor beirão"],["queijo da serra","requeijão"],["chouriço","alheira"],["presunto","fiambre"],["broa","pão de forma"],
-["polvo","lula"],["camarão","lagosta"],["amêijoas","mexilhões"],["frango assado","frango de churrasco"],["batatas fritas","puré"],
+["bica","galão"],["francesinha","tosta"],["bacalhau","sardinha"],["queijada","travesseiro"],["canja","sopa"],
+["bifana","prego"],["feijoada","cozido"],["arroz-doce","leite-creme"],["vinho","sangria"],["imperial","caneca"],
+["ginjinha","aguardente"],["queijo","requeijão"],["chouriço","alheira"],["presunto","fiambre"],["broa","pão"],
+["polvo","lula"],["camarão","lagosta"],["amêijoas","mexilhões"],["frango","peru"],["batatas","puré"],
 ["pizza","lasanha"],["hambúrguer","cachorro-quente"],["sushi","ceviche"],["kebab","shawarma"],["gelado","sorvete"],
-["chocolate quente","cappuccino"],["chá","tisana"],["sumo de laranja","limonada"],["sangria","vinho tinto"],["cerveja","sidra"],
-["croissant","pão de leite"],["bolo-rei","bolo-rainha"],["rabanadas","filhoses"],["mel","compota"],["azeite","manteiga"],
-["tremoços","amendoins"],["pipocas","nachos"],["ovo estrelado","ovo mexido"],["omelete","fritada"],["sopa de legumes","creme de abóbora"],
+["cappuccino","chocolate"],["chá","tisana"],["sumo","limonada"],["batido","iogurte"],["cerveja","sidra"],
+["croissant","torrada"],["bolo-rei","bolo-rainha"],["rabanadas","filhoses"],["mel","compota"],["azeite","manteiga"],
+["tremoços","amendoins"],["pipocas","nachos"],["ovo","panqueca"],["omelete","fritada"],["abóbora","curgete"],
 ["maçã","pera"],["laranja","tangerina"],["morango","framboesa"],["melancia","melão"],["banana","manga"],
 ["cebola","alho"],["tomate","pimento"],["batata","batata-doce"],["cenoura","nabo"],["couve","alface"],
 /* lugares */
 ["Lisboa","Porto"],["Algarve","Ibiza"],["Coimbra","Braga"],["Madeira","Açores"],["Sintra","Cascais"],
 ["praia","piscina"],["montanha","colina"],["café","pastelaria"],["tasca","restaurante"],["discoteca","bar"],
-["supermercado","mercearia"],["hospital","centro de saúde"],["farmácia","parafarmácia"],["igreja","capela"],["escola","universidade"],
-["aeroporto","estação de comboios"],["metro","elétrico"],["autocarro","camioneta"],["ginásio","pavilhão"],["biblioteca","livraria"],
-["cinema","teatro"],["museu","galeria de arte"],["parque de campismo","hotel"],["quinta","herdade"],["aldeia","vila"],
+["supermercado","mercearia"],["hospital","clínica"],["farmácia","parafarmácia"],["igreja","capela"],["escola","universidade"],
+["aeroporto","estação"],["metro","elétrico"],["autocarro","camioneta"],["ginásio","pavilhão"],["biblioteca","livraria"],
+["cinema","teatro"],["museu","galeria"],["campismo","hotel"],["quinta","herdade"],["aldeia","vila"],
 ["Fátima","Santiago de Compostela"],["Paris","Londres"],["Espanha","França"],["Brasil","Angola"],["Nova Iorque","Las Vegas"],
 /* casa e objetos */
-["sofá","cadeirão"],["cama","beliche"],["frigorífico","arca congeladora"],["micro-ondas","forno"],["chaleira","cafeteira"],
-["garfo","colher"],["copo","taça"],["prato","tigela"],["panela","frigideira"],["panela de pressão","tacho"],
+["sofá","cadeirão"],["cama","beliche"],["frigorífico","congelador"],["micro-ondas","forno"],["chaleira","cafeteira"],
+["garfo","colher"],["copo","taça"],["prato","tigela"],["panela","frigideira"],["tacho","caçarola"],
 ["guarda-chuva","impermeável"],["casaco","camisola"],["sapatilhas","chinelos"],["meias","collants"],["chapéu","boné"],
-["óculos","lentes de contacto"],["relógio","pulseira"],["anel","brinco"],["mala","mochila"],["carteira","porta-moedas"],
+["óculos","lentes"],["relógio","pulseira"],["anel","brinco"],["mala","mochila"],["carteira","porta-moedas"],
 ["telemóvel","tablet"],["computador","portátil"],["televisão","rádio"],["comando","teclado"],["auscultadores","colunas"],
-["vassoura","esfregona"],["aspirador","robot aspirador"],["máquina de lavar roupa","máquina de lavar loiça"],["toalha","lençol"],["almofada","edredão"],
-["escova de dentes","fio dental"],["champô","gel de banho"],["perfume","desodorizante"],["espelho","janela"],["vela","candeeiro"],
-["chave","cadeado"],["tesoura","faca"],["martelo","chave de fendas"],["fita-cola","cola"],["caneta","lápis"],
+["vassoura","esfregona"],["aspirador","espanador"],["estendal","ferro"],["toalha","lençol"],["almofada","edredão"],
+["escova","pente"],["champô","sabonete"],["perfume","desodorizante"],["espelho","janela"],["vela","candeeiro"],
+["chave","cadeado"],["tesoura","faca"],["martelo","alicate"],["fita-cola","cola"],["caneta","lápis"],
 /* transportes */
-["carro","mota"],["bicicleta","trotinete"],["avião","helicóptero"],["barco","mota de água"],["comboio","teleférico"],
-["táxi","TVDE"],["ambulância","carro da polícia"],["trator","camião"],["caravana","tenda"],["skate","patins"],
+["carro","mota"],["bicicleta","trotinete"],["avião","helicóptero"],["barco","iate"],["comboio","teleférico"],
+["táxi","TVDE"],["ambulância","reboque"],["trator","camião"],["caravana","tenda"],["skate","patins"],
 /* pessoas e profissões */
 ["médico","enfermeiro"],["professor","explicador"],["polícia","GNR"],["bombeiro","nadador-salvador"],["padre","freira"],
-["cozinheiro","empregado de mesa"],["canalizador","eletricista"],["carteiro","estafeta"],["advogado","juiz"],["dentista","cabeleireiro"],
-["sogra","madrasta"],["avó","tia"],["primo","sobrinho"],["vizinho","porteiro"],["chefe","colega de trabalho"],
-["namorado","amante"],["ex-namorado","melhor amigo"],["noiva","dama de honor"],["padrinho","testemunha"],["bebé","criança"],
+["cozinheiro","empregado"],["canalizador","eletricista"],["carteiro","estafeta"],["advogado","juiz"],["dentista","cabeleireiro"],
+["sogra","madrasta"],["avó","tia"],["primo","sobrinho"],["vizinho","porteiro"],["chefe","colega"],
+["namorado","amante"],["ex-namorado","amigo"],["noiva","madrinha"],["padrinho","testemunha"],["bebé","criança"],
 /* animais */
 ["cão","lobo"],["gato","tigre"],["galinha","pato"],["vaca","boi"],["porco","javali"],
 ["cavalo","burro"],["ovelha","cabra"],["coelho","lebre"],["rato","hamster"],["pombo","gaivota"],
@@ -796,18 +796,18 @@ const PAIRS=[
 ["surf","bodyboard"],["ciclismo","corrida"],["xadrez","damas"],["sueca","poker"],["bowling","bilhar"],
 ["ioga","pilates"],["natação","hidroginástica"],["karaté","judo"],["golfe","minigolfe"],["dardos","matraquilhos"],
 /* música, festas e cultura */
-["fado","pimba"],["guitarra portuguesa","viola"],["piano","acordeão"],["Natal","Páscoa"],["Carnaval","Halloween"],
-["Santos Populares","festa da aldeia"],["casamento","batizado"],["aniversário","jantar de empresa"],["funeral","missa"],["despedida de solteiro","festa de anos"],
-["telenovela","série"],["telejornal","programa da manhã"],["Festival da Canção","Eurovisão"],["WhatsApp","Messenger"],["Instagram","TikTok"],
+["fado","pimba"],["guitarra","viola"],["piano","acordeão"],["Natal","Páscoa"],["Carnaval","Halloween"],
+["arraial","romaria"],["casamento","batizado"],["aniversário","réveillon"],["funeral","missa"],["festa","jantarada"],
+["telenovela","série"],["telejornal","novela"],["Festival da Canção","Eurovisão"],["WhatsApp","Messenger"],["Instagram","TikTok"],
 ["Pai Natal","Rei Mago"],["fantasma","zombie"],["vampiro","lobisomem"],["bruxa","fada"],["sereia","ninfa"],
 /* coisas do dia a dia */
 ["segunda-feira","domingo"],["manhã","madrugada"],["verão","primavera"],["chuva","nevoeiro"],["sol","lua"],
-["ressaca","enjoo"],["constipação","gripe"],["dor de cabeça","dor de dentes"],["sesta","noitada"],["pequeno-almoço","lanche"],
-["Multibanco","MB WAY"],["Finanças","Segurança Social"],["multa","portagem"],["renda","prestação da casa"],["ordenado","subsídio de Natal"],
-["fila","trânsito"],["rotunda","semáforo"],["passadeira","ponte"],["elevador","escada rolante"],["garagem","arrecadação"],
-["selfie","fotografia de grupo"],["áudio","mensagem"],["videochamada","chamada"],["email","carta"],["emoji","sticker"],
+["ressaca","enjoo"],["constipação","gripe"],["enxaqueca","tontura"],["sesta","noitada"],["pequeno-almoço","lanche"],
+["Multibanco","MB WAY"],["Finanças","Segurança Social"],["multa","portagem"],["renda","prestação"],["ordenado","subsídio"],
+["fila","trânsito"],["rotunda","semáforo"],["passadeira","ponte"],["elevador","escadas"],["garagem","arrecadação"],
+["selfie","fotografia"],["áudio","mensagem"],["videochamada","chamada"],["email","carta"],["emoji","sticker"],
 ["dieta","jejum"],["ginástica","caminhada"],["tatuagem","piercing"],["barba","bigode"],["peruca","extensões"],
-["beijo","abraço"],["piscar o olho","acenar"],["rir","sorrir"],["chorar","bocejar"],["espirrar","tossir"]
+["beijo","abraço"],["piscadela","aceno"],["rir","sorrir"],["chorar","bocejar"],["espirrar","tossir"]
 ];
 
 /* ================= SENHOR BRANCO =================
