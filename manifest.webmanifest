@@ -227,6 +227,18 @@
      "type": "image/png"
     }
    ]
+  },
+  {
+   "name": "Stop!",
+   "short_name": "Stop!",
+   "url": "stop/",
+   "icons": [
+    {
+     "src": "stop/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
   }
  ]
 }
