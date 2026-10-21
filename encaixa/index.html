@@ -407,8 +407,11 @@ layout();menu();hud();requestAnimationFrame(t=>{last=t;loop(t)});
   const isFs=()=>!!(D.fullscreenElement||D.webkitFullscreenElement);
   /* app instalada em ecrã completo: já está tudo no ecrã, o botão não faz falta */
   const APPFS=matchMedia("(display-mode: fullscreen)").matches;
-  const get=()=>{if(APPFS)return false;try{return localStorage.getItem("pp-fs")==="1"}catch(e){return false}};
-  const set=v=>{try{localStorage.setItem("pp-fs",v?"1":"0")}catch(e){}};
+  /* app instalada que ainda abre com as barras (o Chrome demora a atualizar a app): entra em ecrã completo no primeiro toque,
+     sempre que se abre a app (a escolha de sair só dura até fechar a app) */
+  const APPSA=!APPFS&&(matchMedia("(display-mode: standalone)").matches||navigator.standalone===true);
+  const get=()=>{if(APPFS)return false;try{if(APPSA){const v=sessionStorage.getItem("pp-fs-app");return v!=="0"}return localStorage.getItem("pp-fs")==="1"}catch(e){return APPSA}};
+  const set=v=>{try{if(APPSA)sessionStorage.setItem("pp-fs-app",v?"1":"0");else localStorage.setItem("pp-fs",v?"1":"0")}catch(e){}};
   const enter=()=>{try{const p=(de.requestFullscreen||de.webkitRequestFullscreen).call(de,{navigationUI:"hide"});if(p&&p.catch)return p.catch(()=>{});return Promise.resolve()}catch(e){return Promise.resolve()}};
   const leave=()=>{try{if(!isFs())return;const p=(D.exitFullscreen||D.webkitExitFullscreen).call(D);if(p&&p.catch)p.catch(()=>{})}catch(e){}};
   const JFS={can,isFs,wanted:get,enter,leave,framed:!!TOP};
