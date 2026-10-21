@@ -267,6 +267,18 @@
      "type": "image/png"
     }
    ]
+  },
+  {
+   "name": "Pinball do Porto",
+   "short_name": "Pinball",
+   "url": "pinball/",
+   "icons": [
+    {
+     "src": "pinball/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
   }
  ]
 }
