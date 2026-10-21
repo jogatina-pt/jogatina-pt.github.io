@@ -358,7 +358,7 @@ html.sda .game{animation:cardTilt linear both;animation-timeline:view(inline);an
   <div class="tiles" id="dots" role="tablist" aria-label="Escolher jogo"></div></div>
   <p class="foot">Feito em Portugal</p>
 </div>
-<div class="isheet" id="iosSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-label="Criar atalho"><h3>Criar atalho</h3><ol><li>Abre este site no Safari.</li><li>Toca no botão Partilhar (o quadrado com a seta para cima).</li><li>Escolhe «Adicionar ao ecrã principal».</li></ol><p class="note" style="margin:0">Fica com um ícone no ecrã inicial, como as outras apps, e abre sem barras do navegador. Também podes fazer isto dentro de cada jogo para teres um atalho só desse jogo.</p><button class="btn" type="button">Percebi</button></div></div>
+<div class="isheet" id="iosSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-label="Criar atalho"><h3>Instalar a app</h3><ol><li>Abre este site no Safari.</li><li>Toca no botão Partilhar (o quadrado com a seta para cima).</li><li>Escolhe «Adicionar ao ecrã principal».</li></ol><p class="note" style="margin:0">Fica com um ícone no ecrã inicial, como as outras apps, e abre sem barras do navegador. Também podes fazer isto dentro de cada jogo para teres um atalho só desse jogo.</p><button class="btn" type="button">Percebi</button></div></div>
 <script>
 const tb=document.getElementById("themeBtn");
 function setTheme(t,save){if(t==="light")document.documentElement.dataset.ppTheme="light";else delete document.documentElement.dataset.ppTheme;if(save)try{localStorage.setItem("pp-tema",t)}catch(e){}tb.textContent=t==="light"?"☾":"☀";tb.title=t==="light"?"Tema escuro":"Tema claro";tb.setAttribute("aria-label",tb.title);const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==="light"?"#f4eee3":"#13201f"}
@@ -376,18 +376,20 @@ tb.addEventListener("click",()=>setTheme(document.documentElement.dataset.ppThem
   let ev=null;
   window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();ev=e});
   window.addEventListener("appinstalled",()=>{btn.hidden=true;ev=null});
-  btn.hidden=false;
+  btn.hidden=false;btn.textContent="📲 Instalar app";
+  window.addEventListener("beforeinstallprompt",()=>{btn.textContent="📲 Instalar app"});
   const steps=()=>{
     if(ios&&!/Safari/.test(ua)||ios&&/CriOS|FxiOS|EdgiOS/.test(ua))return["No iPhone só o Safari deixa instalar: abre este site no Safari.","Toca no botão Partilhar (o quadrado com a seta para cima).","Escolhe «Adicionar ao ecrã principal»."];
     if(ios)return["Toca no botão Partilhar (o quadrado com a seta para cima, em baixo ou ao lado do endereço).","Desce e escolhe «Adicionar ao ecrã principal».","Toca em «Adicionar»."];
     if(samsung)return["Toca no menu (as três riscas, em baixo à direita).","Escolhe «Adicionar página a» e depois «Ecrã inicial».","Confirma em «Adicionar»."];
+    if(firefox&&android)return["<b>Dica:</b> no Firefox fica só um atalho. Para ficar como uma app a sério (na lista de apps, sem barras), abre jogatina-pt.github.io no <b>Chrome</b> e toca em «Instalar app».","No Firefox: menu (os três pontos) → «Adicionar ao ecrã principal»."];
     if(firefox)return["Toca no menu (os três pontos).","Escolhe «Instalar» ou «Adicionar ao ecrã principal».","Confirma."];
     if(android)return["Toca no menu do Chrome (os três pontos, em cima à direita).","Escolhe «Instalar app» ou «Adicionar ao ecrã principal».","Confirma em «Instalar»."];
     return["No menu do navegador, procura «Instalar Jogatina» ou o ícone de instalar na barra do endereço.","Confirma em «Instalar»."];
   };
   btn.addEventListener("click",async()=>{
     if(ev){ev.prompt();let r=null;try{r=await ev.userChoice}catch(e){}ev=null;if(r&&r.outcome==="accepted")btn.hidden=true;return}
-    sheet.querySelector("h3").textContent="Criar atalho";
+    sheet.querySelector("h3").textContent="Instalar a app";
     sheet.querySelector("ol").innerHTML=steps().map(s=>"<li>"+s+"</li>").join("");
     sheet.hidden=false;
   });
