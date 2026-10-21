@@ -608,13 +608,13 @@ function step(dt){
   if(G.state==="dead"){G.deadT+=dt;G.chase=Math.min(1,G.chase+dt*1.6);if(G.deadT>1.2&&!G.over){G.over=true;gameOver()}return}
   if(G.state!=="play")return;
   /* velocidade sobe devagar */
-  G.v=11+13*(1-Math.exp(-G.dist/2600));G.gap=18+G.v*.45;
-  const dz=G.v*dt;const prevFront=P.z+.25;G.lastZ=P.z;P.z+=dz;G.dist+=dz;P.run+=dt*(G.v/11);
+  G.v=14+15*(1-Math.exp(-G.dist/1800));G.gap=18+G.v*.45;
+  const dz=G.v*dt;const prevFront=P.z+.25;G.lastZ=P.z;P.z+=dz;G.dist+=dz;P.run+=dt*(G.v/13);
   while(G.nextZ<P.z+FAR){genRow(G.nextZ);G.nextZ+=G.gap*(.85+R()*.3)}
   /* elétricos em andamento: só arrancam quando estão perto */
   for(const o of G.objs){o.pz0=o.z0;if(o.mv&&o.z0-P.z<42){o.z0-=o.mv*dt;o.z1-=o.mv*dt}}
   /* lado a lado */
-  const tx=LX[P.lane],dx=tx-P.x,mx=12*dt;P.x+=Math.abs(dx)<mx?dx:Math.sign(dx)*mx;
+  const tx=LX[P.lane],dx=tx-P.x,mx=15*dt;P.x+=Math.abs(dx)<mx?dx:Math.sign(dx)*mx;
   /* power-ups */
   for(const k in G.pw)if(G.pw[k]>0){G.pw[k]-=dt;if(G.pw[k]<=0){G.pw[k]=0;if(k==="skate")flash("Acabou o skate")}}
   if(G.inv>0)G.inv-=dt;
