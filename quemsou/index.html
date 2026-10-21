@@ -355,7 +355,7 @@ input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
   <main id="game" class="game" hidden>
     <div class="gbar"><span class="eyebrow" id="gRound"></span><span id="gTimer"></span></div>
     <ul class="chips" id="chips" aria-label="Jogadores e pontos"></ul>
-    <p class="lost" id="lost" role="status" hidden>Quem criou a sala perdeu a ligação. À espera…</p>
+    <p class="lost" id="lost" role="status" hidden>Quem criou a sala saiu do jogo por um momento. À espera que volte…</p>
     <ul class="foreheads" id="foreheads" aria-label="As palavras de cada um"></ul>
     <section class="panel" id="panel" aria-live="polite"></section>
   </main>
@@ -447,46 +447,61 @@ function mkConn(uid){
     close(){this.closed=true}};
 }
 function connFor(uid){let c=ROOM.conns[uid];if(!c||c.closed){c=mkConn(uid);ROOM.conns[uid]=c}return c}
-async function hostRoom(){
+async function hostRoom(reuse){
   const name=cleanName($("myName").value);
   if(!name){netNote("netNote","Escreve o teu nome primeiro.");$("myName").focus();return}
   store.set("pp-name",name);
   netNote("netNote","A criar a sala…");
   try{await fbInit()}catch(e){netNote("netNote",fbErr(e));return}
   let code=null;
+  /* a página recarregou (o telemóvel fecha-a às vezes quando se vai a outra app): volta a abrir a mesma sala */
+  if(reuse){try{const hr=FB.db.ref(`rooms/${reuse}/host`);const s=await hr.get();if(!s.exists()){await hr.set(FB.uid);code=reuse}else if(s.val()===FB.uid)code=reuse}catch(e){}}
   for(let i=0;i<6&&!code;i++){
     const c=Array.from({length:5},()=>ALPH[Math.floor(Math.random()*ALPH.length)]).join("");
     const hr=FB.db.ref(`rooms/${c}/host`);
-    try{const s=await hr.get();if(s.exists())continue;await hr.set(FB.uid);code=c}catch(e){if(i===5){netNote("netNote",fbErr(e));return}}
+    try{const s=await hr.get();if(s.exists())continue;await hr.set(FB.uid);code=c;await FB.db.ref(`rooms/${c}`).update({up:null,clients:null,down:null}).catch(()=>{})}catch(e){if(i===5){netNote("netNote",fbErr(e));return}}
   }
   if(!code){netNote("netNote","Não consegui criar a sala. Tenta outra vez.");return}
   unsubAll();
   Object.assign(ROOM,{role:"host",code,started:false,leaving:false,conns:{},me:0,seats:[{kind:"local",name,online:true}]});
   if(ROOM.game.cleanOpts)ROOM.opts=ROOM.game.cleanOpts(ROOM.opts);
+  sstore.set("ip-host",code);
+  /* se a ligação cair (ex.: foi enviar o link pelo WhatsApp) só se tira o "host": a sala e os pedidos para entrar ficam guardados até voltar */
   const room=roomRef();
-  room.onDisconnect().remove();
+  roomRef("host").onDisconnect().remove();
+  /* ouvir os pedidos dos jogadores. Ao voltar a ligar, o servidor pode ter cancelado estes "ouvidos" (enquanto não havia "host"
+     não havia permissão), por isso volta-se a pôr o "host" e a ouvir de novo */
+  let offs=[];
+  const listen=()=>{
+    for(const f of offs)try{f()}catch(e){}offs=[];
+    const L=(ref,ev,fn)=>{ref.on(ev,fn,e=>console.warn(ev,e&&e.message));const off=()=>ref.off(ev,fn);offs.push(off);ROOM.subs.push(off)};
+    L(roomRef("clients"),"child_removed",s=>{
+      const uid=s.key;
+      setTimeout(()=>{
+        if(ROOM.role!=="host"||ROOM.code!==code)return;
+        roomRef("clients",uid).get().then(x=>{
+          if(x.exists())return;
+          const c=ROOM.conns[uid];if(c&&!c.closed){c.close();hostClose(c)}
+        }).catch(()=>{});
+      },2500);
+    });
+    L(roomRef("up"),"child_added",s=>{
+      const v=s.val();s.ref.remove().catch(()=>{});
+      if(!v||typeof v.m!=="string"||typeof v.from!=="string")return;
+      let d;try{d=JSON.parse(v.m)}catch(e){return}
+      hostData(connFor(v.from),d);
+    });
+  };
   let first=true;
   sub(FB.db.ref(".info/connected"),"value",s=>{
     if(s.val()!==true||ROOM.role!=="host"||ROOM.code!==code)return;
     if(first){first=false;return}
-    roomRef("host").set(FB.uid).catch(()=>{});room.onDisconnect().remove();
-  });
-  sub(roomRef("clients"),"child_removed",s=>{
-    const uid=s.key;
-    setTimeout(()=>{
+    roomRef("host").get().then(h=>{if(!h.exists())return roomRef("host").set(FB.uid)}).then(()=>{
       if(ROOM.role!=="host"||ROOM.code!==code)return;
-      roomRef("clients",uid).get().then(x=>{
-        if(x.exists())return;
-        const c=ROOM.conns[uid];if(c&&!c.closed){c.close();hostClose(c)}
-      }).catch(()=>{});
-    },2500);
+      roomRef("host").onDisconnect().remove();listen();lobbyBroadcast();
+    }).catch(()=>{});
   });
-  sub(roomRef("up"),"child_added",s=>{
-    const v=s.val();s.ref.remove().catch(()=>{});
-    if(!v||typeof v.m!=="string"||typeof v.from!=="string")return;
-    let d;try{d=JSON.parse(v.m)}catch(e){return}
-    hostData(connFor(v.from),d);
-  });
+  listen();
   netNote("netNote","");
   showScreen("lobby");lobbyBroadcast();
 }
@@ -571,9 +586,9 @@ async function joinRoom(){
   ROOM.leaving=false;ROOM.code=code;ROOM.role=null;
   try{
     const h=await roomRef("host").get();
-    if(!h.exists()){netNote("netNote","Não encontrei essa sala. Confirma o código e se quem a criou ainda tem o jogo aberto.");return}
+    ROOM.noHost=!h.exists();
   }catch(e){netNote("netNote",fbErr(e));return}
-  netNote("netNote","2/2 A entrar na sala…");
+  netNote("netNote",ROOM.noHost?`À espera da sala ${code}… Se quem a criou foi enviar o link, tem de voltar ao jogo.`:"2/2 A entrar na sala…");
   const me=roomRef("clients",FB.uid),down=roomRef("down",FB.uid),up=roomRef("up");
   try{const old=await down.get();const jobs=[];old.forEach(ch=>{jobs.push(ch.ref.remove())});await Promise.all(jobs)}catch(e){}
   ROOM.conn={send(m){up.push({from:FB.uid,m:JSON.stringify(m)}).catch(()=>{})}};
@@ -595,18 +610,19 @@ async function joinRoom(){
     clearTimeout(ROOM.hostT);
     if(s.exists()){
       if(!hadHost&&ROOM.role==="client"&&!ROOM.leaving)hello();
+      if(ROOM.role!=="client"&&ROOM.noHost&&ROOM.code===code){ROOM.noHost=false;netNote("netNote","2/2 A entrar na sala…")}
       hadHost=true;netNote("lbNote","");return;
     }
     hadHost=false;
     if(ROOM.role!=="client")return;
-    netNote("lbNote","Quem criou a sala perdeu a ligação. À espera…");
+    netNote("lbNote","Quem criou a sala saiu do jogo por um momento. À espera que volte…");
     if(ROOM.game.hostLost)ROOM.game.hostLost(true);
     ROOM.hostT=setTimeout(()=>{
       if(ROOM.leaving||ROOM.role!=="client")return;
       notice("Ligação perdida","Quem criou a sala saiu ou ficou sem internet.").then(()=>leaveRoom());
-    },30000);
+    },180000);
   });
-  ROOM.joinT=setTimeout(()=>{if(ROOM.role!=="client"&&ROOM.code===code)netNote("netNote","A sala não respondeu. Confirma que quem a criou tem o jogo aberto e tenta outra vez.")},15000);
+  ROOM.joinT=setTimeout(()=>{if(ROOM.role!=="client"&&ROOM.code===code)netNote("netNote",ROOM.noHost?`Ainda não encontrei a sala ${code}. Confirma o código. Se quem a criou foi enviar o link, tem de voltar ao jogo (continuo à espera).`:"A sala ainda não respondeu. Quem a criou tem de ter o jogo aberto no ecrã (continuo à espera).")},15000);
   hello();
 }
 function clientData(d){
@@ -648,7 +664,7 @@ function leaveRoom(){
   if(ROOM.game.stop)ROOM.game.stop();
   unsubAll();
   Object.assign(ROOM,{role:null,conn:null,seats:[],conns:{},lobby:null,started:false,code:null});
-  sstore.set("ip-room","");
+  sstore.set("ip-room","");sstore.set("ip-host","");
   try{history.replaceState(null,"",location.href.split("#")[0])}catch(e){}
   showScreen("setup");
 }
@@ -688,6 +704,7 @@ function initRoomUI(){
   if(m){$("joinCode").value=cleanCode(m[1]);$("joinArea").classList.add("fromlink");netNote("netNote","Escreve o teu nome e carrega em Entrar.");setTimeout(()=>($("myName").value?$("joinBtn"):$("myName")).focus(),50);
     if($("myName").value&&sstore.get("ip-room")===cleanCode(m[1])&&onlineReady())setTimeout(joinRoom,0)}
   if(!onlineReady())$("onlineMode").classList.add("nopeer");
+  else if(!m&&sstore.get("ip-host")&&$("myName").value)setTimeout(()=>hostRoom(cleanCode(sstore.get("ip-host"))),0);
 }
 
 /* ================= ECRÃ (comum aos jogos de rondas) =================
