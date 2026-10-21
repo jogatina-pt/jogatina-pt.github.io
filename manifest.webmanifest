@@ -215,6 +215,18 @@
      "type": "image/png"
     }
    ]
+  },
+  {
+   "name": "Engarrafado",
+   "short_name": "Engarrafado",
+   "url": "parque/",
+   "icons": [
+    {
+     "src": "parque/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
   }
  ]
 }
