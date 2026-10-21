@@ -960,7 +960,7 @@ function newMatch(o){
 }
 function setupKick(k){
   /* k: {sh,ke,bx,bz} quem remata, quem defende e onde está a bola */
-  G.kick=k;G.phase=amShooter()?"aim":"wait";G.t=0;G.shot=null;G.res=null;G.glx=0;G.gly=1.1;G.tgx=0;G.tgy=1.1;G.keepAI=null;G.runT=0;G.kx=G.kind==="livre"?(k.bx>0?.6:-.6):0;G.ky=1.1;G.path=[];G.flightT=0;
+  G.kick=k;G.phase=amShooter()?"aim":"wait";G.t=0;G.shot=null;G.res=null;G.glx=0;G.gly=1.1;G.tgx=0;G.tgy=1.1;G.keepAI=null;G.runT=0;G.glT=0;G.slow=1;G.kx=G.kind==="livre"?(k.bx>0?.6:-.6):0;G.ky=1.1;G.path=[];G.flightT=0;
   BALL.position.set(k.bx,BR,k.bz);BALL.rotation.set(0,0,0);
   G.wall=G.kind==="livre"?wallFor(k.bx,k.bz):null;
   WALL.forEach((p,i)=>{p.root.visible=!!G.wall;if(G.wall){const w=G.wall,l=(i-1.5)*.55;p.root.position.set(w.cx+w.px*l,0,w.cz+w.pz*l);p.root.rotation.y=Math.atan2(w.ux,w.uz);poseIdle(p,i,false);p.root.position.y=0}});
@@ -1007,7 +1007,7 @@ function cpuShot(){
     if(!G.wall||!wallHit(p,G.wall,2.15)||tries>26)return p;
   }
 }
-function launch(p){G.shot=p;G.phase="flight";G.flightT=0;G.res=null;tip("");sfx("kick");
+function launch(p,slow){G.shot=p;G.phase="flight";G.flightT=0;G.slow=slow||1;G.res=null;tip("");sfx("kick");
   if(amShooter()||!G.online){/* a barreira salta */}
   if(!amKeeper()){/* guarda-redes do computador (ou do outro jogador online: vem pelas luvas) */
     if(!G.online){const r=Math.random(),guess=r<.3;const pt={x:p.tx+(Math.random()*2-1)*1.0,y:Math.max(.3,Math.min(2.2,p.ty+(Math.random()*2-1)*.5))};
@@ -1103,7 +1103,7 @@ stage.addEventListener("pointermove",e=>{if(!pd||e.pointerId!==pd.id||!G)return;
   if(G.phase==="aim")pd.path.push({x:e.clientX-r.left,y:e.clientY-r.top,t:performance.now()})});
 const up=e=>{if(!pd||e.pointerId!==pd.id)return;const path=pd.path;pd=null;
   if(G&&G.phase==="aim"&&amShooter()){const p=shotFromPath(path);if(!p){tip("Desliza mais comprido, da bola para cima, na direção da baliza");return}
-    G.trail=path;G.trailT=1;if(G.online){ROOM.send({t:"shot",p});}launch(p);}};
+    G.trail=path;G.trailT=1;if(G.online){ROOM.send({t:"shot",p});G.phase="sent";tip("");return}launch(p);}};
 stage.addEventListener("pointerup",up);stage.addEventListener("pointercancel",up);
 stage.addEventListener("touchmove",e=>{if(G)e.preventDefault()},{passive:false});
 /* ---------- ciclo ---------- */
@@ -1122,16 +1122,16 @@ function step(dt){
   if(meKeep&&G.online&&G.t-(G.glT||0)>.1){G.glT=G.t;ROOM.send({t:"gl",x:+G.glx.toFixed(2),y:+G.gly.toFixed(2)})}
   /* remate do computador */
   if(G.phase==="wait"&&!G.online&&!amShooter()){G.cpuT-=dt;G.runT+=dt;if(G.cpuT<=0){G.phase="flight";launch(cpuShot())}}
-  if(G.phase==="aim"){G.aimT+=dt;if(G.online&&G.aimT>14){const p={bx:k.bx,bz:k.bz,tx:(Math.random()*2-1)*1.5,ty:.4,tf:1,ax:0};ROOM.send({t:"shot",p});launch(p)}}
+  if(G.phase==="aim"){G.aimT+=dt;if(G.online&&G.aimT>14){const p={bx:k.bx,bz:k.bz,tx:(Math.random()*2-1)*1.5,ty:.4,tf:1,ax:0};ROOM.send({t:"shot",p});G.phase="sent"}}
   /* voo */
   if(G.phase==="flight"&&G.shot){
-    G.flightT+=dt;const p=G.shot,t=Math.min(G.flightT,p.tf),q=traj(p,t);
+    G.flightT+=dt/(G.slow||1);const p=G.shot,t=Math.min(G.flightT,p.tf),q=traj(p,t);
     BALL.position.set(q.x,q.y,q.z);BALL.rotation.x-=dt*18;BALL.rotation.y+=p.ax*dt*.6;
     /* guarda-redes do computador */
     if(G.keepAI){const a=G.keepAI;a.delay-=dt;if(a.delay<=0){const dx=a.tx-G.kx,dy=a.ty-G.ky,d=Math.hypot(dx,dy),mx=a.vmax*dt;if(d>mx){G.kx+=dx/d*mx;G.ky+=dy/d*mx}else{G.kx=a.tx;G.ky=a.ty}}}
     const bw=G.wall&&wallHit(p,G.wall,2.15);
-    if(bw&&G.flightT>=bw.t&&!G.res){if(!G.online||meKeep){const r={k:"barreira"};if(G.online)ROOM.send({t:"res",r});applyRes(r)}G.after={vx:-1+Math.random()*2,vy:2,vz:4};}
-    else if(G.flightT>=p.tf&&!G.res&&(!G.online||meKeep)){const r=resolve();if(G.online)ROOM.send({t:"res",r});applyRes(r);G.after=r.k==="golo"?{vx:0,vy:0,vz:-5}:r.k==="defesa"||r.k==="poste"?{vx:(Math.random()*2-1)*3,vy:2.5,vz:6}:{vx:0,vy:0,vz:-14}}
+    if(bw&&G.flightT>=bw.t&&!G.res){if(!G.online||meKeep){const r={k:"barreira"};if(G.online)ROOM.send({t:"res",r,gx:G.glx,gy:G.gly});applyRes(r)}G.after={vx:-1+Math.random()*2,vy:2,vz:4};}
+    else if(G.flightT>=p.tf&&!G.res&&(!G.online||meKeep)){const r=resolve();if(G.online)ROOM.send({t:"res",r,gx:+G.glx.toFixed(2),gy:+G.gly.toFixed(2)});applyRes(r);G.after=r.k==="golo"?{vx:0,vy:0,vz:-5}:r.k==="defesa"||r.k==="poste"?{vx:(Math.random()*2-1)*3,vy:2.5,vz:6}:{vx:0,vy:0,vz:-14}}
     else if(G.flightT>=p.tf&&!G.res){/* online, eu rematei: à espera do resultado de quem defende */BALL.position.set(p.tx,p.ty,0)}
   }
   if(G.phase==="result"&&G.after){const a=G.after;a.vy-=GRV*dt;BALL.position.x+=a.vx*dt;BALL.position.y=Math.max(BR,BALL.position.y+a.vy*dt);BALL.position.z+=a.vz*dt;if(BALL.position.z<-1.7&&G.res&&G.res.k==="golo"){BALL.position.z=-1.7;a.vz=0;a.vx*=.5;NET.userData.back.scale.set(1,1,1)}if(BALL.position.y<=BR){a.vy=Math.abs(a.vy)*.4;a.vx*=.9;a.vz*=.9}BALL.rotation.x-=dt*8}
@@ -1207,9 +1207,9 @@ ROOM.game={id:"golo",title:"Golo!",maxp:2,minp:2,maxBots:0,botNames:[],cleanOpts
   lobbyHelpFew:"Precisas de mais uma pessoa. Envia o link a um amigo.",
   start(seats){const o=cleanOpts(ROOM.opts);HG={seats,kind:o.kind,seed:Math.floor(Math.random()*1e9),score:[0,0],marks:[[],[]],n:0};seats.forEach((s,i)=>ROOM.sendTo(s,{t:"go",me:i,names:seats.map(x=>x.name),kind:o.kind}));setTimeout(()=>HG&&hgKick(),1200)},
   msg(seat,d){if(!HG||!d)return;const i=HG.seats.indexOf(seat);if(i<0)return;const c=HG.cur;
-    if(d.t==="shot"&&c&&i===c.sh&&HG.wait){const p=d.p||{};const q={bx:c.bx,bz:c.bz,tx:num(p.tx,-12,12),ty:num(p.ty,0,8),tf:num(p.tf,.3,2.5),ax:num(p.ax,-20,20)};HG.seats.forEach((s,k)=>{if(k!==i)ROOM.sendTo(s,{t:"shot",p:q})});return}
+    if(d.t==="shot"&&c&&i===c.sh&&HG.wait===true){const p=d.p||{};const q={bx:c.bx,bz:c.bz,tx:num(p.tx,-12,12),ty:num(p.ty,0,8),tf:num(p.tf,.3,2.5),ax:num(p.ax,-20,20)};HG.wait="shot";HG.seats.forEach(s=>ROOM.sendTo(s,{t:"shot",p:q}));return}
     if(d.t==="gl"&&c&&i===c.ke){ROOM.sendTo(HG.seats[c.sh],{t:"gl",x:num(d.x,-5,5),y:num(d.y,0,4)});return}
-    if(d.t==="res"&&c&&i===c.ke&&HG.wait){HG.wait=false;const k=["golo","defesa","fora","poste","barreira"].includes(d.r&&d.r.k)?d.r.k:"fora";if(k==="golo")HG.score[c.sh]++;HG.marks[c.sh].push(k==="golo"?1:0);ROOM.sendTo(HG.seats[c.sh],{t:"res",r:{k}});setTimeout(()=>HG&&!HG.over&&hgKick(),2600);return}
+    if(d.t==="res"&&c&&i===c.ke&&HG.wait){HG.wait=false;const k=["golo","defesa","fora","poste","barreira"].includes(d.r&&d.r.k)?d.r.k:"fora";if(k==="golo")HG.score[c.sh]++;HG.marks[c.sh].push(k==="golo"?1:0);ROOM.sendTo(HG.seats[c.sh],{t:"res",r:{k},gx:num(d.gx,-5,5),gy:num(d.gy,0,4)});setTimeout(()=>HG&&!HG.over&&hgKick(),2600);return}
     if(i===0&&d.t==="again"&&HG.over){this.start(HG.seats);return}
     if(i===0&&d.t==="lobby"){HG=null;ROOM.backToLobby();return}
     if(d.t==="react"){relayReact(HG.seats,seat,d);return}},
@@ -1218,9 +1218,9 @@ ROOM.game={id:"golo",title:"Golo!",maxp:2,minp:2,maxBots:0,botNames:[],cleanOpts
     if(d.t==="go"){showScreen("game");ov.hidden=true;newMatch({mode:"desempate",kind:d.kind,names:(d.names||[]).map(cleanName),me:+d.me,online:true});tip("A preparar…");sfx("whistle");return}
     if(!G||!G.online)return;
     if(d.t==="kick"){G.score=d.score;G.marks=d.marks;setupKick(d.k);return}
-    if(d.t==="shot"&&amKeeper()&&G.phase==="wait"){launch(d.p);return}
+    if(d.t==="shot"){if(amKeeper()&&G.phase==="wait")launch(d.p);else if(amShooter()&&G.phase==="sent")launch(d.p,1.3);return}
     if(d.t==="gl"&&!amKeeper()){G.glx=+d.x;G.gly=+d.y;G.tgx=G.glx;G.tgy=G.gly;return}
-    if(d.t==="res"&&amShooter()){applyRes(d.r);return}
+    if(d.t==="res"&&amShooter()){if(isFinite(d.gx)){G.glx=G.tgx=+d.gx;G.gly=G.tgy=+d.gy}applyRes(d.r);return}
     if(d.t==="over"){G.score=d.score;G.marks=d.marks;sbar();G.over=true;const w=G.score[G.me]>G.score[1-G.me];
       showOv(`<div class="panel"><h2>${w?"Ganhaste! 🏆":"Perdeste!"}</h2><p>${esc(G.names[0])} ${G.score[0]} – ${G.score[1]} ${esc(G.names[1])}</p>${ROOM.role==="host"?`<button class="btn" type="button" data-a="again">Outra vez ▶</button><button class="btn ghost" type="button" data-a="lobby">Voltar à sala</button>`:`<p class="note">À espera de ${esc(G.names[0])}…</p><button class="btn ghost" type="button" data-a="leave">Sair da sala</button>`}</div>`);return}
   },
