@@ -196,7 +196,12 @@ header.top{flex:none}
 .hdist small{font-weight:900;font-size:11px;color:#151515;background:rgba(255,255,255,.7);border-radius:6px;padding:0 5px}
 .hcoins{font-family:var(--display);font-size:20px;letter-spacing:.04em;background:#ffd23f;border:3px solid #151515;border-radius:999px;padding:1px 10px;box-shadow:3px 3px 0 #151515;color:#151515}
 .pbtn{pointer-events:auto;width:38px;height:38px;border-radius:50%;border:3px solid #151515;background:#fffaf1;font-size:16px;font-weight:900;box-shadow:3px 3px 0 #151515;cursor:pointer;color:#151515;display:grid;place-items:center}
-.hmsg{position:absolute;left:0;right:0;top:64px;text-align:center;font-family:var(--display);font-size:26px;color:#ffd23f;-webkit-text-stroke:2px #151515;paint-order:stroke fill;text-shadow:3px 3px 0 #151515;pointer-events:none;letter-spacing:.04em;z-index:3}
+.htour{position:absolute;left:8px;top:54px;display:flex;gap:3px;z-index:3;pointer-events:none}
+.hud[hidden]~.htour{display:none}
+.htour i{font-style:normal;font-size:13px;width:25px;height:25px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid #151515;display:grid;place-items:center;filter:grayscale(1);opacity:.5}
+.htour i.on{background:#ffd23f;filter:none;opacity:1}
+.htour.wiz i{filter:none;opacity:1;animation:wz .4s steps(2) infinite}@keyframes wz{50%{background:#f29fb0}}
+.hmsg{position:absolute;left:10px;right:10px;top:88px;text-align:center;font-family:var(--display);font-size:23px;color:#ffd23f;-webkit-text-stroke:2px #151515;paint-order:stroke fill;text-shadow:3px 3px 0 #151515;pointer-events:none;letter-spacing:.04em;z-index:3}
 .hmsg[hidden]{display:none}
 .foot{flex:none;margin:0;text-align:center;font-size:12px}
 @media (max-width:380px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:26px}.brand a.home{font-size:0}.brand a.home::before{content:"← menu";font-size:12px}.tools{gap:5px}.tools .btn.sm{padding:4px 8px}}
@@ -219,6 +224,7 @@ header.top{flex:none}
       <div class="hdist"><b id="hScore">0</b><small id="hMult">x1</small></div>
       <button class="pbtn" id="pauseBtn" type="button" aria-label="Pausa">❚❚</button>
     </div>
+    <div class="htour" id="hTour"><i data-k="ponte">🌉</i><i data-k="torre">🗼</i><i data-k="fran">🥪</i><i data-k="metro">🚇</i><i data-k="fun">🚠</i><i data-k="sj">🎆</i></div>
     <div class="charge" id="charge" hidden><i id="chargeBar"></i><span>Mantém e solta</span></div>
     <div class="hmsg" id="hMsg" hidden></div>
     <div class="ov" id="ov"></div>
@@ -267,13 +273,24 @@ const DROP=[...LET].map((c,i)=>{const x=-2.1+i*1.05;const s=seg(x-.34,11.0,x+.34
 const FRAN={x:3.55,y:7.6,r:.45};          /* buraco da francesinha */
 const RAMP={x0:-5,x1:-3.95,y0:9.2,y1:12.6}; /* zona de entrada da ponte */
 const DRAIN=-.6;
+/* túnel do metro: buraco que engole a bola e a deita no corredor da esquerda */
+const METRO={x:-3.0,y:14.9,r:.42,ex:-4.45,ey:6.9};
+const MPATH=[[-3.0,14.9],[-3.35,12.9],[-3.45,10.6],[-3.55,9.3],[-4.45,7.0]];
+/* funicular dos Guindais: entrada à direita, a cabine sobe a bola até às pistas de cima */
+const FUN={x0:3.14,x1:4.16,y0:10.0,y1:11.1,ret:0};
+seg(3.05,9.2,3.05,10.3,{r:.08});
+/* pistas de cima S-Ã-O (São João) */
+const LANEX=[-1.8,-.6,.6,1.8];for(const x of LANEX)seg(x,17.4,x,18.5,{r:.08});
+/* spinner do barco rabelo no corredor da ponte */
+const SPIN={y:8.4,x0:-5,x1:-3.9,a:0,w:0,acc:0};
+const TOURK=["ponte","torre","fran","metro","fun","sj"];
 /* flippers */
 const FL=[{px:-2.05,py:2.35,len:1.75,rest:-.52,up:.48,a:-.52,w:0,on:false,side:-1},{px:2.05,py:2.35,len:1.75,rest:Math.PI+.52,up:Math.PI-.48,a:Math.PI+.52,w:0,on:false,side:1}];
 const FLR=.2;
 /* ---------- estado ---------- */
 let G=null;
-function newGame(){G={score:0,balls:3,mult:1,lit:[0,0,0,0,0],torre:0,ponte:0,balls_on:[],save:0,state:"launch",charge:0,extra:0,msgT:0,t:0,francT:0,tilt:0};newBall(true)}
-function newBall(lane){const b={x:4.62,y:1.0,vx:0,vy:0,lane:true,ramp:null,held:0,live:true};G.balls_on.push(b);if(lane){G.state="launch";G.charge=0}return b}
+function newGame(){G={score:0,balls:3,mult:1,lit:[0,0,0,0,0],torre:0,ponte:0,balls_on:[],save:0,state:"launch",charge:0,extra:0,msgT:0,t:0,francT:0,tour:{},lanes:[0,0,0],bumpLv:1,wiz:0,combo:0,lastShot:-9,lastK:"",jack:0,nudges:[],nudgeCd:0,tiltOn:false,sj:0,fwT:0};newBall(true)}
+function newBall(lane){const b={x:4.62,y:1.0,vx:0,vy:0,lane:true,ramp:null,held:0,live:true,fun:null,metro:null};G.balls_on.push(b);if(lane){G.state="launch";G.charge=0}return b}
 /* ---------- física ---------- */
 function closest(ax,ay,bx,by,px,py){const dx=bx-ax,dy=by-ay,l2=dx*dx+dy*dy;let t=l2?((px-ax)*dx+(py-ay)*dy)/l2:0;t=Math.max(0,Math.min(1,t));return[ax+dx*t,ay+dy*t]}
 function collide(b,cx,cy,R,e,svx,svy,kick){
@@ -289,12 +306,12 @@ function collide(b,cx,cy,R,e,svx,svy,kick){
 }
 function flTip(f){return[f.px+Math.cos(f.a)*f.len,f.py+Math.sin(f.a)*f.len]}
 function physics(h){
-  for(const f of FL){const target=f.on?f.up:f.rest,sp=(f.on?32:18)*h,old=f.a;const d=target-f.a;f.a+=Math.abs(d)<sp?d:Math.sign(d)*sp;f.w=(f.a-old)/h}
+  for(const f of FL){const target=f.on&&!G.tiltOn?f.up:f.rest,sp=(f.on?32:18)*h,old=f.a;const d=target-f.a;f.a+=Math.abs(d)<sp?d:Math.sign(d)*sp;f.w=(f.a-old)/h}
   for(const b of G.balls_on){
-    if(!b.live||b.ramp||b.held>0)continue;
+    if(!b.live||b.ramp||b.held>0||b.fun||b.metro)continue;
     if(b.lane&&G.state==="launch"&&b.x>4.3&&b.y<1.3){b.x=4.62;b.y=1.0;b.vx=b.vy=0;continue}
     if(b.x>4.3&&b.y<1.2&&Math.abs(b.vy)<.6&&G.state==="play"&&G.balls_on.length===1){b.lane=true;G.state="launch";G.charge=0}
-    b.vy-=GRAV*h;b.x+=b.vx*h;b.y+=b.vy*h;
+    const oy=b.y;b.vy-=GRAV*h;b.x+=b.vx*h;b.y+=b.vy*h;
     const sp=Math.hypot(b.vx,b.vy);if(sp>32){b.vx*=32/sp;b.vy*=32/sp}
     /* paredes e alvos */
     for(const s of SEGS){if(s.down||(s.oneway&&b.vy>0))continue;const [cx,cy]=closest(s.ax,s.ay,s.bx,s.by,b.x,b.y);const imp=collide(b,cx,cy,BR+s.r,s.e,0,0,s.kick);
@@ -302,13 +319,23 @@ function physics(h){
         if(s.drop!=null&&imp>1.5){s.down=true;G.lit[s.drop]=1;score(250);sfx("drop");checkPorto()}
         if(imp>3&&!s.sling&&s.drop==null)sfx("wall",Math.min(1,imp/14))}}
     for(const c of CIRC){const imp=collide(b,c.x,c.y,BR+c.r,c.e,0,0,c.kick);
-      if(imp){if(c.bump){score(100);c.flash=.18;sfx("bump");buzz(15)}else if(c.torre&&imp>2){c.flash=.3;G.torre++;score(500);sfx("torre");if(G.torre%8===0){G.balls++;msg("Clérigos! Bola extra 🎉",2)}else msg(`Torre dos Clérigos ${G.torre%8}/8`,1.2)}}}
+      if(imp){if(c.bump){score(100*G.bumpLv);c.flash=.18;sfx("bump");buzz(15)}else if(c.torre&&imp>2){c.flash=.3;G.torre++;score(500);sfx("torre");markTour("torre");if(G.torre%8===0){G.balls++;msg("Clérigos! Bola extra 🎉",2);burst(TORRE.x,TORRE.y,3.2,60)}else msg(`Torre dos Clérigos ${G.torre%8}/8`,1.2)}}}
     /* flippers: cápsula que gira; a ponta mexe-se mais depressa */
     for(const f of FL){const [tx,ty]=flTip(f);const [cx,cy]=closest(f.px,f.py,tx,ty,b.x,b.y);const rx=cx-f.px,ry=cy-f.py;const svx=-f.w*ry,svy=f.w*rx;const imp=collide(b,cx,cy,BR+FLR,.25,svx,svy,0);if(imp&&Math.abs(f.w)>3&&imp>4)sfx("flip2")}
     /* entrada da ponte: bola a subir com força */
     if(b.x>RAMP.x0&&b.x<RAMP.x1&&b.y>RAMP.y0&&b.y<RAMP.y1&&b.vy>2.2&&!b.lane){b.ramp={t:0};sfx("ramp")}
-    /* francesinha */
-    if(Math.hypot(b.x-FRAN.x,b.y-FRAN.y)<FRAN.r&&Math.hypot(b.vx,b.vy)<16&&!b.lane){b.held=1.1;b.x=FRAN.x;b.y=FRAN.y;b.vx=b.vy=0;score(2000*G.mult);msg("Francesinha! +"+2000*G.mult,1.4);sfx("fran");buzz(40)}
+    /* francesinha (com jackpot na multibola) */
+    if(Math.hypot(b.x-FRAN.x,b.y-FRAN.y)<FRAN.r&&Math.hypot(b.vx,b.vy)<16&&!b.lane){b.held=1.1;b.x=FRAN.x;b.y=FRAN.y;b.vx=b.vy=0;sfx("fran");buzz(40);
+      if(G.jack&&G.balls_on.filter(x=>x.live).length>1){G.jack=0;score(20000*G.mult);msg("JACKPOT! +"+(20000*G.mult).toLocaleString("pt-PT"),2.2);sfx("jack");burst(FRAN.x,FRAN.y,3,90);buzz([60,40,120])}
+      else shot("fran","Francesinha! +"+2000*G.mult,2000*G.mult)}
+    /* túnel do metro */
+    if(Math.hypot(b.x-METRO.x,b.y-METRO.y)<METRO.r&&Math.hypot(b.vx,b.vy)<22&&!b.lane){b.metro={t:0};b.vx=b.vy=0;sfx("metro");buzz(30);shot("metro","Túnel do Metro! +"+1500*G.mult,1500*G.mult)}
+    /* funicular */
+    if(FUN.ret<=0&&!(b.nf>G.t)&&!G.balls_on.some(x=>x.fun)&&b.x>FUN.x0&&b.x<FUN.x1&&b.y>FUN.y0&&b.y<FUN.y1&&b.vy>3&&!b.lane){b.fun={t:0};b.vx=b.vy=0;sfx("fun");shot("fun","Funicular dos Guindais! +"+1500*G.mult,1500*G.mult)}
+    /* pistas S-Ã-O */
+    if(oy>=17.95&&b.y<17.95&&b.x>-1.8&&b.x<1.8)laneHit(b.x<-.6?0:b.x<.6?1:2);
+    /* spinner */
+    if(b.x>SPIN.x0&&b.x<SPIN.x1&&(oy<SPIN.y)!==(b.y<SPIN.y)){SPIN.w=Math.min(60,Math.abs(b.vy)*2.4)}
     if(b.lane&&b.y>12&&b.x<4.25)b.lane=false;
     if(b.y<DRAIN){b.live=false;lost(b)}
   }
@@ -319,19 +346,39 @@ function step(dt){
   if(G.state==="launch"&&G.charging)G.charge=Math.min(1,G.charge+dt*1.3);
   for(const b of G.balls_on){
     if(b.held>0){b.held-=dt;if(b.held<=0){b.x=FRAN.x-.5;b.y=FRAN.y+.2;b.vx=-7;b.vy=-2}}
-    if(b.ramp){b.ramp.t+=dt/.95;if(b.ramp.t>=1){b.ramp=null;b.x=3.6;b.y=12.6;b.vx=-3.5;b.vy=-5.5;G.ponte++;score(1000*G.mult);sfx("ramp2");
-      if(G.ponte%3===0){msg("PONTE LUÍS I! Multibola!",2);const nb=newBall(false);nb.x=4.62;nb.y=1.2;nb.vy=31;nb.lane=true;G.save=Math.max(G.save,6)}else msg(`Ponte Luís I ${G.ponte%3}/3 · +${1000*G.mult}`,1.3)}}
+    if(b.ramp){b.ramp.t+=dt/.95;if(b.ramp.t>=1){b.ramp=null;b.nf=G.t+1.8;b.x=3.6;b.y=12.6;b.vx=-3.5;b.vy=-5.5;G.ponte++;sfx("ramp2");
+      if(G.ponte%3===0){shot("ponte","PONTE LUÍS I! Multibola!",1000*G.mult);G.jack=1;const nb=newBall(false);nb.x=4.62;nb.y=1.2;nb.vy=31;nb.lane=true;G.save=Math.max(G.save,6);setTimeout(()=>{if(G&&G.jack)msg("Jackpot aceso na francesinha! 🥪",1.6)},2100)}else shot("ponte",`Ponte Luís I ${G.ponte%3}/3 · +${1000*G.mult}`,1000*G.mult)}}
+    if(b.metro){b.metro.t+=dt/1.3;if(b.metro.t>=1){b.metro=null;b.x=METRO.ex;b.y=METRO.ey;b.vx=1.2;b.vy=-3.5;sfx("metro2")}}
+    if(b.fun){b.fun.t+=dt/1.6;if(b.fun.t>=1){b.fun=null;b.x=1.2;b.y=19.3;b.vx=-.3;b.vy=0;FUN.ret=1.2;sfx("ramp2")}}
   }
+  if(FUN.ret>0)FUN.ret-=dt;if(G.nudgeCd>0)G.nudgeCd-=dt;
+  /* spinner */
+  if(SPIN.w>0){SPIN.a+=SPIN.w*dt;SPIN.acc+=SPIN.w*dt;while(SPIN.acc>Math.PI){SPIN.acc-=Math.PI;score(25);sfx("spin")}SPIN.w*=Math.exp(-dt*1.3);if(SPIN.w<.4)SPIN.w=0}
+  /* Noite de São João */
+  if(G.wiz>0){G.wiz-=dt;G.fwT-=dt;if(G.fwT<=0){G.fwT=.35+Math.random()*.3;burst(-3.5+Math.random()*7,6+Math.random()*10,2.5+Math.random()*2.5,70)}
+    if(G.wiz<=0){G.wiz=0;G.tour={};msg("Fim da festa! Faz a volta outra vez",2);tourHud()}}
   const N=Math.ceil(dt/(1/600));const h=dt/N;for(let i=0;i<N;i++)physics(h);
   G.balls_on=G.balls_on.filter(b=>b.live);
   for(const c of CIRC)if(c.flash>0)c.flash-=dt;for(const s of SL)if(s.flash>0)s.flash-=dt;
 }
-function score(n){G.score+=n*(n>=1000?1:G.mult)}
+function score(n){G.score+=Math.round(n*(n>=1000?1:G.mult)*(G.wiz>0?2:1))}
+/* acertos grandes: contam para a volta ao Porto e dão combos se vierem seguidos */
+function shot(k,txt,pts){score(pts);let c="";
+  if(G.t-G.lastShot<4&&G.lastK!==k){G.combo++;score(1500*G.combo);c=` · COMBO x${G.combo+1}!`;sfx("combo")}else G.combo=0;
+  G.lastShot=G.t;G.lastK=k;msg(txt+c,1.6);markTour(k)}
+function markTour(k){if(G.tour[k]||G.wiz>0)return;G.tour[k]=1;tourHud();
+  if(TOURK.every(x=>G.tour[x])){G.wiz=25;G.fwT=0;score(10000*G.mult);setTimeout(()=>{if(G)msg("NOITE DE SÃO JOÃO! 🎆",2.6)},700);sfx("porto");buzz([50,50,50,50,150])}}
+function laneHit(i){if(G.lanes[i]){score(50);return}G.lanes[i]=1;score(300);sfx("drop");
+  if(G.lanes.every(Boolean)){G.bumpLv=Math.min(5,G.bumpLv+1);G.sj++;score(3000);msg(`São João! Pipas valem ${100*G.bumpLv} 🔨`,1.8);sfx("torre");burst(0,18,2.5,50);markTour("sj");setTimeout(()=>{if(G)G.lanes=[0,0,0]},700)}}
+function nudge(){if(!G||G.state!=="play"||G.nudgeCd>0||G.tiltOn)return;G.nudgeCd=.7;G.shake=.25;
+  for(const b of G.balls_on)if(b.live&&!b.ramp&&!b.fun&&!b.metro&&!b.held&&!b.lane){b.vy+=3.2;b.vx+=(Math.random()*2-1)*2.2}
+  G.nudges=G.nudges.filter(t=>G.t-t<6);G.nudges.push(G.t);sfx("wall",1);buzz(25);
+  if(G.nudges.length===3)msg("Cuidado! ⚠️",1.2);else if(G.nudges.length>=4){G.tiltOn=true;msg("TILT! 🚫",2.5);sfx("drain")}}
 function checkPorto(){if(G.lit.every(Boolean)){G.mult=Math.min(5,G.mult+1);score(5000);msg(`P-O-R-T-O! Multiplicador x${G.mult}`,2);sfx("porto");buzz([40,40,80]);setTimeout(()=>{if(!G)return;G.lit=[0,0,0,0,0];DROP.forEach(d=>d.down=false)},1200)}}
 function lost(b){
   if(G.balls_on.some(x=>x.live&&x!==b))return;
   if(G.save>0){msg("Bola salva! 😮‍💨",1.4);G.balls_on=[];newBall(true);G.save=0;return}
-  G.balls--;sfx("drain");buzz(120);
+  G.tiltOn=false;G.nudges=[];G.lanes=[0,0,0];G.jack=0;G.balls--;sfx("drain");buzz(120);
   if(G.balls<=0){gameOver();return}
   msg(`Bola perdida! Faltam ${G.balls}`,1.6);G.balls_on=[];setTimeout(()=>{if(G&&G.state!=="over")newBall(true)},900);G.state="wait";
 }
@@ -368,6 +415,12 @@ const PLAY=tex(PW*S|0,PH*S|0,(g,w,h)=>{
   /* rio Douro e barcos rabelos */
   g.fillStyle="#1a4f8a";g.fillRect(0,Y(5.6),w,1.3*S);g.strokeStyle="rgba(255,255,255,.35)";g.lineWidth=3;for(let i=0;i<10;i++){g.beginPath();g.moveTo(X(-4.5+i)-20,Y(5)+(i%2)*14);g.quadraticCurveTo(X(-4.5+i),Y(5)-10,X(-4.5+i)+20,Y(5)+(i%2)*14);g.stroke()}
   for(const bx of [-3,.5,3]){g.fillStyle="#6b3f22";g.beginPath();g.moveTo(X(bx)-36,Y(5.05));g.lineTo(X(bx)+36,Y(5.05));g.lineTo(X(bx)+24,Y(4.75));g.lineTo(X(bx)-24,Y(4.75));g.fill();g.fillStyle="#fbfaf5";g.fillRect(X(bx)-2,Y(6.2),4,60);g.beginPath();g.moveTo(X(bx)+2,Y(6.15));g.lineTo(X(bx)+30,Y(5.6));g.lineTo(X(bx)+2,Y(5.3));g.fill()}
+  /* caminho do metro por baixo da mesa */
+  g.strokeStyle="rgba(5,10,30,.55)";g.lineWidth=26;g.lineCap="round";g.lineJoin="round";g.beginPath();MPATH.forEach(([x,y],i)=>i?g.lineTo(X(x),Y(y)):g.moveTo(X(x),Y(y)));g.stroke();
+  g.strokeStyle="rgba(41,227,255,.35)";g.lineWidth=3;g.setLineDash([10,12]);g.stroke();g.setLineDash([]);
+  g.font="bold 24px Impact,sans-serif";g.textAlign="center";g.textBaseline="middle";g.lineWidth=5;g.strokeStyle="#151515";
+  const lab=(t,x,y,c,rot)=>{g.save();g.translate(X(x),Y(y));if(rot)g.rotate(rot);g.strokeText(t,0,0);g.fillStyle=c;g.fillText(t,0,0);g.restore()};
+  lab("SÃO JOÃO",0,16.75,"#ffd23f");lab("FUNICULAR",3.65,9.75,"#ff8fa0",-Math.PI/2);
   /* título */
   g.font="bold 86px Impact,sans-serif";g.textAlign="center";g.textBaseline="middle";g.lineWidth=10;g.strokeStyle="#151515";g.strokeText("PORTO",X(0),Y(8.3));g.fillStyle="#ffd23f";g.fillText("PORTO",X(0),Y(8.3));
   g.font="bold 34px Impact,sans-serif";g.lineWidth=6;g.strokeText("PINBALL",X(0),Y(7.55));g.fillStyle="#fbfaf5";g.fillText("PINBALL",X(0),Y(7.55));
@@ -396,7 +449,7 @@ for(const b of BUMP){const g=new THREE.Group();g.position.copy(P3(b.x,b.y));
   g.add(at(part(new THREE.CylinderGeometry(b.r,b.r*.92,.7,20),"#7a4322"),0,.35,0));
   for(const y of [.14,.56]){const ring=new THREE.Mesh(new THREE.CylinderGeometry(b.r+.02,b.r+.02,.07,20),M("#2a2a2a"));ring.position.y=y;g.add(ring)}
   const cap=new THREE.Mesh(new THREE.CylinderGeometry(b.r*.85,b.r*.85,.12,20),new THREE.MeshToonMaterial({color:0xffd23f,emissive:0x000000,gradientMap:GRAD}));cap.position.y=.76;g.add(cap);b.cap=cap;
-  const lab=new THREE.Mesh(new THREE.CircleGeometry(b.r*.6,20),new THREE.MeshBasicMaterial({map:tex(64,64,(c)=>{c.fillStyle="#7a1f2a";c.beginPath();c.arc(32,32,30,0,7);c.fill();c.fillStyle="#ffd23f";c.font="bold 18px Impact,sans-serif";c.textAlign="center";c.textBaseline="middle";c.fillText("100",32,34)})}));lab.rotation.x=-Math.PI/2;lab.position.y=.83;g.add(lab);
+  const lab=new THREE.Mesh(new THREE.CircleGeometry(b.r*.6,20),new THREE.MeshBasicMaterial({map:tex(64,64,(c)=>{c.fillStyle="#7a1f2a";c.beginPath();c.arc(32,32,30,0,7);c.fill();c.fillStyle="#ffd23f";c.font="bold 18px Impact,sans-serif";c.textAlign="center";c.textBaseline="middle";c.font="bold 15px Impact,sans-serif";c.fillText("VINHO",32,34)})}));lab.rotation.x=-Math.PI/2;lab.position.y=.83;g.add(lab);
   TABLE.add(g);b.g=g}
 /* Torre dos Clérigos */
 {const g=new THREE.Group();g.position.copy(P3(TORRE.x,TORRE.y));const st=M("#e8d8b0");
@@ -433,14 +486,70 @@ const BALLG=new THREE.SphereGeometry(BR,24,16),BALLM=new THREE.MeshPhongMaterial
 const BM=[];function ballMesh(i){if(!BM[i]){const m=new THREE.Mesh(BALLG,BALLM);m.castShadow=true;const o=new THREE.Mesh(BALLG,OUT);o.scale.setScalar(1.1);m.add(o);TABLE.add(m);BM[i]=m}return BM[i]}
 /* gaivota a passar */
 const GULL=(()=>{const g=new THREE.Group(),w=M("#fbfaf5");g.add(part(new THREE.SphereGeometry(.18,10,8),w));for(const sd of [-1,1]){const wg=part(new THREE.BoxGeometry(.5,.03,.18),w,{t:.015});wg.position.x=sd*.3;wg.name="w"+sd;g.add(wg)}const bk=part(new THREE.ConeGeometry(.05,.16,6),"#ffb627",{t:.01});bk.rotation.z=-Math.PI/2;bk.position.x=.22;g.add(bk);g.scale.setScalar(1.2);scene.add(g);return g})();
+/* túnel do metro: buraco, boca do túnel com placa e luzes do caminho */
+const portal=(x,y)=>{const g=new THREE.Group();g.position.copy(P3(x,y));
+  g.add(at(new THREE.Mesh(new THREE.CircleGeometry(.5,18,0,Math.PI),M("#0b0f1e")),0,0,-.02));
+  g.add(part(new THREE.TorusGeometry(.55,.1,8,18,Math.PI),"#8a94a8",{t:.02}));
+  const T=tex(128,32,(c)=>{c.fillStyle="#1d3f8a";c.fillRect(0,0,128,32);c.fillStyle="#fff";c.font="bold 24px Impact,sans-serif";c.textAlign="center";c.textBaseline="middle";c.fillText("METRO",64,17)});
+  const sg=part(new THREE.BoxGeometry(.9,.24,.06),[M("#1d3f8a"),M("#1d3f8a"),M("#1d3f8a"),M("#1d3f8a"),new THREE.MeshBasicMaterial({map:T}),M("#1d3f8a")],{t:.015});sg.position.y=.82;g.add(sg);TABLE.add(g);return g};
+portal(METRO.x,METRO.y+.32);portal(-4.45,7.28);
+{const hole=new THREE.Mesh(new THREE.CylinderGeometry(METRO.r*.9,METRO.r*.9,.05,20),M("#05070f"));hole.position.copy(P3(METRO.x,METRO.y,.03));TABLE.add(hole);
+  const rim=new THREE.Mesh(new THREE.RingGeometry(METRO.r*.9,METRO.r*1.15,24),new THREE.MeshBasicMaterial({color:0x29e3ff}));rim.rotation.x=-Math.PI/2;rim.position.copy(P3(METRO.x,METRO.y,.035));TABLE.add(rim)}
+const MLIGHTS=[];{const pts=[];let L=0;for(let i=1;i<MPATH.length;i++)L+=Math.hypot(MPATH[i][0]-MPATH[i-1][0],MPATH[i][1]-MPATH[i-1][1]);
+  for(let k=1;k<=10;k++){let d=L*k/11;for(let i=1;i<MPATH.length;i++){const l=Math.hypot(MPATH[i][0]-MPATH[i-1][0],MPATH[i][1]-MPATH[i-1][1]);if(d<=l){const f=d/l;pts.push([MPATH[i-1][0]+(MPATH[i][0]-MPATH[i-1][0])*f,MPATH[i-1][1]+(MPATH[i][1]-MPATH[i-1][1])*f]);break}d-=l}}
+  for(const [x,y] of pts){const m=new THREE.Mesh(new THREE.CircleGeometry(.11,10),new THREE.MeshBasicMaterial({color:0x123040}));m.rotation.x=-Math.PI/2;m.position.copy(P3(x,y,.03));TABLE.add(m);MLIGHTS.push(m)}}
+/* funicular dos Guindais: carris e cabine */
+const FUNC=new THREE.CatmullRomCurve3([P3(3.64,10.4,.05),P3(3.6,12.4,.7),P3(3.15,15.2,1.35),P3(2.2,17.9,1.5),P3(1.2,19.3,.38)]);
+{const up=new THREE.Vector3(0,1,0),steel=M("#ff8fa0");for(const sd of [-1,1]){const pts=[];for(let i=0;i<=40;i++){const p=FUNC.getPoint(i/40),tg=FUNC.getTangent(i/40),lat=new THREE.Vector3().crossVectors(tg,up).normalize();pts.push(p.add(lat.multiplyScalar(sd*.24)))}
+    TABLE.add(part(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),50,.04,6),steel,{t:.015}))}
+  for(let i=1;i<10;i++){const p=FUNC.getPoint(i/10);if(p.y<.25)continue;const pst=part(new THREE.CylinderGeometry(.035,.035,p.y,6),"#8a94a8",{t:.01});pst.position.set(p.x,p.y/2,p.z);TABLE.add(pst)}}
+const CAB=new THREE.Group();{const red=M("#e0483e"),wht=M("#fbfaf5");CAB.add(at(part(new THREE.BoxGeometry(.6,.06,.62),red,{t:.015}),0,.02,0));CAB.add(at(part(new THREE.BoxGeometry(.68,.08,.7),wht,{t:.015}),0,.78,0));
+  for(const [x,z] of [[-.27,-.28],[.27,-.28],[-.27,.28],[.27,.28]])CAB.add(at(part(new THREE.BoxGeometry(.05,.76,.05),red,{t:.01}),x,.4,z));
+  CAB.add(at(new THREE.Mesh(new THREE.BoxGeometry(.6,.12,.02),red),0,.66,.29));TABLE.add(CAB)}
+/* spinner (barco rabelo) */
+const SPM=new THREE.Group();{SPM.position.copy(P3((SPIN.x0+SPIN.x1)/2,SPIN.y,.48));const T=tex(64,32,(c)=>{for(let i=0;i<4;i++){c.fillStyle=i%2?"#e0483e":"#ffd23f";c.fillRect(i*16,0,16,32)}c.fillStyle="#151515";c.font="bold 14px Impact,sans-serif";c.textAlign="center";c.textBaseline="middle";c.fillText("RABELO",32,17)});
+  const pl=part(new THREE.BoxGeometry(.9,.4,.04),[M("#ffd23f"),M("#ffd23f"),M("#ffd23f"),M("#ffd23f"),new THREE.MeshBasicMaterial({map:T}),new THREE.MeshBasicMaterial({map:T})],{t:.012});pl.name="pl";SPM.add(pl);
+  const bar=new THREE.Mesh(new THREE.CylinderGeometry(.025,.025,1.05,6),M("#cfd3d6"));bar.rotation.z=Math.PI/2;SPM.add(bar);TABLE.add(SPM)}
+/* luzes das pistas S-Ã-O */
+const LANEL=["S","Ã","O"].map((ch,i)=>{const T=tex(64,64,(c)=>{c.fillStyle="#ffd23f";c.beginPath();c.arc(32,32,31,0,7);c.fill();c.strokeStyle="#151515";c.lineWidth=4;c.stroke();c.fillStyle="#151515";c.font="bold 36px Impact,sans-serif";c.textAlign="center";c.textBaseline="middle";c.fillText(ch,32,35)});
+  const m=new THREE.Mesh(new THREE.CircleGeometry(.27,20),new THREE.MeshBasicMaterial({map:T,color:0x555555}));m.rotation.x=-Math.PI/2;m.position.copy(P3(-1.2+i*1.2,17.95,.03));TABLE.add(m);return m});
+/* setas acesas para cada sítio da volta ao Porto */
+const ARW={};{const sh=new THREE.Shape();sh.moveTo(0,.36);sh.lineTo(.27,-.18);sh.lineTo(-.27,-.18);sh.closePath();const geo=new THREE.ShapeGeometry(sh);
+  for(const [k,x,y,r,c] of [["ponte",-4.45,9.4,0,0xffd23f],["torre",-2.45,7.7,.62,0xfbfaf5],["fran",3.55,6.75,-.3,0xff9a3c],["metro",-2.55,13.95,.44,0x29e3ff],["fun",3.65,8.95,0,0xff5a6e]]){
+    const m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:0}));m.rotation.set(-Math.PI/2,0,r);m.position.copy(P3(x,y,.04));TABLE.add(m);ARW[k]=m}}
+/* fogo de artifício (Noite de São João) */
+const FWN=700,FWP=new Float32Array(FWN*3).fill(-99),FWC=new Float32Array(FWN*3),FW=[];
+const FWG=new THREE.BufferGeometry();FWG.setAttribute("position",new THREE.BufferAttribute(FWP,3));FWG.setAttribute("color",new THREE.BufferAttribute(FWC,3));
+const FWPTS=new THREE.Points(FWG,new THREE.PointsMaterial({size:.7,map:tex(32,32,(c)=>{const g=c.createRadialGradient(16,16,0,16,16,16);g.addColorStop(0,"#fff");g.addColorStop(.35,"rgba(255,255,255,.8)");g.addColorStop(1,"rgba(255,255,255,0)");c.fillStyle=g;c.fillRect(0,0,32,32)}),vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));FWPTS.frustumCulled=false;TABLE.add(FWPTS);
+let fwI=0;const FWCOL=[[1,.82,.25],[1,.3,.45],[.3,.9,1],[.6,1,.4],[1,1,1],[1,.55,.15]];
+function burst(x,y,h,n){const c=FWCOL[Math.floor(Math.random()*FWCOL.length)],p=P3(x,y,h);for(let i=0;i<n;i++){const k=fwI++%FWN,u=Math.random()*2-1,a=Math.random()*6.283,r=Math.sqrt(1-u*u),sp=2.2+Math.random()*1.6;
+  FW[k]={x:p.x,y:p.y,z:p.z,vx:r*Math.cos(a)*sp,vy:u*sp+1,vz:r*Math.sin(a)*sp,l:1,d:.7+Math.random()*.6,c}}}
+function stepFW(dt){for(let k=0;k<FWN;k++){const f=FW[k];if(!f||f.l<=0){FWP[k*3+1]=-99;continue}f.l-=dt/f.d;f.vy-=3*dt;f.vx*=.985;f.vz*=.985;f.x+=f.vx*dt;f.y+=f.vy*dt;f.z+=f.vz*dt;
+  FWP[k*3]=f.x;FWP[k*3+1]=f.l>0?f.y:-99;FWP[k*3+2]=f.z;const L=Math.max(0,f.l);FWC[k*3]=f.c[0]*L;FWC[k*3+1]=f.c[1]*L;FWC[k*3+2]=f.c[2]*L}
+  FWG.attributes.position.needsUpdate=true;FWG.attributes.color.needsUpdate=true}
+/* rasto da bola quando vai depressa */
+const TRAILM=[];function trailMesh(i,j){const k=i*6+j;if(!TRAILM[k]){const m=new THREE.Mesh(BALLG,new THREE.MeshBasicMaterial({color:0xcfe0ff,transparent:true,opacity:0,depthWrite:false}));m.scale.setScalar(.85-j*.1);TABLE.add(m);TRAILM[k]=m}return TRAILM[k]}
+function tourHud(){const el=$("hTour");if(!el||!G)return;el.querySelectorAll("i").forEach(i=>i.classList.toggle("on",!!G.tour[i.dataset.k]));el.classList.toggle("wiz",G.wiz>0)}
+const BG0=new THREE.Color(0x10162b),BG1=new THREE.Color(0x3a1460);
 /* ---------- desenhar ---------- */
 let W=0,H=0,LOWQ=false;
 function layout(){const r=stage.getBoundingClientRect();W=Math.max(200,r.width);H=Math.max(200,r.height);renderer.setPixelRatio(Math.min(LOWQ?1:1.6,window.devicePixelRatio||1));renderer.setSize(W,H,false);camera.aspect=W/H;
   if(W/H<.75){camera.fov=57;camera.position.set(0,21.5,2.4);camera.lookAt(0,0,-10)}else{camera.fov=50;camera.position.set(0,15,8);camera.lookAt(0,0,-9)}camera.updateProjectionMatrix()}
 function draw(){
   if(G){
-    G.balls_on.forEach((b,i)=>{const m=ballMesh(i);m.visible=true;if(b.ramp){const p=RAMPC.getPoint(Math.min(1,b.ramp.t));m.position.set(p.x,p.y+BR,p.z)}else m.position.copy(P3(b.x,b.y,BR));m.rotation.x-=b.vy*.012;m.rotation.z-=b.vx*.012});
-    for(let i=G.balls_on.length;i<BM.length;i++)if(BM[i])BM[i].visible=false;
+    const now=performance.now()/1000,blink=Math.sin(now*9)>0;
+    G.balls_on.forEach((b,i)=>{const m=ballMesh(i);m.visible=!b.metro;if(b.ramp){const p=RAMPC.getPoint(Math.min(1,b.ramp.t));m.position.set(p.x,p.y+BR,p.z)}else if(b.fun){const p=FUNC.getPoint(Math.min(1,b.fun.t));m.position.set(p.x,p.y+BR+.07,p.z)}else m.position.copy(P3(b.x,b.y,BR));m.rotation.x-=b.vy*.012;m.rotation.z-=b.vx*.012;
+      const H=b.hist||(b.hist=[]);H.unshift(m.position.clone());if(H.length>7)H.pop();const fast=Math.hypot(b.vx,b.vy)>13&&!b.metro&&!b.fun&&!b.held;
+      for(let j=0;j<6;j++){const t=trailMesh(i,j);if(fast&&H[j+1]){t.position.copy(H[j+1]);t.material.opacity=.28*(1-j/6)}else t.material.opacity=0}});
+    for(let i=G.balls_on.length;i<BM.length;i++)if(BM[i]){BM[i].visible=false;for(let j=0;j<6;j++)trailMesh(i,j).material.opacity=0}
+    /* metro, funicular, spinner, pistas e setas */
+    const mb=G.balls_on.find(b=>b.metro),mt=mb?mb.metro.t:-1;MLIGHTS.forEach((l,i)=>l.material.color.setHex(mt>=0?(Math.abs(mt*10-i)<1.2?0xffffff:mt*10>i?0x29e3ff:0x123040):(G.wiz>0?((i+Math.floor(now*12))%3?0x123040:0x29e3ff):(!G.tour.metro&&((i+Math.floor(now*6))%5===0)?0x1e7f99:0x123040))));
+    const fb=G.balls_on.find(b=>b.fun),ct=fb?fb.fun.t:(FUN.ret>0?FUN.ret/1.2:0),cp=FUNC.getPoint(Math.min(1,ct)),tg=FUNC.getTangent(Math.min(.999,ct));CAB.position.copy(cp);CAB.rotation.y=Math.atan2(tg.x,tg.z);
+    SPM.getObjectByName("pl").rotation.x=SPIN.a;
+    LANEL.forEach((m,i)=>m.material.color.setHex(G.lanes[i]?0xffffff:(G.wiz>0&&blink?0xffffff:0x4a4a4a)));
+    for(const k in ARW){const a=ARW[k];a.material.opacity=G.wiz>0?(blink?.9:.2):G.tour[k]?.9:(blink?.85:.12)}
+    if(G.shake>0){G.shake-=1/60;TABLE.position.x=Math.sin(now*80)*.12*G.shake/.25}else TABLE.position.x=0;
+    scene.background.lerp(G.wiz>0?BG1:BG0,.05);
     for(const b of BUMP){b.cap.material.emissive.setHex(b.flash>0?0xffe680:0x221800);b.g.scale.setScalar(b.flash>0?1.06:1)}
     TORRE.cap.material.emissive.setHex(TORRE.flash>0?0xffe680:0x000000);
     for(const s of SL)if(s.mesh)s.mesh.material=s.flash>0?M("#ffd23f"):RAILK;
@@ -449,6 +558,7 @@ function draw(){
     PLUNG.position.copy(P3(4.62,.1-G.charge*.6,.3));
   }
   for(const f of FL)f.g.rotation.y=f.a;
+  {const n=performance.now();stepFW(Math.min(.05,(n-(draw.l||n))/1000));draw.l=n}
   const t=performance.now()/1000;GULL.position.set(Math.sin(t*.23)*9,9+Math.sin(t*.7),-14+Math.cos(t*.23)*6);GULL.rotation.y=Math.atan2(Math.cos(t*.23),-Math.sin(t*.23)*.7);for(const sd of [-1,1]){const w=GULL.getObjectByName("w"+sd);if(w)w.rotation.x=0,w.rotation.z=sd*Math.sin(t*9)*.5}
   if(!window.__norender)renderer.render(scene,camera);
 }
@@ -458,23 +568,25 @@ function hud(){if(!G)return;setT("hScore",G.score.toLocaleString("pt-PT"));setT(
   $("charge").hidden=G.state!=="launch";if(G.state==="launch")$("chargeBar").style.height=(G.charge*100).toFixed(0)+"%"}
 function msg(t,s){const m=$("hMsg");m.textContent=t;m.hidden=false;G.msgT=s||1.5}
 const ov=$("ov");function showOv(h){ov.innerHTML=h;ov.hidden=false}
-function menu(){G=null;showOv(`<div class="panel"><h2>Pinball do Porto</h2><p>Toca na metade <b>esquerda</b> ou <b>direita</b> do ecrã para os flippers. Para lançar a bola, mantém o dedo e solta.</p><p class="note">🌉 Ponte Luís I: 3 vezes = multibola · 🗼 Clérigos: 8 vezes = bola extra · P-O-R-T-O = multiplicador · 🥪 francesinha = +2000</p><button class="btn" type="button" data-a="go">Jogar ▶</button><p class="note">Recorde: ${BEST.toLocaleString("pt-PT")}</p></div>`)}
-ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;unlock();if(b.dataset.a==="go"){ov.hidden=true;newGame();$("hud").hidden=false;keepAwake(true)}else if(b.dataset.a==="resume"){ov.hidden=true;G.state=G.prev||"play"}else if(b.dataset.a==="menu")menu()});
+function menu(){G=null;showOv(`<div class="panel"><h2>Pinball do Porto</h2><p>Toca na metade <b>esquerda</b> ou <b>direita</b> do ecrã para os flippers. Para lançar a bola, mantém o dedo e solta.</p><p class="note">🌉 Ponte Luís I: 3 vezes = multibola (e jackpot na 🥪 francesinha) · 🗼 Clérigos: 8 vezes = bola extra · P-O-R-T-O = multiplicador · 🚇 túnel do Metro · 🚠 funicular · pistas S-Ã-O = pipas valem mais (os flippers mudam as luzes)</p><p class="note">Acerta nos 6 sítios para a <b>Noite de São João</b> 🎆 (tudo a dobrar). Desliza o dedo para cima para abanar a mesa — sem exagerar!</p><button class="btn" type="button" data-a="go">Jogar ▶</button><p class="note">Recorde: ${BEST.toLocaleString("pt-PT")}</p></div>`)}
+ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;unlock();if(b.dataset.a==="go"){ov.hidden=true;newGame();tourHud();$("hud").hidden=false;keepAwake(true)}else if(b.dataset.a==="resume"){ov.hidden=true;G.state=G.prev||"play"}else if(b.dataset.a==="menu")menu()});
 function pause(){if(!G||G.state==="over"||G.state==="pause")return;G.prev=G.state;G.state="pause";showOv(`<div class="panel"><h2>Pausa</h2><p>${G.score.toLocaleString("pt-PT")} pontos</p><button class="btn" type="button" data-a="resume">Continuar</button><button class="btn ghost" type="button" data-a="menu">Desistir</button></div>`)}
 /* ---------- comandos ---------- */
 const touches=new Map();
 function updFlip(){let l=false,r=false;for(const v of touches.values()){if(v==="l")l=true;else if(v==="r")r=true}
   if(keysL)l=true;if(keysR)r=true;
-  for(const f of FL){const on=f.side<0?l:r;if(on&&!f.on){sfx("flip");buzz(8)}f.on=on}}
+  for(const f of FL){const on=f.side<0?l:r;if(on&&!f.on){sfx("flip");buzz(8);if(G&&G.state==="play"&&!G.tiltOn){if(f.side<0)G.lanes.push(G.lanes.shift());else G.lanes.unshift(G.lanes.pop())}}f.on=on}}
 let keysL=false,keysR=false;
 stage.addEventListener("pointerdown",e=>{if(e.target.closest(".ov,.pbtn"))return;unlock();if(!G)return;try{stage.setPointerCapture(e.pointerId)}catch(x){}
   if(G.state==="launch"){G.charging=true;touches.set(e.pointerId,"p");return}
-  const r=stage.getBoundingClientRect();touches.set(e.pointerId,e.clientX-r.left<r.width/2?"l":"r");updFlip()});
-const pend=e=>{const v=touches.get(e.pointerId);touches.delete(e.pointerId);if(v==="p"&&G&&G.state==="launch")launch();updFlip()};
+  const r=stage.getBoundingClientRect();touches.set(e.pointerId,e.clientX-r.left<r.width/2?"l":"r");PST.set(e.pointerId,{y:e.clientY,t:performance.now(),n:false});updFlip()});
+const PST=new Map();
+stage.addEventListener("pointermove",e=>{const s=PST.get(e.pointerId);if(s&&!s.n&&s.y-e.clientY>45&&performance.now()-s.t<400){s.n=true;nudge()}});
+const pend=e=>{PST.delete(e.pointerId);const v=touches.get(e.pointerId);touches.delete(e.pointerId);if(v==="p"&&G&&G.state==="launch")launch();updFlip()};
 stage.addEventListener("pointerup",pend);stage.addEventListener("pointercancel",pend);
 stage.addEventListener("contextmenu",e=>e.preventDefault());
 stage.addEventListener("touchmove",e=>{if(G)e.preventDefault()},{passive:false});
-document.addEventListener("keydown",e=>{if(e.repeat||!G)return;if(["ArrowLeft","z","Z","a","A","Shift"].includes(e.key)){keysL=true;updFlip()}if(["ArrowRight","m","M","l","L"].includes(e.key)){keysR=true;updFlip()}if((e.key===" "||e.key==="ArrowDown"||e.key==="Enter")&&G.state==="launch"){G.charging=true;e.preventDefault()}if(e.key==="p"||e.key==="Escape")pause()});
+document.addEventListener("keydown",e=>{if(e.repeat||!G)return;if(["ArrowLeft","z","Z","a","A","Shift"].includes(e.key)){keysL=true;updFlip()}if(["ArrowRight","m","M","l","L"].includes(e.key)){keysR=true;updFlip()}if((e.key===" "||e.key==="ArrowDown"||e.key==="Enter")&&G.state==="launch"){G.charging=true;e.preventDefault()}if(e.key==="p"||e.key==="Escape")pause();if(["ArrowUp","w","W"].includes(e.key)||(e.key===" "&&G.state==="play")){nudge();e.preventDefault()}});
 document.addEventListener("keyup",e=>{if(!G)return;if(["ArrowLeft","z","Z","a","A","Shift"].includes(e.key)){keysL=false;updFlip()}if(["ArrowRight","m","M","l","L"].includes(e.key)){keysR=false;updFlip()}if((e.key===" "||e.key==="ArrowDown"||e.key==="Enter")&&G.state==="launch"&&G.charging)launch()});
 $("pauseBtn").onclick=pause;
 document.addEventListener("visibilitychange",()=>{if(document.hidden)pause()});
@@ -486,7 +598,9 @@ let lastWall=0;
 const SFX={flip:()=>tone(160,.05,{type:"square",v:.05,f2:90}),flip2:()=>tone(220,.04,{type:"square",v:.03}),bump:()=>{tone(880,.08,{type:"square",v:.05});tone(1320,.06,{type:"square",v:.03,at:.03})},sling:()=>tone(520,.07,{type:"square",v:.05}),
   wall:v=>{const n=performance.now();if(n-lastWall<60)return;lastWall=n;tone(140,.05,{type:"sine",v:.08*v})},drop:()=>tone(660,.09,{type:"square",v:.05,f2:330}),torre:()=>[784,988,1175].forEach((f,i)=>tone(f,.12,{at:i*.06,type:"square",v:.04})),
   ramp:()=>tone(300,.6,{type:"sawtooth",v:.03,f2:900}),ramp2:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.12,{at:i*.07,type:"square",v:.04})),fran:()=>[392,523,659].forEach((f,i)=>tone(f,.16,{at:i*.09,type:"triangle",v:.06})),
-  porto:()=>[523,659,784,1047,1319].forEach((f,i)=>tone(f,.15,{at:i*.08,type:"square",v:.05})),drain:()=>tone(330,.6,{type:"sawtooth",v:.06,f2:80}),plunge:()=>tone(90,.25,{type:"sine",v:.12,f2:300})};
+  porto:()=>[523,659,784,1047,1319].forEach((f,i)=>tone(f,.15,{at:i*.08,type:"square",v:.05})),metro:()=>tone(260,.7,{type:"sawtooth",v:.04,f2:55}),metro2:()=>tone(110,.3,{type:"square",v:.05,f2:440}),fun:()=>[330,392,494,587].forEach((f,i)=>tone(f,.14,{at:i*.12,type:"triangle",v:.05})),spin:()=>tone(1500,.02,{type:"square",v:.018}),
+  combo:()=>[784,1047,1319,1568].forEach((f,i)=>tone(f,.1,{at:i*.05,type:"square",v:.04})),jack:()=>[523,659,784,1047,784,1047,1319].forEach((f,i)=>tone(f,.16,{at:i*.09,type:"square",v:.05})),
+  drain:()=>tone(330,.6,{type:"sawtooth",v:.06,f2:80}),plunge:()=>tone(90,.25,{type:"sine",v:.12,f2:300})};
 const sfx=(k,v)=>{try{SFX[k](v)}catch(e){}};
 const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
 function setMute(m){muted=m;store.set("pp-mute",m?"1":"0");$("mute").textContent=m?"🔇":"🔊"}
@@ -500,7 +614,7 @@ let last=0,slowN=0;
 function loop(t){const dt=Math.min(.033,(t-last)/1000||0);
   if(G&&G.state==="play"){slowN=(t-last>24)?slowN+1:Math.max(0,slowN-.5);if(slowN>50){slowN=0;if(!LOWQ){LOWQ=true;layout()}else key.castShadow=false}}
   last=t;step(dt);draw();hud();requestAnimationFrame(loop)}
-window.PB={get G(){return G},FL,launch,newGame};
+window.PB={get G(){return G},FL,launch,newGame,markTour,burst,SPIN};
 window.addEventListener("resize",()=>{clearTimeout(window.__rz);window.__rz=setTimeout(layout,60)});
 layout();menu();requestAnimationFrame(t=>{last=t;loop(t)});
 
