@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Lisboa 2099</title>
+<title>Corre Neon</title>
 <meta name="description" content="Lisboa, ano 2099: foge do robô pela autoestrada de néon. Salta, rebola, apanha moedas e corre contra os amigos. Grátis, sem conta e sem publicidade.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Lisboa 2099: foge do robô!">
+<meta property="og:title" content="Corre Neon: foge do robô!">
 <meta property="og:description" content="Lasers, drones e carros voadores. Sozinho ou em corrida com amigos. Bates o meu recorde?">
 <meta property="og:url" content="https://jogatina-pt.github.io/eletrico/">
 <meta property="og:image" content="https://jogatina-pt.github.io/eletrico/og.jpg">
@@ -20,7 +20,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Lisboa 2099">
+<meta name="apple-mobile-web-app-title" content="Corre Neon">
 <meta name="theme-color" content="#f4eee3">
 <link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
@@ -257,7 +257,7 @@ header.top{flex:none}
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Lisboa <span>2099</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1>Corre <span>Neon</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
       <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
@@ -811,13 +811,13 @@ function genRow(z){
     if(t==="low"){const v=Math.floor(R()*3);G.objs.push({t:"low",v,lane:l,z0:z,z1:z+(v===1?.7:.35)})}
     else if(t==="high")G.objs.push({t:"high",v:Math.floor(R()*2),lane:l,z0:z,z1:z+.35});
     else if(t==="car")G.objs.push({t:"car",kind:"car",lane:l,z0:z,z1:z+3.8,top:1.3,hue:Math.floor(R()*5),mv:0});
-    else if(t==="tuk")G.objs.push({t:"car",kind:"tuk",lane:l,z0:z,z1:z+2.6,top:1.6,hue:Math.floor(R()*3),mv:5+3*d});
+    else if(t==="tuk")G.objs.push({t:"car",kind:"tuk",lane:l,z0:z,z1:z+2.6,top:1.6,hue:Math.floor(R()*3),mv:G.mp?0:5+3*d});
     else if(t==="tram"||t==="ramp"||t==="move"){
       const maxLen=gap-8;let len=7.5;
       if(t!=="move"&&R()<.35&&maxLen>=14.5&&l!==s)len=14.5;
       const z0=t==="ramp"?z+3.4:z;
       if(t==="ramp")G.objs.push({t:"ramp",lane:l,z0:z,z1:z+3.4});
-      G.objs.push({t:"tram",lane:l,z0,z1:z0+Math.min(len,Math.max(7.5,maxLen)),mv:t==="move"?4.5+2.5*d:0,hue:R()<.15?"red":"yellow",num:pick(["28","12","15","18","25"])});
+      G.objs.push({t:"tram",lane:l,z0,z1:z0+Math.min(len,Math.max(7.5,maxLen)),mv:t==="move"&&!G.mp?4.5+2.5*d:0,hue:R()<.15?"red":"yellow",num:pick(["28","12","15","18","25"])});
     }
   }
   /* moedas na linha segura */
@@ -1261,7 +1261,7 @@ function step(dt){
     if(Math.abs(o.z-P.z)<.6&&Math.abs(o.x-P.x)<.6&&Math.abs(o.y-(P.y+.7))<1){
       o.dead=true;
       if(o.t==="coin"){G.coins++;sfx("coin")}
-      else if(o.t==="box"){G.atk=pick(["tinta","banana","lento"]);sfx("pw");buzz(30);hflash("Apanhaste "+ATK[G.atk].n+" "+ATK[G.atk].ic+" Toca no botão para usar!");atkBtn()}
+      else if(o.t==="box"){G.atk=["tinta","banana","lento"][Math.floor(Math.random()*3)];sfx("pw");buzz(30);hflash("Apanhaste "+ATK[G.atk].n+" "+ATK[G.atk].ic+" Toca no botão para usar!");atkBtn()}
       else{G.pw[o.k]=PWDUR(o.k);sfx("pw");buzz(30);hflash(o.k==="iman"?"Íman! 🧲":o.k==="mola"?"Botas-foguete! 🚀":"Hoverboard! 🛹")}
     }
   }
@@ -1270,8 +1270,8 @@ function step(dt){
   if(!G.rec&&SAVE.best>50&&G.dist>SAVE.best){G.rec=true;hflash("Novo recorde! 🏆");sfx("rec")}
 }
 function crash(o){
-  if(G.inv>0){o.dead=true;return false}
-  if(G.pw.skate>0){G.pw.skate=0;G.inv=1.2;o.dead=true;hflash("O hoverboard salvou-te!");sfx("stumble");buzz(80);if(o.t==="tram"){/* remove a rampa junto */}return false}
+  if(G.inv>0){if(!G.mp)o.dead=true;return false}
+  if(G.pw.skate>0){G.pw.skate=0;G.inv=G.mp?1.6:1.2;if(!G.mp)o.dead=true;hflash("O hoverboard salvou-te!");sfx("stumble");buzz(80);if(o.t==="tram"){/* remove a rampa junto */}return false}
   G.state="dead";G.deadT=0;G.why=o.t==="tram"?"Foste contra a cápsula!":o.t==="car"?(o.kind==="tuk"?"Foste contra uma mota voadora!":"Foste contra um carro voador!"):o.t==="low"?(o.v===1?"Foste contra o caixote!":o.v===2?"Tropeçaste nos pilaretes!":"Tocaste no laser!"):(o.v===1?"Bateste no drone!":"Bateste no laser!");P.dead=true;sfx("crash");buzz([120,60,200]);keepAwake(false);return true;
 }
 function stumble(o,keep){
@@ -1297,7 +1297,7 @@ let HG=null;
 const num=(v,a,b)=>{v=+v;return isFinite(v)?Math.max(a,Math.min(b,v)):a};
 function hgEnd(){if(!HG||HG.done||HG.alive.some(Boolean))return;HG.done=true;const res=HG.seats.map((s,i)=>({n:s.name,d:Math.floor(HG.dist[i])})).sort((a,b)=>b.d-a.d);HG.seats.forEach(s=>ROOM.sendTo(s,{t:"end",res}))}
 function hgDead(i,dist){if(!HG||!HG.alive[i])return;HG.alive[i]=false;HG.dist[i]=Math.max(HG.dist[i],dist);HG.seats.forEach((s,k)=>{if(k!==i)ROOM.sendTo(s,{t:"dd",i,dist:HG.dist[i]})});hgEnd()}
-ROOM.game={id:"eletrico",title:"Lisboa 2099",maxp:4,minp:2,maxBots:0,botNames:[],
+ROOM.game={id:"eletrico",title:"Corre Neon",maxp:4,minp:2,maxBots:0,botNames:[],
   lobbyHelpFew:"São precisas pelo menos 2 pessoas. Envia o link aos amigos.",
   start(seats){HG={seats,seed:1+Math.floor(Math.random()*2e9),alive:seats.map(s=>s.kind!=="remote"||s.online),dist:seats.map(()=>0),done:false};
     seats.forEach((s,i)=>ROOM.sendTo(s,{t:"go",seed:HG.seed,me:i,names:seats.map(x=>x.name)}))},
@@ -1354,8 +1354,10 @@ function mpClient(d){
 }
 function respawn(){
   P.dead=false;P.y=P.floor=0;P.vy=0;P.roll=0;P.rollQ=false;P.x=LX[P.lane];
-  for(const o of G.objs)if(o.t!=="coin"&&o.z0!=null&&o.z0<P.z+18&&o.z1>P.z-3)o.dead=true;
-  Object.assign(G,{state:"play",over:false,deadT:0,inv:2.5,chase:0,intro:0});keepAwake(true);
+  /* não se apagam obstáculos (os outros veem o mesmo percurso): volta numa linha livre e fica uns segundos a piscar, sem bater */
+  const blocked=l=>G.objs.some(o=>o.lane===l&&(o.t==="tram"||o.t==="car"||o.t==="ramp")&&!o.dead&&o.z0<P.z+16&&o.z1>P.z-1);
+  let best=P.lane;for(const d of [0,1,-1,2,-2,3,-3]){const l=P.lane+d;if(l>=0&&l<NL&&!blocked(l)){best=l;break}}P.lane=P.prev=best;
+  Object.assign(G,{state:"play",over:false,deadT:0,inv:2.6,chase:0,intro:0});keepAwake(true);
   hflash(`Perdeste uma vida! ${"❤️".repeat(MP.lives)}`);sfx("pw");
 }
 function mpOver(){
@@ -1379,7 +1381,7 @@ function specStep(dt){
   while(G.nextZ<P.z+FAR){const gp=genRow(G.nextZ);G.nextZ+=gp*(.85+R()*.3)}
   for(const o of G.objs){o.pz0=o.z0;if(o.mv&&o.z0-P.z<42){o.z0-=o.mv*dt;o.z1-=o.mv*dt}}
   G.objs=G.objs.filter(o=>!o.dead&&(o.z1!=null?o.z1:o.z)>P.z-7);
-  G.atkCD-=dt;if(!G.atk&&G.atkCD<=0){G.atk=pick(["tinta","banana","lento"]);G.atkCD=6;$("atkBtn").textContent=ATK[G.atk].ic;HC.ab=null;hflash("Tens "+ATK[G.atk].n+" "+ATK[G.atk].ic+"!")}
+  G.atkCD-=dt;if(!G.atk&&G.atkCD<=0){G.atk=["tinta","banana","lento"][Math.floor(Math.random()*3)];G.atkCD=6;$("atkBtn").textContent=ATK[G.atk].ic;HC.ab=null;hflash("Tens "+ATK[G.atk].n+" "+ATK[G.atk].ic+"!")}
 }
 function mpWait(){
   if(MP.res)return;
@@ -1407,7 +1409,7 @@ function drawGhosts(){
   if(!MP.on)return;
   MP.st.forEach((st,i)=>{if(!st||i===MP.me)return;const g=ghostKid(i,st.w==="rita"?"rita":"ze");
     const z=st.dead?st.z:st.z+st.v*Math.min(.4,(now-st.t)/1000);if(Math.abs(z-P.z)>FAR)return;
-    g.K.root.visible=true;g.K.board.visible=!!st.b&&!st.dead;{const al=G.state==="spec"&&i===MP.specI?1:.5;if(g.al!==al){g.al=al;g.K.root.traverse(o=>{if(o.isMesh){o.material.opacity=o.material.userData.out?Math.min(1,al*.6+.4*(al===1)):al;o.material.depthWrite=al===1}})}}animKid(g.K,st.dead?"down":st.r?"roll":st.b?"board":st.y>.05?"air":"run",z/13*.9);g.K.root.position.set(st.x,st.y+HL(z),-z)});
+    g.K.root.visible=true;g.x=g.x==null?st.x:g.x+(st.x-g.x)*.25;g.K.board.visible=!!st.b&&!st.dead;{const al=G.state==="spec"&&i===MP.specI?1:.5;if(g.al!==al){g.al=al;g.K.root.traverse(o=>{if(o.isMesh){o.material.opacity=o.material.userData.out?Math.min(1,al*.6+.4*(al===1)):al;o.material.depthWrite=al===1}})}}animKid(g.K,st.dead?"down":st.r?"roll":st.b?"board":st.y>.05?"air":"run",z/13*.9);g.K.root.position.set(g.x,st.y+HL(z),-z)});
 }
 /* ---------- HUD ---------- */
 const HC={};const setT=(id,v)=>{if(HC[id]!==v){HC[id]=v;$(id).textContent=v}};
