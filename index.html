@@ -446,7 +446,7 @@ tb.addEventListener("click",()=>setTheme(document.documentElement.dataset.ppThem
   function recent(){try{return JSON.parse(ls.get("hub-rec")||"[]").filter(id=>all.some(c=>c.classList[1]===id))}catch(e){return[]}}
   all.forEach(c=>c.addEventListener("click",()=>{const id=c.classList[1];const r=recent().filter(x=>x!==id);r.unshift(id);ls.set("hub-rec",JSON.stringify(r.slice(0,6)))}));
   const recB=fl.querySelector('[data-f="rec"]');recB.hidden=!recent().length;
-  const f0=ls.get("hub-filtro");applyFilter(["rec","festa","cartas","arcada","puzzles","all"].includes(f0)?f0:(recent().length?"rec":"all"),ls.get("hub-jogo"));
+  applyFilter("all",ls.get("hub-jogo"));
   requestAnimationFrame(()=>{const on=fl.querySelector(".on");if(on)fl.scrollTo({left:on.offsetLeft-fl.clientWidth/2+on.offsetWidth/2})});
 })();
 /* bonecos do menu */
