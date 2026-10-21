@@ -243,6 +243,18 @@
      "type": "image/png"
     }
    ]
+  },
+  {
+   "name": "Apanha o Elétrico",
+   "short_name": "Apanha",
+   "url": "eletrico/",
+   "icons": [
+    {
+     "src": "eletrico/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
   }
  ]
 }
