@@ -477,7 +477,9 @@ tb.addEventListener("click",()=>setTheme(document.documentElement.dataset.ppThem
   const D=TOP?TOP.document:document,de=D.documentElement;
   const can=!!(D.fullscreenEnabled||D.webkitFullscreenEnabled);
   const isFs=()=>!!(D.fullscreenElement||D.webkitFullscreenElement);
-  const get=()=>{try{return localStorage.getItem("pp-fs")==="1"}catch(e){return false}};
+  /* app instalada em ecrã completo: já está tudo no ecrã, o botão não faz falta */
+  const APPFS=matchMedia("(display-mode: fullscreen)").matches;
+  const get=()=>{if(APPFS)return false;try{return localStorage.getItem("pp-fs")==="1"}catch(e){return false}};
   const set=v=>{try{localStorage.setItem("pp-fs",v?"1":"0")}catch(e){}};
   const enter=()=>{try{const p=(de.requestFullscreen||de.webkitRequestFullscreen).call(de,{navigationUI:"hide"});if(p&&p.catch)return p.catch(()=>{});return Promise.resolve()}catch(e){return Promise.resolve()}};
   const leave=()=>{try{if(!isFs())return;const p=(D.exitFullscreen||D.webkitExitFullscreen).call(D);if(p&&p.catch)p.catch(()=>{})}catch(e){}};
@@ -535,7 +537,7 @@ tb.addEventListener("click",()=>setTheme(document.documentElement.dataset.ppThem
     /* em ecrã completo, os links do site abrem na moldura */
     addEventListener("click",e=>{if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey)return;if(!isFs()&&!fr&&!get())return;const a=e.target.closest&&e.target.closest("a[href]");const h=sameSite(a);if(!h)return;e.preventDefault();JFS.go(h)},false);
   }
-  if(!can)return;
+  if(!can||APPFS)return;
 
   /* ---- botão ---- */
   const IN='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg>';
