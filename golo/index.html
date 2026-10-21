@@ -235,7 +235,7 @@ header.top{flex:none}
 .sbar .tm b{font-family:var(--display);font-weight:400;font-size:17px;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .sbar .dots{display:flex;gap:3px}.sbar .dots i{width:11px;height:11px;border-radius:50%;border:2px solid #151515;background:#fff}.sbar .dots i.g{background:#3fbf6b}.sbar .dots i.x{background:#e0483e}
 .sbar .sc{font-family:var(--display);font-size:34px;color:#fff;-webkit-text-stroke:2px #151515;paint-order:stroke fill;text-shadow:3px 3px 0 #151515;letter-spacing:.04em}
-.tip{position:absolute;left:10px;right:10px;top:74px;text-align:center;z-index:3;pointer-events:none;font-weight:900;font-size:15px;color:#fff;text-shadow:0 2px 0 #151515,0 0 6px #151515}
+.tip{position:absolute;left:10px;right:10px;bottom:16px;text-align:center;z-index:3;pointer-events:none;font-weight:900;font-size:15px;color:#fff;text-shadow:0 2px 0 #151515,0 0 6px #151515}
 .hmsg.big{font-size:64px;top:35%}
 .seg2{display:flex;gap:6px;width:100%}.seg2 button{flex:1;font:inherit;font-weight:900;font-size:14px;border:3px solid #151515;border-radius:14px;padding:8px 4px;background:#fff;color:#151515;cursor:pointer;box-shadow:3px 3px 0 #151515}.seg2 button.on{background:#ffe27a}
 .podium{display:flex;flex-direction:column;gap:6px;width:100%}.podium div{display:flex;justify-content:space-between;align-items:center;border:3px solid #151515;border-radius:14px;padding:6px 10px;background:#fff;font-weight:800}
@@ -901,13 +901,13 @@ function setupKick(k){
   G.wall=G.kind==="livre"?wallFor(k.bx,k.bz):null;
   WALL.forEach((p,i)=>{p.root.visible=!!G.wall;if(G.wall){const w=G.wall,l=(i-1.5)*.55;p.root.position.set(w.cx+w.px*l,0,w.cz+w.pz*l);p.root.rotation.y=Math.atan2(w.ux,w.uz);poseIdle(p,i,false);p.root.position.y=0}});
   const meKeep=amKeeper();
-  KEEPER.root.visible=true;GLOVES.visible=false;NET.userData.back.visible=!meKeep;window.ADB.visible=!meKeep;RING.visible=meKeep;G.kbase=G.kind==="livre"?(k.bx>0?.6:-.6):0;G.glx=G.tgx=G.kbase;Object.assign(KS,{fx:G.kbase,fy:0,th:0,b:0});
+  KEEPER.root.visible=!meKeep;GLOVES.visible=meKeep;NET.userData.back.visible=!meKeep;window.ADB.visible=true;RING.visible=false;G.kbase=G.kind==="livre"?(k.bx>0?.6:-.6):0;G.glx=G.tgx=G.kbase;Object.assign(KS,{fx:G.kbase,fy:0,th:0,b:0});
   KEEPER.root.position.set(G.wall?(k.bx>0?.6:-.6):0,0,.3);KEEPER.root.rotation.set(0,Math.PI,0);
   const shCpu=!amShooter()&&!G.online;SHOOTER.root.visible=!amShooter();
   if(SHOOTER.root.visible){const d=Math.hypot(k.bx,k.bz);SHOOTER.root.position.set(k.bx+k.bx/d*2.2+.6,0,k.bz+k.bz/d*2.2);SHOOTER.root.rotation.y=Math.atan2(-k.bx,-k.bz)+Math.PI}
   sbar();
   if(amShooter()){tip(G.kind==="livre"?"Desenha o remate: curva a bola à volta da barreira!":"Desenha o remate com o dedo, da bola para a baliza");msg(G.online?"És tu a rematar!":"Remata!",true,1100)}
-  else if(meKeep){tip(G.online?`${G.names[k.sh]} vai rematar… arrasta o dedo para onde te vais atirar!`:"Arrasta o dedo para onde te vais atirar!");msg("Defende!",true,1100);if(shCpu){G.cpuT=1.6+Math.random()*.8}}
+  else if(meKeep){tip(G.online?`${G.names[k.sh]} vai rematar… arrasta as luvas!`:"Arrasta as luvas. Em cima vês onde estás na baliza");msg("Defende!",true,1100);if(shCpu){G.cpuT=1.6+Math.random()*.8}}
   else tip("");
   G.aimT=0;
 }
@@ -1027,7 +1027,8 @@ ov.addEventListener("click",e=>{
 /* ---------- comandos ---------- */
 const ray=new THREE.Raycaster(),ndc=new THREE.Vector2(),plane=new THREE.Plane(new THREE.Vector3(0,0,1),0),hit=new THREE.Vector3();
 /* o ecrã todo corresponde à baliza toda: dedo na ponta direita = luvas no poste direito (a câmara acompanha) */
-function glovesTo(cx,cy){const r=stage.getBoundingClientRect();ndc.set((cx-r.left)/r.width*2-1,-((cy-r.top)/r.height)*2+1);ray.setFromCamera(ndc,camera);if(ray.ray.intersectPlane(plane,hit)){G.tgx=Math.max(-GW-.4,Math.min(GW+.4,hit.x));G.tgy=Math.max(.15,Math.min(GH+.3,hit.y))}}
+/* o ecrã todo corresponde à baliza toda (a mini-baliza em cima mostra onde estás) */
+function glovesTo(cx,cy){const r=stage.getBoundingClientRect(),u=(cx-r.left)/r.width,v=(cy-r.top)/r.height;G.tgx=Math.max(-GW-.35,Math.min(GW+.35,(1-u*2)*(GW+.5)));G.tgy=Math.max(.12,Math.min(GH+.25,(1-(v-.18)/.7)*(GH+.3)))}
 let pd=null;
 stage.addEventListener("pointerdown",e=>{if(!G||e.target.closest(".ov"))return;unlockAudio();try{stage.setPointerCapture(e.pointerId)}catch(x){}
   const r=stage.getBoundingClientRect();pd={id:e.pointerId,path:[{x:e.clientX-r.left,y:e.clientY-r.top,t:performance.now()}]};
@@ -1049,10 +1050,10 @@ function step(dt){
   G.t+=dt;const k=G.kick;if(!k)return;
   const meKeep=amKeeper();
   /* câmaras */
-  if(meKeep){camT.p.set(0,2.2,-9.4);camT.l.set(k.bx*.12,1.0,4)}
+  if(meKeep){camT.p.set(G.glx*.82,1.55,-2.3);camT.l.set(G.glx*.55+k.bx*.2,.95,k.bz*.6)}
   else{const d=Math.hypot(k.bx,k.bz),ux=k.bx/d,uz=k.bz/d;camT.p.set(k.bx+ux*3.6,1.6,k.bz+uz*3.6);camT.l.set(0,.3,0)}
   /* luvas: seguem o dedo, com velocidade máxima */
-  {const dx=G.tgx-G.glx,dy=G.tgy-G.gly,d=Math.hypot(dx,dy),mx=8.5*dt;if(d>mx){G.glx+=dx/d*mx;G.gly+=dy/d*mx}else{G.glx=G.tgx;G.gly=G.tgy}}
+  {const dx=G.tgx-G.glx,dy=G.tgy-G.gly,d=Math.hypot(dx,dy),mx=10*dt;if(d>mx){G.glx+=dx/d*mx;G.gly+=dy/d*mx}else{G.glx=G.tgx;G.gly=G.tgy}}
   if(meKeep&&G.online&&G.t-(G.glT||0)>.1){G.glT=G.t;ROOM.send({t:"gl",x:+G.glx.toFixed(2),y:+G.gly.toFixed(2)})}
   /* remate do computador */
   if(G.phase==="wait"&&!G.online&&!amShooter()){G.cpuT-=dt;G.runT+=dt;if(G.cpuT<=0){G.phase="flight";launch(cpuShot())}}
@@ -1081,8 +1082,21 @@ function step(dt){
   if(GLOVES.visible){GLOVES.position.set(G.glx,G.gly,.15);GLOVES.rotation.z=-(G.glx-camT.p.x)*.06}
   if(G.trailT>0)G.trailT-=dt*1.2;
 }
+function miniGoal(){
+  const w=Math.min(W*.62,300),h=w*GH/(2*GW),x0=(W-w)/2,y0=H*.12+4,X=x=>x0+(GW-x)/(2*GW)*w,Y=y=>y0+h-y/GH*h;
+  tctx.fillStyle="rgba(10,30,10,.35)";tctx.fillRect(x0,y0,w,h);
+  tctx.strokeStyle="rgba(255,255,255,.35)";tctx.lineWidth=1;tctx.beginPath();for(let i=1;i<8;i++){tctx.moveTo(x0+w*i/8,y0);tctx.lineTo(x0+w*i/8,y0+h)}for(let i=1;i<3;i++){tctx.moveTo(x0,y0+h*i/3);tctx.lineTo(x0+w,y0+h*i/3)}tctx.stroke();
+  tctx.lineCap="round";tctx.strokeStyle="#151515";tctx.lineWidth=8;tctx.beginPath();tctx.moveTo(x0,y0+h+2);tctx.lineTo(x0,y0);tctx.lineTo(x0+w,y0);tctx.lineTo(x0+w,y0+h+2);tctx.stroke();
+  tctx.strokeStyle="#fbfaf5";tctx.lineWidth=4.5;tctx.stroke();
+  tctx.strokeStyle="rgba(255,255,255,.8)";tctx.lineWidth=2;tctx.beginPath();tctx.moveTo(x0-8,y0+h+2);tctx.lineTo(x0+w+8,y0+h+2);tctx.stroke();
+  /* luvas */
+  const gx=X(G.glx),gy=Y(G.gly);for(const d of [-1,1]){tctx.fillStyle="#fbfaf5";tctx.strokeStyle="#151515";tctx.lineWidth=2;tctx.beginPath();tctx.roundRect?tctx.roundRect(gx+d*7-5,gy-7,10,14,4):tctx.rect(gx+d*7-5,gy-7,10,14);tctx.fill();tctx.stroke()}
+  /* bola (onde está agora, vista de frente) */
+  if(G.phase==="flight"&&G.shot){const q=BALL.position;const r=Math.max(3,7-q.z*.25);tctx.fillStyle="#ffd23f";tctx.strokeStyle="#151515";tctx.lineWidth=2;tctx.beginPath();tctx.arc(X(q.x),Y(Math.max(0,q.y)),r,0,7);tctx.fill();tctx.stroke()}
+}
 function drawTrail(){
   const s=trc.width/W;tctx.setTransform(s,0,0,s,0,0);tctx.clearRect(0,0,W,H);
+  if(G&&G.kick&&amKeeper()&&G.phase!=="over")miniGoal();
   const path=pd&&G&&G.phase==="aim"?pd.path:G&&G.trailT>0?G.trail:null;if(!path||path.length<2)return;
   tctx.globalAlpha=pd?1:Math.max(0,G.trailT);tctx.lineCap="round";tctx.lineJoin="round";
   tctx.strokeStyle="rgba(21,21,21,.6)";tctx.lineWidth=14;tctx.beginPath();path.forEach((p,i)=>i?tctx.lineTo(p.x,p.y):tctx.moveTo(p.x,p.y));tctx.stroke();
@@ -1092,7 +1106,7 @@ function loop(t){
   const dt=Math.min(.033,(t-last)/1000||0);
   if(G&&G.phase!=="idle"){slowN=(t-last>24)?slowN+1:Math.max(0,slowN-.5);if(slowN>50){slowN=0;if(!LOWQ){LOWQ=true;layout()}else sun.castShadow=false}}
   last=t;step(dt);
-  {const want=G&&amKeeper()?(W/H<1?80:52):(W/H<1?55:45);if(Math.abs(camera.fov-want)>.1){camera.fov+=(want-camera.fov)*.15;camera.updateProjectionMatrix()}}
+  {const want=G&&amKeeper()?(W/H<1?68:50):(W/H<1?55:45);if(Math.abs(camera.fov-want)>.1){camera.fov+=(want-camera.fov)*.15;camera.updateProjectionMatrix()}}
   camera.position.lerp(camT.p,.12);const lk=camera.userData.lk||(camera.userData.lk=camT.l.clone());lk.lerp(camT.l,.12);camera.lookAt(lk);
   if(!window.__norender)renderer.render(scene,camera);drawTrail();
   requestAnimationFrame(loop);
