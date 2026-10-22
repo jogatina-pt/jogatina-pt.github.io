@@ -30,8 +30,8 @@
 @font-face{font-family:"Figtree";font-style:normal;font-weight:300 900;font-display:swap;src:url(../fonts/figtree.woff2) format("woff2")}
 [hidden]{display:none!important}
 :root{
-  --bg:#000000; --surface:#1b2d2b; --surface-2:#223835; --line:#2f4744;
-  --ink:#eef2ea; --muted:#9fb5af; --title:#f1ece2; --enamel:#f1ece2; --card-ink:#1b2422;
+  --bg:#000000; --surface:#171717; --surface-2:#232323; --line:#363636;
+  --ink:#eef2ea; --muted:#aaaaaa; --title:#f1ece2; --enamel:#f1ece2; --card-ink:#1b2422;
   --accent:#ff8a3d; --accent-ink:#1d130b; --steam:#8fd3c8; --danger:#ff5a4f; --good:#5fd08a;
   --display:"Bowlby One", Impact, "Arial Black", sans-serif;
   --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -156,7 +156,7 @@ header.top{flex:none}
 .pbtn{width:38px;height:38px;border-radius:50%;border:3px solid var(--stroke);background:var(--surface);color:var(--ink);font-size:14px;font-weight:900;box-shadow:2px 2px 0 var(--stroke);cursor:pointer;flex:none}
 .arena{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
 .stage{flex:none;width:100%;height:100%;box-sizing:border-box;position:relative;border:3px solid var(--stroke);box-shadow:6px 6px 0 var(--stroke);border-radius:10px;overflow:hidden;background:#e8dcc4;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
-:root:not([data-pp-theme="light"]) .stage{background:#1b2d2b}
+:root:not([data-pp-theme="light"]) .stage{background:#171717}
 #cv{position:absolute;inset:0;width:100%;height:100%;display:block}
 .ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;text-align:center;background:rgba(10,20,30,.3);z-index:5;overflow:auto}
 .panel{box-sizing:border-box;background:#fffaf1;color:#151515;border:3px solid #151515;box-shadow:6px 6px 0 #151515;border-radius:20px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:9px;width:min(330px,100%);margin:auto}
@@ -310,7 +310,7 @@ function prerender(){
   g.strokeStyle="rgba(255,255,255,.06)";g.lineWidth=1;g.beginPath();for(let x=1;x<COLS;x++){g.moveTo(x*C+.5,0);g.lineTo(x*C+.5,H)}for(let y=1;y<ROWS-HID;y++){g.moveTo(0,y*C+.5);g.lineTo(C*COLS,y*C+.5)}g.stroke();
   g.strokeStyle="#151515";g.lineWidth=3;g.strokeRect(C*COLS+1.5,-2,0,H+4);
   /* painel lateral */
-  const box=(y,h,label)=>{g.fillStyle=dark?"#1b2d2b":"#fffaf1";g.strokeStyle="#151515";g.lineWidth=2.5;g.beginPath();g.roundRect(sx,y,C*3.4,h,8);g.fill();g.stroke();
+  const box=(y,h,label)=>{g.fillStyle=dark?"#171717":"#fffaf1";g.strokeStyle="#151515";g.lineWidth=2.5;g.beginPath();g.roundRect(sx,y,C*3.4,h,8);g.fill();g.stroke();
     g.fillStyle=dark?"#9fb3ae":"#555";g.font=`800 ${Math.max(8,Math.round(C*.36))}px Figtree, system-ui, sans-serif`;g.textAlign="center";g.fillText(label,sx+C*1.7,y+C*.62)};
   box(C*.25,C*3.3,"GUARDADA");box(C*3.9,C*8.6,"PRÓXIMAS");
 }
