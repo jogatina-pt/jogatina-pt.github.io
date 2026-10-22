@@ -279,6 +279,18 @@
      "type": "image/png"
     }
    ]
+  },
+  {
+   "name": "Surfa!",
+   "short_name": "Surfa!",
+   "url": "surf/",
+   "icons": [
+    {
+     "src": "surf/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
   }
  ]
 }
