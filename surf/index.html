@@ -647,7 +647,26 @@ const KN=new THREE.Group(),KI=new THREE.Group(),KB=new THREE.Group(),KL=new THRE
   const lc=new THREE.Mesh(new THREE.CylinderGeometry(.052,.05,.05,22),red);lc.position.set(0,-.14,0);KL.add(lc);
   const ls=new THREE.Mesh(new THREE.CylinderGeometry(.065,.05,.6,24),sleeve);ls.position.set(0,-.46,0);KL.add(ls);
 })();
-window.__vm={KN,KI,KB,KL,vmCam};let kSway=0,kRoll=0,kPit=0,kIn=-1,kLast=0,kAt=-1,kTy=0,kDir=1;function inspect(){if(G&&G.state==='play'&&kIn<0&&kAt<0)kIn=0}
+window.__vm={KN,KI,KB,KL,vmCam};/* mãos com modelo 3D (esqueleto + malha lisa); se não carregarem, ficam as procedurais */
+const QP=new URLSearchParams(location.search),HAND={ready:false,rs:+(QP.get('rs')||1),p0z:+(QP.get('pz')||-.02),rx:+(QP.get('rx')||1.5708),rz:+(QP.get('rz')||1.15)};
+function curlHand(o,sign,ang){const bones={};o.traverse(n=>{if(n.isBone)bones[n.name]=n});o.updateMatrixWorld(true);const rq={},rl={};
+  for(const k in bones){const q=new THREE.Quaternion();bones[k].getWorldQuaternion(q);rq[k]=q;rl[k]=bones[k].quaternion.clone()}
+  for(const f of ["index","middle","ring","pinky"]){let tot=0;["proximal","intermediate","distal"].forEach((ph,j)=>{const b=bones[f+"-finger-phalanx-"+ph];if(!b)return;tot+=ang[j]*sign;
+    const want=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),tot).multiply(rq[f+"-finger-phalanx-"+ph]);const pq=new THREE.Quaternion();b.parent.getWorldQuaternion(pq);b.quaternion.copy(pq.invert().multiply(want));o.updateMatrixWorld(true)})}
+  return bones}
+import("./assets/GLTFLoader.js").then(({GLTFLoader})=>{const ld=new GLTFLoader(),load=u=>new Promise((ok,no)=>ld.load(u,g=>ok(g.scene),undefined,no));
+  Promise.all([load("./assets/right.glb"),load("./assets/left.glb")]).then(([R,L])=>{
+    const glove=new THREE.MeshPhongMaterial({color:0x3e424b,specular:0x7a808c,shininess:35}),red=new THREE.MeshPhongMaterial({color:0xa8332f,specular:0xaa7770,shininess:35}),sleeve=new THREE.MeshPhongMaterial({color:0x4a569e,specular:0x181830,shininess:6});
+    for(const o of [R,L])o.traverse(n=>{if(n.isMesh){n.material=glove;n.frustumCulled=false}});
+    const sl=(g)=>{const c=new THREE.Mesh(new THREE.CylinderGeometry(.04,.037,.05,20),red);c.position.set(.02,.098,0);g.add(c);const m=new THREE.Mesh(new THREE.CylinderGeometry(.062,.045,.6,24),sleeve);m.position.set(.02,.4,0);g.add(m)};
+    curlHand(R,HAND.rs||1,[1.15,1.3,.85]);sl(R);curlHand(L,HAND.ls||1,[.35,.45,.3]);sl(L);
+    HAND.R=R;HAND.L=L;window.__hand=HAND;place();HAND.ready=true}).catch(e=>{window.__handerr=String(e)})}).catch(e=>{window.__handerr=String(e)});
+function place(){const R=HAND.R,L=HAND.L;if(!R)return;
+  const hg=KI.getObjectByName("hand");if(hg)hg.visible=false;
+  KI.add(R);window.__placeR=(rx,ry,rz)=>{R.rotation.set(rx,ry,rz);R.scale.setScalar(1.4);const v=new THREE.Vector3(.02,-.035,HAND.p0z).multiplyScalar(1.4).applyEuler(R.rotation);R.position.set(-.09-v.x,-v.y,-v.z)};
+  const rr=[HAND.rx,0,HAND.rz];window.__placeR(rr[0],rr[1],rr[2]);
+  KL.children.forEach(c=>c.visible=false);KL.add(L);L.rotation.set(0,0,Math.PI);L.scale.setScalar(1.4);L.position.set(0,.13,0)}
+let kSway=0,kRoll=0,kPit=0,kIn=-1,kLast=0,kAt=-1,kTy=0,kDir=1;function inspect(){if(G&&G.state==='play'&&kIn<0&&kAt<0)kIn=0}
 function attack(ty){if(!G||G.state!=='play'||kAt>=0||!SET.knife)return;kIn=-1;kAt=0;kTy=ty;if(ty===0)kDir=-kDir;sfx(ty?'stab':'slash')}
 function drawKnife(){if(window.__vmfreeze)return;const P=G.P,sp=Math.hypot(P.v[0],P.v[1]),t=performance.now()/1000,a=vmCam.aspect;
   kRoll+=((P.side||0)*-.16-kRoll)*.12;kPit+=((P.ground?0:Math.max(-.2,Math.min(.2,P.v[2]/4000)))-kPit)*.1;
