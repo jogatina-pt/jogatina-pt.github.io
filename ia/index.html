@@ -60,6 +60,8 @@ select#model{background:none;border:0;color:var(--mut);cursor:pointer;max-width:
 select#model:hover{background:var(--s2);color:var(--tx)}
 #go{background:var(--ac);color:#fff;border:0;border-radius:50%;width:36px;height:36px;font-weight:700;font-size:18px;cursor:pointer;flex:none;display:grid;place-items:center;padding:0}
 #go:hover{background:var(--acd)}#go.stop{background:var(--tx);color:var(--bg)}
+#prev{display:none;padding:0 0 8px}#prev.on{display:block}#prev .pv{position:relative;display:inline-block}#prev img{height:72px;border-radius:12px;display:block}#prev button{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:0;background:var(--tx);color:var(--bg);cursor:pointer;font-size:12px;line-height:1}
+.m.u img{display:block;max-width:220px;max-height:220px;border-radius:12px;margin-bottom:6px}.m.u .hi{opacity:.7;font-size:14px}
 .foot{max-width:720px;margin:6px auto 0;text-align:center;font-size:12px;color:var(--mut)}
 .dlg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;place-items:center;z-index:30;padding:14px}.dlg.on{display:grid}
 .card{background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:20px;width:min(560px,100%);max-height:90dvh;overflow:auto}
@@ -82,8 +84,8 @@ select#model:hover{background:var(--s2);color:var(--tx)}
  <div class="main">
   <div class="top"><button class="ib menu" id="menu" aria-label="Conversas">☰</button><div class="t" id="title">O meu chat</div><span class="dot" id="dot" title="Ligação"></span><button class="ib" id="cfg" aria-label="Definições">⚙</button></div>
   <div class="msgs" id="msgs"><div class="wrap" id="wrap"></div></div>
-  <div class="bar"><div class="box"><textarea id="in" rows="1" placeholder="Como posso ajudar hoje?" enterkeyhint="send"></textarea>
-    <div class="brow"><select id="model" aria-label="Modelo"></select><span class="sp"></span><button id="go" aria-label="Enviar">↑</button></div></div>
+  <div class="bar"><div class="box"><div id="prev"></div><textarea id="in" rows="1" placeholder="Como posso ajudar hoje?" enterkeyhint="send"></textarea>
+    <div class="brow"><button class="ib" id="att" type="button" aria-label="Anexar imagem">📎</button><input type="file" id="file" accept="image/*" hidden><select id="model" aria-label="Modelo"></select><span class="sp"></span><button id="go" aria-label="Enviar">↑</button></div></div>
    <div class="foot">Corre no teu PC. Confirma sempre as respostas importantes.</div></div>
  </div>
 </div>
@@ -109,7 +111,7 @@ let S=Object.assign({url:"http://localhost:11434",model:"",sys:"Responde sempre 
 let CH=LS.get("ia-chats",[]),CUR=null,busy=false,ctl=null;
 const TOUCH=matchMedia("(pointer:coarse)").matches;
 const base=()=>S.url.trim().replace(/\/+$/,"");
-const save=()=>{LS.set("ia-chats",CH.slice(0,60));LS.set("ia-set",S)};
+const save=()=>{LS.set("ia-chats",CH.slice(0,60).map(c=>Object.assign({},c,{m:c.m.map(m=>m.img?Object.assign({},m,{img:undefined,hadImg:1}):m)})));LS.set("ia-set",S)};
 const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function md(t){const blocks=[];t=esc(t).replace(/```(\w*)\n?([\s\S]*?)(```|$)/g,(m,l,c)=>{blocks.push(c.replace(/\n$/,""));return"\u0000"+(blocks.length-1)+"\u0000"});
   const inl=s=>s.replace(/`([^`\n]+)`/g,"<code>$1</code>").replace(/\*\*([^*\n]+)\*\*/g,"<b>$1</b>").replace(/(^|[^*])\*([^*\n]+)\*/g,"$1<i>$2</i>");
@@ -124,7 +126,7 @@ function md(t){const blocks=[];t=esc(t).replace(/```(\w*)\n?([\s\S]*?)(```|$)/g,
 function cur(){return CH.find(c=>c.id===CUR)}
 function render(){const c=cur(),w=$("wrap");w.innerHTML="";$("title").textContent=c?c.title:"O meu chat";
   if(!c||!c.m.length){w.innerHTML='<div class="empty"><div class="st">✻</div><b>Olá, como estás?</b><span>O teu modelo, no teu PC.</span></div>'}
-  else for(const m of c.m){const d=document.createElement("div");d.className="m "+(m.r==="user"?"u":"a")+(m.err?" err":"");if(m.r==="user")d.textContent=m.c;else d.innerHTML=m.err?esc(m.c).replace(/\n/g,"<br>"):(m.c?md(m.c):'<span class="thk">✻</span>');w.appendChild(d)}
+  else for(const m of c.m){const d=document.createElement("div");d.className="m "+(m.r==="user"?"u":"a")+(m.err?" err":"");if(m.r==="user"){if(m.img){const im=document.createElement("img");im.src=m.img;d.appendChild(im)}else if(m.hadImg){const h=document.createElement("div");h.className="hi";h.textContent="📷 imagem";d.appendChild(h)}d.appendChild(document.createTextNode(m.c))}else d.innerHTML=m.err?esc(m.c).replace(/\n/g,"<br>"):(m.c?md(m.c):'<span class="thk">✻</span>');w.appendChild(d)}
   const L=$("list");L.innerHTML="";for(const x of CH){const d=document.createElement("div");d.className="it"+(x.id===CUR?" on":"");d.innerHTML="<span></span><button aria-label='Apagar'>✕</button>";d.firstChild.textContent=x.title;
     d.onclick=e=>{if(e.target.tagName==="BUTTON"){if(confirm("Apagar esta conversa?")){CH=CH.filter(y=>y!==x);if(CUR===x.id)CUR=CH[0]?CH[0].id:null;save();render()}return}CUR=x.id;render();closeSide()};L.appendChild(d)}
   scroll()}
@@ -133,20 +135,20 @@ function newChat(){CUR=null;render();closeSide();$("in").focus()}
 const closeSide=()=>{$("side").classList.remove("on");$("scrim").classList.remove("on")};
 $("menu").onclick=()=>{$("side").classList.add("on");$("scrim").classList.add("on")};$("scrim").onclick=closeSide;$("newc").onclick=newChat;
 $("wrap").addEventListener("click",e=>{if(e.target.classList.contains("cp")){const t=e.target.nextSibling.textContent;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>{e.target.textContent="copiado";setTimeout(()=>e.target.textContent="copiar",1200)}).catch(()=>{})}});
-async function api(path,opt){const r=await fetch(base()+path,opt);if(!r.ok)throw new Error("HTTP "+r.status);return r}
+async function api(path,opt){const r=await fetch(base()+path,opt);if(!r.ok){let t="";try{t=(await r.text()).slice(0,200)}catch(e){}throw new Error("HTTP "+r.status+(t?": "+t:""))}return r}
 function setDot(k){$("dot").className="dot "+(k||"")}
 async function loadModels(){try{const r=await api("/api/tags");const j=await r.json(),ms=(j.models||[]).map(m=>m.name);const sel=$("model");sel.innerHTML="";
     if(!ms.length){sel.innerHTML="<option value=''>(sem modelos)</option>";setDot("ok");return}
     for(const n of ms){const o=document.createElement("option");o.value=n;o.textContent=n;sel.appendChild(o)}
     if(!ms.includes(S.model))S.model=ms[0];sel.value=S.model;setDot("ok");save();return true}catch(e){setDot("bad");$("model").innerHTML="<option value=''>sem ligação</option>";return false}}
 $("model").onchange=e=>{S.model=e.target.value;save()};
-function errText(e){const m=String(e&&e.message||e);return "Não consegui falar com o servidor ("+m+").\n• O PC está ligado e o Ollama a correr?\n• O Tailscale está ligado no telemóvel?\n• O endereço nas definições (⚙) está certo?\n• Já fizeste OLLAMA_ORIGINS no PC? (ver ⚙ › Como ligar)"}
+function errText(e){const m=String(e&&e.message||e);if(/image|vision|multimodal/i.test(m))return "Este modelo não aceita imagens. Escolhe um que veja imagens (por exemplo gemma3:4b) no menu em baixo.\n("+m+")";return "Não consegui falar com o servidor ("+m+").\n• O PC está ligado e o Ollama a correr?\n• O Tailscale está ligado no telemóvel?\n• O endereço nas definições (⚙) está certo?\n• Já fizeste OLLAMA_ORIGINS no PC? (ver ⚙ › Como ligar)"}
 async function send(){if(busy){if(ctl)ctl.abort();return}
-  const inp=$("in"),txt=inp.value.trim();if(!txt)return;if(!S.model){await loadModels();if(!S.model){toast("Sem modelo: abre ⚙ e liga ao PC.");return}}
+  const inp=$("in");let txt=inp.value.trim();if(!txt&&!PEND)return;if(!txt)txt="Descreve esta imagem.";const img=PEND;setPend(null);if(!S.model){await loadModels();if(!S.model){toast("Sem modelo: abre ⚙ e liga ao PC.");return}}
   let c=cur();if(!c){c={id:String(Date.now()),title:txt.slice(0,40),m:[]};CH.unshift(c);CUR=c.id}
-  c.m.push({r:"user",c:txt});const a={r:"assistant",c:""};c.m.push(a);inp.value="";inp.style.height="auto";render();
+  c.m.push(img?{r:"user",c:txt,img}:{r:"user",c:txt});const a={r:"assistant",c:""};c.m.push(a);inp.value="";inp.style.height="auto";render();
   busy=true;$("go").textContent="■";$("go").classList.add("stop");ctl=new AbortController();
-  const hist=c.m.slice(0,-1).filter(m=>!m.err).map(m=>({role:m.r,content:m.c}));if(S.sys.trim())hist.unshift({role:"system",content:S.sys.trim()});
+  const hist=c.m.slice(0,-1).filter(m=>!m.err).map(m=>m.img?{role:m.r,content:m.c,images:[m.img.split(",")[1]]}:{role:m.r,content:m.c});if(S.sys.trim())hist.unshift({role:"system",content:S.sys.trim()});
   const node=()=>$("wrap").lastChild;
   try{const r=await api("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},signal:ctl.signal,body:JSON.stringify({model:S.model,messages:hist,stream:true,options:{temperature:S.temp}})});
     const rd=r.body.getReader(),dec=new TextDecoder();let buf="";
@@ -156,6 +158,12 @@ async function send(){if(busy){if(ctl)ctl.abort();return}
   catch(e){if(e.name==="AbortError"){if(!a.c)a.c="(parado)"}else{a.err=1;a.c=(a.c?a.c+"\n\n":"")+errText(e);setDot("bad")}}
   busy=false;ctl=null;$("go").textContent="↑";$("go").classList.remove("stop");save();render()}
 function toast(t){const m=cur();$("title").textContent=t;setTimeout(()=>$("title").textContent=m?m.title:"O meu chat",2500)}
+let PEND=null;
+function setPend(d){PEND=d;const p=$("prev");if(!d){p.className="";p.innerHTML="";return}p.className="on";p.innerHTML='<span class="pv"><img alt=""><button type="button" aria-label="Remover">✕</button></span>';p.querySelector("img").src=d;p.querySelector("button").onclick=()=>setPend(null)}
+$("att").onclick=()=>$("file").click();
+$("file").onchange=e=>{const f=e.target.files[0];e.target.value="";if(!f)return;const u=URL.createObjectURL(f),im=new Image();
+  im.onload=()=>{const M=1024,k=Math.min(1,M/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);setPend(c.toDataURL("image/jpeg",.85))};
+  im.onerror=()=>{URL.revokeObjectURL(u);toast("Não consegui abrir essa imagem.")};im.src=u};
 $("go").onclick=send;
 $("in").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&!TOUCH){e.preventDefault();send()}});
 $("in").addEventListener("input",e=>{const t=e.target;t.style.height="auto";t.style.height=Math.min(180,t.scrollHeight)+"px"});
