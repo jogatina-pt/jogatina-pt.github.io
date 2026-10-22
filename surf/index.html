@@ -601,33 +601,46 @@ let GSI=0;for(const MP of MAPS)MP.stages.forEach((s,si)=>{const T=THEMES[MP.them
 const vmScene=new THREE.Scene(),vmCam=new THREE.PerspectiveCamera(62,1,.02,10);
 vmScene.add(new THREE.HemisphereLight(0xffffff,0x555566,1.9));const vmL=new THREE.DirectionalLight(0xffffff,2.2);vmL.position.set(-1,2,1.5);vmScene.add(vmL);
 const KN=new THREE.Group(),KI=new THREE.Group(),KB=new THREE.Group();KN.add(KI);vmScene.add(KN);
-(()=>{const steel=new THREE.MeshPhongMaterial({color:0xdde3ea,specular:0xffffff,shininess:140}),edge=new THREE.MeshPhongMaterial({color:0xf6f9fc,specular:0xffffff,shininess:160}),dark=new THREE.MeshPhongMaterial({color:0x14161a,shininess:40}),grip=new THREE.MeshPhongMaterial({color:0x23262c,shininess:25}),glove=new THREE.MeshPhongMaterial({color:0xcf9a78,shininess:18}),glove2=new THREE.MeshPhongMaterial({color:0xc08764,shininess:18}),nail=new THREE.MeshPhongMaterial({color:0xe9c3aa,shininess:60}),sleeve=new THREE.MeshPhongMaterial({color:0x4a5238,shininess:6});
-  /* lâmina (ponta tipo "drop point" com barriga) */
-  const sh=new THREE.Shape();sh.moveTo(0,.028);sh.lineTo(.23,.028);sh.quadraticCurveTo(.3,.026,.345,-.004);sh.quadraticCurveTo(.3,-.026,.22,-.032);sh.lineTo(0,-.032);sh.closePath();
-  const bl=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:.008,bevelEnabled:true,bevelSize:.0025,bevelThickness:.0025,bevelSegments:1}),steel);bl.position.z=-.004;
-  const gr=new THREE.Mesh(new THREE.BoxGeometry(.2,.006,.0125),dark);gr.position.set(.11,.008,0);/* canal (fuller) */
-  const ed=new THREE.Mesh(new THREE.BoxGeometry(.2,.004,.0105),edge);ed.position.set(.12,-.03,0);/* gume brilhante */
-  const guard=new THREE.Mesh(new THREE.BoxGeometry(.014,.09,.038),dark);guard.position.set(-.004,-.002,0);
-  const hand=new THREE.Mesh(new THREE.CylinderGeometry(.0185,.021,.15,10),grip);hand.rotation.z=Math.PI/2;hand.position.set(-.09,-.002,0);
-  const pom=new THREE.Mesh(new THREE.BoxGeometry(.02,.046,.044),dark);pom.position.set(-.174,-.002,0);
-  KB.add(bl,gr,ed,guard,hand,pom);KI.add(KB);
-  for(const x of [-.05,-.08,-.11,-.14]){const r=new THREE.Mesh(new THREE.TorusGeometry(.0205,.003,6,12),dark);r.rotation.y=Math.PI/2;r.position.set(x,-.002,0);KB.add(r)}
-  /* mão de luva (4 dedos enrolados + polegar) e braço com manga */
-  const knu=new THREE.Mesh(new THREE.BoxGeometry(.105,.05,.062),glove);knu.position.set(-.09,.0,.0);KI.add(knu);
-  for(let i=0;i<4;i++){const f=new THREE.Mesh(new THREE.CapsuleGeometry(.0105,.04,4,8),glove2);f.rotation.x=Math.PI/2;f.position.set(-.045-i*.0255,-.018,.036);KI.add(f);const tip=new THREE.Mesh(new THREE.SphereGeometry(.0085,8,6),nail);tip.scale.set(1,.7,1);tip.position.set(f.position.x,f.position.y-.002,f.position.z+.03);KI.add(tip);
-    const k=new THREE.Mesh(new THREE.SphereGeometry(.0125,8,6),glove);k.position.set(-.045-i*.0255,.016,.034);KI.add(k)}
-  const th=new THREE.Mesh(new THREE.CapsuleGeometry(.012,.045,4,8),glove2);th.rotation.z=Math.PI/2+.2;th.position.set(-.04,.03,.012);KI.add(th);
-  const wr=new THREE.Mesh(new THREE.CylinderGeometry(.034,.03,.16,10),glove2);wr.rotation.z=Math.PI/2;wr.position.set(-.215,-.01,.008);KI.add(wr);
-  const cuff=new THREE.Mesh(new THREE.CylinderGeometry(.049,.047,.07,12),sleeve);cuff.rotation.z=Math.PI/2;cuff.position.set(-.3,-.014,.01);KI.add(cuff);
-  const arm=new THREE.Mesh(new THREE.CylinderGeometry(.058,.04,.5,12),sleeve);arm.rotation.z=Math.PI/2;arm.position.set(-.55,-.02,.012);KI.add(arm);
+(()=>{const M=(c,s,sh,o)=>new THREE.MeshPhongMaterial(Object.assign({color:c,specular:s,shininess:sh},o||{})),DS=THREE.DoubleSide;
+  const steel=M(0xe4e9ef,0xffffff,160,{side:DS}),dark=M(0x15171b,0x4a5260,50),skin=M(0xd29c7a,0x4a3226,14),skin2=M(0xc28866,0x2a1e18,10),sleeve=M(0x4a5340,0x101010,4),cuff=M(0x3b4232,0x101010,4),brass=M(0xb9955c,0xfff0c0,70);
+  const sm=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)};
+  /* lâmina: perfil com ponta "drop point", gume afiado e costas grossas */
+  const L=.35,H1=.031,H2=.031,T0=.006,N=32,yt=-.003;
+  const sp=u=>u<.68?H1:H1-(H1-yt)*Math.pow(sm((u-.68)/.32),1.4),ed=u=>-H2+(yt+H2)*Math.pow(sm((u-.4)/.6),1.8),th=u=>T0*(1-sm((u-.8)/.2));
+  const ring=u=>{const x=u*L,t=th(u);return[[x,sp(u),t],[x,sp(u),-t],[x,ed(u),0],[x,(sp(u)+ed(u))/2+.004,t*.55],[x,(sp(u)+ed(u))/2+.004,-t*.55]]};
+  const pos=[],tri=(a,b,c)=>pos.push(...a,...b,...c);
+  for(let i=0;i<N;i++){const A=ring(i/N),B=ring((i+1)/N);
+    tri(A[0],B[0],B[3]);tri(A[0],B[3],A[3]);tri(A[3],B[3],B[2]);tri(A[3],B[2],A[2]);
+    tri(A[1],B[4],B[1]);tri(A[1],A[4],B[4]);tri(A[4],B[2],B[4]);tri(A[4],A[2],B[2]);
+    tri(A[0],A[1],B[1]);tri(A[0],B[1],B[0])}
+  const bg=new THREE.BufferGeometry();bg.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));bg.computeVertexNormals();
+  const bl=new THREE.Mesh(bg,steel);
+  /* canal central (fuller) */
+  const fg=new THREE.Mesh(new THREE.BoxGeometry(.2,.0035,.0135),M(0x9aa3ad,0xffffff,120));fg.position.set(.14,.011,0);
+  /* punho com ranhuras */
+  const pr=[];const HL=.17;for(let i=0;i<=40;i++){const y=i/40*HL,tp=.0205-.0035*(y/HL),r=tp+.0013*Math.sin(y*2*Math.PI/.0212)*(y>.012&&y<HL-.012?1:0);pr.push(new THREE.Vector2(i===0||i===40?.004:r,y))}
+  const han=new THREE.Mesh(new THREE.LatheGeometry(pr,22),dark);han.rotation.z=-Math.PI/2;han.position.set(-.172,0,0);han.scale.set(1,1,1);
+  const gd=new THREE.Mesh(new THREE.CapsuleGeometry(.0085,.082,6,12),dark);gd.position.set(-.004,-.002,0);gd.scale.set(.9,1,1.9);
+  const co=new THREE.Mesh(new THREE.TorusGeometry(.021,.0045,8,24),brass);co.rotation.y=Math.PI/2;co.position.set(-.017,0,0);
+  const pm=new THREE.Mesh(new THREE.SphereGeometry(.0185,16,12),dark);pm.scale.set(.85,1.05,1.05);pm.position.set(-.175,0,0);
+  KB.add(bl,fg,han,gd,co,pm);KI.add(KB);
+  /* mão: dedos enrolados no punho, nós dos dedos, polegar, palma, pulso, antebraço com manga */
+  const hg=new THREE.Group();hg.name="hand";KI.add(hg);
+  [[-.058,.0112],[-.0855,.0115],[-.113,.0108],[-.1385,.0095]].forEach(([x,r],i)=>{const f=new THREE.Mesh(new THREE.TorusGeometry(.0242,r,12,28,4.3),i%2?skin2:skin);f.rotation.y=Math.PI/2;f.rotation.x=.5;f.position.set(x,0,0);hg.add(f);
+    const k=new THREE.Mesh(new THREE.SphereGeometry(r*1.18,12,10),skin);k.position.set(x,.0,0);k.userData.k=1;hg.add(k)});
+  const pa=new THREE.Mesh(new THREE.SphereGeometry(.045,18,14),skin);pa.scale.set(1.55,.82,.95);pa.position.set(-.1,-.01,-.02);hg.add(pa);
+  const th2=new THREE.Mesh(new THREE.CapsuleGeometry(.0125,.06,6,12),skin);th2.rotation.z=Math.PI/2;th2.position.set(-.052,.03,.018);hg.add(th2);
+  const wr=new THREE.Mesh(new THREE.CylinderGeometry(.034,.038,.17,18),skin2);wr.rotation.z=Math.PI/2;wr.position.set(-.245,-.014,-.012);hg.add(wr);
+  const cf=new THREE.Mesh(new THREE.CylinderGeometry(.054,.052,.05,22),cuff);cf.rotation.z=Math.PI/2;cf.position.set(-.34,-.018,-.014);hg.add(cf);
+  const sl=new THREE.Mesh(new THREE.CylinderGeometry(.066,.052,.55,24),sleeve);sl.rotation.z=Math.PI/2;sl.position.set(-.63,-.022,-.016);hg.add(sl);
   KN.scale.setScalar(.78);KI.rotation.set(.7,Math.PI/2,.35)})();
-let kSway=0,kRoll=0,kPit=0,kIn=-1,kLast=0,kAt=-1,kTy=0,kDir=1;function inspect(){if(G&&G.state==='play'&&kIn<0&&kAt<0)kIn=0}
+window.__vm={KN,KI,KB,vmCam};let kSway=0,kRoll=0,kPit=0,kIn=-1,kLast=0,kAt=-1,kTy=0,kDir=1;function inspect(){if(G&&G.state==='play'&&kIn<0&&kAt<0)kIn=0}
 function attack(ty){if(!G||G.state!=='play'||kAt>=0||!SET.knife)return;kIn=-1;kAt=0;kTy=ty;if(ty===0)kDir=-kDir;sfx(ty?'stab':'slash')}
-function drawKnife(){const P=G.P,sp=Math.hypot(P.v[0],P.v[1]),t=performance.now()/1000,a=vmCam.aspect;
+function drawKnife(){if(window.__vmfreeze)return;const P=G.P,sp=Math.hypot(P.v[0],P.v[1]),t=performance.now()/1000,a=vmCam.aspect;
   kRoll+=((P.side||0)*-.16-kRoll)*.12;kPit+=((P.ground?0:Math.max(-.2,Math.min(.2,P.v[2]/4000)))-kPit)*.1;
   const bob=P.ground?Math.min(1,sp/300):0;
   const nw=performance.now()/1000,dt=Math.min(.05,nw-(kLast||nw));kLast=nw;let e=0,fl=0;if(kIn>=0){kIn+=dt;const q=kIn/2.8;if(q>=1){kIn=-1}else{e=Math.sin(Math.PI*q);fl=q<.2?0:q>.8?1:(q-.2)/.6;fl=fl*fl*(3-2*fl)}}KB.rotation.x=fl*Math.PI*2;
-  KN.position.set((a<1?.07:.2)+Math.sin(t*1.3)*.003-kRoll*.05,(a<1?-.16:-.12)+Math.sin(t*2.6)*.0025+Math.sin(t*9)*.004*bob-kPit*.06,-.34);KN.position.x-=.06*e;KN.position.y+=.03*e;KN.position.z+=.02*e;
+  KN.position.set((a<1?.0:.17)+Math.sin(t*1.3)*.003-kRoll*.05,(a<1?-.13:-.085)+Math.sin(t*2.6)*.0025+Math.sin(t*9)*.004*bob-kPit*.06,-.34);KN.position.x-=.06*e;KN.position.y+=.03*e;KN.position.z+=.02*e;
   KN.scale.setScalar(a<1?.56:.78);let ax=0,ay=0,az=0;if(kAt>=0){kAt+=dt;const D=kTy?.42:.36,q=kAt/D;if(q>=1)kAt=-1;else{const sn=Math.sin(Math.PI*q);if(kTy){KN.position.z-=.16*sn;KN.position.x-=.2*sn;KN.position.y+=.09*sn;ax=-.5*sn;ay=.25*sn}else{KN.position.x+=kDir*(.12-.5*q)*sn*1.2;KN.position.z-=.08*sn;KN.position.y+=.05*sn;ay=kDir*(.5-q)*1.5;az=kDir*(.5-q)*1.1}}}
   KN.rotation.set(kPit+ax,-.35*e+ay,kRoll+Math.sin(t*1.1)*.012+.2*e+az)}
 /* ---------- desenhar ---------- */
