@@ -177,6 +177,15 @@ input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
 
 .macaco-mini{width:100%;height:auto;display:block}
 
+/* janelas dos jogos de arcada (pausa, fim, menus) também escuras no modo escuro */
+:root:not([data-pp-theme="light"]) .panel{background:#171717;color:#eee;border-color:#000;box-shadow:6px 6px 0 #000}
+:root:not([data-pp-theme="light"]) .panel h2,:root:not([data-pp-theme="light"]) .panel h3{color:#fff}
+:root:not([data-pp-theme="light"]) .panel p{color:#cfcfcf}
+:root:not([data-pp-theme="light"]) .panel .note,:root:not([data-pp-theme="light"]) .panel .eyebrow{color:#a8a8a8!important}
+:root:not([data-pp-theme="light"]) .panel .stats div,:root:not([data-pp-theme="light"]) .panel .u,:root:not([data-pp-theme="light"]) .panel .who button{background:#232323;color:#eee;border-color:#000}
+:root:not([data-pp-theme="light"]) .panel .stats span,:root:not([data-pp-theme="light"]) .panel .u small,:root:not([data-pp-theme="light"]) .panel .who small{color:#aaa}
+:root:not([data-pp-theme="light"]) .panel .who button.on{background:#4a3d12}
+
 :root,:root[data-pp-theme="light"]{--accent:#2f9e44;--accent-ink:#fff}
 :root:not([data-pp-theme="light"]){--accent:#ffb26b;--accent-ink:#2a1405}
 html,body{height:100%}

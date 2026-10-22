@@ -142,6 +142,15 @@ input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
 
 .macaco-mini{width:100%;height:auto;display:block}
 
+/* janelas dos jogos de arcada (pausa, fim, menus) também escuras no modo escuro */
+:root:not([data-pp-theme="light"]) .panel{background:#171717;color:#eee;border-color:#000;box-shadow:6px 6px 0 #000}
+:root:not([data-pp-theme="light"]) .panel h2,:root:not([data-pp-theme="light"]) .panel h3{color:#fff}
+:root:not([data-pp-theme="light"]) .panel p{color:#cfcfcf}
+:root:not([data-pp-theme="light"]) .panel .note,:root:not([data-pp-theme="light"]) .panel .eyebrow{color:#a8a8a8!important}
+:root:not([data-pp-theme="light"]) .panel .stats div,:root:not([data-pp-theme="light"]) .panel .u,:root:not([data-pp-theme="light"]) .panel .who button{background:#232323;color:#eee;border-color:#000}
+:root:not([data-pp-theme="light"]) .panel .stats span,:root:not([data-pp-theme="light"]) .panel .u small,:root:not([data-pp-theme="light"]) .panel .who small{color:#aaa}
+:root:not([data-pp-theme="light"]) .panel .who button.on{background:#4a3d12}
+
 :root,:root[data-pp-theme="light"]{--accent:#d23a6e;--accent-ink:#fff}
 :root:not([data-pp-theme="light"]){--accent:#ff8fc0;--accent-ink:#2a0516}
 html,body{height:100%}
@@ -177,13 +186,27 @@ body.playing .stage{position:fixed;inset:0;border:0;border-radius:0;box-shadow:n
 .sets input[type=range]{flex:1;box-shadow:none;border:0;padding:0}
 .sets input[type=checkbox]{width:20px;height:20px;box-shadow:none}
 .home2{font-weight:800;font-size:13px;color:#555}
+.mtabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;width:100%}
+.mtab{font:inherit;cursor:pointer;border:3px solid #151515;border-radius:12px;padding:5px 2px;background:#fff;color:#151515;display:flex;flex-direction:column;align-items:center;gap:1px;box-shadow:2px 2px 0 #151515}
+.mtab b{font-family:var(--display);font-weight:400;font-size:17px;letter-spacing:.04em;line-height:1}
+.mtab small{font-size:10.5px;font-weight:800;color:#666}
+.mtab.on{background:var(--mc);transform:translate(-1px,-1px);box-shadow:4px 4px 0 #151515}
+.mtab.on small{color:#151515}
+:root:not([data-pp-theme="light"]) .mtab{background:#232323;color:#eee;border-color:#000}
+:root:not([data-pp-theme="light"]) .mtab.on{background:var(--mc);color:#151515}
+:root:not([data-pp-theme="light"]) .mtab small{color:#aaa}:root:not([data-pp-theme="light"]) .mtab.on small{color:#151515}
+:root:not([data-pp-theme="light"]) .stg{background:#232323;color:#eee;border-color:#000}
+:root:not([data-pp-theme="light"]) .stg small{color:#aaa}
+:root:not([data-pp-theme="light"]) .how{border-color:#444}
+:root:not([data-pp-theme="light"]) .home2{color:#bbb}
 /* HUD */
 .hud{position:absolute;inset:0;pointer-events:none;z-index:3}
 .htop{position:absolute;left:0;right:0;top:max(8px,env(safe-area-inset-top,0px));display:flex;justify-content:center;align-items:center;gap:10px}
 .htop span{font-weight:900;font-size:12px;color:#fff;background:rgba(0,0,0,.45);border-radius:999px;padding:3px 10px}
 .htop b{font-family:var(--display);font-weight:400;font-size:28px;color:#fff;letter-spacing:.05em;-webkit-text-stroke:1.5px #151515;paint-order:stroke fill;text-shadow:2px 2px 0 #151515;min-width:110px;text-align:center}
 .pbtn{pointer-events:auto;position:absolute;width:40px;height:40px;border-radius:50%;border:3px solid #151515;background:#fffaf1;font-size:16px;font-weight:900;box-shadow:3px 3px 0 #151515;cursor:pointer;color:#151515;display:grid;place-items:center;top:max(8px,env(safe-area-inset-top,0px))}
-#pauseBtn{right:max(10px,env(safe-area-inset-right,0px))}#rBtn{right:calc(max(10px,env(safe-area-inset-right,0px)) + 50px);font-size:20px}
+#pauseBtn{right:max(10px,env(safe-area-inset-right,0px))}#rBtn{right:calc(max(10px,env(safe-area-inset-right,0px)) + 50px);font-size:20px}#oriBtn{right:calc(max(10px,env(safe-area-inset-right,0px)) + 100px)}body:not(.touch) #oriBtn{display:none}
+.tjump{display:none;position:absolute;right:max(14px,env(safe-area-inset-right,0px));bottom:max(14px,env(safe-area-inset-bottom,0px));pointer-events:auto}body.touch .tjump{display:block}.tjump .tb{width:72px;height:72px;border-radius:50%;font-size:28px}
 .hspeed{position:absolute;left:0;right:0;bottom:max(14px,env(safe-area-inset-bottom,0px));display:flex;justify-content:center;align-items:baseline;gap:4px}
 .hspeed b{font-family:var(--display);font-weight:400;font-size:44px;line-height:1;color:#fff;-webkit-text-stroke:2px #151515;paint-order:stroke fill;text-shadow:3px 3px 0 #151515;letter-spacing:.04em;transition:color .2s}
 .hspeed b.s1{color:#8dffb0}.hspeed b.s2{color:#ffe36b}.hspeed b.s3{color:#ff8a5c}
@@ -201,10 +224,10 @@ body.touch .tctl{display:flex}
 .tb.on{background:#ffd23f;transform:translate(2px,2px);box-shadow:1px 1px 0 #151515}
 .rot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;background:#fffaf1;color:#151515;border:3px solid #151515;border-radius:16px;padding:10px 14px;font-weight:900;box-shadow:4px 4px 0 #151515;pointer-events:none;text-align:center}
 .rot[hidden]{display:none}.rot{transition:opacity .45s;max-width:calc(100% - 40px)}.rot.out{opacity:0}.rot small{font-weight:700;color:#555}
-@media (orientation:portrait){.htop{left:12px;right:112px;justify-content:flex-start;gap:8px}.htop b{min-width:0;font-size:26px}.htop span{white-space:nowrap}.hspeed{bottom:auto;top:calc(max(8px,env(safe-area-inset-top,0px)) + 50px)}.hspeed b{font-size:34px}.hmsg{top:120px}}
+@media (orientation:portrait){.htop{left:12px;right:156px;justify-content:flex-start;gap:8px}.htop b{min-width:0;font-size:26px}.htop span{white-space:nowrap}.hspeed{bottom:auto;top:calc(max(8px,env(safe-area-inset-top,0px)) + 50px)}.hspeed b{font-size:34px}.hmsg{top:120px}}
 .foot{flex:none;margin:0;text-align:center;font-size:12px}
 @media (max-width:380px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:26px}.brand a.home{font-size:0}.brand a.home::before{content:"← menu";font-size:12px}}
-@media (max-height:500px){.panel{width:min(640px,100%);gap:7px;padding:10px 14px}.stgs{grid-template-columns:repeat(4,minmax(0,1fr))}.panel h2{font-size:34px}.foot{display:none}.tb{width:56px;height:56px}.tb.small{width:46px;height:46px}.hspeed b{font-size:36px}}
+@media (max-height:500px){.panel{width:min(640px,100%);gap:7px;padding:10px 14px}.panel .intro{display:none}.stgs{grid-template-columns:repeat(4,minmax(0,1fr))}.panel h2{font-size:34px}.foot{display:none}.tb{width:56px;height:56px}.tb.small{width:46px;height:46px}.hspeed b{font-size:36px}}
 </style>
 </head>
 <body>
@@ -222,13 +245,14 @@ body.touch .tctl{display:flex}
       <div class="htop"><span id="hStage">Stage 1/4</span><b id="hTime">0:00.00</b></div>
       <button class="pbtn" id="rBtn" type="button" aria-label="Voltar ao início do stage" title="Voltar ao início do stage (R)">⟲</button>
       <button class="pbtn" id="pauseBtn" type="button" aria-label="Pausa">❚❚</button>
+      <button class="pbtn" id="oriBtn" type="button" aria-label="Mudar entre vertical e horizontal" title="Vertical / horizontal"><svg viewBox="0 0 24 24" width="20" height="20"><rect x="3" y="7" width="18" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M7 4.5h8l-2.2-2.2M17 19.5H9l2.2 2.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <div class="cross"></div>
       <div class="hmsg" id="hMsg" hidden></div>
       <div class="hspeed"><b id="hSpd">0</b><small>u/s</small></div>
-      <div class="tctl"><div class="row"><button class="tb small" type="button" data-k="j" aria-label="Saltar">⤒</button><button class="tb small" type="button" data-k="w" aria-label="Andar">▲</button></div>
+      <div class="tjump"><button class="tb" type="button" data-k="j" aria-label="Saltar">⤒</button></div>
+      <div class="tctl"><div class="row"><button class="tb small" type="button" data-k="w" aria-label="Andar">▲</button></div>
         <div class="row"><button class="tb" id="tA" type="button" data-k="a" aria-label="Strafe à esquerda">◀</button><button class="tb" id="tD" type="button" data-k="d" aria-label="Strafe à direita">▶</button></div></div>
     </div>
-    <div class="rot" id="rotHint" hidden>📱↻ Dica: na horizontal vês mais da rampa<br><small>mas podes jogar assim, como preferires</small></div>
     <div class="ov" id="ov"></div>
   </main>
   <p class="foot">Arrasta para rodar, ◀ ▶ para o strafe. No computador: rato, W A S D e Espaço.</p>
@@ -324,10 +348,11 @@ function tick(){
   if(P.stuck){P.stuck=false;unstick(P)}
   zones();
 }
-/* ---------- mapa: 4 stages ---------- */
-const STAGES=[];let CUR=null;
+/* ---------- mapas (cada um com vários stages) ---------- */
+const MAPS=[];let CUR=null,CURM=null,STAGES=[];
+function map(id,name,lvl,theme,fn){CURM={id,name,lvl,theme,stages:[]};fn();MAPS.push(CURM)}
 const inZone=(p,z)=>p[0]>z[0]&&p[0]<z[1]&&p[1]>z[2]&&p[1]<z[3]&&p[2]>z[4]&&p[2]<z[5];
-function stage(name,ox,col,fn){const s={name,ox,col,vis:[]};CUR=s;fn(s);STAGES.push(s)}
+function stage(name,ox,col,fn,o){const s=Object.assign({name,ox,col,vis:[],map:CURM},o||{});CUR=s;fn(s);CURM.stages.push(s)}
 function plat(x0,x1,y0,y1,z0,z1,kind){const o=CUR.ox;CUR.vis.push(addBrush([],[x0+o,y0,z0],[x1+o,y1,z1],{t:"box",kind}).vis);}
 function rY(xr,y0,y1,zt,h,side=0){const o=CUR.ox;xr+=o;const run=h/Math.tan(ANG),sa=Math.sin(ANG),ca=Math.cos(ANG),zb=zt-h,pl=[];
   pl.push(side<=0?[-sa,0,ca,-sa*xr+ca*zt]:[-1,0,0,-xr]);pl.push(side>=0?[sa,0,ca,sa*xr+ca*zt]:[1,0,0,xr]);pl.push([0,0,-1,-zb],[0,-1,0,-y0],[0,1,0,y1]);
@@ -336,6 +361,22 @@ function rX(yr,x0,x1,zt,h,side=0){const o=CUR.ox;x0+=o;x1+=o;const run=h/Math.ta
   pl.push(side<=0?[0,-sa,ca,-sa*yr+ca*zt]:[0,-1,0,-yr]);pl.push(side>=0?[0,sa,ca,sa*yr+ca*zt]:[0,1,0,yr]);pl.push([0,0,-1,-zb],[-1,0,0,-x0],[1,0,0,x1]);
   addBrush(pl,[x0,side<=0?yr-run:yr,zb],[x1,side>=0?yr+run:yr,zt]);CUR.vis.push({t:"rX",yr,x0,x1,zt,zb,run,side})}
 const Z=(s,x0,x1,y0,y1,z0,z1)=>[x0+s.ox,x1+s.ox,y0,y1,z0,z1];
+/* Céu: fácil, rampas compridas e saltos curtos */
+map("ceu","Céu","Fácil","ceu",()=>{
+stage("Primeiro voo",200000,"#7fe0b5",s=>{
+  plat(-192,192,-512,0,968,1000,"start");s.spawn=[0,-420,1000+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,990,1400);
+  rY(256,64,3200,900,1100);rY(210,3400,6600,600,1100);rY(164,6800,10000,300,1100);
+  plat(-900,900,10300,11300,-482,-450,"end");s.end=Z(s,-900,900,10300,11300,-460,150);s.kill=-1100;s.sign=[0,10800,-100]});
+stage("Dois lados",240000,"#ffc56b",s=>{
+  plat(-60,360,-512,0,1068,1100,"start");s.spawn=[150,-420,1100+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-60,360,-512,0,1090,1500);
+  rY(380,64,2664,1000,1000);rY(-380,2884,5484,700,1000);rY(380,5704,8304,400,1000);rY(-380,8524,11124,100,1000);
+  plat(-900,900,11400,12400,-632,-600,"end");s.end=Z(s,-900,900,11400,12400,-610,0);s.kill=-1150;s.sign=[0,11900,-250]});
+stage("Mergulho",280000,"#ff9ec8",s=>{
+  plat(-192,192,-512,0,1168,1200,"start");s.spawn=[0,-420,1200+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,1190,1600);
+  rY(256,64,2400,1100,1100);rY(200,2600,6000,500,1300);rY(150,6200,9000,100,1100);
+  plat(-900,900,9300,10300,-732,-700,"end");s.end=Z(s,-900,900,9300,10300,-710,-100);s.kill=-1500;s.sign=[0,9800,-350]})});
+/* Néon: o primeiro mapa */
+map("neon","Néon","Normal","neon",()=>{
 stage("Aquecimento",0,"#ff5ea8",s=>{
   plat(-192,192,-512,0,968,1000,"start");s.spawn=[0,-420,1000+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,990,1400);
   rY(256,64,2600,900,1100);rY(200,2850,5400,560,1100);rY(144,5650,8200,220,1100);
@@ -352,12 +393,48 @@ stage("O salto final",120000,"#a98bff",s=>{
   plat(-60,360,-512,0,1168,1200,"start");s.spawn=[150,-420,1200+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-60,360,-512,0,1190,1600);
   [[420,1100],[-360,780],[360,460],[-360,140],[360,-180]].forEach(([x,z],i)=>rY(x,64+i*1600,1364+i*1600,z,1000));
   plat(-900,900,8064,9164,-832,-800,"end");s.end=Z(s,-900,900,8064,9164,-810,-200);s.kill=-1400;s.sign=[0,8600,-450]});
+});
+/* Glaciar: curvas para a direita e para a esquerda */
+map("gelo","Glaciar","Médio","gelo",()=>{
+stage("Curva à direita",360000,"#bdefff",s=>{
+  plat(-192,192,-512,0,1068,1100,"start");s.spawn=[0,-420,1100+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,1090,1500);
+  rY(256,64,2400,1000,1100);rX(3200,-700,3000,560,1100);
+  plat(3300,4300,2100,4300,-432,-400,"end");s.end=Z(s,3300,4300,2100,4300,-410,200);s.kill=-1250;s.sign=[3800,3200,-50]});
+stage("Escada",400000,"#8fd8ff",s=>{
+  plat(-192,192,-512,0,1068,1100,"start");s.spawn=[0,-420,1100+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,1090,1500);
+  rY(256,64,2200,1000,1100);rX(3000,-700,2400,620,1100);rY(3500,2200,5000,260,1100);
+  plat(2400,3900,5300,6300,-532,-500,"end");s.end=Z(s,2400,3900,5300,6300,-510,100);s.kill=-1300;s.sign=[3150,5800,-150]});
+stage("Labirinto de gelo",440000,"#d9f6ff",s=>{
+  plat(-192,192,-512,0,1168,1200,"start");s.spawn=[0,-420,1200+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,1190,1600);
+  rY(256,64,2200,1100,1100);rX(3000,-700,2400,720,1100);rY(3500,2200,5000,360,1100);rX(5800,2600,5600,0,1100);rY(6700,4900,7600,-360,1100);
+  plat(5400,7300,7900,8900,-1282,-1250,"end");s.end=Z(s,5400,7300,7900,8900,-1260,-500);s.kill=-1950;s.sign=[6350,8400,-850]})});
+/* Vulcão: difícil, quedas grandes e rampas estreitas sobre a lava */
+map("lava","Vulcão","Difícil","lava",()=>{
+stage("Queda livre",520000,"#ff7a2a",s=>{
+  plat(-192,192,-512,0,1468,1500,"start");s.spawn=[0,-420,1500+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,1490,1900);
+  rY(256,64,1800,1400,1200);rY(256,2100,5000,600,1400);rY(200,5300,8000,0,1200);
+  plat(-900,900,8300,9300,-932,-900,"end");s.end=Z(s,-900,900,8300,9300,-910,-300);s.kill=-1700;s.sign=[0,8800,-550]},{dark:1});
+stage("Pontes estreitas",560000,"#ffb020",s=>{
+  plat(-60,360,-512,0,1068,1100,"start");s.spawn=[150,-420,1100+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-60,360,-512,0,1090,1500);
+  rY(300,64,2000,1000,700);rY(-300,2300,4200,750,700);rY(300,4500,6400,500,700);rY(-300,6700,8600,250,700);
+  plat(-900,900,8900,9900,-332,-300,"end");s.end=Z(s,-900,900,8900,9900,-310,300);s.kill=-900;s.sign=[0,9400,50]},{dark:1});
+stage("O grande salto",600000,"#ff4a2a",s=>{
+  plat(-192,192,-512,0,1268,1300,"start");s.spawn=[0,-420,1300+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,1290,1700);
+  rY(256,64,3000,1200,1200);rY(200,3700,6500,600,1300);rY(150,7000,9500,100,1100);
+  plat(-900,900,9900,10900,-732,-700,"end");s.end=Z(s,-900,900,9900,10900,-710,-100);s.kill=-1600;s.sign=[0,10400,-350]},{dark:1})});
+const THEMES={
+  neon:{sky:[[0,"#07031a"],[.32,"#1b0a3d"],[.47,"#7a1f6b"],[.5,"#ff6f7d"],[.53,"#5a1a5e"],[1,"#120624"]],fog:0x2a1446,far:520,stars:.75,sun:["rgba(255,240,200,1)","rgba(255,170,110,1)","rgba(255,90,140,.55)","rgba(255,60,140,0)"],stripes:1,hemi:[0xffe6f4,0x3a1a5a],sea:"#120a2e",decor:"rings"},
+  ceu:{sky:[[0,"#2f6fd6"],[.36,"#74b3f5"],[.49,"#d6ecff"],[.5,"#fff3dc"],[.53,"#c4ddf7"],[1,"#9cc0ea"]],fog:0xc4dcf5,far:620,stars:0,sun:["rgba(255,255,245,1)","rgba(255,250,215,1)","rgba(255,240,190,.35)","rgba(255,240,190,0)"],stripes:0,hemi:[0xffffff,0x8fb0d8],sea:"#f2f7ff",decor:"clouds"},
+  gelo:{sky:[[0,"#061b33"],[.35,"#174a7a"],[.48,"#6fb7d9"],[.5,"#e6fbff"],[.53,"#2b5f85"],[1,"#0a2440"]],fog:0x4f84ad,far:560,stars:.45,sun:["rgba(240,255,255,1)","rgba(190,240,255,1)","rgba(120,210,255,.4)","rgba(120,210,255,0)"],stripes:0,hemi:[0xe8fbff,0x2a4a6a],sea:"#0b2a45",decor:"shards"},
+  lava:{sky:[[0,"#0a0204"],[.34,"#2a0608"],[.47,"#7a1a0c"],[.5,"#ff6a1f"],[.53,"#4a0d08"],[1,"#140303"]],fog:0x3a0e0a,far:480,stars:.5,sun:["rgba(255,230,180,1)","rgba(255,120,40,1)","rgba(255,40,20,.5)","rgba(255,30,10,0)"],stripes:0,hemi:[0xffd6c0,0x3a0a06],sea:"#2a0500",seaLine:"#ff7a1f",decor:"rocks"}};
+let MI=Math.max(0,Math.min(MAPS.length-1,+(store.get("surf-map")??1)||0));STAGES=MAPS[MI].stages;
+const bk=k=>(MAPS[MI].id==="neon"?"":MAPS[MI].id+":")+k;
 /* ---------- jogo ---------- */
 let G=null;
 const BEST=(()=>{try{return JSON.parse(store.get("surf-best")||"{}")}catch(e){return{}}})();
 const fmt=t=>{if(t==null||!isFinite(t))return"–";const m=Math.floor(t/60),s=t-m*60;return m+":"+(s<10?"0":"")+s.toFixed(2)};
 function newGame(mode){/* mode: "run" = todos os stages; número = só esse stage */
-  const si=mode==="run"?0:mode;G={mode,si,state:"play",running:false,time:0,stT:0,splits:[],falls:0,acc:0,
+  STAGES=MAPS[MI].stages;applyTheme(MAPS[MI].theme);const si=mode==="run"?0:mode;G={mode,si,state:"play",running:false,time:0,stT:0,splits:[],falls:0,acc:0,
     P:{p:[0,0,0],v:[0,0,0],yaw:0,lyaw:0,pitch:0,ground:false,ticks:0,rampT:-99,rampN:[0,0,1],side:0,prev:[0,0,0]}};
   spawn(true);msg(STAGES[si].name.toUpperCase(),1.6);showStage(si)}
 function spawn(reset){const P=G.P,s=STAGES[G.si];P.p=[s.spawn[0]+s.ox,s.spawn[1],s.spawn[2]];P.prev=P.p.slice();P.v=[0,0,0];P.yaw=P.lyaw=s.yaw;P.pitch=.12;P.ground=false;P.rampT=-99;G.stT=0;G.stRun=false;if(reset){G.running=false;G.time=0}}
@@ -367,7 +444,7 @@ function zones(){
   if(G.running)G.time+=TICK;if(G.stRun)G.stT+=TICK;
   if(P.p[2]<s.kill){G.falls++;sfx("fall");spawn(false);msg("Caíste! De volta ao início do stage",1.2);return}
   if(inZone(P.p,s.end)){
-    const t=G.stT,k="s"+G.si,old=BEST[k];G.splits.push(t);
+    const t=G.stT,k=bk("s"+G.si),old=BEST[k];G.splits.push(t);
     if(old==null||t<old){BEST[k]=t;store.set("surf-best",JSON.stringify(BEST))}
     sfx("stage");
     const diff=old==null?" · recorde!":t<old?` · recorde! (−${(old-t).toFixed(2)})`:` (+${(t-old).toFixed(2)})`;
@@ -375,11 +452,11 @@ function zones(){
     else finish();
   }
 }
-function finish(){G.state="done";const run=G.mode==="run",tot=run?G.time:G.stT,k=run?"run":"s"+G.si,old=BEST[k+"_end"]??(run?BEST.run:undefined);
-  let rec=false;if(run){if(BEST.run==null||tot<BEST.run){BEST.run=tot;rec=true;store.set("surf-best",JSON.stringify(BEST))}}else rec=BEST["s"+G.si]===tot;
+function finish(){G.state="done";const run=G.mode==="run",tot=run?G.time:G.stT,rk=bk("run");
+  let rec=false;if(run){if(BEST[rk]==null||tot<BEST[rk]){BEST[rk]=tot;rec=true;store.set("surf-best",JSON.stringify(BEST))}}else rec=BEST[bk("s"+G.si)]===tot;
   if(document.pointerLockElement)document.exitPointerLock();
-  showOv(`<div class="panel"><h2>${run?"Mapa completo!":"Stage completo!"}</h2>
-   <div class="stats"><div><span>Tempo</span><b>${fmt(tot)}</b></div><div><span>Recorde</span><b>${fmt(run?BEST.run:BEST["s"+G.si])}</b></div></div>
+  showOv(`<div class="panel"><h2>${run?"Mapa completo!":"Stage completo!"}</h2><p class="note">${MAPS[MI].name} · ${run?MAPS[MI].stages.length+" stages":STAGES[G.si].name}</p>
+   <div class="stats"><div><span>Tempo</span><b>${fmt(tot)}</b></div><div><span>Recorde</span><b>${fmt(run?BEST[rk]:BEST[bk("s"+G.si)])}</b></div></div>
    ${rec?'<div class="newrec">Novo recorde! 🏆</div>':""}
    ${run?`<p class="note">${G.splits.map((t,i)=>`Stage ${i+1}: ${fmt(t)}`).join(" · ")} · quedas: ${G.falls}</p>`:""}
    <button class="btn" type="button" data-a="again">Outra vez ▶</button><button class="btn ghost" type="button" data-a="menu">Menu</button></div>`)}
@@ -393,14 +470,18 @@ const camera=new THREE.PerspectiveCamera(80,1,.05,1200);camera.rotation.order="Y
 scene.add(new THREE.HemisphereLight(0xffe6f4,0x3a1a5a,1.5));
 const sunL=new THREE.DirectionalLight(0xfff0dd,1.6);sunL.position.set(60,80,-40);scene.add(sunL);
 function tex(w,h,draw){const c=document.createElement("canvas");c.width=w;c.height=h;draw(c.getContext("2d"),w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=ANISO;t.wrapS=t.wrapT=THREE.RepeatWrapping;return t}
-/* céu ao pôr-do-sol, sol e estrelas */
-{const sky=tex(8,512,(g,w,h)=>{const gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,"#07031a");gr.addColorStop(.32,"#1b0a3d");gr.addColorStop(.47,"#7a1f6b");gr.addColorStop(.5,"#ff6f7d");gr.addColorStop(.53,"#5a1a5e");gr.addColorStop(1,"#120624");g.fillStyle=gr;g.fillRect(0,0,w,h)});
-  const m=new THREE.Mesh(new THREE.SphereGeometry(900,32,24),new THREE.MeshBasicMaterial({map:sky,side:THREE.BackSide,fog:false,depthWrite:false}));m.renderOrder=-2;scene.add(m);window.__sky=m;
-  const sunT=tex(256,256,(g)=>{const gr=g.createRadialGradient(128,128,10,128,128,128);gr.addColorStop(0,"rgba(255,240,200,1)");gr.addColorStop(.3,"rgba(255,170,110,1)");gr.addColorStop(.42,"rgba(255,90,140,.55)");gr.addColorStop(1,"rgba(255,60,140,0)");g.fillStyle=gr;g.fillRect(0,0,256,256);
-    g.globalCompositeOperation="destination-out";for(let i=0;i<7;i++){g.fillRect(0,140+i*15,256,3+i*1.3)}});
-  const sun=new THREE.Sprite(new THREE.SpriteMaterial({map:sunT,fog:false,depthWrite:false,transparent:true}));sun.scale.set(260,260,1);sun.position.set(0,40,-820);sun.renderOrder=-1;m.add(sun);
-  const sg=new THREE.BufferGeometry(),sp=[];for(let i=0;i<700;i++){const u=Math.random()*.9+.1,a=Math.random()*6.283,r=Math.sqrt(1-u*u);sp.push(Math.cos(a)*r*850,u*850,Math.sin(a)*r*850)}sg.setAttribute("position",new THREE.Float32BufferAttribute(sp,3));
-  m.add(new THREE.Points(sg,new THREE.PointsMaterial({color:0xffffff,size:2.2,sizeAttenuation:false,fog:false,transparent:true,opacity:.75,depthWrite:false})))}
+/* céu, sol e estrelas (mudam com o tema do mapa) */
+const hemiL=scene.children.find(o=>o.isHemisphereLight);
+const SKY=new THREE.Mesh(new THREE.SphereGeometry(900,32,24),new THREE.MeshBasicMaterial({side:THREE.BackSide,fog:false,depthWrite:false}));SKY.renderOrder=-2;scene.add(SKY);window.__sky=SKY;
+const SUN=new THREE.Sprite(new THREE.SpriteMaterial({fog:false,depthWrite:false,transparent:true}));SUN.scale.set(260,260,1);SUN.position.set(0,40,-820);SUN.renderOrder=-1;SKY.add(SUN);
+const STARS=(()=>{const sg=new THREE.BufferGeometry(),sp=[];for(let i=0;i<700;i++){const u=Math.random()*.9+.1,a=Math.random()*6.283,r=Math.sqrt(1-u*u);sp.push(Math.cos(a)*r*850,u*850,Math.sin(a)*r*850)}sg.setAttribute("position",new THREE.Float32BufferAttribute(sp,3));
+  const p=new THREE.Points(sg,new THREE.PointsMaterial({color:0xffffff,size:2.2,sizeAttenuation:false,fog:false,transparent:true,opacity:.75,depthWrite:false}));SKY.add(p);return p})();
+const THT={};
+function applyTheme(id){const T=THEMES[id];if(!T)return;if(!THT[id])THT[id]={
+    sky:tex(8,512,(g,w,h)=>{const gr=g.createLinearGradient(0,0,0,h);for(const [o,c] of T.sky)gr.addColorStop(o,c);g.fillStyle=gr;g.fillRect(0,0,w,h)}),
+    sun:tex(256,256,(g)=>{const gr=g.createRadialGradient(128,128,10,128,128,128);T.sun.forEach((c,i)=>gr.addColorStop([0,.3,.42,1][i],c));g.fillStyle=gr;g.fillRect(0,0,256,256);if(T.stripes){g.globalCompositeOperation="destination-out";for(let i=0;i<7;i++)g.fillRect(0,140+i*15,256,3+i*1.3)}})};
+  SKY.material.map=THT[id].sky;SKY.material.needsUpdate=true;SUN.material.map=THT[id].sun;SUN.material.needsUpdate=true;
+  STARS.visible=T.stars>0;STARS.material.opacity=T.stars;scene.fog.color.setHex(T.fog);scene.fog.far=T.far;hemiL.color.setHex(T.hemi[0]);hemiL.groundColor.setHex(T.hemi[1]);scene.background.setHex(T.fog)}
 const rampTex={};function rampT(col){return rampTex[col]||(rampTex[col]=tex(256,256,(g,w,h)=>{const c=new THREE.Color(col);g.fillStyle=col;g.fillRect(0,0,w,h);
   const gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,"rgba(255,255,255,.18)");gr.addColorStop(1,"rgba(0,0,0,.18)");g.fillStyle=gr;g.fillRect(0,0,w,h);
   g.strokeStyle="rgba(0,0,0,.22)";g.lineWidth=2;for(let i=0;i<=w;i+=32){g.beginPath();g.moveTo(i,0);g.lineTo(i,h);g.stroke();g.beginPath();g.moveTo(0,i);g.lineTo(w,i);g.stroke()}
@@ -414,8 +495,8 @@ function faceMesh(faces,uAxis,mat){const pos=[],uv=[];
   const m=new THREE.Mesh(g,mat);return m}
 function edgeLines(mesh,col){const l=new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry,20),new THREE.LineBasicMaterial({color:col,transparent:true,opacity:.95}));mesh.add(l);return l}
 const signT=(txt,col)=>tex(512,128,(g,w,h)=>{g.fillStyle="rgba(10,6,30,.75)";g.beginPath();g.roundRect?g.roundRect(4,4,w-8,h-8,28):g.rect(4,4,w-8,h-8);g.fill();g.lineWidth=6;g.strokeStyle=col;g.stroke();g.fillStyle="#fff";g.font="bold 70px Impact,sans-serif";g.textAlign="center";g.textBaseline="middle";g.fillText(txt,w/2,h/2+4)});
-const ZONEM=[];
-STAGES.forEach((s,si)=>{const col=s.col,mat=new THREE.MeshLambertMaterial({map:rampT(col),side:THREE.DoubleSide}),light=new THREE.Color(col).lerp(new THREE.Color(0xffffff),.55).getHex();
+const ZONEM=[];const CLOUDT=tex(256,128,(g,w,h)=>{for(let i=0;i<9;i++){const x=30+i*25,y=70+Math.sin(i*1.7)*14,r=34+((i*37)%5)*6;const gr=g.createRadialGradient(x,y,2,x,y,r);gr.addColorStop(0,"rgba(255,255,255,.95)");gr.addColorStop(1,"rgba(255,255,255,0)");g.fillStyle=gr;g.fillRect(0,0,w,h)}});
+let GSI=0;for(const MP of MAPS)MP.stages.forEach((s,si)=>{const T=THEMES[MP.theme],gi=GSI++,col=s.col,mat=new THREE.MeshLambertMaterial({map:rampT(s.dark?"#4a2420":col),side:THREE.DoubleSide}),light=s.dark?new THREE.Color(col).getHex():new THREE.Color(col).lerp(new THREE.Color(0xffffff),.55).getHex();
   for(const v of s.vis){
     if(v.t==="rY"){const {xr,y0,y1,zt,zb,run,side}=v,xl=side<=0?xr-run:xr,xR=side>=0?xr+run:xr,F=[];
       if(side<=0)F.push([[xl,y0,zb],[xl,y1,zb],[xr,y1,zt],[xr,y0,zt]]);else F.push([[xr,y0,zb],[xr,y1,zb],[xr,y1,zt],[xr,y0,zt]]);
@@ -433,24 +514,28 @@ STAGES.forEach((s,si)=>{const col=s.col,mat=new THREE.MeshLambertMaterial({map:r
   for(const [z,c] of [[s.start,0x5fd08a],[s.end,0xffd23f]]){const g=new THREE.BoxGeometry((z[1]-z[0])*SC,(z[5]-z[4])*SC,(z[3]-z[2])*SC),m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:.1,depthWrite:false,side:THREE.DoubleSide}));
     m.position.copy(V3((z[0]+z[1])/2,(z[2]+z[3])/2,(z[4]+z[5])/2));const e=new THREE.LineSegments(new THREE.EdgesGeometry(g),new THREE.LineBasicMaterial({color:c,transparent:true,opacity:.7}));m.add(e);scene.add(m);ZONEM.push(m)}
   /* placas */
-  const sg=new THREE.Sprite(new THREE.SpriteMaterial({map:signT(si===STAGES.length-1?"META":"FIM DO STAGE","#ffd23f"),transparent:true,depthWrite:false}));sg.scale.set(14,3.5,1);sg.position.copy(V3(s.sign[0]+s.ox,s.sign[1],s.sign[2]+260));scene.add(sg);
+  const sg=new THREE.Sprite(new THREE.SpriteMaterial({map:signT(si===MP.stages.length-1?"META":"FIM DO STAGE","#ffd23f"),transparent:true,depthWrite:false}));sg.scale.set(14,3.5,1);sg.position.copy(V3(s.sign[0]+s.ox,s.sign[1],s.sign[2]+260));scene.add(sg);
   const st=new THREE.Sprite(new THREE.SpriteMaterial({map:signT(`STAGE ${si+1}`,col),transparent:true,depthWrite:false}));st.scale.set(10,2.5,1);st.position.copy(V3(s.spawn[0]+s.ox,s.spawn[1]+700,s.spawn[2]+260));scene.add(st);
   /* mar de néon lá em baixo (é onde se cai) */
-  const gridT=tex(256,256,(g,w,h)=>{g.fillStyle="#120a2e";g.fillRect(0,0,w,h);g.strokeStyle=col;g.globalAlpha=.85;g.lineWidth=3;g.strokeRect(0,0,w,h);g.globalAlpha=.25;g.lineWidth=1.5;g.beginPath();g.moveTo(w/2,0);g.lineTo(w/2,h);g.moveTo(0,h/2);g.lineTo(w,h/2);g.stroke()});
+  const gridT=tex(256,256,(g,w,h)=>{g.fillStyle=T.sea;g.fillRect(0,0,w,h);g.strokeStyle=T.seaLine||col;g.globalAlpha=.85;g.lineWidth=3;g.strokeRect(0,0,w,h);g.globalAlpha=.25;g.lineWidth=1.5;g.beginPath();g.moveTo(w/2,0);g.lineTo(w/2,h);g.moveTo(0,h/2);g.lineTo(w,h/2);g.stroke()});
   gridT.repeat.set(60,60);const sea=new THREE.Mesh(new THREE.PlaneGeometry(1600,1600),new THREE.MeshBasicMaterial({map:gridT}));sea.rotation.x=-Math.PI/2;sea.position.copy(V3(s.ox+2000,5000,s.kill+60));scene.add(sea);
-  /* anéis a flutuar à volta, para se sentir a velocidade */
-  const rng=(()=>{let a=si*977+13;return()=>{a=(a*1664525+1013904223)>>>0;return a/4294967296}})();
-  const ringM=new THREE.MeshBasicMaterial({color:light});
-  for(let i=0;i<16;i++){const side=rng()<.5?-1:1,x=s.ox+side*(2600+rng()*3400)+(si===2?3000:0),y=rng()*11000-500,z=-300+rng()*1800;const r=new THREE.Mesh(new THREE.TorusGeometry(6+rng()*10,.5,6,28),ringM);r.position.copy(V3(x,y,z));r.rotation.set(rng()*3,rng()*3,0);scene.add(r)}
+  /* decoração à volta, para se sentir a velocidade: anéis, nuvens, cristais de gelo ou rochas */
+  const rng=(()=>{let a=gi*977+13;return()=>{a=(a*1664525+1013904223)>>>0;return a/4294967296}})();
+  const xs=Math.max(...s.vis.filter(v=>v.t==="rX").map(v=>v.x1-s.ox),0)/2;
+  const near=(x,y)=>s.vis.some(v=>v.t==="rY"?(x>v.xr-v.run-1300&&x<v.xr+v.run+1300&&y>v.y0-1300&&y<v.y1+1300):v.t==="rX"?(x>v.x0-1300&&x<v.x1+1300&&y>v.yr-v.run-1300&&y<v.yr+v.run+1300):false);
+  if(T.decor==="rings"){const ringM=new THREE.MeshBasicMaterial({color:light});
+    for(let i=0;i<16;i++){const side=rng()<.5?-1:1,x=s.ox+xs+side*(2600+rng()*3400),y=rng()*11000-500,z=-300+rng()*1800;if(near(x,y))continue;const r=new THREE.Mesh(new THREE.TorusGeometry(6+rng()*10,.5,6,28),ringM);r.position.copy(V3(x,y,z));r.rotation.set(rng()*3,rng()*3,0);scene.add(r)}}
+  else if(T.decor==="clouds"){for(let i=0;i<26;i++){const side=rng()<.5?-1:1,x=s.ox+xs+side*(1200+rng()*4500),y=rng()*12000-500,z=s.kill+150+rng()*1600;if(near(x,y)&&z>s.kill+700)continue;const c=new THREE.Sprite(new THREE.SpriteMaterial({map:CLOUDT,transparent:true,depthWrite:false,opacity:.9}));const k=40+rng()*60;c.scale.set(k,k*.45,1);c.position.copy(V3(x,y,z));scene.add(c)}}
+  else{const M2=T.decor==="shards"?new THREE.MeshLambertMaterial({color:0xe8fbff,transparent:true,opacity:.85}):new THREE.MeshLambertMaterial({color:0x2a1410});
+    for(let i=0;i<18;i++){const side=rng()<.5?-1:1,x=s.ox+xs+side*(2200+rng()*3800),y=rng()*11000-500,z=-500+rng()*1800,k=4+rng()*12;if(near(x,y))continue;const g=T.decor==="shards"?new THREE.OctahedronGeometry(k,0):new THREE.DodecahedronGeometry(k,0);const m=new THREE.Mesh(g,M2);if(T.decor==="shards")m.scale.y=2.2;m.position.copy(V3(x,y,z));m.rotation.set(rng()*3,rng()*3,rng()*3);scene.add(m);edgeLines(m,T.decor==="shards"?0x8fe8ff:0xff7a1f)}}
 });
 /* ---------- desenhar ---------- */
 let W=0,H=0;
 function layout(){const r=stageEl.getBoundingClientRect();W=Math.max(200,r.width);H=Math.max(200,r.height);renderer.setPixelRatio(Math.min(1.75,window.devicePixelRatio||1));renderer.setSize(W,H,false);camera.aspect=W/H;
-  const port=innerHeight>innerWidth;if(port!==layout.port){layout.port=port;if(port)rotTip();else hideTip()}}
-/* dica para rodar: aparece uns segundos quando se joga na vertical (pode-se jogar das duas maneiras) */
-let tipT=0;function rotTip(){if(!TOUCH||!G||G.state!=="play"||innerHeight<=innerWidth)return;const el=$("rotHint");el.hidden=false;el.classList.remove("out");clearTimeout(tipT);tipT=setTimeout(()=>{el.classList.add("out");tipT=setTimeout(()=>{el.hidden=true},500)},3800)}
-function hideTip(){clearTimeout(tipT);$("rotHint").hidden=true}
-const BG=new THREE.Color(0x07031a);scene.background=BG;
+}
+/* botão para rodar: pede ao telemóvel para mudar de vertical para horizontal (ou ao contrário) */
+async function toggleOri(){const land=innerWidth>innerHeight;try{if(window.JFS&&JFS.can&&!JFS.isFs())await JFS.enter();await JFS.lockOr(land?"portrait":"landscape");setTimeout(layout,250)}catch(e){msg(land?"Roda o telemóvel para a vertical 📱":"Roda o telemóvel para a horizontal 📱",1.8)}}
+scene.background=new THREE.Color(0x07031a);
 function draw(alpha){
   if(G){const P=G.P,a=alpha;const x=P.prev[0]+(P.p[0]-P.prev[0])*a,y=P.prev[1]+(P.p[1]-P.prev[1])*a,z=P.prev[2]+(P.p[2]-P.prev[2])*a+EYE;
     camera.position.set(x*SC,z*SC,-y*SC);camera.rotation.y=P.yaw-Math.PI/2;camera.rotation.x=-P.pitch;
@@ -465,13 +550,15 @@ function hud(){if(!G)return;const P=G.P,sp=Math.round(Math.hypot(P.v[0],P.v[1]))
   const el=$("hSpd");const c=sp<400?"":sp<900?"s1":sp<1500?"s2":"s3";if(el.dataset.c!==c){el.dataset.c=c;el.className=c}
   setT("hTime",G.running?fmt(G.mode==="run"?G.time:G.stT):"0:00.00");
   $("tA").classList.toggle("on",P.side<0);$("tD").classList.toggle("on",P.side>0)}
-function showStage(si){setT("hStage",G.mode==="run"?`Stage ${si+1}/${STAGES.length}`:`Treino · stage ${si+1}`)}
+function showStage(si){setT("hStage",(G.mode==="run"?`${MAPS[MI].name} · ${si+1}/${STAGES.length}`:`Treino · ${MAPS[MI].name} ${si+1}`))}
 let msgT=0;function msg(t,s){const m=$("hMsg");m.textContent=t;m.hidden=false;msgT=s||1.5}
 const ov=$("ov");function showOv(h){ov.innerHTML=h;ov.hidden=false;document.body.classList.remove("playing");setTimeout(layout,30)}
-function menu(){G=null;document.body.classList.remove("playing");$("hud").hidden=true;
-  const st=STAGES.map((s,i)=>`<button class="stg" type="button" data-a="st" data-i="${i}"><b>${i+1}</b><span>${s.name}</span><small>${fmt(BEST["s"+i])}</small></button>`).join("");
-  showOv(`<div class="panel"><h2>Surfa!</h2><p>Desliza nas rampas, ganha velocidade e chega ao fim no menor tempo. Física igual à dos servidores de surf.</p>
-   <button class="btn" type="button" data-a="run">Mapa completo ▶</button><p class="note">Recorde: ${fmt(BEST.run)}</p>
+function menu(){G=null;document.body.classList.remove("playing");$("hud").hidden=true;STAGES=MAPS[MI].stages;applyTheme(MAPS[MI].theme);menuCam();
+  const st=STAGES.map((s,i)=>`<button class="stg" type="button" data-a="st" data-i="${i}"><b>${i+1}</b><span>${s.name}</span><small>${fmt(BEST[bk("s"+i)])}</small></button>`).join("");
+  const tabs=MAPS.map((m,i)=>`<button class="mtab${i===MI?" on":""}" type="button" data-a="map" data-i="${i}" style="--mc:${m.stages[0].col}"><b>${m.name}</b><small>${m.lvl}</small></button>`).join("");
+  showOv(`<div class="panel"><h2>Surfa!</h2><p class="intro">Desliza nas rampas, ganha velocidade e chega ao fim no menor tempo. Física igual à dos servidores de surf.</p>
+   <div class="mtabs">${tabs}</div>
+   <button class="btn" type="button" data-a="run">${MAPS[MI].name}: mapa completo ▶</button><p class="note">Recorde: ${fmt(BEST[bk("run")])} · ${STAGES.length} stages</p>
    <div class="stgs">${st}</div>
    <details class="how"><summary>Como se joga</summary>
     <p>${TOUCH?"<b>Arrasta o dedo</b> (lado direito) para rodar a câmara. No início usa <b>▲</b> para sair da plataforma.":"<b>Rato</b> para rodar (clica no jogo), <b>W</b> para andar na plataforma, <b>A/D</b> para o strafe, <b>Espaço</b> para saltar, <b>R</b> volta ao início do stage."}</p>
@@ -483,8 +570,9 @@ function menu(){G=null;document.body.classList.remove("playing");$("hud").hidden
    <a class="home2" href="../">← mais jogos</a></div>`);
   $("sAssist").onchange=e=>{SET.assist=e.target.checked;saveSet()};$("sSens").oninput=e=>{if(TOUCH)SET.sens=+e.target.value;else SET.msens=+e.target.value;saveSet()}}
 function start(mode){unlock();ov.hidden=true;newGame(mode);$("hud").hidden=false;document.body.classList.add("playing");keepAwake(true);setTimeout(layout,30);
-  if(TOUCH){try{if(window.JFS&&JFS.can&&!JFS.isFs())JFS.enter()}catch(e){}setTimeout(rotTip,350)}else lockMouse()}
+  if(TOUCH){try{if(window.JFS&&JFS.can&&!JFS.isFs())JFS.enter()}catch(e){}}else lockMouse()}
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a;
+  if(a==="map"){MI=+b.dataset.i;store.set("surf-map",String(MI));menu();return}
   if(a==="run")start("run");else if(a==="st")start(+b.dataset.i);else if(a==="again")start(G?G.mode:"run");else if(a==="menu")menu();else if(a==="resume")resume()});
 function pause(){if(!G||G.state!=="play")return;G.state="pause";IN.w=IN.s=IN.a=IN.d=IN.j=0;
   showOv(`<div class="panel"><h2>Pausa</h2><p>${fmt(G.mode==="run"?G.time:G.stT)}</p><button class="btn" type="button" data-a="resume">Continuar</button><button class="btn ghost" type="button" data-a="again">Recomeçar</button><button class="btn ghost" type="button" data-a="menu">Menu</button></div>`)}
@@ -506,7 +594,7 @@ stageEl.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"||!G||G.sta
 stageEl.addEventListener("pointermove",e=>{const l=looks.get(e.pointerId);if(!l||!G)return;const dx=e.clientX-l.x,dy=e.clientY-l.y;l.x=e.clientX;l.y=e.clientY;const k=SET.sens*Math.PI/180;G.P.yaw-=dx*k;G.P.pitch=Math.max(-1.4,Math.min(1.4,G.P.pitch+dy*k*.8))});
 const lend=e=>looks.delete(e.pointerId);stageEl.addEventListener("pointerup",lend);stageEl.addEventListener("pointercancel",lend);
 stageEl.addEventListener("contextmenu",e=>e.preventDefault());stageEl.addEventListener("touchmove",e=>{if(G)e.preventDefault()},{passive:false});
-$("pauseBtn").onclick=pause;$("rBtn").onclick=()=>{if(G&&G.state==="play"){spawn(false);msg("Início do stage",1)}};
+$("pauseBtn").onclick=pause;$("oriBtn").onclick=toggleOri;$("rBtn").onclick=()=>{if(G&&G.state==="play"){spawn(false);msg("Início do stage",1)}};
 document.addEventListener("visibilitychange",()=>{if(document.hidden)pause()});
 /* ---------- som: vento conforme a velocidade ---------- */
 let AC=null,muted=store.get("pp-mute")==="1",WIND=null;
@@ -530,10 +618,10 @@ function loop(t){const dt=Math.min(.1,(t-last)/1000||0);last=t;
   if(msgT>0){msgT-=dt;if(msgT<=0)$("hMsg").hidden=true}
   draw(G&&G.state==="play"?Math.min(1,G.acc/TICK):1);hud();windUpd();requestAnimationFrame(loop)}
 document.body.classList.toggle("touch",TOUCH);
-window.SURF={get G(){return G},IN,SET,STAGES,tick,start,trace,BRUSH};
+window.SURF={get G(){return G},IN,SET,get STAGES(){return STAGES},MAPS,setMap(i){MI=i},tick,start,trace,BRUSH};
 window.addEventListener("resize",()=>{clearTimeout(window.__rz);window.__rz=setTimeout(layout,60)});
 /* vista de fundo no menu: câmara a passear pelo stage 1 */
-{const s=STAGES[0];camera.position.copy(V3(s.spawn[0]-900,s.spawn[1]+300,s.spawn[2]+300));camera.lookAt(V3(0,4000,300));window.__sky.position.copy(camera.position)}
+function menuCam(){const s=STAGES[0];camera.rotation.set(0,0,0);camera.position.copy(V3(s.ox+s.spawn[0]-900,s.spawn[1]+300,s.spawn[2]+300));camera.lookAt(V3(s.ox,4000,s.spawn[2]-400));SKY.position.copy(camera.position)}
 layout();menu();requestAnimationFrame(t=>{last=t;loop(t)});
 
 </script>
