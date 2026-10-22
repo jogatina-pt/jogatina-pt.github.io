@@ -187,6 +187,18 @@ header.top{flex:none}
 .filters button{flex:none;white-space:nowrap;border:2.5px solid var(--stroke);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 12px;font-weight:800;font-size:13px;cursor:pointer;box-shadow:2px 2px 0 var(--stroke)}
 .filters button.on{background:var(--accent);color:var(--accent-ink)}
 .game[hidden]{display:none!important}
+/* modo escuro: cartões escuros com a cor do jogo só nos contornos e destaques */
+:root:not([data-pp-theme="light"]) .game{background:color-mix(in srgb,var(--gc) 13%,#101010);color:#eee;border-color:var(--gc);box-shadow:6px 6px 0 color-mix(in srgb,var(--gc) 30%,#000)}
+:root:not([data-pp-theme="light"]) .game::before{background:radial-gradient(rgba(255,255,255,.06) 1.2px,transparent 1.5px) 0 0/9px 9px}
+:root:not([data-pp-theme="light"]) .game .pic{background:color-mix(in srgb,var(--gc) 26%,#1a1a1a);border-color:color-mix(in srgb,var(--gc) 55%,#000)}
+:root:not([data-pp-theme="light"]) .game .pic::before{opacity:.12}
+:root:not([data-pp-theme="light"]) .game .pic::after{background:radial-gradient(closest-side,color-mix(in srgb,var(--gc) 45%,transparent),transparent)}
+:root:not([data-pp-theme="light"]) .game h3{color:var(--gc);text-shadow:2px 2px 0 #000;-webkit-text-stroke:0}
+:root:not([data-pp-theme="light"]) .game p{color:#d6d6d6}
+:root:not([data-pp-theme="light"]) .game .tag{background:#1e1e1e;color:#e6e6e6;border-color:color-mix(in srgb,var(--gc) 60%,#000)}
+:root:not([data-pp-theme="light"]) .game .play{background:var(--gc);color:#151515;box-shadow:3px 3px 0 #000}
+:root:not([data-pp-theme="light"]) .tiles button{background:color-mix(in srgb,var(--c) 28%,#161616);border-color:color-mix(in srgb,var(--c) 60%,#000)}
+
 /* fila de ícones (como numa consola, mas em BD) */
 .tiles{flex:none;display:flex;gap:8px;align-items:flex-end;overflow-x:auto;overflow-y:visible;scrollbar-width:none;padding:6px 16px 22px;scroll-padding:0 40%;-webkit-overflow-scrolling:touch}
 .tiles::-webkit-scrollbar{display:none}
