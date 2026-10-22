@@ -186,6 +186,7 @@ body.playing .stage{position:fixed;inset:0;border:0;border-radius:0;box-shadow:n
 .sets input[type=range]{flex:1;box-shadow:none;border:0;padding:0}
 .sets input[type=checkbox]{width:20px;height:20px;box-shadow:none}
 .home2{font-weight:800;font-size:13px;color:#555}
+.mdesc{font-size:12.5px!important;margin:-2px 0 0!important}
 .mtabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;width:100%}
 .mtab{font:inherit;cursor:pointer;border:3px solid #151515;border-radius:12px;padding:5px 2px;background:#fff;color:#151515;display:flex;flex-direction:column;align-items:center;gap:1px;box-shadow:2px 2px 0 #151515}
 .mtab b{font-family:var(--display);font-weight:400;font-size:17px;letter-spacing:.04em;line-height:1}
@@ -354,29 +355,57 @@ function map(id,name,lvl,theme,fn){CURM={id,name,lvl,theme,stages:[]};fn();MAPS.
 const inZone=(p,z)=>p[0]>z[0]&&p[0]<z[1]&&p[1]>z[2]&&p[1]<z[3]&&p[2]>z[4]&&p[2]<z[5];
 function stage(name,ox,col,fn,o){const s=Object.assign({name,ox,col,vis:[],map:CURM},o||{});CUR=s;fn(s);CURM.stages.push(s)}
 function plat(x0,x1,y0,y1,z0,z1,kind){const o=CUR.ox;CUR.vis.push(addBrush([],[x0+o,y0,z0],[x1+o,y1,z1],{t:"box",kind}).vis);}
-function rY(xr,y0,y1,zt,h,side=0){const o=CUR.ox;xr+=o;const run=h/Math.tan(ANG),sa=Math.sin(ANG),ca=Math.cos(ANG),zb=zt-h,pl=[];
+function rY(xr,y0,y1,zt,h,side=0,ang){const A=ang?ang*Math.PI/180:ANG;const o=CUR.ox;xr+=o;const run=h/Math.tan(A),sa=Math.sin(A),ca=Math.cos(A),zb=zt-h,pl=[];
   pl.push(side<=0?[-sa,0,ca,-sa*xr+ca*zt]:[-1,0,0,-xr]);pl.push(side>=0?[sa,0,ca,sa*xr+ca*zt]:[1,0,0,xr]);pl.push([0,0,-1,-zb],[0,-1,0,-y0],[0,1,0,y1]);
-  addBrush(pl,[side<=0?xr-run:xr,y0,zb],[side>=0?xr+run:xr,y1,zt]);CUR.vis.push({t:"rY",xr,y0,y1,zt,zb,run,side})}
-function rX(yr,x0,x1,zt,h,side=0){const o=CUR.ox;x0+=o;x1+=o;const run=h/Math.tan(ANG),sa=Math.sin(ANG),ca=Math.cos(ANG),zb=zt-h,pl=[];
+  addBrush(pl,[side<=0?xr-run:xr,y0,zb],[side>=0?xr+run:xr,y1,zt]);CUR.vis.push({t:"rY",xr,y0,y1,zt,zb,run,side,pts:[[xr,y0],[xr,y1]]})}
+function rX(yr,x0,x1,zt,h,side=0,ang){const A=ang?ang*Math.PI/180:ANG;const o=CUR.ox;x0+=o;x1+=o;const run=h/Math.tan(A),sa=Math.sin(A),ca=Math.cos(A),zb=zt-h,pl=[];
   pl.push(side<=0?[0,-sa,ca,-sa*yr+ca*zt]:[0,-1,0,-yr]);pl.push(side>=0?[0,sa,ca,sa*yr+ca*zt]:[0,1,0,yr]);pl.push([0,0,-1,-zb],[-1,0,0,-x0],[1,0,0,x1]);
-  addBrush(pl,[x0,side<=0?yr-run:yr,zb],[x1,side>=0?yr+run:yr,zt]);CUR.vis.push({t:"rX",yr,x0,x1,zt,zb,run,side})}
+  addBrush(pl,[x0,side<=0?yr-run:yr,zb],[x1,side>=0?yr+run:yr,zt]);CUR.vis.push({t:"rX",yr,x0,x1,zt,zb,run,side,pts:[[x0,yr],[x1,yr]]})}
 const Z=(s,x0,x1,y0,y1,z0,z1)=>[x0+s.ox,x1+s.ox,y0,y1,z0,z1];
-/* Céu: fácil, rampas compridas e saltos curtos */
-map("ceu","Céu","Fácil","ceu",()=>{
+/* brush convexo qualquer, com os "bevels" todos (planos extra nas arestas) para a caixa do jogador não prender nas juntas */
+const vsub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],vcross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+function convex(V,F){const cen=[0,1,2].map(k=>V.reduce((a,v)=>a+v[k],0)/V.length),planes=[];
+  const addP=(n,d)=>{if(!planes.some(p=>p[0]*n[0]+p[1]*n[1]+p[2]*n[2]>.99999))planes.push([n[0],n[1],n[2],d])};
+  for(const f of F){let n=vcross(vsub(V[f[1]],V[f[0]]),vsub(V[f[2]],V[f[0]]));const l=Math.hypot(...n);n=n.map(x=>x/l);let d=dot(n,V[f[0]]);if(dot(n,cen)>d){n=n.map(x=>-x);d=-d}addP(n,d)}
+  for(const f of F)for(let i=0;i<f.length;i++){const a=V[f[i]],e=vsub(V[f[(i+1)%f.length]],a);
+    for(const ax of [[1,0,0],[0,1,0],[0,0,1]]){let n=vcross(e,ax);const l=Math.hypot(...n);if(l<1e-6)continue;n=n.map(x=>x/l);
+      for(const sg of [1,-1]){const m=n.map(x=>x*sg),d=dot(m,a);if(V.every(v=>dot(m,v)<=d+.01))addP(m,d)}}}
+  return addBrush(planes,[0,1,2].map(k=>Math.min(...V.map(v=>v[k]))),[0,1,2].map(k=>Math.max(...V.map(v=>v[k]))))}
+/* rampa contínua feita de troços retos ("S",comprimento) e curvas ("C",raio,graus,+1 esquerda/-1 direita); a crista fica sempre à mesma altura */
+function course(x,y,dir,zt,h,ang,pieces){const o=CUR.ox;x+=o;dir*=Math.PI/180;const run=h/Math.tan(ang*Math.PI/180),zb=zt-h,pts=[[x,y]],segs=[];let s=0;
+  const tri=(px,py,nx,ny)=>[[px,py,zt],[px+nx*run,py+ny*run,zb],[px-nx*run,py-ny*run,zb]];
+  for(const pc of pieces){
+    if(pc[0]==="S"){const nx=-Math.sin(dir),ny=Math.cos(dir),x2=x+Math.cos(dir)*pc[1],y2=y+Math.sin(dir)*pc[1];segs.push({A:tri(x,y,nx,ny),B:tri(x2,y2,nx,ny),uA:s,uB:s+pc[1]});s+=pc[1];x=x2;y=y2;pts.push([x,y])}
+    else{const [,Rr,deg,turn]=pc,n=Math.max(2,Math.ceil(deg/3)),da=deg*Math.PI/180/n,cx=x-Math.sin(dir)*turn*Rr,cy=y+Math.cos(dir)*turn*Rr;let a=Math.atan2(y-cy,x-cx);
+      const mk=an=>{const c=Math.cos(an),sn=Math.sin(an),r=[cx+c*Rr,cy+sn*Rr,zt],i=[cx+c*(Rr-run),cy+sn*(Rr-run),zb],ou=[cx+c*(Rr+run),cy+sn*(Rr+run),zb];return turn>0?[r,i,ou]:[r,ou,i]};
+      for(let k=0;k<n;k++){const a2=a+turn*da;segs.push({A:mk(a),B:mk(a2),uA:s,uB:s+Rr*da});s+=Rr*da;a=a2;pts.push([cx+Math.cos(a)*Rr,cy+Math.sin(a)*Rr])}
+      dir+=turn*deg*Math.PI/180;x=pts[pts.length-1][0];y=pts[pts.length-1][1]}}
+  for(const g of segs)convex([...g.A,...g.B],[[0,1,4,3],[0,3,5,2],[1,2,5,4],[0,2,1],[3,4,5]]);
+  CUR.vis.push({t:"course",segs,run,zt,zb,pts,sl:Math.hypot(run,h)});
+  return{x:x-o,y,dir:dir*180/Math.PI,zt,zb}}
+/* ponto à frente do fim de uma rampa (para a próxima começar depois de um salto) */
+const ahead=(e,d,dx=0)=>{const r=e.dir*Math.PI/180;return[e.x+Math.cos(r)*d-Math.sin(r)*dx,e.y+Math.sin(r)*d+Math.cos(r)*dx]};
+/* plataforma do fim, centrada à frente da última rampa */
+function finishPlat(s,e,gap,top,kill){const [cx,cy]=ahead(e,gap+600);plat(cx-800,cx+800,cy-800,cy+800,top-32,top,"end");s.end=Z(s,cx-800,cx+800,cy-800,cy+800,top-10,top+600);s.kill=kill;s.sign=[cx,cy,top+350]}
+/* booster: anel que dá velocidade a quem passa por dentro */
+function booster(x,y,z,dir,mult=1.3,hw=600){const ax=Math.abs(Math.cos(dir*Math.PI/180))<.5;(CUR.boost||(CUR.boost=[])).push({z:ax?Z(CUR,x-hw,x+hw,y-160,y+160,z-hw,z+hw):Z(CUR,x-160,x+160,y-hw,y+hw,z-hw,z+hw),x:x+CUR.ox,y,zz:z,dir,mult,hw})}
+/* Céu (nível 1, como os mapas de principiante): rampas largas e pouco inclinadas, saltos curtos, curvas abertas */
+map("ceu","Céu","Nível 1","ceu",()=>{
 stage("Primeiro voo",200000,"#7fe0b5",s=>{
   plat(-192,192,-512,0,968,1000,"start");s.spawn=[0,-420,1000+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,990,1400);
-  rY(256,64,3200,900,1100);rY(210,3400,6600,600,1100);rY(164,6800,10000,300,1100);
-  plat(-900,900,10300,11300,-482,-450,"end");s.end=Z(s,-900,900,10300,11300,-460,150);s.kill=-1100;s.sign=[0,10800,-100]});
-stage("Dois lados",240000,"#ffc56b",s=>{
-  plat(-60,360,-512,0,1068,1100,"start");s.spawn=[150,-420,1100+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-60,360,-512,0,1090,1500);
-  rY(380,64,2664,1000,1000);rY(-380,2884,5484,700,1000);rY(380,5704,8304,400,1000);rY(-380,8524,11124,100,1000);
-  plat(-900,900,11400,12400,-632,-600,"end");s.end=Z(s,-900,900,11400,12400,-610,0);s.kill=-1150;s.sign=[0,11900,-250]});
-stage("Mergulho",280000,"#ff9ec8",s=>{
-  plat(-192,192,-512,0,1168,1200,"start");s.spawn=[0,-420,1200+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,1190,1600);
-  rY(256,64,2400,1100,1100);rY(200,2600,6000,500,1300);rY(150,6200,9000,100,1100);
-  plat(-900,900,9300,10300,-732,-700,"end");s.end=Z(s,-900,900,9300,10300,-710,-100);s.kill=-1500;s.sign=[0,9800,-350]})});
+  course(256,64,90,900,1200,48,[["S",3100]]);course(210,3364,90,600,1200,48,[["S",3200]]);const e=course(164,6764,90,300,1200,48,[["S",3200]]);
+  finishPlat(s,e,250,-550,-1400)});
+stage("Curva larga",240000,"#ffc56b",s=>{
+  plat(-192,192,-512,0,968,1000,"start");s.spawn=[0,-420,1000+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,990,1400);
+  const e=course(256,64,90,900,1300,48,[["S",2000],["C",2600,90,-1],["S",2400]]);
+  finishPlat(s,e,250,-150,-900)});
+stage("Duas curvas",280000,"#ff9ec8",s=>{
+  plat(-192,192,-512,0,1068,1100,"start");s.spawn=[0,-420,1100+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,1090,1500);
+  let e=course(256,64,90,1000,1300,48,[["S",1600],["C",2400,90,-1],["S",1400]]);
+  const [x,y]=ahead(e,260);e=course(x,y,0,680,1300,48,[["S",900],["C",2400,90,1],["S",1800]]);
+  finishPlat(s,e,250,-250,-1100)})});
 /* Néon: o primeiro mapa */
-map("neon","Néon","Normal","neon",()=>{
+map("neon","Néon","Nível 2","neon",()=>{
 stage("Aquecimento",0,"#ff5ea8",s=>{
   plat(-192,192,-512,0,968,1000,"start");s.spawn=[0,-420,1000+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,990,1400);
   rY(256,64,2600,900,1100);rY(200,2850,5400,560,1100);rY(144,5650,8200,220,1100);
@@ -394,34 +423,39 @@ stage("O salto final",120000,"#a98bff",s=>{
   [[420,1100],[-360,780],[360,460],[-360,140],[360,-180]].forEach(([x,z],i)=>rY(x,64+i*1600,1364+i*1600,z,1000));
   plat(-900,900,8064,9164,-832,-800,"end");s.end=Z(s,-900,900,8064,9164,-810,-200);s.kill=-1400;s.sign=[0,8600,-450]});
 });
-/* Glaciar: curvas para a direita e para a esquerda */
-map("gelo","Glaciar","Médio","gelo",()=>{
-stage("Curva à direita",360000,"#bdefff",s=>{
+/* Glaciar (nível 3): rampas mais inclinadas e estreitas, curvas em S, um salto que pede velocidade e rampas com buracos */
+map("gelo","Glaciar","Nível 3","gelo",()=>{
+stage("Serpentina",360000,"#bdefff",s=>{
   plat(-192,192,-512,0,1068,1100,"start");s.spawn=[0,-420,1100+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,1090,1500);
-  rY(256,64,2400,1000,1100);rX(3200,-700,3000,560,1100);
-  plat(3300,4300,2100,4300,-432,-400,"end");s.end=Z(s,3300,4300,2100,4300,-410,200);s.kill=-1250;s.sign=[3800,3200,-50]});
-stage("Escada",400000,"#8fd8ff",s=>{
+  const e=course(200,64,90,1000,900,56,[["S",1500],["C",1700,70,1],["C",1700,70,-1],["S",1600]]);
+  finishPlat(s,e,250,-200,-800)});
+stage("Salto de velocidade",400000,"#8fd8ff",s=>{
+  plat(-192,192,-512,0,1368,1400,"start");s.spawn=[0,-420,1400+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,1390,1800);
+  course(200,64,90,1300,850,56,[["S",2200]]);course(160,2464,90,950,850,56,[["S",2200]]);course(120,4864,90,600,850,56,[["S",2000]]);
+  const e=course(80,7764,90,0,900,56,[["S",2000]]);finishPlat(s,e,300,-700,-1300)});
+stage("Buracos",440000,"#d9f6ff",s=>{
   plat(-192,192,-512,0,1068,1100,"start");s.spawn=[0,-420,1100+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,1090,1500);
-  rY(256,64,2200,1000,1100);rX(3000,-700,2400,620,1100);rY(3500,2200,5000,260,1100);
-  plat(2400,3900,5300,6300,-532,-500,"end");s.end=Z(s,2400,3900,5300,6300,-510,100);s.kill=-1300;s.sign=[3150,5800,-150]});
-stage("Labirinto de gelo",440000,"#d9f6ff",s=>{
-  plat(-192,192,-512,0,1168,1200,"start");s.spawn=[0,-420,1200+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,1190,1600);
-  rY(256,64,2200,1100,1100);rX(3000,-700,2400,720,1100);rY(3500,2200,5000,360,1100);rX(5800,2600,5600,0,1100);rY(6700,4900,7600,-360,1100);
-  plat(5400,7300,7900,8900,-1282,-1250,"end");s.end=Z(s,5400,7300,7900,8900,-1260,-500);s.kill=-1950;s.sign=[6350,8400,-850]})});
-/* Vulcão: difícil, quedas grandes e rampas estreitas sobre a lava */
-map("lava","Vulcão","Difícil","lava",()=>{
-stage("Queda livre",520000,"#ff7a2a",s=>{
-  plat(-192,192,-512,0,1468,1500,"start");s.spawn=[0,-420,1500+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,1490,1900);
-  rY(256,64,1800,1400,1200);rY(256,2100,5000,600,1400);rY(200,5300,8000,0,1200);
-  plat(-900,900,8300,9300,-932,-900,"end");s.end=Z(s,-900,900,8300,9300,-910,-300);s.kill=-1700;s.sign=[0,8800,-550]},{dark:1});
+  let e;for(let i=0;i<5;i++)e=course(200,64+i*1350,90,1000-120*i,850,56,[["S",1100]]);
+  const [x,y]=ahead(e,250);e=course(200,y,90,350,900,56,[["S",600],["C",1800,90,-1],["S",1400]]);
+  finishPlat(s,e,250,-450,-1000)})});
+/* Vulcão (nível 4): rampas muito inclinadas e estreitas, curvas apertadas, boosters e saltos compridos sobre a lava */
+map("lava","Vulcão","Nível 4","lava",()=>{
+stage("Garganta",520000,"#ff7a2a",s=>{
+  plat(-192,192,-512,0,1368,1400,"start");s.spawn=[0,-420,1400+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,1390,1800);
+  let e=course(180,64,90,1300,700,60,[["S",1500],["C",1400,80,-1],["S",500],["C",1400,80,1],["S",1500]]);
+  const [bx,by]=ahead(e,-500);booster(bx,by,e.zt-350,e.dir,1.3,600);
+  const [x,y]=ahead(e,900);e=course(x+40,y,e.dir,650,700,60,[["S",1600]]);
+  finishPlat(s,e,250,-250,-800)},{dark:1});
 stage("Pontes estreitas",560000,"#ffb020",s=>{
   plat(-60,360,-512,0,1068,1100,"start");s.spawn=[150,-420,1100+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-60,360,-512,0,1090,1500);
-  rY(300,64,2000,1000,700);rY(-300,2300,4200,750,700);rY(300,4500,6400,500,700);rY(-300,6700,8600,250,700);
-  plat(-900,900,8900,9900,-332,-300,"end");s.end=Z(s,-900,900,8900,9900,-310,300);s.kill=-900;s.sign=[0,9400,50]},{dark:1});
+  rY(270,64,2000,1000,750,0,60);rY(-270,2250,4150,720,750,0,60);rY(270,4400,6300,440,750,0,60);rY(-270,6550,8450,160,750,0,60);
+  plat(-900,900,8750,9750,-382,-350,"end");s.end=Z(s,-900,900,8750,9750,-360,250);s.kill=-1000;s.sign=[0,9250,0]},{dark:1});
 stage("O grande salto",600000,"#ff4a2a",s=>{
-  plat(-192,192,-512,0,1268,1300,"start");s.spawn=[0,-420,1300+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,1290,1700);
-  rY(256,64,3000,1200,1200);rY(200,3700,6500,600,1300);rY(150,7000,9500,100,1100);
-  plat(-900,900,9900,10900,-732,-700,"end");s.end=Z(s,-900,900,9900,10900,-710,-100);s.kill=-1600;s.sign=[0,10400,-350]},{dark:1})});
+  plat(-192,192,-512,0,1468,1500,"start");s.spawn=[0,-420,1500+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,1490,1900);
+  let e=course(220,64,90,1400,800,58,[["S",2800]]);booster(220,2500,e.zt-400,90,1.25,700);
+  e=course(160,3800,90,420,900,58,[["S",1400],["C",1500,90,-1],["S",1200]]);
+  finishPlat(s,e,250,-500,-1100)},{dark:1})});
+const MDESC={ceu:"Para começar: rampas largas e pouco inclinadas, saltos curtos e curvas abertas.",neon:"Rampas normais: zigue-zague, uma curva no ar e saltos maiores.",gelo:"Rampas mais inclinadas e estreitas, curvas em S, um salto que pede velocidade e rampas com buracos.",lava:"Rampas muito inclinadas e estreitas, curvas apertadas, boosters e saltos compridos sobre a lava."};
 const THEMES={
   neon:{sky:[[0,"#07031a"],[.32,"#1b0a3d"],[.47,"#7a1f6b"],[.5,"#ff6f7d"],[.53,"#5a1a5e"],[1,"#120624"]],fog:0x2a1446,far:520,stars:.75,sun:["rgba(255,240,200,1)","rgba(255,170,110,1)","rgba(255,90,140,.55)","rgba(255,60,140,0)"],stripes:1,hemi:[0xffe6f4,0x3a1a5a],sea:"#120a2e",decor:"rings"},
   ceu:{sky:[[0,"#2f6fd6"],[.36,"#74b3f5"],[.49,"#d6ecff"],[.5,"#fff3dc"],[.53,"#c4ddf7"],[1,"#9cc0ea"]],fog:0xc4dcf5,far:620,stars:0,sun:["rgba(255,255,245,1)","rgba(255,250,215,1)","rgba(255,240,190,.35)","rgba(255,240,190,0)"],stripes:0,hemi:[0xffffff,0x8fb0d8],sea:"#f2f7ff",decor:"clouds"},
@@ -443,6 +477,7 @@ function zones(){
   if(!G.stRun&&!inZone(P.p,s.start)){G.stRun=true;if(!G.running){G.running=true;G.time=0}}
   if(G.running)G.time+=TICK;if(G.stRun)G.stT+=TICK;
   if(P.p[2]<s.kill){G.falls++;sfx("fall");spawn(false);msg("Caíste! De volta ao início do stage",1.2);return}
+  if(s.boost)for(const b of s.boost){const inb=inZone(P.p,b.z);if(inb&&!b.on){const v=P.v,hs=Math.hypot(v[0],v[1]);if(hs>50){const k=Math.min(b.mult,MAXVEL/hs);v[0]*=k;v[1]*=k}sfx("boost");msg("Booster! 🚀",.8)}b.on=inb}
   if(inZone(P.p,s.end)){
     const t=G.stT,k=bk("s"+G.si),old=BEST[k];G.splits.push(t);
     if(old==null||t<old){BEST[k]=t;store.set("surf-best",JSON.stringify(BEST))}
@@ -488,9 +523,9 @@ const rampTex={};function rampT(col){return rampTex[col]||(rampTex[col]=tex(256,
   g.strokeStyle="rgba(255,255,255,.55)";g.lineWidth=4;g.strokeRect(2,2,w-4,h-4);void c}))}
 const platT=tex(256,256,(g,w,h)=>{g.fillStyle="#d9dbe6";g.fillRect(0,0,w,h);g.fillStyle="#c4c7d6";for(let y=0;y<4;y++)for(let x=0;x<4;x++)if((x+y)%2)g.fillRect(x*64,y*64,64,64);g.strokeStyle="rgba(0,0,0,.25)";g.lineWidth=2;for(let i=0;i<=w;i+=64){g.beginPath();g.moveTo(i,0);g.lineTo(i,h);g.stroke();g.beginPath();g.moveTo(0,i);g.lineTo(w,i);g.stroke()}});
 function faceMesh(faces,uAxis,mat){const pos=[],uv=[];
-  for(const f of faces){const a=new THREE.Vector3(...f[0]),b=new THREE.Vector3(...f[1]),c=new THREE.Vector3(...f[2]);const n=new THREE.Vector3().subVectors(b,a).cross(new THREE.Vector3().subVectors(c,a)).normalize();
+  for(const f of faces){const a=new THREE.Vector3(f[0][0],f[0][1],f[0][2]),b=new THREE.Vector3(f[1][0],f[1][1],f[1][2]),c=new THREE.Vector3(f[2][0],f[2][1],f[2][2]);const n=new THREE.Vector3().subVectors(b,a).cross(new THREE.Vector3().subVectors(c,a)).normalize();
     let u=uAxis.clone();let w=new THREE.Vector3().crossVectors(n,u);if(w.lengthSq()<1e-6){u=new THREE.Vector3(1,0,0);if(Math.abs(n.x)>.9)u.set(0,1,0);w.crossVectors(n,u)}w.normalize();u=new THREE.Vector3().crossVectors(w,n).normalize();
-    for(let i=1;i<f.length-1;i++)for(const q of [f[0],f[i],f[i+1]]){pos.push(q[0]*SC,q[2]*SC,-q[1]*SC);const P=new THREE.Vector3(...q);uv.push(P.dot(u)/256,P.dot(w)/256)}}
+    for(let i=1;i<f.length-1;i++)for(const q of [f[0],f[i],f[i+1]]){pos.push(q[0]*SC,q[2]*SC,-q[1]*SC);if(q.length>3)uv.push(q[3]/256,q[4]/256);else{const P=new THREE.Vector3(q[0],q[1],q[2]);uv.push(P.dot(u)/256,P.dot(w)/256)}}}
   const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));g.setAttribute("uv",new THREE.Float32BufferAttribute(uv,2));g.computeVertexNormals();
   const m=new THREE.Mesh(g,mat);return m}
 function edgeLines(mesh,col){const l=new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry,20),new THREE.LineBasicMaterial({color:col,transparent:true,opacity:.95}));mesh.add(l);return l}
@@ -503,6 +538,11 @@ let GSI=0;for(const MP of MAPS)MP.stages.forEach((s,si)=>{const T=THEMES[MP.them
       if(side>=0)F.push([[xR,y0,zb],[xr,y0,zt],[xr,y1,zt],[xR,y1,zb]]);else F.push([[xr,y0,zb],[xr,y0,zt],[xr,y1,zt],[xr,y1,zb]]);
       F.push([[xl,y0,zb],[xr,y0,zt],[xR,y0,zb]],[[xl,y1,zb],[xR,y1,zb],[xr,y1,zt]]);
       const m=faceMesh(F,new THREE.Vector3(0,1,0),mat);scene.add(m);edgeLines(m,light)}
+    else if(v.t==="course"){const F=[],sl=v.sl,n=v.segs.length;
+      v.segs.forEach((g,i)=>{const [rA,lA,oA]=g.A,[rB,lB,oB]=g.B,U=(p,u,vv)=>[p[0],p[1],p[2],u,vv];
+        F.push([U(rA,g.uA,0),U(lA,g.uA,sl),U(lB,g.uB,sl),U(rB,g.uB,0)],[U(rA,g.uA,0),U(rB,g.uB,0),U(oB,g.uB,sl),U(oA,g.uA,sl)]);
+        if(i===0)F.push([rA,oA,lA]);if(i===n-1)F.push([rB,lB,oB])});
+      const m=faceMesh(F,new THREE.Vector3(0,1,0),mat);scene.add(m);edgeLines(m,light)}
     else if(v.t==="rX"){const {yr,x0,x1,zt,zb,run,side}=v,yl=side<=0?yr-run:yr,yR=side>=0?yr+run:yr,F=[];
       F.push([[x0,yl,zb],[x1,yl,zb],[x1,yr,zt],[x0,yr,zt]],[[x0,yR,zb],[x0,yr,zt],[x1,yr,zt],[x1,yR,zb]],[[x0,yl,zb],[x0,yr,zt],[x0,yR,zb]],[[x1,yl,zb],[x1,yR,zb],[x1,yr,zt]]);
       const m=faceMesh(F,new THREE.Vector3(1,0,0),mat);scene.add(m);edgeLines(m,light)}
@@ -513,6 +553,9 @@ let GSI=0;for(const MP of MAPS)MP.stages.forEach((s,si)=>{const T=THEMES[MP.them
   /* zonas de início e fim (caixas transparentes) */
   for(const [z,c] of [[s.start,0x5fd08a],[s.end,0xffd23f]]){const g=new THREE.BoxGeometry((z[1]-z[0])*SC,(z[5]-z[4])*SC,(z[3]-z[2])*SC),m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:.1,depthWrite:false,side:THREE.DoubleSide}));
     m.position.copy(V3((z[0]+z[1])/2,(z[2]+z[3])/2,(z[4]+z[5])/2));const e=new THREE.LineSegments(new THREE.EdgesGeometry(g),new THREE.LineBasicMaterial({color:c,transparent:true,opacity:.7}));m.add(e);scene.add(m);ZONEM.push(m)}
+  if(s.boost)for(const b of s.boost){const g=new THREE.Group();g.position.copy(V3(b.x,b.y,b.zz));g.rotation.y=b.dir*Math.PI/180-Math.PI/2;
+    const ring=new THREE.Mesh(new THREE.TorusGeometry(b.hw*SC,22*SC,8,40),new THREE.MeshBasicMaterial({color:0x39ffb0}));g.add(ring);
+    const ar=new THREE.Mesh(new THREE.ConeGeometry(90*SC,160*SC,4),new THREE.MeshBasicMaterial({color:0x39ffb0,transparent:true,opacity:.7}));ar.rotation.x=-Math.PI/2;g.add(ar);scene.add(g);ZONEM.push(ring)}
   /* placas */
   const sg=new THREE.Sprite(new THREE.SpriteMaterial({map:signT(si===MP.stages.length-1?"META":"FIM DO STAGE","#ffd23f"),transparent:true,depthWrite:false}));sg.scale.set(14,3.5,1);sg.position.copy(V3(s.sign[0]+s.ox,s.sign[1],s.sign[2]+260));scene.add(sg);
   const st=new THREE.Sprite(new THREE.SpriteMaterial({map:signT(`STAGE ${si+1}`,col),transparent:true,depthWrite:false}));st.scale.set(10,2.5,1);st.position.copy(V3(s.spawn[0]+s.ox,s.spawn[1]+700,s.spawn[2]+260));scene.add(st);
@@ -521,8 +564,8 @@ let GSI=0;for(const MP of MAPS)MP.stages.forEach((s,si)=>{const T=THEMES[MP.them
   gridT.repeat.set(60,60);const sea=new THREE.Mesh(new THREE.PlaneGeometry(1600,1600),new THREE.MeshBasicMaterial({map:gridT}));sea.rotation.x=-Math.PI/2;sea.position.copy(V3(s.ox+2000,5000,s.kill+60));scene.add(sea);
   /* decoração à volta, para se sentir a velocidade: anéis, nuvens, cristais de gelo ou rochas */
   const rng=(()=>{let a=gi*977+13;return()=>{a=(a*1664525+1013904223)>>>0;return a/4294967296}})();
-  const xs=Math.max(...s.vis.filter(v=>v.t==="rX").map(v=>v.x1-s.ox),0)/2;
-  const near=(x,y)=>s.vis.some(v=>v.t==="rY"?(x>v.xr-v.run-1300&&x<v.xr+v.run+1300&&y>v.y0-1300&&y<v.y1+1300):v.t==="rX"?(x>v.x0-1300&&x<v.x1+1300&&y>v.yr-v.run-1300&&y<v.yr+v.run+1300):false);
+  const xs=Math.max(...s.vis.filter(v=>v.pts).flatMap(v=>v.pts.map(p=>p[0]-s.ox)),0)/2;
+  const near=(x,y)=>s.vis.some(v=>{if(!v.pts)return false;const P=v.pts,st=Math.max(1,Math.floor(P.length/40));for(let i=0;i<P.length-1;i+=st){const [ax,ay]=P[i],[bx,by]=P[Math.min(P.length-1,i+st)],dx=bx-ax,dy=by-ay,l2=dx*dx+dy*dy||1,t=Math.max(0,Math.min(1,((x-ax)*dx+(y-ay)*dy)/l2));if(Math.hypot(x-ax-dx*t,y-ay-dy*t)<1400+v.run)return true}return false});
   if(T.decor==="rings"){const ringM=new THREE.MeshBasicMaterial({color:light});
     for(let i=0;i<16;i++){const side=rng()<.5?-1:1,x=s.ox+xs+side*(2600+rng()*3400),y=rng()*11000-500,z=-300+rng()*1800;if(near(x,y))continue;const r=new THREE.Mesh(new THREE.TorusGeometry(6+rng()*10,.5,6,28),ringM);r.position.copy(V3(x,y,z));r.rotation.set(rng()*3,rng()*3,0);scene.add(r)}}
   else if(T.decor==="clouds"){for(let i=0;i<26;i++){const side=rng()<.5?-1:1,x=s.ox+xs+side*(1200+rng()*4500),y=rng()*12000-500,z=s.kill+150+rng()*1600;if(near(x,y)&&z>s.kill+700)continue;const c=new THREE.Sprite(new THREE.SpriteMaterial({map:CLOUDT,transparent:true,depthWrite:false,opacity:.9}));const k=40+rng()*60;c.scale.set(k,k*.45,1);c.position.copy(V3(x,y,z));scene.add(c)}}
@@ -557,7 +600,7 @@ function menu(){G=null;document.body.classList.remove("playing");$("hud").hidden
   const st=STAGES.map((s,i)=>`<button class="stg" type="button" data-a="st" data-i="${i}"><b>${i+1}</b><span>${s.name}</span><small>${fmt(BEST[bk("s"+i)])}</small></button>`).join("");
   const tabs=MAPS.map((m,i)=>`<button class="mtab${i===MI?" on":""}" type="button" data-a="map" data-i="${i}" style="--mc:${m.stages[0].col}"><b>${m.name}</b><small>${m.lvl}</small></button>`).join("");
   showOv(`<div class="panel"><h2>Surfa!</h2><p class="intro">Desliza nas rampas, ganha velocidade e chega ao fim no menor tempo. Física igual à dos servidores de surf.</p>
-   <div class="mtabs">${tabs}</div>
+   <div class="mtabs">${tabs}</div><p class="mdesc">${MDESC[MAPS[MI].id]}</p>
    <button class="btn" type="button" data-a="run">${MAPS[MI].name}: mapa completo ▶</button><p class="note">Recorde: ${fmt(BEST[bk("run")])} · ${STAGES.length} stages</p>
    <div class="stgs">${st}</div>
    <details class="how"><summary>Como se joga</summary>
@@ -602,7 +645,7 @@ function unlock(){try{if(!AC){AC=new(window.AudioContext||window.webkitAudioCont
     const s=AC.createBufferSource();s.buffer=n;s.loop=true;const f=AC.createBiquadFilter();f.type="lowpass";f.frequency.value=400;const g=AC.createGain();g.gain.value=0;s.connect(f).connect(g).connect(AC.destination);s.start();WIND={f,g}}
   if(AC.state!=="running")AC.resume()}catch(e){}}
 function tone(f,d,o={}){if(muted||!AC||AC.state!=="running")return;const t=AC.currentTime+(o.at||0),os=AC.createOscillator(),g=AC.createGain();os.type=o.type||"triangle";os.frequency.setValueAtTime(f,t);if(o.f2)os.frequency.exponentialRampToValueAtTime(o.f2,t+d);g.gain.setValueAtTime(o.v||.06,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);os.connect(g).connect(AC.destination);os.start(t);os.stop(t+d+.02)}
-const SFX={jump:()=>tone(300,.08,{type:"sine",v:.04,f2:420}),fall:()=>tone(500,.5,{type:"sawtooth",v:.05,f2:80}),stage:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.14,{at:i*.08,type:"square",v:.045})),land:()=>tone(90,.12,{type:"sine",v:.12,f2:50}),bonk:()=>tone(120,.08,{type:"square",v:.05,f2:60})};
+const SFX={boost:()=>tone(220,.35,{type:"sawtooth",v:.05,f2:880}),jump:()=>tone(300,.08,{type:"sine",v:.04,f2:420}),fall:()=>tone(500,.5,{type:"sawtooth",v:.05,f2:80}),stage:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.14,{at:i*.08,type:"square",v:.045})),land:()=>tone(90,.12,{type:"sine",v:.12,f2:50}),bonk:()=>tone(120,.08,{type:"square",v:.05,f2:60})};
 const sfx=k=>{try{SFX[k]()}catch(e){}};
 function windUpd(){if(!WIND)return;const sp=G&&G.state==="play"?Math.hypot(...G.P.v):0,on=!muted&&sp>60;WIND.g.gain.setTargetAtTime(on?Math.min(.22,sp/9000):0,AC.currentTime,.12);WIND.f.frequency.setTargetAtTime(250+Math.min(2600,sp*1.1),AC.currentTime,.15)}
 function setMute(m){muted=m;store.set("pp-mute",m?"1":"0");$("mute").textContent=m?"🔇":"🔊"}
