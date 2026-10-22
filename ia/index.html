@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>O meu chat</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Chat">
+<style>
+:root{--bg:#000;--s1:#141414;--s2:#212121;--line:#343434;--tx:#f2f2f2;--mut:#9a9a9a;--ac:#ff9ccd;--acd:#a3195b}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+.app{display:flex;height:100dvh;overflow:hidden}
+.side{width:280px;background:var(--s1);border-right:1px solid var(--line);display:flex;flex-direction:column;flex:none}
+.side h2{margin:0;padding:14px 14px 8px;font-size:15px;color:var(--mut);font-weight:600}
+.list{flex:1;overflow:auto;padding:0 8px 8px}
+.it{display:flex;align-items:center;gap:6px;padding:9px 10px;border-radius:10px;cursor:pointer;font-size:14px}
+.it:hover,.it.on{background:var(--s2)}.it span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.it button{background:none;border:0;color:var(--mut);cursor:pointer;padding:2px 6px;border-radius:6px}.it button:hover{color:#ff7b7b}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.top{display:flex;align-items:center;gap:8px;padding:max(10px,env(safe-area-inset-top)) 12px 10px;border-bottom:1px solid var(--line);background:var(--bg)}
+.top .t{flex:1;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dot{width:10px;height:10px;border-radius:50%;background:#666;flex:none}.dot.ok{background:#4be08a}.dot.bad{background:#ff6b6b}
+.ib{background:var(--s2);border:1px solid var(--line);border-radius:10px;padding:7px 11px;cursor:pointer;line-height:1}
+.ib:hover{border-color:var(--ac)}
+select.ib{max-width:170px}
+.msgs{flex:1;overflow:auto;padding:16px 12px;scroll-behavior:smooth}
+.wrap{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.m{max-width:92%;padding:10px 14px;border-radius:16px;word-wrap:break-word;overflow-wrap:anywhere}
+.m.u{align-self:flex-end;background:var(--acd);color:#fff;border-bottom-right-radius:4px;white-space:pre-wrap}
+.m.a{align-self:flex-start;background:var(--s1);border:1px solid var(--line);border-bottom-left-radius:4px}
+.m.a p{margin:0 0 .6em}.m.a p:last-child{margin:0}.m.a ul,.m.a ol{margin:.3em 0 .6em;padding-left:1.3em}
+.m.a h3,.m.a h4{margin:.6em 0 .3em}.m.a code{background:var(--s2);padding:1px 5px;border-radius:5px;font-size:.9em}
+.m.a pre{background:#0b0b0b;border:1px solid var(--line);border-radius:10px;padding:30px 10px 10px;overflow:auto;position:relative;margin:.5em 0}
+.m.a pre code{background:none;padding:0;white-space:pre}
+.cp{position:absolute;right:6px;top:6px;font-size:12px;background:var(--s2);border:1px solid var(--line);border-radius:7px;padding:2px 7px;cursor:pointer}
+.m.err{background:#2a1010;border-color:#6b2a2a;color:#ffb4b4}
+.empty{margin:auto;text-align:center;color:var(--mut);padding:40px 10px}.empty b{display:block;font-size:20px;color:var(--tx);margin-bottom:6px}
+.bar{padding:8px 12px max(10px,env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--bg)}
+.row{max-width:820px;margin:0 auto;display:flex;gap:8px;align-items:flex-end}
+textarea#in{flex:1;resize:none;max-height:180px;background:var(--s1);border:1px solid var(--line);border-radius:14px;padding:11px 14px;outline:none;line-height:1.4}
+textarea#in:focus{border-color:var(--ac)}
+#go{background:var(--ac);color:#000;border:0;border-radius:14px;width:48px;height:46px;font-weight:900;font-size:18px;cursor:pointer;flex:none}
+#go.stop{background:#ff7b7b}
+.dlg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;place-items:center;z-index:30;padding:14px}.dlg.on{display:grid}
+.card{background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:16px;width:min(560px,100%);max-height:90dvh;overflow:auto}
+.card h3{margin:0 0 10px}.card label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
+.card input,.card textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;outline:none}
+.card input:focus,.card textarea:focus{border-color:var(--ac)}
+.card pre{background:#0b0b0b;border:1px solid var(--line);border-radius:10px;padding:9px;overflow:auto;font-size:12.5px;margin:6px 0}
+.card details{margin-top:12px;color:var(--mut);font-size:14px}.card details summary{cursor:pointer;color:var(--tx)}
+.acts{display:flex;gap:8px;margin-top:14px;justify-content:flex-end}.acts button{background:var(--s2);border:1px solid var(--line);border-radius:10px;padding:9px 14px;cursor:pointer}.acts .p{background:var(--ac);color:#000;border:0;font-weight:700}
+.menu{display:none}
+@media(max-width:760px){.side{position:fixed;inset:0 auto 0 0;z-index:20;transform:translateX(-100%);transition:transform .2s;width:min(300px,85vw)}.side.on{transform:none}.menu{display:inline-block}.scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:19;display:none}.scrim.on{display:block}}
+</style>
+</head>
+<body>
+<div class="app">
+ <aside class="side" id="side"><h2>Conversas</h2><div class="list" id="list"></div>
+  <div style="padding:8px"><button class="ib" style="width:100%" id="newc">＋ Nova conversa</button></div></aside>
+ <div class="scrim" id="scrim"></div>
+ <div class="main">
+  <div class="top"><button class="ib menu" id="menu" aria-label="Conversas">☰</button><span class="dot" id="dot" title="Ligação"></span><div class="t" id="title">O meu chat</div>
+   <select class="ib" id="model" aria-label="Modelo"></select><button class="ib" id="cfg" aria-label="Definições">⚙</button></div>
+  <div class="msgs" id="msgs"><div class="wrap" id="wrap"></div></div>
+  <div class="bar"><div class="row"><textarea id="in" rows="1" placeholder="Escreve uma mensagem…" enterkeyhint="send"></textarea><button id="go" aria-label="Enviar">➤</button></div></div>
+ </div>
+</div>
+<div class="dlg" id="dlg"><div class="card">
+ <h3>Definições</h3>
+ <label>Endereço do servidor (Ollama)</label><input id="url" placeholder="https://o-teu-pc.tailXXXX.ts.net" autocapitalize="off" autocorrect="off" spellcheck="false">
+ <label>Instruções para o modelo (opcional)</label><textarea id="sys" rows="3"></textarea>
+ <label>Criatividade (temperatura): <b id="tv">0.7</b></label><input type="range" id="temp" min="0" max="1.5" step="0.1">
+ <details><summary>Como ligar ao meu PC</summary>
+  <p>1) No PC instala o <b>Ollama</b> e o <b>Tailscale</b> (a mesma conta no telemóvel). Descarrega um modelo, por exemplo <code>ollama pull gemma3:4b</code>.</p>
+  <p>2) Autoriza esta página (PowerShell), depois fecha e abre o Ollama:</p><pre>setx OLLAMA_ORIGINS "*"</pre>
+  <p>3) Cria o endereço privado HTTPS (no PC):</p><pre>tailscale serve --bg 11434</pre>
+  <p>Cola aqui o endereço que ele mostrar (https://…ts.net). No telemóvel, tem o Tailscale ligado.</p>
+  <p>Se der erro 403, põe também <code>setx OLLAMA_HOST "0.0.0.0:11434"</code> e reinicia o Ollama.</p>
+  <p>Só no próprio PC: usa <code>http://localhost:11434</code>.</p></details>
+ <div class="acts"><button id="test">Testar ligação</button><button class="p" id="save">Guardar</button></div>
+ <div id="tmsg" style="margin-top:8px;font-size:14px"></div>
+</div></div>
+<script>
+const $=id=>document.getElementById(id);
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let S=Object.assign({url:"http://localhost:11434",model:"",sys:"Responde sempre em português europeu, de forma clara e direta.",temp:.7},LS.get("ia-set",{}));
+let CH=LS.get("ia-chats",[]),CUR=null,busy=false,ctl=null;
+const TOUCH=matchMedia("(pointer:coarse)").matches;
+const base=()=>S.url.trim().replace(/\/+$/,"");
+const save=()=>{LS.set("ia-chats",CH.slice(0,60));LS.set("ia-set",S)};
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function md(t){const blocks=[];t=esc(t).replace(/```(\w*)\n?([\s\S]*?)(```|$)/g,(m,l,c)=>{blocks.push(c.replace(/\n$/,""));return"\u0000"+(blocks.length-1)+"\u0000"});
+  const inl=s=>s.replace(/`([^`\n]+)`/g,"<code>$1</code>").replace(/\*\*([^*\n]+)\*\*/g,"<b>$1</b>").replace(/(^|[^*])\*([^*\n]+)\*/g,"$1<i>$2</i>");
+  const out=[];let list=null;const flush=()=>{if(list){out.push("</"+list+">");list=null}};
+  for(const ln of t.split("\n")){let m;
+    if(m=ln.match(/^\s*[-*•]\s+(.*)/)){if(list!=="ul"){flush();out.push("<ul>");list="ul"}out.push("<li>"+inl(m[1])+"</li>")}
+    else if(m=ln.match(/^\s*\d+[.)]\s+(.*)/)){if(list!=="ol"){flush();out.push("<ol>");list="ol"}out.push("<li>"+inl(m[1])+"</li>")}
+    else if(m=ln.match(/^#{1,4}\s+(.*)/)){flush();out.push("<h3>"+inl(m[1])+"</h3>")}
+    else if(/^\u0000\d+\u0000$/.test(ln.trim())){flush();out.push(ln.trim())}
+    else if(!ln.trim()){flush()}else{flush();out.push("<p>"+inl(ln)+"</p>")}}
+  flush();return out.join("").replace(/\u0000(\d+)\u0000/g,(m,i)=>'<pre><button class="cp" type="button">copiar</button><code>'+blocks[+i]+"</code></pre>")}
+function cur(){return CH.find(c=>c.id===CUR)}
+function render(){const c=cur(),w=$("wrap");w.innerHTML="";$("title").textContent=c?c.title:"O meu chat";
+  if(!c||!c.m.length){w.innerHTML='<div class="empty"><b>Olá 👋</b>O teu modelo, no teu PC.<br>Escreve em baixo para começar.</div>'}
+  else for(const m of c.m){const d=document.createElement("div");d.className="m "+(m.r==="user"?"u":"a")+(m.err?" err":"");if(m.r==="user")d.textContent=m.c;else d.innerHTML=m.err?esc(m.c).replace(/\n/g,"<br>"):md(m.c);w.appendChild(d)}
+  const L=$("list");L.innerHTML="";for(const x of CH){const d=document.createElement("div");d.className="it"+(x.id===CUR?" on":"");d.innerHTML="<span></span><button aria-label='Apagar'>✕</button>";d.firstChild.textContent=x.title;
+    d.onclick=e=>{if(e.target.tagName==="BUTTON"){if(confirm("Apagar esta conversa?")){CH=CH.filter(y=>y!==x);if(CUR===x.id)CUR=CH[0]?CH[0].id:null;save();render()}return}CUR=x.id;render();closeSide()};L.appendChild(d)}
+  scroll()}
+function scroll(){const m=$("msgs");m.scrollTop=m.scrollHeight}
+function newChat(){CUR=null;render();closeSide();$("in").focus()}
+const closeSide=()=>{$("side").classList.remove("on");$("scrim").classList.remove("on")};
+$("menu").onclick=()=>{$("side").classList.add("on");$("scrim").classList.add("on")};$("scrim").onclick=closeSide;$("newc").onclick=newChat;
+$("wrap").addEventListener("click",e=>{if(e.target.classList.contains("cp")){const t=e.target.nextSibling.textContent;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>{e.target.textContent="copiado";setTimeout(()=>e.target.textContent="copiar",1200)}).catch(()=>{})}});
+async function api(path,opt){const r=await fetch(base()+path,opt);if(!r.ok)throw new Error("HTTP "+r.status);return r}
+function setDot(k){$("dot").className="dot "+(k||"")}
+async function loadModels(){try{const r=await api("/api/tags");const j=await r.json(),ms=(j.models||[]).map(m=>m.name);const sel=$("model");sel.innerHTML="";
+    if(!ms.length){sel.innerHTML="<option value=''>(sem modelos)</option>";setDot("ok");return}
+    for(const n of ms){const o=document.createElement("option");o.value=n;o.textContent=n;sel.appendChild(o)}
+    if(!ms.includes(S.model))S.model=ms[0];sel.value=S.model;setDot("ok");save();return true}catch(e){setDot("bad");$("model").innerHTML="<option value=''>sem ligação</option>";return false}}
+$("model").onchange=e=>{S.model=e.target.value;save()};
+function errText(e){const m=String(e&&e.message||e);return "Não consegui falar com o servidor ("+m+").\n• O PC está ligado e o Ollama a correr?\n• O Tailscale está ligado no telemóvel?\n• O endereço nas definições (⚙) está certo?\n• Já fizeste OLLAMA_ORIGINS no PC? (ver ⚙ › Como ligar)"}
+async function send(){if(busy){if(ctl)ctl.abort();return}
+  const inp=$("in"),txt=inp.value.trim();if(!txt)return;if(!S.model){await loadModels();if(!S.model){toast("Sem modelo: abre ⚙ e liga ao PC.");return}}
+  let c=cur();if(!c){c={id:String(Date.now()),title:txt.slice(0,40),m:[]};CH.unshift(c);CUR=c.id}
+  c.m.push({r:"user",c:txt});const a={r:"assistant",c:""};c.m.push(a);inp.value="";inp.style.height="auto";render();
+  busy=true;$("go").textContent="■";$("go").classList.add("stop");ctl=new AbortController();
+  const hist=c.m.slice(0,-1).filter(m=>!m.err).map(m=>({role:m.r,content:m.c}));if(S.sys.trim())hist.unshift({role:"system",content:S.sys.trim()});
+  const node=()=>$("wrap").lastChild;
+  try{const r=await api("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},signal:ctl.signal,body:JSON.stringify({model:S.model,messages:hist,stream:true,options:{temperature:S.temp}})});
+    const rd=r.body.getReader(),dec=new TextDecoder();let buf="";
+    for(;;){const {value,done}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});let i;
+      while((i=buf.indexOf("\n"))>=0){const ln=buf.slice(0,i).trim();buf=buf.slice(i+1);if(!ln)continue;try{const j=JSON.parse(ln);if(j.error)throw new Error(j.error);if(j.message&&j.message.content){a.c+=j.message.content;const n=node();if(n)n.innerHTML=md(a.c);scroll()}}catch(e){if(e.message&&!/JSON/.test(e.message))throw e}}}
+    if(!a.c)a.c="(sem resposta)";setDot("ok")}
+  catch(e){if(e.name==="AbortError"){if(!a.c)a.c="(parado)"}else{a.err=1;a.c=(a.c?a.c+"\n\n":"")+errText(e);setDot("bad")}}
+  busy=false;ctl=null;$("go").textContent="➤";$("go").classList.remove("stop");save();render()}
+function toast(t){const m=cur();$("title").textContent=t;setTimeout(()=>$("title").textContent=m?m.title:"O meu chat",2500)}
+$("go").onclick=send;
+$("in").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&!TOUCH){e.preventDefault();send()}});
+$("in").addEventListener("input",e=>{const t=e.target;t.style.height="auto";t.style.height=Math.min(180,t.scrollHeight)+"px"});
+/* definições */
+function openCfg(){$("url").value=S.url;$("sys").value=S.sys;$("temp").value=S.temp;$("tv").textContent=S.temp;$("tmsg").textContent="";$("dlg").classList.add("on")}
+$("cfg").onclick=openCfg;$("temp").oninput=e=>$("tv").textContent=e.target.value;
+$("dlg").onclick=e=>{if(e.target===$("dlg"))$("dlg").classList.remove("on")};
+$("test").onclick=async()=>{const old=S.url;S.url=$("url").value;$("tmsg").textContent="A testar…";const ok=await loadModels();$("tmsg").textContent=ok?"✅ Ligado. Modelos: "+[...$("model").options].map(o=>o.value).join(", "):"❌ Sem ligação. Vê os passos em «Como ligar ao meu PC».";if(!ok)S.url=old};
+$("save").onclick=()=>{S.url=$("url").value.trim()||S.url;S.sys=$("sys").value;S.temp=+$("temp").value;save();$("dlg").classList.remove("on");loadModels()};
+render();loadModels().then(ok=>{if(ok===false&&!LS.get("ia-seen",0)){LS.set("ia-seen",1);openCfg()}});
+</script>
+</body>
+</html>
