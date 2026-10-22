@@ -31,7 +31,7 @@
 @font-face{font-family:"Figtree";font-style:normal;font-weight:300 900;font-display:swap;src:url(fonts/figtree.woff2) format("woff2")}
 [hidden]{display:none!important}
 :root{
-  --bg:#13201f; --surface:#1b2d2b; --surface-2:#223835; --line:#2f4744;
+  --bg:#000000; --surface:#1b2d2b; --surface-2:#223835; --line:#2f4744;
   --ink:#eef2ea; --muted:#9fb5af; --title:#f1ece2; --enamel:#f1ece2; --card-ink:#1b2422;
   --accent:#ff8a3d; --accent-ink:#1d130b; --steam:#8fd3c8; --danger:#ff5a4f; --good:#5fd08a;
   --display:"Bowlby One", Impact, "Arial Black", sans-serif;
@@ -193,8 +193,8 @@ html{--hub:#ffd23f}
 .burst{--bgx:color-mix(in srgb,var(--hub) 26%,var(--bg));position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:var(--bgx);transform:translateZ(0)}
 .burst::before{content:"";position:absolute;inset:0;background:repeating-conic-gradient(from 0deg at 50% 58%,rgba(255,255,255,.5) 0 7deg,transparent 7deg 18deg);-webkit-mask:radial-gradient(circle at 50% 58%,#000 0,transparent 75%);mask:radial-gradient(circle at 50% 58%,#000 0,transparent 75%);will-change:transform}
 .burst::after{content:"";position:absolute;inset:0;background-image:var(--dots);background-size:13px 13px;opacity:.7;will-change:transform}
-:root:not([data-pp-theme="light"]) .burst{--bgx:color-mix(in srgb,var(--hub) 12%,var(--bg))}
-:root:not([data-pp-theme="light"]) .burst::before{opacity:.12}
+:root:not([data-pp-theme="light"]) .burst{--bgx:var(--bg)}
+:root:not([data-pp-theme="light"]) .burst::before{opacity:.08}
 @keyframes burstSpin{to{transform:rotate(360deg)}}
 body{background:transparent!important;background-image:none!important}
 html{background:var(--bg)}
@@ -365,7 +365,7 @@ html.sda .game{animation:cardTilt linear both;animation-timeline:view(inline);an
 <div class="isheet" id="iosSheet" hidden><div class="box" role="dialog" aria-modal="true" aria-label="Criar atalho"><h3>Instalar a app</h3><ol><li>Abre este site no Safari.</li><li>Toca no botão Partilhar (o quadrado com a seta para cima).</li><li>Escolhe «Adicionar ao ecrã principal».</li></ol><p class="note" style="margin:0">Fica com um ícone no ecrã inicial, como as outras apps, e abre sem barras do navegador. Também podes fazer isto dentro de cada jogo para teres um atalho só desse jogo.</p><button class="btn" type="button">Percebi</button></div></div>
 <script>
 const tb=document.getElementById("themeBtn");
-function setTheme(t,save){if(t==="light")document.documentElement.dataset.ppTheme="light";else delete document.documentElement.dataset.ppTheme;if(save)try{localStorage.setItem("pp-tema",t)}catch(e){}tb.textContent=t==="light"?"☾":"☀";tb.title=t==="light"?"Tema escuro":"Tema claro";tb.setAttribute("aria-label",tb.title);const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==="light"?"#f4eee3":"#13201f"}
+function setTheme(t,save){if(t==="light")document.documentElement.dataset.ppTheme="light";else delete document.documentElement.dataset.ppTheme;if(save)try{localStorage.setItem("pp-tema",t)}catch(e){}tb.textContent=t==="light"?"☾":"☀";tb.title=t==="light"?"Tema escuro":"Tema claro";tb.setAttribute("aria-label",tb.title);const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==="light"?"#f4eee3":"#000000"}
 setTheme(document.documentElement.dataset.ppTheme==="light"?"light":"dark");
 tb.addEventListener("click",()=>setTheme(document.documentElement.dataset.ppTheme==="light"?"dark":"light",true));
 /* Botão "Instalar app" no menu: aparece sempre (menos quando já está instalada).

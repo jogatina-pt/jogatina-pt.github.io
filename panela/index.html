@@ -34,7 +34,7 @@
 <style>
 /* Layout: mesa de cozinha à noite, tudo num só ecrã — adversários em cima, baralho e registo ao meio, a tua mão em baixo. Tema único escuro. */
 :root{
-  --bg:#13201f; --surface:#1b2d2b; --surface-2:#223835; --line:#2f4744;
+  --bg:#000000; --surface:#1b2d2b; --surface-2:#223835; --line:#2f4744;
   --ink:#eef2ea; --muted:#9fb5af; --enamel:#f1ece2; --card-ink:#1b2422; --title:#f1ece2; --card-line:transparent;
   --flame:#ff8a3d; --steam:#8fd3c8; --danger:#ff5a4f;
   --c-panela:#e5483f; --c-valvula:#3fa79a; --c-passa:#e3a23b; --c-lume:#f06b2d;
@@ -1369,7 +1369,7 @@ function setTheme(t,save){
   if(t==="light")document.documentElement.dataset.ppTheme="light";else delete document.documentElement.dataset.ppTheme;
   if(save)try{localStorage.setItem("pp-tema",t)}catch(e){}
   const tb=$("themeBtn");tb.textContent=t==="light"?"☾":"☀";tb.title=t==="light"?"Tema escuro":"Tema claro";tb.setAttribute("aria-label",t==="light"?"Mudar para tema escuro":"Mudar para tema claro");
-  const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==="light"?"#f4eee3":"#13201f";
+  const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==="light"?"#f4eee3":"#000000";
 }
 /* mini panela: tampa salta, vapor e apito; 5 toques seguidos e rebenta */
 SFX.whistle=()=>{noise(.55,{v:.1,hp:3000,lp:9000});tone(1650,.45,{type:"sine",v:.07,f2:2100,at:.05});tone(1660,.45,{type:"sine",v:.05,f2:2120,at:.05})};

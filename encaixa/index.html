@@ -30,7 +30,7 @@
 @font-face{font-family:"Figtree";font-style:normal;font-weight:300 900;font-display:swap;src:url(../fonts/figtree.woff2) format("woff2")}
 [hidden]{display:none!important}
 :root{
-  --bg:#13201f; --surface:#1b2d2b; --surface-2:#223835; --line:#2f4744;
+  --bg:#000000; --surface:#1b2d2b; --surface-2:#223835; --line:#2f4744;
   --ink:#eef2ea; --muted:#9fb5af; --title:#f1ece2; --enamel:#f1ece2; --card-ink:#1b2422;
   --accent:#ff8a3d; --accent-ink:#1d130b; --steam:#8fd3c8; --danger:#ff5a4f; --good:#5fd08a;
   --display:"Bowlby One", Impact, "Arial Black", sans-serif;
@@ -305,7 +305,7 @@ function tile(col,size,ghost){
 function prerender(){
   BG=document.createElement("canvas");BG.width=cv.width;BG.height=cv.height;const g=BG.getContext("2d");g.scale(dpr,dpr);
   const dark=document.documentElement.dataset.ppTheme!=="light";
-  g.fillStyle=dark?"#13201f":"#f4eee3";g.fillRect(0,0,W,H);
+  g.fillStyle=dark?"#000000":"#f4eee3";g.fillRect(0,0,W,H);
   g.fillStyle="#1d2a44";g.fillRect(0,0,C*COLS,H);
   g.strokeStyle="rgba(255,255,255,.06)";g.lineWidth=1;g.beginPath();for(let x=1;x<COLS;x++){g.moveTo(x*C+.5,0);g.lineTo(x*C+.5,H)}for(let y=1;y<ROWS-HID;y++){g.moveTo(0,y*C+.5);g.lineTo(C*COLS,y*C+.5)}g.stroke();
   g.strokeStyle="#151515";g.lineWidth=3;g.strokeRect(C*COLS+1.5,-2,0,H+4);
