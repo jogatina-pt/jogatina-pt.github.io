@@ -187,7 +187,7 @@ body.playing .stage{position:fixed;inset:0;border:0;border-radius:0;box-shadow:n
 .sets input[type=checkbox]{width:20px;height:20px;box-shadow:none}
 .home2{font-weight:800;font-size:13px;color:#555}
 .mdesc{font-size:12.5px!important;margin:-2px 0 0!important}
-.mtabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;width:100%}
+.mtabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;width:100%}
 .mtab{font:inherit;cursor:pointer;border:3px solid #151515;border-radius:12px;padding:5px 2px;background:#fff;color:#151515;display:flex;flex-direction:column;align-items:center;gap:1px;box-shadow:2px 2px 0 #151515}
 .mtab b{font-family:var(--display);font-weight:400;font-size:17px;letter-spacing:.04em;line-height:1}
 .mtab small{font-size:10.5px;font-weight:800;color:#666}
@@ -387,6 +387,12 @@ function course(x,y,dir,zt,h,ang,pieces){const o=CUR.ox;x+=o;dir*=Math.PI/180;co
 const ahead=(e,d,dx=0)=>{const r=e.dir*Math.PI/180;return[e.x+Math.cos(r)*d-Math.sin(r)*dx,e.y+Math.sin(r)*d+Math.cos(r)*dx]};
 /* plataforma do fim, centrada à frente da última rampa */
 function finishPlat(s,e,gap,top,kill){const [cx,cy]=ahead(e,gap+600);plat(cx-800,cx+800,cy-800,cy+800,top-32,top,"end");s.end=Z(s,cx-800,cx+800,cy-800,cy+800,top-10,top+600);s.kill=kill;s.sign=[cx,cy,top+350]}
+/* várias rampas seguidas: cada parte começa "gap" unidades depois do fim da anterior (e "dx" para o lado) */
+function chain(x,y,dir,parts){let e=null;for(const p of parts){if(e){const [nx,ny]=ahead(e,p.gap||250,p.dx||0);x=nx;y=ny;dir=e.dir}
+    e=course(x,y,dir,p.zt,p.h,p.ang||60,p.pc);
+    if(p.boost){const run=p.h/Math.tan((p.ang||60)*Math.PI/180),[bx,by]=ahead(e,-p.boost);booster(bx,by,p.zt-p.h*.45,e.dir,p.mult||1.3,run+150)}}
+  return e}
+const S_=n=>["S",n],L_=(r,d)=>["C",r,d,1],D_=(r,d)=>["C",r,d,-1];
 /* booster: anel que dá velocidade a quem passa por dentro */
 function booster(x,y,z,dir,mult=1.3,hw=600){const ax=Math.abs(Math.cos(dir*Math.PI/180))<.5;(CUR.boost||(CUR.boost=[])).push({z:ax?Z(CUR,x-hw,x+hw,y-160,y+160,z-hw,z+hw):Z(CUR,x-160,x+160,y-hw,y+hw,z-hw,z+hw),x:x+CUR.ox,y,zz:z,dir,mult,hw})}
 /* Céu (nível 1, como os mapas de principiante): rampas largas e pouco inclinadas, saltos curtos, curvas abertas */
@@ -455,8 +461,44 @@ stage("O grande salto",600000,"#ff4a2a",s=>{
   let e=course(220,64,90,1400,800,58,[["S",2800]]);booster(220,2500,e.zt-400,90,1.25,700);
   e=course(160,3800,90,420,900,58,[["S",1400],["C",1500,90,-1],["S",1200]]);
   finishPlat(s,e,250,-500,-1100)},{dark:1})});
-const MDESC={ceu:"Para começar: rampas largas e pouco inclinadas, saltos curtos e curvas abertas.",neon:"Rampas normais: zigue-zague, uma curva no ar e saltos maiores.",gelo:"Rampas mais inclinadas e estreitas, curvas em S, um salto que pede velocidade e rampas com buracos.",lava:"Rampas muito inclinadas e estreitas, curvas apertadas, boosters e saltos compridos sobre a lava."};
+/* Tempestade (nível 5): rampas a 60° muito estreitas, curvas apertadas seguidas, escadas com buracos e saltos às cegas */
+map("storm","Tempestade","Nível 5","storm",()=>{
+const st0=s=>{plat(-192,192,-512,0,s.z0-32,s.z0,"start");s.spawn=[0,-420,s.z0+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,s.z0-10,s.z0+400)};
+stage("Relâmpago",680000,"#7ce8ff",s=>{s.z0=1500;st0(s);
+  const e=chain(200,64,90,[{zt:1400,h:750,pc:[S_(1400),D_(1300,90),S_(900),L_(1800,90),S_(1200)]},
+    {gap:260,zt:1050,h:750,pc:[S_(800),L_(1800,90),S_(800),D_(1250,90),S_(1000)],boost:450},
+    {gap:700,zt:500,h:850,pc:[S_(1600)]}]);
+  finishPlat(s,e,250,-200,-1000)});
+stage("Escadas partidas",720000,"#b9a8ff",s=>{s.z0=1400;st0(s);
+  const P=[];for(let i=0;i<7;i++)P.push({gap:260,dx:i%2?50:-50,zt:1300-220*i,h:650,pc:[S_(900)]});
+  P.push({gap:260,zt:1300-220*7-60,h:750,pc:[S_(500),D_(1250,120),S_(900)]});
+  const e=chain(200,64,90,P);finishPlat(s,e,250,e.zt-650,e.zt-1300)});
+stage("Salto às cegas",760000,"#5fe0c0",s=>{s.z0=1700;st0(s);
+  const e=chain(200,64,90,[{zt:1600,h:800,pc:[S_(2000)]},{gap:220,zt:1250,h:800,pc:[S_(2000)]},{gap:220,zt:900,h:800,pc:[S_(1800)],boost:450},
+    {gap:1100,zt:250,h:900,pc:[S_(800),D_(1500,90),S_(1200)]}]);
+  finishPlat(s,e,250,-500,-1200)});
+stage("Funil",800000,"#ff8fd0",s=>{s.z0=1600;st0(s);
+  const e=chain(200,64,90,[{zt:1500,h:700,pc:[S_(1000),D_(1100,100),L_(1700,100),D_(1100,100),S_(800)]},
+    {gap:300,zt:1100,h:700,pc:[S_(600),D_(1100,100),L_(1700,100),S_(1200)],boost:450},
+    {gap:900,zt:500,h:800,pc:[S_(1500)]}]);
+  finishPlat(s,e,250,-200,-1000)})});
+/* Abismo (nível 6): mapa linear e comprido, sem checkpoints — se caíres, voltas ao início */
+map("abismo","Abismo","Nível 6","abismo",()=>{
+stage("Abismo",880000,"#c08bff",s=>{s.z0=4300;plat(-192,192,-512,0,s.z0-32,s.z0,"start");s.spawn=[0,-420,s.z0+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,s.z0-10,s.z0+400);s.dyn=1;
+  /* "dx" desvia a rampa seguinte para o lado: ao cair passa-se para a outra face, que fica do lado de fora da curva seguinte */
+  const P=[{zt:4200,h:800,ang:62,pc:[S_(1500),D_(1300,90),S_(600)]},
+    {gap:300,dx:400,zt:3850,h:700,ang:62,pc:[S_(700),L_(1250,180),S_(600)]},
+    {gap:700,zt:3300,h:750,ang:62,pc:[S_(1500)],boost:400}];
+  for(let i=0;i<4;i++)P.push({gap:260,dx:i%2?50:-50,zt:3050-220*i,h:650,ang:62,pc:[S_(800)]});
+  P.push({gap:260,zt:2170,h:750,ang:62,pc:[L_(1100,90),D_(1700,90),L_(1100,90),S_(700)]});
+  P.push({gap:1000,zt:1500,h:800,ang:62,pc:[S_(1800)],boost:450});
+  P.push({gap:300,dx:-400,zt:1150,h:800,ang:62,pc:[D_(1300,180),S_(1000)]});
+  P.push({gap:700,zt:600,h:800,ang:62,pc:[S_(600),D_(1150,90),S_(1400)],boost:400});
+  const e=chain(200,64,90,P);finishPlat(s,e,250,e.zt-650,-1000)})});
+const MDESC={storm:"Mais longo: curvas apertadas seguidas, escadas com buracos, saltos às cegas com boosters. Rampas a 60°, muito estreitas.",abismo:"Linear e comprido, sem checkpoints: se caíres, voltas ao início. Rampas a 62°, tudo o que há nos outros mapas junto.",ceu:"Para começar: rampas largas e pouco inclinadas, saltos curtos e curvas abertas.",neon:"Rampas normais: zigue-zague, uma curva no ar e saltos maiores.",gelo:"Rampas mais inclinadas e estreitas, curvas em S, um salto que pede velocidade e rampas com buracos.",lava:"Rampas muito inclinadas e estreitas, curvas apertadas, boosters e saltos compridos sobre a lava."};
 const THEMES={
+  storm:{sky:[[0,"#0a1016"],[.34,"#1c2a36"],[.47,"#3d5566"],[.5,"#9fd6e0"],[.53,"#24323d"],[1,"#0b1218"]],fog:0x1d2932,far:480,stars:0,sun:["rgba(220,250,255,1)","rgba(160,220,240,.8)","rgba(120,180,220,.3)","rgba(120,180,220,0)"],stripes:0,hemi:[0xd8f0ff,0x1a2630],sea:"#081117",seaLine:"#38e1c8",decor:"shards"},
+  abismo:{sky:[[0,"#000000"],[.36,"#07020f"],[.47,"#2a0b4a"],[.5,"#b14cff"],[.53,"#14051f"],[1,"#000000"]],fog:0x10051c,far:500,stars:1,sun:["rgba(240,220,255,1)","rgba(190,120,255,.9)","rgba(140,60,255,.35)","rgba(140,60,255,0)"],stripes:1,hemi:[0xeedcff,0x1a0a2a],sea:"#050008",seaLine:"#b14cff",decor:"rings"},
   neon:{sky:[[0,"#07031a"],[.32,"#1b0a3d"],[.47,"#7a1f6b"],[.5,"#ff6f7d"],[.53,"#5a1a5e"],[1,"#120624"]],fog:0x2a1446,far:520,stars:.75,sun:["rgba(255,240,200,1)","rgba(255,170,110,1)","rgba(255,90,140,.55)","rgba(255,60,140,0)"],stripes:1,hemi:[0xffe6f4,0x3a1a5a],sea:"#120a2e",decor:"rings"},
   ceu:{sky:[[0,"#2f6fd6"],[.36,"#74b3f5"],[.49,"#d6ecff"],[.5,"#fff3dc"],[.53,"#c4ddf7"],[1,"#9cc0ea"]],fog:0xc4dcf5,far:620,stars:0,sun:["rgba(255,255,245,1)","rgba(255,250,215,1)","rgba(255,240,190,.35)","rgba(255,240,190,0)"],stripes:0,hemi:[0xffffff,0x8fb0d8],sea:"#f2f7ff",decor:"clouds"},
   gelo:{sky:[[0,"#061b33"],[.35,"#174a7a"],[.48,"#6fb7d9"],[.5,"#e6fbff"],[.53,"#2b5f85"],[1,"#0a2440"]],fog:0x4f84ad,far:560,stars:.45,sun:["rgba(240,255,255,1)","rgba(190,240,255,1)","rgba(120,210,255,.4)","rgba(120,210,255,0)"],stripes:0,hemi:[0xe8fbff,0x2a4a6a],sea:"#0b2a45",decor:"shards"},
@@ -476,7 +518,7 @@ function zones(){
   const P=G.P,s=STAGES[G.si];
   if(!G.stRun&&!inZone(P.p,s.start)){G.stRun=true;if(!G.running){G.running=true;G.time=0}}
   if(G.running)G.time+=TICK;if(G.stRun)G.stT+=TICK;
-  if(P.p[2]<s.kill){G.falls++;sfx("fall");spawn(false);msg("Caíste! De volta ao início do stage",1.2);return}
+  if(P.p[2]<(s.dyn?localKill(s,P.p):s.kill)){G.falls++;sfx("fall");spawn(false);msg("Caíste! De volta ao início do stage",1.2);return}
   if(s.boost)for(const b of s.boost){const inb=inZone(P.p,b.z);if(inb&&!b.on){const v=P.v,hs=Math.hypot(v[0],v[1]);if(hs>50){const k=Math.min(b.mult,MAXVEL/hs);v[0]*=k;v[1]*=k}sfx("boost");msg("Booster! 🚀",.8)}b.on=inb}
   if(inZone(P.p,s.end)){
     const t=G.stT,k=bk("s"+G.si),old=BEST[k];G.splits.push(t);
@@ -487,6 +529,9 @@ function zones(){
     else finish();
   }
 }
+/* nos mapas compridos, cair "abaixo da rampa onde se está" já conta como queda (não é preciso ir até ao fundo) */
+function localKill(s,p){if(!s.kb)s.kb=s.vis.filter(v=>v.pts).map(v=>{const xs=v.pts.map(q=>q[0]),ys=v.pts.map(q=>q[1]);return[Math.min(...xs)-v.run-1600,Math.max(...xs)+v.run+1600,Math.min(...ys)-v.run-1600,Math.max(...ys)+v.run+1600,v.zb]});
+  let z=Infinity;for(const b of s.kb)if(p[0]>b[0]&&p[0]<b[1]&&p[1]>b[2]&&p[1]<b[3])z=Math.min(z,b[4]);return z===Infinity?s.kill:z-450}
 function finish(){G.state="done";const run=G.mode==="run",tot=run?G.time:G.stT,rk=bk("run");
   let rec=false;if(run){if(BEST[rk]==null||tot<BEST[rk]){BEST[rk]=tot;rec=true;store.set("surf-best",JSON.stringify(BEST))}}else rec=BEST[bk("s"+G.si)]===tot;
   if(document.pointerLockElement)document.exitPointerLock();
