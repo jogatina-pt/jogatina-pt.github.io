@@ -200,7 +200,8 @@ body.touch .tctl{display:flex}
 .tb.small{width:52px;height:52px;font-size:20px;border-radius:14px}
 .tb.on{background:#ffd23f;transform:translate(2px,2px);box-shadow:1px 1px 0 #151515}
 .rot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;background:#fffaf1;color:#151515;border:3px solid #151515;border-radius:16px;padding:10px 14px;font-weight:900;box-shadow:4px 4px 0 #151515;pointer-events:none;text-align:center}
-.rot[hidden]{display:none}
+.rot[hidden]{display:none}.rot{transition:opacity .45s;max-width:calc(100% - 40px)}.rot.out{opacity:0}.rot small{font-weight:700;color:#555}
+@media (orientation:portrait){.htop{left:12px;right:112px;justify-content:flex-start;gap:8px}.htop b{min-width:0;font-size:26px}.htop span{white-space:nowrap}.hspeed{bottom:auto;top:calc(max(8px,env(safe-area-inset-top,0px)) + 50px)}.hspeed b{font-size:34px}.hmsg{top:120px}}
 .foot{flex:none;margin:0;text-align:center;font-size:12px}
 @media (max-width:380px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:26px}.brand a.home{font-size:0}.brand a.home::before{content:"← menu";font-size:12px}}
 @media (max-height:500px){.panel{width:min(640px,100%);gap:7px;padding:10px 14px}.stgs{grid-template-columns:repeat(4,minmax(0,1fr))}.panel h2{font-size:34px}.foot{display:none}.tb{width:56px;height:56px}.tb.small{width:46px;height:46px}.hspeed b{font-size:36px}}
@@ -227,7 +228,7 @@ body.touch .tctl{display:flex}
       <div class="tctl"><div class="row"><button class="tb small" type="button" data-k="j" aria-label="Saltar">⤒</button><button class="tb small" type="button" data-k="w" aria-label="Andar">▲</button></div>
         <div class="row"><button class="tb" id="tA" type="button" data-k="a" aria-label="Strafe à esquerda">◀</button><button class="tb" id="tD" type="button" data-k="d" aria-label="Strafe à direita">▶</button></div></div>
     </div>
-    <div class="rot" id="rotHint" hidden>📱↻ Roda o telemóvel<br><small>joga-se melhor deitado</small></div>
+    <div class="rot" id="rotHint" hidden>📱↻ Dica: na horizontal vês mais da rampa<br><small>mas podes jogar assim, como preferires</small></div>
     <div class="ov" id="ov"></div>
   </main>
   <p class="foot">Arrasta para rodar, ◀ ▶ para o strafe. No computador: rato, W A S D e Espaço.</p>
@@ -445,13 +446,16 @@ STAGES.forEach((s,si)=>{const col=s.col,mat=new THREE.MeshLambertMaterial({map:r
 /* ---------- desenhar ---------- */
 let W=0,H=0;
 function layout(){const r=stageEl.getBoundingClientRect();W=Math.max(200,r.width);H=Math.max(200,r.height);renderer.setPixelRatio(Math.min(1.75,window.devicePixelRatio||1));renderer.setSize(W,H,false);camera.aspect=W/H;
-  $("rotHint").hidden=!(TOUCH&&H>W&&G&&G.state==="play")}
+  const port=innerHeight>innerWidth;if(port!==layout.port){layout.port=port;if(port)rotTip();else hideTip()}}
+/* dica para rodar: aparece uns segundos quando se joga na vertical (pode-se jogar das duas maneiras) */
+let tipT=0;function rotTip(){if(!TOUCH||!G||G.state!=="play"||innerHeight<=innerWidth)return;const el=$("rotHint");el.hidden=false;el.classList.remove("out");clearTimeout(tipT);tipT=setTimeout(()=>{el.classList.add("out");tipT=setTimeout(()=>{el.hidden=true},500)},3800)}
+function hideTip(){clearTimeout(tipT);$("rotHint").hidden=true}
 const BG=new THREE.Color(0x07031a);scene.background=BG;
 function draw(alpha){
   if(G){const P=G.P,a=alpha;const x=P.prev[0]+(P.p[0]-P.prev[0])*a,y=P.prev[1]+(P.p[1]-P.prev[1])*a,z=P.prev[2]+(P.p[2]-P.prev[2])*a+EYE;
     camera.position.set(x*SC,z*SC,-y*SC);camera.rotation.y=P.yaw-Math.PI/2;camera.rotation.x=-P.pitch;
     const sp=Math.hypot(P.v[0],P.v[1]);const hf=SET.fov+Math.min(14,sp/180);/* campo de visão horizontal */
-    const vf=2*Math.atan(Math.tan(hf*Math.PI/360)/camera.aspect)*180/Math.PI;const nf=Math.min(105,Math.max(55,vf));if(Math.abs(camera.fov-nf)>.05){camera.fov+=(nf-camera.fov)*.15;camera.updateProjectionMatrix()}
+    const vf=2*Math.atan(Math.tan(hf*Math.PI/360)/camera.aspect)*180/Math.PI;const nf=Math.min(camera.aspect<1?118:105,Math.max(55,vf));if(Math.abs(camera.fov-nf)>.05){camera.fov+=(nf-camera.fov)*.15;camera.updateProjectionMatrix()}
     window.__sky.position.copy(camera.position);}
   const t=performance.now()/1000;ZONEM.forEach((m,i)=>m.material.opacity=.08+.05*Math.sin(t*3+i));
   if(!window.__norender)renderer.render(scene,camera)}
@@ -479,7 +483,7 @@ function menu(){G=null;document.body.classList.remove("playing");$("hud").hidden
    <a class="home2" href="../">← mais jogos</a></div>`);
   $("sAssist").onchange=e=>{SET.assist=e.target.checked;saveSet()};$("sSens").oninput=e=>{if(TOUCH)SET.sens=+e.target.value;else SET.msens=+e.target.value;saveSet()}}
 function start(mode){unlock();ov.hidden=true;newGame(mode);$("hud").hidden=false;document.body.classList.add("playing");keepAwake(true);setTimeout(layout,30);
-  if(TOUCH){try{if(window.JFS&&JFS.can&&!JFS.isFs())JFS.enter().then(()=>JFS.lockOr&&JFS.lockOr("landscape").catch(()=>{}))}catch(e){}}else lockMouse()}
+  if(TOUCH){try{if(window.JFS&&JFS.can&&!JFS.isFs())JFS.enter()}catch(e){}setTimeout(rotTip,350)}else lockMouse()}
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a;
   if(a==="run")start("run");else if(a==="st")start(+b.dataset.i);else if(a==="again")start(G?G.mode:"run");else if(a==="menu")menu();else if(a==="resume")resume()});
 function pause(){if(!G||G.state!=="play")return;G.state="pause";IN.w=IN.s=IN.a=IN.d=IN.j=0;
