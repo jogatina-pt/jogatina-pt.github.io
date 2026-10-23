@@ -389,7 +389,7 @@ function course(x,y,dir,zt,h,ang,pieces){const o=CUR.ox;x+=o;dir*=Math.PI/180;co
 /* ponto à frente do fim de uma rampa (para a próxima começar depois de um salto) */
 const ahead=(e,d,dx=0)=>{const r=e.dir*Math.PI/180;return[e.x+Math.cos(r)*d-Math.sin(r)*dx,e.y+Math.sin(r)*d+Math.cos(r)*dx]};
 /* plataforma do fim, centrada à frente da última rampa */
-function finishPlat(s,e,gap,top,kill){const [cx,cy]=ahead(e,gap+600);plat(cx-800,cx+800,cy-800,cy+800,top-32,top,"end");s.end=Z(s,cx-800,cx+800,cy-800,cy+800,top-10,top+600);s.kill=kill;s.sign=[cx,cy,top+350]}
+function finishPlat(s,e,gap,top,kill,hw=800){const [cx,cy]=ahead(e,hw>800?gap+hw:gap+600);plat(cx-hw,cx+hw,cy-hw,cy+hw,top-32,top,"end");s.end=Z(s,cx-hw,cx+hw,cy-hw,cy+hw,top-10,top+600);s.kill=kill;s.sign=[cx,cy,top+350]}
 /* várias rampas seguidas: cada parte começa "gap" unidades depois do fim da anterior (e "dx" para o lado) */
 function chain(x,y,dir,parts){let e=null;for(const p of parts){if(e){const [nx,ny]=ahead(e,p.gap||250,p.dx||0);x=nx;y=ny;dir=e.dir}
     e=course(x,y,dir,p.zt,p.h,p.ang||60,p.pc);
@@ -408,7 +408,7 @@ function long(name,ox,col,h,ang,parts,o){stage(name,ox,col,s=>{
   const dr=parts.map((p,i)=>i?(p.drop!=null?p.drop:Math.round(100+(p.gap||260)*.6)):0),tot=dr.reduce((a,b)=>a+b,0);
   s.z0=tot+700;st0(s);s.dyn=1;let zt=s.z0-100;
   const P=parts.map((p,i)=>{zt-=dr[i];return Object.assign({h,ang},p,{zt})});
-  const e=chain(200,64,90,P);finishPlat(s,e,250,e.zt-650,-1000);if(o&&o.room)room(s)},o)}
+  const e=chain(200,64,90,P);finishPlat(s,e,250,e.zt-650,-1000,o&&o.room?2400:800);if(o&&o.room)room(s)},o)}
 /* sala fechada à volta do percurso (paredes e teto com colisão): ambiente de espaço fechado */
 function room(s){const ox=s.ox,C=s.vis.filter(v=>v.t==="course");let x0=-192+ox,x1=192+ox,y0=-512,y1=0,zt=-1e9,run=0;
   for(const c of C){run=Math.max(run,c.run);zt=Math.max(zt,c.zt);for(const p of c.pts){x0=Math.min(x0,p[0]);x1=Math.max(x1,p[0]);y0=Math.min(y0,p[1]);y1=Math.max(y1,p[1])}}
@@ -497,15 +497,23 @@ long("Escadaria do gigante",580000,"#ffd36b",800,60,(()=>{const a=[RP([S_(2400),
   a.push(RP([S_(900),D_(1500,90),S_(500),L_(1500,90),S_(900)],{gap:300}),JP([S_(2400)],{gap:1900,boost:500,mult:1.5}),
     RP([S_(1000),D_(1500,180),S_(800)],{gap:400,dx:-300}),JP([S_(2400)],{gap:2000,boost:500,mult:1.5}),RP([S_(2200)],{gap:400}));return a})())});
 /* Betão (nível 8): ambiente claro de betão com riscas laranja, rampas compridas e curvas encadeadas — inspirado no estilo dos mapas de surf de CS (mapa original) */
-map("betao","Betão","Nível 8","betao",()=>{
+map("betao","Betão","Nível 7","betao",()=>{
 long("Corredor de betão",700000,"#c9bcc8",800,56,[
   RP([S_(2400),L_(2000,90),S_(1200)],{boost:450}),RP([S_(1800),D_(2000,90),S_(900)],{gap:300,boost:450,mult:1.4}),
   JP([S_(2200)],{gap:900}),RP([S_(1200),L_(1800,90),D_(1800,90),S_(1000)],{gap:300,boost:450,mult:1.4}),
   JP([S_(2400)],{gap:1100}),RP([S_(1000),D_(1800,120),S_(700),L_(1800,120),S_(900)],{gap:300,boost:450,mult:1.5}),
   JP([S_(2400)],{gap:1300}),RP([S_(1400),L_(1900,90),S_(900)],{gap:300,dx:-200,boost:500,mult:1.5}),
   JP([S_(2600)],{gap:1500}),RP([S_(2000)],{gap:400})],{room:1,flat:1})});
+/* Salão (nível 8): sala fechada com rampas enormes e rápidas, curvas muito largas e saltos compridos (percurso original) */
+map("salao","Salão","Nível 8","betao",()=>{
+long("Salão vermelho",760000,"#c9bcc8",1200,54,[
+  RP([S_(3500),L_(3000,90),S_(2000)],{boost:600,mult:1.5}),RP([S_(3000),D_(3000,90),S_(1500)],{gap:300,boost:600,mult:1.5}),
+  JP([S_(4000)],{gap:1200}),RP([S_(1500),L_(3000,60),D_(3000,60),S_(2000)],{gap:300,boost:600,mult:1.5}),
+  JP([S_(4000)],{gap:1600}),RP([S_(2000),D_(3000,90),L_(3000,90),S_(1500)],{gap:300,boost:600,mult:1.5}),
+  JP([S_(4000)],{gap:2000}),RP([S_(2500),L_(3500,120),S_(2000)],{gap:300,boost:700,mult:1.5}),
+  JP([S_(4500)],{gap:2400}),RP([S_(3000)],{gap:400})],{room:1,flat:1})});
 /* Pesadelo (nível 7): rampas a 62°, curvas apertadas seguidas e saltos quase impossíveis; só para quem já domina */
-map("pesadelo","Pesadelo","Nível 7","abismo",()=>{
+map("pesadelo","Pesadelo","Nível 9","abismo",()=>{
 long("Sem perdão",640000,"#ff6bd6",750,62,[
   RP([S_(2200),D_(1300,90),S_(500),L_(1300,90),S_(1400)],{boost:500,mult:1.6}),JP([S_(1800)],{gap:1200,boost:450,mult:1.5}),
   RP([S_(700),L_(1300,100),D_(1300,100),L_(1300,100),S_(700)],{gap:300,drop:260}),JP([S_(1800)],{gap:1800,dx:150,boost:500,mult:1.6}),
@@ -513,7 +521,7 @@ long("Sem perdão",640000,"#ff6bd6",750,62,[
   RP([S_(800),L_(1250,180),S_(600)],{gap:300,dx:350,drop:300}),JP([S_(2000)],{gap:1900,boost:500,mult:1.6}),
   RP([S_(600),D_(1250,90),L_(1250,90),D_(1250,90),S_(600)],{gap:300,drop:260}),JP([S_(2200)],{gap:2000,dx:-150,boost:500,mult:1.6}),
   JP([S_(1500)],{gap:1700,boost:500,mult:1.5}),RP([S_(2000)],{gap:400})])});
-const MDESC={ceu:"Pequeno, para aprenderes: rampas largas e pouco inclinadas, saltos curtos e uma curva aberta.",neon:"Rampas normais mas já compridas: curvas largas, um zigue-zague a sério e saltos cada vez maiores.",gelo:"Rampas mais inclinadas e estreitas: serpentinas, saltos que pedem velocidade e uma sequência de rampas com buracos.",lava:"Rampas muito inclinadas e estreitas: curvas apertadas, boosters, pontes estreitas e saltos compridos sobre a lava.",storm:"Dois stages compridos: curvas apertadas seguidas, escadas partidas, saltos às cegas e um funil. Rampas a 60°.",colosso:"Estilo CS: saltos enormes entre rampas altas, boosters e curvas encadeadas. Precisas de velocidade para chegar ao outro lado.",pesadelo:"Só para quem domina: rampas a 62°, curvas apertadas seguidas e saltos quase impossíveis.",betao:"Espaço fechado: uma sala enorme de betão com riscas laranja, rampas compridas, curvas encadeadas e saltos grandes. Mapa original, inspirado no estilo dos mapas de surf de CS.",abismo:"O mais comprido: um só percurso, sem checkpoints; se caíres, voltas ao início. Rampas a 62° e tudo o que há nos outros mapas junto."};
+const MDESC={ceu:"Pequeno, para aprenderes: rampas largas e pouco inclinadas, saltos curtos e uma curva aberta.",neon:"Rampas normais mas já compridas: curvas largas, um zigue-zague a sério e saltos cada vez maiores.",gelo:"Rampas mais inclinadas e estreitas: serpentinas, saltos que pedem velocidade e uma sequência de rampas com buracos.",lava:"Rampas muito inclinadas e estreitas: curvas apertadas, boosters, pontes estreitas e saltos compridos sobre a lava.",storm:"Dois stages compridos: curvas apertadas seguidas, escadas partidas, saltos às cegas e um funil. Rampas a 60°.",colosso:"Estilo CS: saltos enormes entre rampas altas, boosters e curvas encadeadas. Precisas de velocidade para chegar ao outro lado.",pesadelo:"Só para quem domina: rampas a 62°, curvas apertadas seguidas e saltos quase impossíveis.",salao:"Sala fechada com rampas enormes e rápidas: curvas muito largas e saltos compridos entre elas. Percurso original, no estilo dos mapas de surf de CS.",betao:"Espaço fechado: uma sala enorme de betão com riscas laranja, rampas compridas, curvas encadeadas e saltos grandes. Mapa original, inspirado no estilo dos mapas de surf de CS.",abismo:"O mais comprido: um só percurso, sem checkpoints; se caíres, voltas ao início. Rampas a 62° e tudo o que há nos outros mapas junto."};
 const THEMES={
   betao:{sky:[[0,"#5d89b8"],[.36,"#9fc0dc"],[.49,"#e4dcd2"],[.5,"#fff0dc"],[.53,"#bfae9f"],[1,"#8b7b70"]],fog:0xa38fa2,far:560,stars:0,sun:["rgba(255,250,235,1)","rgba(255,225,180,.9)","rgba(255,170,100,.35)","rgba(255,150,80,0)"],stripes:1,hemi:[0xfff2e4,0x8a7c70],sea:"#a79686",seaLine:"#ff7a2a",decor:"shards"},
   storm:{sky:[[0,"#0a1016"],[.34,"#1c2a36"],[.47,"#3d5566"],[.5,"#9fd6e0"],[.53,"#24323d"],[1,"#0b1218"]],fog:0x1d2932,far:480,stars:0,sun:["rgba(220,250,255,1)","rgba(160,220,240,.8)","rgba(120,180,220,.3)","rgba(120,180,220,0)"],stripes:0,hemi:[0xd8f0ff,0x1a2630],sea:"#081117",seaLine:"#38e1c8",decor:"shards"},
