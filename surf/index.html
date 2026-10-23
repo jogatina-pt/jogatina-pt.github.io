@@ -301,25 +301,28 @@ function trace(sx,sy,sz,ex,ey,ez){
   TR.frac=frac;TR.n=hn;TR.start=start;TR.all=all;TR.end[0]=sx+(ex-sx)*frac;TR.end[1]=sy+(ey-sy)*frac;TR.end[2]=sz+(ez-sz)*frac;return TR}
 const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
 function clip(i,n,o){const bo=dot(i,n);o[0]=i[0]-n[0]*bo;o[1]=i[1]-n[1]*bo;o[2]=i[2]-n[2]*bo;const ad=dot(o,n);if(ad<0){o[0]-=n[0]*ad;o[1]-=n[1]*ad;o[2]-=n[2]*ad}}
+const ZC={};const zero=(v,w)=>{v[0]=v[1]=v[2]=0;ZC[w]=(ZC[w]||0)+1};
 function tryMove(P){
   const v=P.v,p=P.p;let time=TICK;const planes=[];let ov=v.slice();const pv=v.slice();
   for(let bump=0;bump<4;bump++){
     if(!v[0]&&!v[1]&&!v[2])break;
     const t=trace(p[0],p[1],p[2],p[0]+v[0]*time,p[1]+v[1]*time,p[2]+v[2]*time);
-    if(t.all){v[0]=v[1]=v[2]=0;P.stuck=true;return}
+    if(t.all){ZC.all=(ZC.all||0)+1;P.stuck=true;return}
     if(t.frac>0){p[0]=t.end[0];p[1]=t.end[1];p[2]=t.end[2];ov=v.slice();planes.length=0}
     if(t.frac===1)break;
     const n=t.n;if(n[2]<.7&&n[2]>.05){P.rampN=n;P.rampT=P.ticks}
     if(Math.abs(n[2])<.05||n[2]>=.7){const hit=-dot(v,n);if(hit>350)P.bonk=Math.max(P.bonk||0,hit)}
     time-=time*t.frac;
-    if(planes.length>=5){v[0]=v[1]=v[2]=0;break}
+    if(planes.length>=5){zero(v,'p5');break}
     planes.push(n);
     if(planes.length===1&&!P.ground){clip(ov,n,v);ov=v.slice()}
     else{
-      let i;for(i=0;i<planes.length;i++){clip(ov,planes[i],v);let j;for(j=0;j<planes.length;j++)if(j!==i&&dot(v,planes[j])<0)break;if(j===planes.length)break}
-      if(i===planes.length){if(planes.length!==2){v[0]=v[1]=v[2]=0;break}
-        const a=planes[0],b=planes[1],d=[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],l=Math.hypot(...d)||1,s=dot(d,v)/l;v[0]=d[0]/l*s;v[1]=d[1]/l*s;v[2]=d[2]/l*s}
-      if(dot(v,pv)<=0){v[0]=v[1]=v[2]=0;break}
+      let i;for(i=0;i<planes.length;i++){clip(ov,planes[i],v);let j;for(j=0;j<planes.length;j++)if(j!==i&&dot(v,planes[j])<-.5)break;if(j===planes.length)break}
+      if(i===planes.length){if(planes.length!==2){zero(v,'n3');break}
+        const a=planes[0],b=planes[1],d=[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],l=Math.hypot(...d);
+        if(l<.02){clip(ov,b,v)} /* planos quase iguais (junta entre dois troços da rampa): não dá para cruzar, só deslizar no último */
+        else{const s=dot(d,v)/l;v[0]=d[0]/l*s;v[1]=d[1]/l*s;v[2]=d[2]/l*s}}
+      if(dot(v,pv)<=0){zero(v,'rev');break}
     }
   }
 }
@@ -398,6 +401,7 @@ function booster(x,y,z,dir,mult=1.3,hw=600){const ax=Math.abs(Math.cos(dir*Math.
 /* ---------- mapas ---------- */
 const st0=s=>{plat(-192,192,-512,0,s.z0-32,s.z0,"start");s.spawn=[0,-420,s.z0+HZ+.5];s.yaw=Math.PI/2;s.start=Z(s,-192,192,-512,0,s.z0-10,s.z0+400)};
 const RP=(pc,o)=>Object.assign({pc},o||{});
+const JP=(pc,o)=>RP(pc,Object.assign({drop:Math.round(150+o.gap*.85)},o));
 const MIR=a=>a.map(p=>Object.assign({},p,{pc:p.pc.map(c=>c[0]==="C"?["C",c[1],c[2],-c[3]]:c),dx:-(p.dx||0)}));
 /* stage comprido: as rampas descem sozinhas (altura calculada pelo "gap", ou pelo "drop"); sem chão: se caíres sem apanhar outra rampa, voltas ao início */
 function long(name,ox,col,h,ang,parts,o){stage(name,ox,col,s=>{
@@ -473,7 +477,29 @@ A.push(RP([L_(1100,90),D_(1700,90),L_(1100,90),S_(700)],{gap:260,drop:220,h:750}
 const link=p=>Object.assign({},p,{gap:700,drop:550,dx:0});
 const AM=MIR(A);AM[0]=link(AM[0]);const A3=A.map(p=>Object.assign({},p));A3[0]=link(A3[0]);
 long("Abismo",460000,"#c08bff",800,62,[...A,...AM,...A3])});
-const MDESC={ceu:"Pequeno, para aprenderes: rampas largas e pouco inclinadas, saltos curtos e uma curva aberta.",neon:"Rampas normais mas já compridas: curvas largas, um zigue-zague a sério e saltos cada vez maiores.",gelo:"Rampas mais inclinadas e estreitas: serpentinas, saltos que pedem velocidade e uma sequência de rampas com buracos.",lava:"Rampas muito inclinadas e estreitas: curvas apertadas, boosters, pontes estreitas e saltos compridos sobre a lava.",storm:"Dois stages compridos: curvas apertadas seguidas, escadas partidas, saltos às cegas e um funil. Rampas a 60°.",abismo:"O mais comprido: um só percurso, sem checkpoints; se caíres, voltas ao início. Rampas a 62° e tudo o que há nos outros mapas junto."};
+/* Colosso (nível 6): estilo mapas de CS — rampas altas e estreitas, saltos enormes entre elas e curvas encadeadas */
+map("colosso","Colosso","Nível 6","gelo",()=>{
+long("Grandes saltos",520000,"#8ad7ff",800,60,[
+  RP([S_(2200),D_(1800,90),S_(1200)],{boost:500,mult:1.5}),JP([S_(2000)],{gap:1500,boost:450,mult:1.4}),
+  RP([S_(1200),L_(1700,90),S_(800),D_(1700,90),S_(1000)],{gap:300}),JP([S_(2400)],{gap:1700,boost:500,mult:1.5}),
+  RP([S_(1000),D_(1600,90),L_(1600,90),S_(800)],{gap:300}),JP([S_(2200)],{gap:1300,boost:450,mult:1.4}),
+  RP([S_(1600),L_(1700,90),S_(1000)],{gap:300,dx:-200}),JP([S_(2400)],{gap:2000,boost:500,mult:1.5}),
+  RP([S_(900),D_(1500,90),S_(600),L_(1500,90),S_(900)],{gap:300}),JP([S_(2200)],{gap:1600,boost:450,mult:1.4}),
+  JP([S_(2400)],{gap:2200,dx:200,boost:500,mult:1.5}),RP([S_(2000)],{gap:400})]);
+long("Escadaria do gigante",580000,"#ffd36b",800,60,(()=>{const a=[RP([S_(2400),L_(1700,90),S_(900)],{boost:450,mult:1.5})];
+  for(let i=0;i<6;i++)a.push(RP([S_(1500)],{gap:900+i*180,dx:i%2?-300:300,boost:450,mult:1.4}));
+  a.push(RP([S_(900),D_(1500,90),S_(500),L_(1500,90),S_(900)],{gap:300}),JP([S_(2400)],{gap:1900,boost:500,mult:1.5}),
+    RP([S_(1000),D_(1500,180),S_(800)],{gap:400,dx:-300}),JP([S_(2400)],{gap:2000,boost:500,mult:1.5}),RP([S_(2200)],{gap:400}));return a})())});
+/* Pesadelo (nível 7): rampas a 62°, curvas apertadas seguidas e saltos quase impossíveis; só para quem já domina */
+map("pesadelo","Pesadelo","Nível 7","abismo",()=>{
+long("Sem perdão",640000,"#ff6bd6",750,62,[
+  RP([S_(2200),D_(1300,90),S_(500),L_(1300,90),S_(1400)],{boost:500,mult:1.6}),JP([S_(1800)],{gap:1200,boost:450,mult:1.5}),
+  RP([S_(700),L_(1300,100),D_(1300,100),L_(1300,100),S_(700)],{gap:300,drop:260}),JP([S_(1800)],{gap:1800,dx:150,boost:500,mult:1.6}),
+  RP([S_(600),D_(1250,120),S_(400),L_(1250,120),S_(600)],{gap:300,drop:260}),JP([S_(1800)],{gap:1300,boost:500,mult:1.6}),
+  RP([S_(800),L_(1250,180),S_(600)],{gap:300,dx:350,drop:300}),JP([S_(2000)],{gap:1900,boost:500,mult:1.6}),
+  RP([S_(600),D_(1250,90),L_(1250,90),D_(1250,90),S_(600)],{gap:300,drop:260}),JP([S_(2200)],{gap:2000,dx:-150,boost:500,mult:1.6}),
+  JP([S_(1500)],{gap:1700,boost:500,mult:1.5}),RP([S_(2000)],{gap:400})])});
+const MDESC={ceu:"Pequeno, para aprenderes: rampas largas e pouco inclinadas, saltos curtos e uma curva aberta.",neon:"Rampas normais mas já compridas: curvas largas, um zigue-zague a sério e saltos cada vez maiores.",gelo:"Rampas mais inclinadas e estreitas: serpentinas, saltos que pedem velocidade e uma sequência de rampas com buracos.",lava:"Rampas muito inclinadas e estreitas: curvas apertadas, boosters, pontes estreitas e saltos compridos sobre a lava.",storm:"Dois stages compridos: curvas apertadas seguidas, escadas partidas, saltos às cegas e um funil. Rampas a 60°.",colosso:"Estilo CS: saltos enormes entre rampas altas, boosters e curvas encadeadas. Precisas de velocidade para chegar ao outro lado.",pesadelo:"Só para quem domina: rampas a 62°, curvas apertadas seguidas e saltos quase impossíveis.",abismo:"O mais comprido: um só percurso, sem checkpoints; se caíres, voltas ao início. Rampas a 62° e tudo o que há nos outros mapas junto."};
 const THEMES={
   storm:{sky:[[0,"#0a1016"],[.34,"#1c2a36"],[.47,"#3d5566"],[.5,"#9fd6e0"],[.53,"#24323d"],[1,"#0b1218"]],fog:0x1d2932,far:480,stars:0,sun:["rgba(220,250,255,1)","rgba(160,220,240,.8)","rgba(120,180,220,.3)","rgba(120,180,220,0)"],stripes:0,hemi:[0xd8f0ff,0x1a2630],sea:"#081117",seaLine:"#38e1c8",decor:"shards"},
   abismo:{sky:[[0,"#000000"],[.36,"#07020f"],[.47,"#2a0b4a"],[.5,"#b14cff"],[.53,"#14051f"],[1,"#000000"]],fog:0x10051c,far:500,stars:1,sun:["rgba(240,220,255,1)","rgba(190,120,255,.9)","rgba(140,60,255,.35)","rgba(140,60,255,0)"],stripes:1,hemi:[0xeedcff,0x1a0a2a],sea:"#050008",seaLine:"#b14cff",decor:"rings"},
@@ -704,7 +730,7 @@ function loop(t){const dt=Math.min(.1,(t-last)/1000||0);last=t;
   if(msgT>0){msgT-=dt;if(msgT<=0)$("hMsg").hidden=true}
   draw(G&&G.state==="play"?Math.min(1,G.acc/TICK):1);hud();windUpd();requestAnimationFrame(loop)}
 document.body.classList.toggle("touch",TOUCH);
-window.SURF={get G(){return G},IN,SET,get STAGES(){return STAGES},MAPS,setMap(i){MI=i},tick,start,trace,BRUSH};
+window.SURF={ZC,get G(){return G},IN,SET,get STAGES(){return STAGES},MAPS,setMap(i){MI=i},tick,start,trace,BRUSH};
 window.addEventListener("resize",()=>{clearTimeout(window.__rz);window.__rz=setTimeout(layout,60)});
 /* vista de fundo no menu: câmara a passear pelo stage 1 */
 function menuCam(){const s=STAGES[0];camera.rotation.set(0,0,0);camera.position.copy(V3(s.ox+s.spawn[0]-900,s.spawn[1]+300,s.spawn[2]+300));camera.lookAt(V3(s.ox,4000,s.spawn[2]-400));SKY.position.copy(camera.position)}
