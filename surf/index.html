@@ -498,7 +498,7 @@ long("Escadaria do gigante",580000,"#ffd36b",800,60,(()=>{const a=[RP([S_(2400),
     RP([S_(1000),D_(1500,180),S_(800)],{gap:400,dx:-300}),JP([S_(2400)],{gap:2000,boost:500,mult:1.5}),RP([S_(2200)],{gap:400}));return a})())});
 /* Betão (nível 8): ambiente claro de betão com riscas laranja, rampas compridas e curvas encadeadas — inspirado no estilo dos mapas de surf de CS (mapa original) */
 map("betao","Betão","Nível 8","betao",()=>{
-long("Corredor de betão",700000,"#c9ced8",800,56,[
+long("Corredor de betão",700000,"#c9bcc8",800,56,[
   RP([S_(2400),L_(2000,90),S_(1200)],{boost:450}),RP([S_(1800),D_(2000,90),S_(900)],{gap:300,boost:450,mult:1.4}),
   JP([S_(2200)],{gap:900}),RP([S_(1200),L_(1800,90),D_(1800,90),S_(1000)],{gap:300,boost:450,mult:1.4}),
   JP([S_(2400)],{gap:1100}),RP([S_(1000),D_(1800,120),S_(700),L_(1800,120),S_(900)],{gap:300,boost:450,mult:1.5}),
@@ -515,7 +515,7 @@ long("Sem perdão",640000,"#ff6bd6",750,62,[
   JP([S_(1500)],{gap:1700,boost:500,mult:1.5}),RP([S_(2000)],{gap:400})])});
 const MDESC={ceu:"Pequeno, para aprenderes: rampas largas e pouco inclinadas, saltos curtos e uma curva aberta.",neon:"Rampas normais mas já compridas: curvas largas, um zigue-zague a sério e saltos cada vez maiores.",gelo:"Rampas mais inclinadas e estreitas: serpentinas, saltos que pedem velocidade e uma sequência de rampas com buracos.",lava:"Rampas muito inclinadas e estreitas: curvas apertadas, boosters, pontes estreitas e saltos compridos sobre a lava.",storm:"Dois stages compridos: curvas apertadas seguidas, escadas partidas, saltos às cegas e um funil. Rampas a 60°.",colosso:"Estilo CS: saltos enormes entre rampas altas, boosters e curvas encadeadas. Precisas de velocidade para chegar ao outro lado.",pesadelo:"Só para quem domina: rampas a 62°, curvas apertadas seguidas e saltos quase impossíveis.",betao:"Espaço fechado: uma sala enorme de betão com riscas laranja, rampas compridas, curvas encadeadas e saltos grandes. Mapa original, inspirado no estilo dos mapas de surf de CS.",abismo:"O mais comprido: um só percurso, sem checkpoints; se caíres, voltas ao início. Rampas a 62° e tudo o que há nos outros mapas junto."};
 const THEMES={
-  betao:{sky:[[0,"#5d89b8"],[.36,"#9fc0dc"],[.49,"#e4dcd2"],[.5,"#fff0dc"],[.53,"#bfae9f"],[1,"#8b7b70"]],fog:0x7f94b0,far:520,stars:0,sun:["rgba(255,250,235,1)","rgba(255,225,180,.9)","rgba(255,170,100,.35)","rgba(255,150,80,0)"],stripes:1,hemi:[0xfff2e4,0x8a7c70],sea:"#a79686",seaLine:"#ff7a2a",decor:"shards"},
+  betao:{sky:[[0,"#5d89b8"],[.36,"#9fc0dc"],[.49,"#e4dcd2"],[.5,"#fff0dc"],[.53,"#bfae9f"],[1,"#8b7b70"]],fog:0xa38fa2,far:560,stars:0,sun:["rgba(255,250,235,1)","rgba(255,225,180,.9)","rgba(255,170,100,.35)","rgba(255,150,80,0)"],stripes:1,hemi:[0xfff2e4,0x8a7c70],sea:"#a79686",seaLine:"#ff7a2a",decor:"shards"},
   storm:{sky:[[0,"#0a1016"],[.34,"#1c2a36"],[.47,"#3d5566"],[.5,"#9fd6e0"],[.53,"#24323d"],[1,"#0b1218"]],fog:0x1d2932,far:480,stars:0,sun:["rgba(220,250,255,1)","rgba(160,220,240,.8)","rgba(120,180,220,.3)","rgba(120,180,220,0)"],stripes:0,hemi:[0xd8f0ff,0x1a2630],sea:"#081117",seaLine:"#38e1c8",decor:"shards"},
   abismo:{sky:[[0,"#000000"],[.36,"#07020f"],[.47,"#2a0b4a"],[.5,"#b14cff"],[.53,"#14051f"],[1,"#000000"]],fog:0x10051c,far:500,stars:1,sun:["rgba(240,220,255,1)","rgba(190,120,255,.9)","rgba(140,60,255,.35)","rgba(140,60,255,0)"],stripes:1,hemi:[0xeedcff,0x1a0a2a],sea:"#050008",seaLine:"#b14cff",decor:"rings"},
   neon:{sky:[[0,"#07031a"],[.32,"#1b0a3d"],[.47,"#7a1f6b"],[.5,"#ff6f7d"],[.53,"#5a1a5e"],[1,"#120624"]],fog:0x2a1446,far:520,stars:.75,sun:["rgba(255,240,200,1)","rgba(255,170,110,1)","rgba(255,90,140,.55)","rgba(255,60,140,0)"],stripes:1,hemi:[0xffe6f4,0x3a1a5a],sea:"#120a2e",decor:"rings"},
@@ -595,10 +595,10 @@ const rampTex={};function rampT(col){return rampTex[col]||(rampTex[col]=tex(256,
   g.strokeStyle="rgba(0,0,0,.22)";g.lineWidth=2;for(let i=0;i<=w;i+=32){g.beginPath();g.moveTo(i,0);g.lineTo(i,h);g.stroke();g.beginPath();g.moveTo(0,i);g.lineTo(w,i);g.stroke()}
   g.strokeStyle="rgba(255,255,255,.55)";g.lineWidth=4;g.strokeRect(2,2,w-4,h-4);void c}))}
 const platT=tex(256,256,(g,w,h)=>{g.fillStyle="#d9dbe6";g.fillRect(0,0,w,h);g.fillStyle="#c4c7d6";for(let y=0;y<4;y++)for(let x=0;x<4;x++)if((x+y)%2)g.fillRect(x*64,y*64,64,64);g.strokeStyle="rgba(0,0,0,.25)";g.lineWidth=2;for(let i=0;i<=w;i+=64){g.beginPath();g.moveTo(i,0);g.lineTo(i,h);g.stroke();g.beginPath();g.moveTo(0,i);g.lineTo(w,i);g.stroke()}});
-const ROOMT=tex(256,256,(g,w,h)=>{g.fillStyle="#8da4c0";g.fillRect(0,0,w,h);g.fillStyle="#7a93b3";g.fillRect(0,0,w,70);g.fillStyle="#a5b8cf";g.fillRect(0,200,w,56);
-  for(const [y,hh,c] of [[82,40,"#ee6a2c"],[128,14,"#c8421f"],[150,8,"#f59a5a"],[70,6,"#c8421f"]]){g.fillStyle=c;g.fillRect(0,y,w,hh)}
-  g.strokeStyle="rgba(40,50,70,.18)";g.lineWidth=2;g.beginPath();g.moveTo(0,1);g.lineTo(w,1);g.moveTo(1,0);g.lineTo(1,h);g.stroke()});
-ROOMT.repeat.set(.25,.25);const RFLAT=tex(128,128,(g,w,h)=>{g.fillStyle="#bdb6c8";g.fillRect(0,0,w,h);const gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,"rgba(255,255,255,.12)");gr.addColorStop(1,"rgba(40,30,70,.14)");g.fillStyle=gr;g.fillRect(0,0,w,h)});
+const ROOMT=tex(256,256,(g,w,h)=>{g.fillStyle="#b3a1b3";g.fillRect(0,0,w,h);g.fillStyle="#a290a3";g.fillRect(0,0,w,60);g.fillStyle="#c2b2c0";g.fillRect(0,196,w,60);
+  for(const [y,hh,c] of [[70,10,"#d6452b"],[96,5,"#efe3dc"],[108,26,"#d6452b"],[146,5,"#efe3dc"],[158,10,"#d6452b"]]){g.fillStyle=c;g.fillRect(0,y,w,hh)}
+  g.strokeStyle="rgba(60,40,70,.15)";g.lineWidth=2;g.beginPath();g.moveTo(0,1);g.lineTo(w,1);g.moveTo(1,0);g.lineTo(1,h);g.stroke()});
+ROOMT.repeat.set(.25,.25);const RFLAT=tex(128,128,(g,w,h)=>{g.fillStyle="#cbbfca";g.fillRect(0,0,w,h);const gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,"rgba(255,255,255,.12)");gr.addColorStop(1,"rgba(40,30,70,.14)");g.fillStyle=gr;g.fillRect(0,0,w,h)});
 const ROOMM=new THREE.MeshLambertMaterial({map:ROOMT,side:THREE.DoubleSide});
 function faceMesh(faces,uAxis,mat){const pos=[],uv=[];
   for(const f of faces){const a=new THREE.Vector3(f[0][0],f[0][1],f[0][2]),b=new THREE.Vector3(f[1][0],f[1][1],f[1][2]),c=new THREE.Vector3(f[2][0],f[2][1],f[2][2]);const n=new THREE.Vector3().subVectors(b,a).cross(new THREE.Vector3().subVectors(c,a)).normalize();
@@ -615,15 +615,15 @@ let GSI=0;for(const MP of MAPS)MP.stages.forEach((s,si)=>{const T=THEMES[MP.them
       if(side<=0)F.push([[xl,y0,zb],[xl,y1,zb],[xr,y1,zt],[xr,y0,zt]]);else F.push([[xr,y0,zb],[xr,y1,zb],[xr,y1,zt],[xr,y0,zt]]);
       if(side>=0)F.push([[xR,y0,zb],[xr,y0,zt],[xr,y1,zt],[xR,y1,zb]]);else F.push([[xr,y0,zb],[xr,y0,zt],[xr,y1,zt],[xr,y1,zb]]);
       F.push([[xl,y0,zb],[xr,y0,zt],[xR,y0,zb]],[[xl,y1,zb],[xR,y1,zb],[xr,y1,zt]]);
-      const m=faceMesh(F,new THREE.Vector3(0,1,0),mat);scene.add(m);if(!s.flat)edgeLines(m,light)}
+      const m=faceMesh(F,new THREE.Vector3(0,1,0),mat);scene.add(m);edgeLines(m,s.flat?0xdc4a2c:light)}
     else if(v.t==="course"){const F=[],sl=v.sl,n=v.segs.length;
       v.segs.forEach((g,i)=>{const [rA,lA,oA]=g.A,[rB,lB,oB]=g.B,U=(p,u,vv)=>[p[0],p[1],p[2],u,vv];
         F.push([U(rA,g.uA,0),U(lA,g.uA,sl),U(lB,g.uB,sl),U(rB,g.uB,0)],[U(rA,g.uA,0),U(rB,g.uB,0),U(oB,g.uB,sl),U(oA,g.uA,sl)]);
         if(i===0)F.push([rA,oA,lA]);if(i===n-1)F.push([rB,lB,oB])});
-      const m=faceMesh(F,new THREE.Vector3(0,1,0),mat);scene.add(m);if(!s.flat)edgeLines(m,light)}
+      const m=faceMesh(F,new THREE.Vector3(0,1,0),mat);scene.add(m);edgeLines(m,s.flat?0xdc4a2c:light)}
     else if(v.t==="rX"){const {yr,x0,x1,zt,zb,run,side}=v,yl=side<=0?yr-run:yr,yR=side>=0?yr+run:yr,F=[];
       F.push([[x0,yl,zb],[x1,yl,zb],[x1,yr,zt],[x0,yr,zt]],[[x0,yR,zb],[x0,yr,zt],[x1,yr,zt],[x1,yR,zb]],[[x0,yl,zb],[x0,yr,zt],[x0,yR,zb]],[[x1,yl,zb],[x1,yR,zb],[x1,yr,zt]]);
-      const m=faceMesh(F,new THREE.Vector3(1,0,0),mat);scene.add(m);if(!s.flat)edgeLines(m,light)}
+      const m=faceMesh(F,new THREE.Vector3(1,0,0),mat);scene.add(m);edgeLines(m,s.flat?0xdc4a2c:light)}
   }
   for(const b of BRUSH)if(b.vis&&b.vis.t==="box"&&s.vis.includes(b.vis)){const [x0,y0,z0]=b.min,[x1,y1,z1]=b.max;
     const F=[[[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]],[[x0,y0,z0],[x0,y1,z0],[x1,y1,z0],[x1,y0,z0]],[[x0,y0,z0],[x1,y0,z0],[x1,y0,z1],[x0,y0,z1]],[[x0,y1,z0],[x0,y1,z1],[x1,y1,z1],[x1,y1,z0]],[[x0,y0,z0],[x0,y0,z1],[x0,y1,z1],[x0,y1,z0]],[[x1,y0,z0],[x1,y1,z0],[x1,y1,z1],[x1,y0,z1]]];
