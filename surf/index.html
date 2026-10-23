@@ -490,6 +490,14 @@ long("Escadaria do gigante",580000,"#ffd36b",800,60,(()=>{const a=[RP([S_(2400),
   for(let i=0;i<6;i++)a.push(RP([S_(1500)],{gap:900+i*180,dx:i%2?-300:300,boost:450,mult:1.4}));
   a.push(RP([S_(900),D_(1500,90),S_(500),L_(1500,90),S_(900)],{gap:300}),JP([S_(2400)],{gap:1900,boost:500,mult:1.5}),
     RP([S_(1000),D_(1500,180),S_(800)],{gap:400,dx:-300}),JP([S_(2400)],{gap:2000,boost:500,mult:1.5}),RP([S_(2200)],{gap:400}));return a})())});
+/* Betão (nível 8): ambiente claro de betão com riscas laranja, rampas compridas e curvas encadeadas — inspirado no estilo dos mapas de surf de CS (mapa original) */
+map("betao","Betão","Nível 8","betao",()=>{
+long("Corredor de betão",700000,"#e2a47a",800,56,[
+  RP([S_(2400),L_(2000,90),S_(1200)],{boost:450}),RP([S_(1800),D_(2000,90),S_(900)],{gap:300,boost:450,mult:1.4}),
+  JP([S_(2200)],{gap:900}),RP([S_(1200),L_(1800,90),D_(1800,90),S_(1000)],{gap:300,boost:450,mult:1.4}),
+  JP([S_(2400)],{gap:1100}),RP([S_(1000),D_(1800,120),S_(700),L_(1800,120),S_(900)],{gap:300,boost:450,mult:1.5}),
+  JP([S_(2400)],{gap:1300}),RP([S_(1400),L_(1900,90),S_(900)],{gap:300,dx:-200,boost:500,mult:1.5}),
+  JP([S_(2600)],{gap:1500}),RP([S_(2000)],{gap:400})])});
 /* Pesadelo (nível 7): rampas a 62°, curvas apertadas seguidas e saltos quase impossíveis; só para quem já domina */
 map("pesadelo","Pesadelo","Nível 7","abismo",()=>{
 long("Sem perdão",640000,"#ff6bd6",750,62,[
@@ -499,8 +507,9 @@ long("Sem perdão",640000,"#ff6bd6",750,62,[
   RP([S_(800),L_(1250,180),S_(600)],{gap:300,dx:350,drop:300}),JP([S_(2000)],{gap:1900,boost:500,mult:1.6}),
   RP([S_(600),D_(1250,90),L_(1250,90),D_(1250,90),S_(600)],{gap:300,drop:260}),JP([S_(2200)],{gap:2000,dx:-150,boost:500,mult:1.6}),
   JP([S_(1500)],{gap:1700,boost:500,mult:1.5}),RP([S_(2000)],{gap:400})])});
-const MDESC={ceu:"Pequeno, para aprenderes: rampas largas e pouco inclinadas, saltos curtos e uma curva aberta.",neon:"Rampas normais mas já compridas: curvas largas, um zigue-zague a sério e saltos cada vez maiores.",gelo:"Rampas mais inclinadas e estreitas: serpentinas, saltos que pedem velocidade e uma sequência de rampas com buracos.",lava:"Rampas muito inclinadas e estreitas: curvas apertadas, boosters, pontes estreitas e saltos compridos sobre a lava.",storm:"Dois stages compridos: curvas apertadas seguidas, escadas partidas, saltos às cegas e um funil. Rampas a 60°.",colosso:"Estilo CS: saltos enormes entre rampas altas, boosters e curvas encadeadas. Precisas de velocidade para chegar ao outro lado.",pesadelo:"Só para quem domina: rampas a 62°, curvas apertadas seguidas e saltos quase impossíveis.",abismo:"O mais comprido: um só percurso, sem checkpoints; se caíres, voltas ao início. Rampas a 62° e tudo o que há nos outros mapas junto."};
+const MDESC={ceu:"Pequeno, para aprenderes: rampas largas e pouco inclinadas, saltos curtos e uma curva aberta.",neon:"Rampas normais mas já compridas: curvas largas, um zigue-zague a sério e saltos cada vez maiores.",gelo:"Rampas mais inclinadas e estreitas: serpentinas, saltos que pedem velocidade e uma sequência de rampas com buracos.",lava:"Rampas muito inclinadas e estreitas: curvas apertadas, boosters, pontes estreitas e saltos compridos sobre a lava.",storm:"Dois stages compridos: curvas apertadas seguidas, escadas partidas, saltos às cegas e um funil. Rampas a 60°.",colosso:"Estilo CS: saltos enormes entre rampas altas, boosters e curvas encadeadas. Precisas de velocidade para chegar ao outro lado.",pesadelo:"Só para quem domina: rampas a 62°, curvas apertadas seguidas e saltos quase impossíveis.",betao:"Ambiente de betão claro com riscas laranja: rampas compridas, curvas encadeadas e saltos grandes. Mapa original, inspirado nos mapas de surf de CS.",abismo:"O mais comprido: um só percurso, sem checkpoints; se caíres, voltas ao início. Rampas a 62° e tudo o que há nos outros mapas junto."};
 const THEMES={
+  betao:{sky:[[0,"#5d89b8"],[.36,"#9fc0dc"],[.49,"#e4dcd2"],[.5,"#fff0dc"],[.53,"#bfae9f"],[1,"#8b7b70"]],fog:0xb8aa9e,far:600,stars:0,sun:["rgba(255,250,235,1)","rgba(255,225,180,.9)","rgba(255,170,100,.35)","rgba(255,150,80,0)"],stripes:1,hemi:[0xfff2e4,0x8a7c70],sea:"#a79686",seaLine:"#ff7a2a",decor:"shards"},
   storm:{sky:[[0,"#0a1016"],[.34,"#1c2a36"],[.47,"#3d5566"],[.5,"#9fd6e0"],[.53,"#24323d"],[1,"#0b1218"]],fog:0x1d2932,far:480,stars:0,sun:["rgba(220,250,255,1)","rgba(160,220,240,.8)","rgba(120,180,220,.3)","rgba(120,180,220,0)"],stripes:0,hemi:[0xd8f0ff,0x1a2630],sea:"#081117",seaLine:"#38e1c8",decor:"shards"},
   abismo:{sky:[[0,"#000000"],[.36,"#07020f"],[.47,"#2a0b4a"],[.5,"#b14cff"],[.53,"#14051f"],[1,"#000000"]],fog:0x10051c,far:500,stars:1,sun:["rgba(240,220,255,1)","rgba(190,120,255,.9)","rgba(140,60,255,.35)","rgba(140,60,255,0)"],stripes:1,hemi:[0xeedcff,0x1a0a2a],sea:"#050008",seaLine:"#b14cff",decor:"rings"},
   neon:{sky:[[0,"#07031a"],[.32,"#1b0a3d"],[.47,"#7a1f6b"],[.5,"#ff6f7d"],[.53,"#5a1a5e"],[1,"#120624"]],fog:0x2a1446,far:520,stars:.75,sun:["rgba(255,240,200,1)","rgba(255,170,110,1)","rgba(255,90,140,.55)","rgba(255,60,140,0)"],stripes:1,hemi:[0xffe6f4,0x3a1a5a],sea:"#120a2e",decor:"rings"},
