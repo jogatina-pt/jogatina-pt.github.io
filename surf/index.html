@@ -408,7 +408,13 @@ function long(name,ox,col,h,ang,parts,o){stage(name,ox,col,s=>{
   const dr=parts.map((p,i)=>i?(p.drop!=null?p.drop:Math.round(100+(p.gap||260)*.6)):0),tot=dr.reduce((a,b)=>a+b,0);
   s.z0=tot+700;st0(s);s.dyn=1;let zt=s.z0-100;
   const P=parts.map((p,i)=>{zt-=dr[i];return Object.assign({h,ang},p,{zt})});
-  const e=chain(200,64,90,P);finishPlat(s,e,250,e.zt-650,-1000)},o)}
+  const e=chain(200,64,90,P);finishPlat(s,e,250,e.zt-650,-1000);if(o&&o.room)room(s)},o)}
+/* sala fechada à volta do percurso (paredes e teto com colisão): ambiente de espaço fechado */
+function room(s){const ox=s.ox,C=s.vis.filter(v=>v.t==="course");let x0=-192+ox,x1=192+ox,y0=-512,y1=0,zt=-1e9,run=0;
+  for(const c of C){run=Math.max(run,c.run);zt=Math.max(zt,c.zt);for(const p of c.pts){x0=Math.min(x0,p[0]);x1=Math.max(x1,p[0]);y0=Math.min(y0,p[1]);y1=Math.max(y1,p[1])}}
+  x0=Math.min(x0,s.end[0])-run-650-ox;x1=Math.max(x1,s.end[1])+run+650-ox;y0=y0-run-650;y1=Math.max(y1,s.end[3])+650;
+  const T=200,zl=-1600,zh=zt+1100;
+  plat(x0-T,x0,y0-T,y1+T,zl,zh,"room");plat(x1,x1+T,y0-T,y1+T,zl,zh,"room");plat(x0,x1,y0-T,y0,zl,zh,"room");plat(x0,x1,y1,y1+T,zl,zh,"room");plat(x0-T,x1+T,y0-T,y1+T,zh,zh+T,"room")}
 /* Tutorial: pequeno, rampas largas e pouco inclinadas */
 map("ceu","Tutorial","Para começar","ceu",()=>{
 stage("Primeiro voo",200000,"#7fe0b5",s=>{
@@ -492,12 +498,12 @@ long("Escadaria do gigante",580000,"#ffd36b",800,60,(()=>{const a=[RP([S_(2400),
     RP([S_(1000),D_(1500,180),S_(800)],{gap:400,dx:-300}),JP([S_(2400)],{gap:2000,boost:500,mult:1.5}),RP([S_(2200)],{gap:400}));return a})())});
 /* Betão (nível 8): ambiente claro de betão com riscas laranja, rampas compridas e curvas encadeadas — inspirado no estilo dos mapas de surf de CS (mapa original) */
 map("betao","Betão","Nível 8","betao",()=>{
-long("Corredor de betão",700000,"#e2a47a",800,56,[
+long("Corredor de betão",700000,"#c9ced8",800,56,[
   RP([S_(2400),L_(2000,90),S_(1200)],{boost:450}),RP([S_(1800),D_(2000,90),S_(900)],{gap:300,boost:450,mult:1.4}),
   JP([S_(2200)],{gap:900}),RP([S_(1200),L_(1800,90),D_(1800,90),S_(1000)],{gap:300,boost:450,mult:1.4}),
   JP([S_(2400)],{gap:1100}),RP([S_(1000),D_(1800,120),S_(700),L_(1800,120),S_(900)],{gap:300,boost:450,mult:1.5}),
   JP([S_(2400)],{gap:1300}),RP([S_(1400),L_(1900,90),S_(900)],{gap:300,dx:-200,boost:500,mult:1.5}),
-  JP([S_(2600)],{gap:1500}),RP([S_(2000)],{gap:400})])});
+  JP([S_(2600)],{gap:1500}),RP([S_(2000)],{gap:400})],{room:1})});
 /* Pesadelo (nível 7): rampas a 62°, curvas apertadas seguidas e saltos quase impossíveis; só para quem já domina */
 map("pesadelo","Pesadelo","Nível 7","abismo",()=>{
 long("Sem perdão",640000,"#ff6bd6",750,62,[
@@ -507,9 +513,9 @@ long("Sem perdão",640000,"#ff6bd6",750,62,[
   RP([S_(800),L_(1250,180),S_(600)],{gap:300,dx:350,drop:300}),JP([S_(2000)],{gap:1900,boost:500,mult:1.6}),
   RP([S_(600),D_(1250,90),L_(1250,90),D_(1250,90),S_(600)],{gap:300,drop:260}),JP([S_(2200)],{gap:2000,dx:-150,boost:500,mult:1.6}),
   JP([S_(1500)],{gap:1700,boost:500,mult:1.5}),RP([S_(2000)],{gap:400})])});
-const MDESC={ceu:"Pequeno, para aprenderes: rampas largas e pouco inclinadas, saltos curtos e uma curva aberta.",neon:"Rampas normais mas já compridas: curvas largas, um zigue-zague a sério e saltos cada vez maiores.",gelo:"Rampas mais inclinadas e estreitas: serpentinas, saltos que pedem velocidade e uma sequência de rampas com buracos.",lava:"Rampas muito inclinadas e estreitas: curvas apertadas, boosters, pontes estreitas e saltos compridos sobre a lava.",storm:"Dois stages compridos: curvas apertadas seguidas, escadas partidas, saltos às cegas e um funil. Rampas a 60°.",colosso:"Estilo CS: saltos enormes entre rampas altas, boosters e curvas encadeadas. Precisas de velocidade para chegar ao outro lado.",pesadelo:"Só para quem domina: rampas a 62°, curvas apertadas seguidas e saltos quase impossíveis.",betao:"Ambiente de betão claro com riscas laranja: rampas compridas, curvas encadeadas e saltos grandes. Mapa original, inspirado nos mapas de surf de CS.",abismo:"O mais comprido: um só percurso, sem checkpoints; se caíres, voltas ao início. Rampas a 62° e tudo o que há nos outros mapas junto."};
+const MDESC={ceu:"Pequeno, para aprenderes: rampas largas e pouco inclinadas, saltos curtos e uma curva aberta.",neon:"Rampas normais mas já compridas: curvas largas, um zigue-zague a sério e saltos cada vez maiores.",gelo:"Rampas mais inclinadas e estreitas: serpentinas, saltos que pedem velocidade e uma sequência de rampas com buracos.",lava:"Rampas muito inclinadas e estreitas: curvas apertadas, boosters, pontes estreitas e saltos compridos sobre a lava.",storm:"Dois stages compridos: curvas apertadas seguidas, escadas partidas, saltos às cegas e um funil. Rampas a 60°.",colosso:"Estilo CS: saltos enormes entre rampas altas, boosters e curvas encadeadas. Precisas de velocidade para chegar ao outro lado.",pesadelo:"Só para quem domina: rampas a 62°, curvas apertadas seguidas e saltos quase impossíveis.",betao:"Espaço fechado: uma sala enorme de betão com riscas laranja, rampas compridas, curvas encadeadas e saltos grandes. Mapa original, inspirado no estilo dos mapas de surf de CS.",abismo:"O mais comprido: um só percurso, sem checkpoints; se caíres, voltas ao início. Rampas a 62° e tudo o que há nos outros mapas junto."};
 const THEMES={
-  betao:{sky:[[0,"#5d89b8"],[.36,"#9fc0dc"],[.49,"#e4dcd2"],[.5,"#fff0dc"],[.53,"#bfae9f"],[1,"#8b7b70"]],fog:0xb8aa9e,far:600,stars:0,sun:["rgba(255,250,235,1)","rgba(255,225,180,.9)","rgba(255,170,100,.35)","rgba(255,150,80,0)"],stripes:1,hemi:[0xfff2e4,0x8a7c70],sea:"#a79686",seaLine:"#ff7a2a",decor:"shards"},
+  betao:{sky:[[0,"#5d89b8"],[.36,"#9fc0dc"],[.49,"#e4dcd2"],[.5,"#fff0dc"],[.53,"#bfae9f"],[1,"#8b7b70"]],fog:0x9aa6b8,far:520,stars:0,sun:["rgba(255,250,235,1)","rgba(255,225,180,.9)","rgba(255,170,100,.35)","rgba(255,150,80,0)"],stripes:1,hemi:[0xfff2e4,0x8a7c70],sea:"#a79686",seaLine:"#ff7a2a",decor:"shards"},
   storm:{sky:[[0,"#0a1016"],[.34,"#1c2a36"],[.47,"#3d5566"],[.5,"#9fd6e0"],[.53,"#24323d"],[1,"#0b1218"]],fog:0x1d2932,far:480,stars:0,sun:["rgba(220,250,255,1)","rgba(160,220,240,.8)","rgba(120,180,220,.3)","rgba(120,180,220,0)"],stripes:0,hemi:[0xd8f0ff,0x1a2630],sea:"#081117",seaLine:"#38e1c8",decor:"shards"},
   abismo:{sky:[[0,"#000000"],[.36,"#07020f"],[.47,"#2a0b4a"],[.5,"#b14cff"],[.53,"#14051f"],[1,"#000000"]],fog:0x10051c,far:500,stars:1,sun:["rgba(240,220,255,1)","rgba(190,120,255,.9)","rgba(140,60,255,.35)","rgba(140,60,255,0)"],stripes:1,hemi:[0xeedcff,0x1a0a2a],sea:"#050008",seaLine:"#b14cff",decor:"rings"},
   neon:{sky:[[0,"#07031a"],[.32,"#1b0a3d"],[.47,"#7a1f6b"],[.5,"#ff6f7d"],[.53,"#5a1a5e"],[1,"#120624"]],fog:0x2a1446,far:520,stars:.75,sun:["rgba(255,240,200,1)","rgba(255,170,110,1)","rgba(255,90,140,.55)","rgba(255,60,140,0)"],stripes:1,hemi:[0xffe6f4,0x3a1a5a],sea:"#120a2e",decor:"rings"},
@@ -589,6 +595,10 @@ const rampTex={};function rampT(col){return rampTex[col]||(rampTex[col]=tex(256,
   g.strokeStyle="rgba(0,0,0,.22)";g.lineWidth=2;for(let i=0;i<=w;i+=32){g.beginPath();g.moveTo(i,0);g.lineTo(i,h);g.stroke();g.beginPath();g.moveTo(0,i);g.lineTo(w,i);g.stroke()}
   g.strokeStyle="rgba(255,255,255,.55)";g.lineWidth=4;g.strokeRect(2,2,w-4,h-4);void c}))}
 const platT=tex(256,256,(g,w,h)=>{g.fillStyle="#d9dbe6";g.fillRect(0,0,w,h);g.fillStyle="#c4c7d6";for(let y=0;y<4;y++)for(let x=0;x<4;x++)if((x+y)%2)g.fillRect(x*64,y*64,64,64);g.strokeStyle="rgba(0,0,0,.25)";g.lineWidth=2;for(let i=0;i<=w;i+=64){g.beginPath();g.moveTo(i,0);g.lineTo(i,h);g.stroke();g.beginPath();g.moveTo(0,i);g.lineTo(w,i);g.stroke()}});
+const ROOMT=tex(256,256,(g,w,h)=>{g.fillStyle="#b9c3d2";g.fillRect(0,0,w,h);g.fillStyle="#aab5c6";g.fillRect(0,0,w,h/2);
+  for(const [y,hh,c] of [[78,34,"#e8703a"],[118,10,"#d9532a"],[150,6,"#f2a06b"]]){g.fillStyle=c;g.fillRect(0,y,w,hh)}
+  g.strokeStyle="rgba(40,50,70,.18)";g.lineWidth=2;g.beginPath();g.moveTo(0,1);g.lineTo(w,1);g.moveTo(1,0);g.lineTo(1,h);g.stroke()});
+ROOMT.repeat.set(.25,.25);const ROOMM=new THREE.MeshLambertMaterial({map:ROOMT,side:THREE.DoubleSide});
 function faceMesh(faces,uAxis,mat){const pos=[],uv=[];
   for(const f of faces){const a=new THREE.Vector3(f[0][0],f[0][1],f[0][2]),b=new THREE.Vector3(f[1][0],f[1][1],f[1][2]),c=new THREE.Vector3(f[2][0],f[2][1],f[2][2]);const n=new THREE.Vector3().subVectors(b,a).cross(new THREE.Vector3().subVectors(c,a)).normalize();
     let u=uAxis.clone();let w=new THREE.Vector3().crossVectors(n,u);if(w.lengthSq()<1e-6){u=new THREE.Vector3(1,0,0);if(Math.abs(n.x)>.9)u.set(0,1,0);w.crossVectors(n,u)}w.normalize();u=new THREE.Vector3().crossVectors(w,n).normalize();
@@ -616,6 +626,7 @@ let GSI=0;for(const MP of MAPS)MP.stages.forEach((s,si)=>{const T=THEMES[MP.them
   }
   for(const b of BRUSH)if(b.vis&&b.vis.t==="box"&&s.vis.includes(b.vis)){const [x0,y0,z0]=b.min,[x1,y1,z1]=b.max;
     const F=[[[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]],[[x0,y0,z0],[x0,y1,z0],[x1,y1,z0],[x1,y0,z0]],[[x0,y0,z0],[x1,y0,z0],[x1,y0,z1],[x0,y0,z1]],[[x0,y1,z0],[x0,y1,z1],[x1,y1,z1],[x1,y1,z0]],[[x0,y0,z0],[x0,y0,z1],[x0,y1,z1],[x0,y1,z0]],[[x1,y0,z0],[x1,y1,z0],[x1,y1,z1],[x1,y0,z1]]];
+    if(b.vis.kind==="room"){scene.add(faceMesh(F,new THREE.Vector3(0,1,0),ROOMM));continue}
     const m=faceMesh(F,new THREE.Vector3(0,1,0),new THREE.MeshLambertMaterial({map:platT,color:b.vis.kind==="end"?0xffe9a8:0xd8ffe4}));scene.add(m);edgeLines(m,b.vis.kind==="end"?0xffd23f:0x5fd08a)}
   /* zonas de início e fim (caixas transparentes) */
   for(const [z,c] of [[s.start,0x5fd08a],[s.end,0xffd23f]]){const g=new THREE.BoxGeometry((z[1]-z[0])*SC,(z[5]-z[4])*SC,(z[3]-z[2])*SC),m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:.1,depthWrite:false,side:THREE.DoubleSide}));
