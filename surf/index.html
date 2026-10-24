@@ -280,14 +280,15 @@ function addBrush(planes,min,max,vis){
     if(!planes.some(p=>Math.abs(p[0]-a[0])<1e-6&&Math.abs(p[1]-a[1])<1e-6&&Math.abs(p[2]-a[2])<1e-6))planes.push(a);
   /* os planos já vêm "inchados" com o tamanho da caixa do jogador (soma de Minkowski), assim basta seguir um ponto */
   const b={planes:planes.map(p=>[p[0],p[1],p[2],p[3]+HX*Math.abs(p[0])+HY*Math.abs(p[1])+HZ*Math.abs(p[2])]),min,max,vis};BRUSH.push(b);return b}
-const TR={frac:1,n:null,start:false,all:false,end:[0,0,0]};
+const IGNP=new Set();const TR={frac:1,n:null,start:false,all:false,end:[0,0,0]};
 function trace(sx,sy,sz,ex,ey,ez){
-  let frac=1,hn=null,start=false,all=false;
+  let frac=1,hn=null,hb=null,start=false,all=false;
   const lx=Math.min(sx,ex)-HX-1,hx=Math.max(sx,ex)+HX+1,ly=Math.min(sy,ey)-HY-1,hy=Math.max(sy,ey)+HY+1,lz=Math.min(sz,ez)-HZ-1,hz=Math.max(sz,ez)+HZ+1;
   for(const b of BRUSH){
     if(b.max[0]<lx||b.min[0]>hx||b.max[1]<ly||b.min[1]>hy||b.max[2]<lz||b.min[2]>hz)continue;
     let enter=-1,leave=1,bn=null,so=false,eo=false,out=false;
     for(const p of b.planes){
+      if(IGNP.has(p))continue;
       const d1=p[0]*sx+p[1]*sy+p[2]*sz-p[3],d2=p[0]*ex+p[1]*ey+p[2]*ez-p[3];
       if(d1>0)so=true;if(d2>0)eo=true;
       if(d1>0&&(d2>=EPS||d2>=d1-1e-6)){out=true;break} /* a andar paralelo à parede (erro de arredondamento) não conta como entrar */
@@ -296,22 +297,25 @@ function trace(sx,sy,sz,ex,ey,ez){
     }
     if(out)continue;
     if(!so){start=true;if(!eo)all=true;continue}
-    if(enter<leave&&enter>-1&&enter<frac){frac=Math.max(0,enter);hn=bn}
+    if(enter<leave&&enter>-1&&enter<frac){frac=Math.max(0,enter);hn=bn;hb=b}
   }
-  TR.frac=frac;TR.n=hn;TR.start=start;TR.all=all;TR.end[0]=sx+(ex-sx)*frac;TR.end[1]=sy+(ey-sy)*frac;TR.end[2]=sz+(ez-sz)*frac;return TR}
+  TR.frac=frac;TR.n=hn;TR.b=hb;TR.start=start;TR.all=all;TR.end[0]=sx+(ex-sx)*frac;TR.end[1]=sy+(ey-sy)*frac;TR.end[2]=sz+(ez-sz)*frac;return TR}
 const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
 function clip(i,n,o){const bo=dot(i,n);o[0]=i[0]-n[0]*bo;o[1]=i[1]-n[1]*bo;o[2]=i[2]-n[2]*bo;const ad=dot(o,n);if(ad<0){o[0]-=n[0]*ad;o[1]-=n[1]*ad;o[2]-=n[2]*ad}}
-const ZC={};const zero=(v,w)=>{v[0]=v[1]=v[2]=0;ZC[w]=(ZC[w]||0)+1};
+const ZC={bl:[],dr:[]};const zero=(v,w)=>{v[0]=v[1]=v[2]=0;ZC[w]=(ZC[w]||0)+1};
 function tryMove(P){
-  const v=P.v,p=P.p;let time=TICK;const planes=[];let ov=v.slice();const pv=v.slice();
-  for(let bump=0;bump<4;bump++){
+  const v=P.v,p=P.p;let time=TICK;const planes=[];P.dbg=planes;P.v0=v.slice();IGNP.clear();let ov=v.slice();const pv=v.slice();
+  for(let bump=0;bump<7;bump++){
     if(!v[0]&&!v[1]&&!v[2])break;
     const t=trace(p[0],p[1],p[2],p[0]+v[0]*time,p[1]+v[1]*time,p[2]+v[2]*time);
     if(t.all){ZC.all=(ZC.all||0)+1;P.stuck=true;return}
     if(t.frac>0){p[0]=t.end[0];p[1]=t.end[1];p[2]=t.end[2];ov=v.slice();planes.length=0}
     if(t.frac===1)break;
-    const n=t.n;if(n[2]<.7&&n[2]>.05){P.rampN=n;P.rampT=P.ticks}
-    if(Math.abs(n[2])<.05||n[2]>=.7){const hit=-dot(v,n);if(hit>350)P.bonk=Math.max(P.bonk||0,hit)}
+    const n=t.n;P.hb=t.b;P.hn=n;
+    /* planos quase verticais nas juntas entre troços da mesma rampa não são paredes a sério: ignora-os (era o "pop" que tirava a velocidade nas curvas) */
+    if(Math.abs(n[2])<.4&&t.b&&t.b.tag){const g=t.b.tag,c=n[0]*(g.B[0][0]-g.A[0][0])+n[1]*(g.B[0][1]-g.A[0][1]);
+      if(c<0?g.i>0:g.i<g.n-1){IGNP.add(n);ZC.ign=(ZC.ign||0)+1;time-=time*t.frac;continue}}if(n[2]<.7&&n[2]>.05){P.rampN=n;P.rampT=P.ticks}
+    if(Math.abs(n[2])<.05||n[2]>=.7){const hit=-dot(v,n);if(hit>350){P.bonk=Math.max(P.bonk||0,hit);if(ZC.bl&&ZC.bl.length<40)ZC.bl.push([n.map(x=>+x.toFixed(2)),Math.round(hit),Math.round(Math.hypot(v[0],v[1])),p.map(Math.round)])}}
     time-=time*t.frac;
     if(planes.length>=5){zero(v,'p5');break}
     planes.push(n);
@@ -339,14 +343,15 @@ function tick(){
   if(!side&&!fw&&SET.assist&&!P.ground){
     /* ajuda de strafe: na rampa carrega para dentro da rampa; no ar carrega para o lado para onde se está a rodar */
     if(P.ticks-P.rampT<4){const d=Math.sin(P.yaw)*P.rampN[0]-Math.cos(P.yaw)*P.rampN[1];if(Math.abs(d)>.04)side=d<0?1:-1}
-    else if(Math.abs(yawD)>.0004)side=yawD<0?1:-1}
+    else if(Math.abs(yawD)>.0004){side=yawD<0?1:-1;P.hs=side;P.hsT=P.ticks}
+    else if(P.hs&&P.ticks-P.hsT<35)side=P.hs} /* ao tirar o dedo do ecrã, mantém o último strafe uns 0,35 s para não perderes velocidade */
   P.side=side;
   const fx=Math.cos(P.yaw),fy=Math.sin(P.yaw),rx=fy,ry=-fx;
   let wx=fx*fw*450+rx*side*450,wy=fy*fw*450+ry*side*450,ws=Math.hypot(wx,wy);const wd=[ws?wx/ws:0,ws?wy/ws:0,0];if(ws>MAXSPD)ws=MAXSPD;
   const v=P.v;categorize(P);
   if(IN.j&&P.ground){v[2]=JUMPV;P.ground=false;sfx("jump")}
   if(P.ground){v[2]=0;friction(v);accel(v,wd,ws,ACC,false);tryMove(P)}
-  else{v[2]-=GRAV*TICK*.5;accel(v,wd,ws,AIRACC,true);tryMove(P);v[2]-=GRAV*TICK*.5}
+  else{v[2]-=GRAV*TICK*.5;accel(v,wd,ws,AIRACC,true);const sp0=Math.hypot(v[0],v[1],v[2]),pp=P.p.slice(),onr=P.ticks-P.rampT<3;tryMove(P);const sp1=Math.hypot(v[0],v[1],v[2]);if(onr&&sp0>400&&sp1<sp0*.7&&ZC.dr&&ZC.dr.length<30)ZC.dr.push([Math.round(sp0),Math.round(sp1),pp.map(Math.round),P.v0.map(Math.round),P.dbg.map(n=>n.map(x=>+x.toFixed(2))),(P.hn||[]).map(x=>+x.toFixed(2)),P.hb&&P.hb.tag&&[P.hb.tag.A.map(q=>q.map(Math.round)),P.hb.tag.B.map(q=>q.map(Math.round)),P.hb.planes.length],P.stuck?1:0,+(P.ticks/100).toFixed(1)]);v[2]-=GRAV*TICK*.5}
   categorize(P);if(P.ground&&v[2]<0)v[2]=0;
   for(let i=0;i<3;i++)v[i]=Math.max(-MAXVEL,Math.min(MAXVEL,v[i]));
   if(P.stuck){P.stuck=false;unstick(P)}
@@ -383,7 +388,8 @@ function course(x,y,dir,zt,h,ang,pieces){const o=CUR.ox;x+=o;dir*=Math.PI/180;co
       const mk=an=>{const c=Math.cos(an),sn=Math.sin(an),r=[cx+c*Rr,cy+sn*Rr,zt],i=[cx+c*(Rr-run),cy+sn*(Rr-run),zb],ou=[cx+c*(Rr+run),cy+sn*(Rr+run),zb];return turn>0?[r,i,ou]:[r,ou,i]};
       for(let k=0;k<n;k++){const a2=a+turn*da;segs.push({A:mk(a),B:mk(a2),uA:s,uB:s+Rr*da});s+=Rr*da;a=a2;pts.push([cx+Math.cos(a)*Rr,cy+Math.sin(a)*Rr])}
       dir+=turn*deg*Math.PI/180;x=pts[pts.length-1][0];y=pts[pts.length-1][1]}}
-  for(const g of segs)convex([...g.A,...g.B],[[0,1,4,3],[0,3,5,2],[1,2,5,4],[0,2,1],[3,4,5]]);
+  segs.forEach((g,i)=>{g.i=i;g.n=segs.length});
+  for(const g of segs){const bb=convex([...g.A,...g.B],[[0,1,4,3],[0,3,5,2],[1,2,5,4],[0,2,1],[3,4,5]]);bb.tag=g}
   CUR.vis.push({t:"course",segs,run,zt,zb,pts,sl:Math.hypot(run,h)});
   return{x:x-o,y,dir:dir*180/Math.PI,zt,zb}}
 /* ponto à frente do fim de uma rampa (para a próxima começar depois de um salto) */
@@ -492,15 +498,15 @@ long("Abismo",460000,"#c08bff",800,62,[...A,...AM,...A3])});
 map("colosso","Colosso","Nível 6","gelo",()=>{
 long("Grandes saltos",520000,"#8ad7ff",800,60,[
   RP([S_(2200),D_(1800,90),S_(1200)],{boost:500,mult:1.5}),JP([S_(2000)],{gap:1500,obs:[1100,1640],boost:450,mult:1.4}),
-  RP([S_(1200),L_(1700,90),S_(800),D_(1700,90),S_(1000)],{gap:300}),JP([S_(2400)],{gap:1700,obs:[1320,1968],boost:500,mult:1.5}),
+  RP([S_(1200),L_(1700,90),S_(800),D_(1700,90),S_(1000)],{gap:300,boost:450,mult:1.5}),JP([S_(2400)],{gap:1700,obs:[1320,1968],boost:500,mult:1.5}),
   RP([S_(1000),D_(1600,90),L_(1600,90),S_(800)],{gap:300}),JP([S_(2200)],{gap:1000,obs:[1210,1804],boost:450,mult:1.4}),
-  RP([S_(1600),L_(1700,90),S_(1000)],{gap:300,dx:-200}),JP([S_(2400)],{gap:2000,obs:[1320,1968],boost:500,mult:1.5}),
+  RP([S_(1600),L_(1700,90),S_(1000)],{gap:300,dx:-200}),JP([S_(2400)],{gap:1700,obs:[1320,1968],boost:500,mult:1.5}),
   RP([S_(900),D_(1500,90),S_(600),L_(1500,90),S_(900)],{gap:300}),JP([S_(2200)],{gap:1600,obs:[1210,1804],boost:450,mult:1.4}),
-  JP([S_(2400)],{gap:2200,obs:[1320,1968],dx:200,boost:500,mult:1.5}),RP([S_(2000)],{gap:400})]);
+  JP([S_(2400)],{gap:1900,obs:[1320,1968],dx:200,boost:500,mult:1.5}),RP([S_(2000)],{gap:400})]);
 long("Escadaria do gigante",580000,"#ffd36b",800,60,(()=>{const a=[RP([S_(2400),L_(1700,90),S_(900)],{boost:450,mult:1.5})];
   for(let i=0;i<6;i++)a.push(RP([S_(1500)],{gap:900+i*180,dx:i%2?-300:300,boost:450,mult:1.4}));
   a.push(RP([S_(900),D_(1500,90),S_(500),L_(1500,90),S_(900)],{gap:300}),JP([S_(2400)],{gap:1900,obs:[1320,1968],boost:500,mult:1.5}),
-    RP([S_(1000),D_(1500,180),S_(800)],{gap:400,dx:-300}),JP([S_(2400)],{gap:2000,obs:[1320,1968],boost:500,mult:1.5}),RP([S_(2200)],{gap:400}));return a})())});
+    RP([S_(1000),D_(1500,180),S_(800)],{gap:400,dx:-300}),JP([S_(2400)],{gap:1700,obs:[1320,1968],boost:500,mult:1.5}),RP([S_(2200)],{gap:400}));return a})())});
 /* Betão (nível 8): ambiente claro de betão com riscas laranja, rampas compridas e curvas encadeadas — inspirado no estilo dos mapas de surf de CS (mapa original) */
 map("betao","Betão","Nível 7","betao",()=>{
 long("Corredor de betão",700000,"#c9bcc8",800,56,[
