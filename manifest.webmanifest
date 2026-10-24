@@ -269,6 +269,18 @@
    ]
   },
   {
+   "name": "Bolhas!",
+   "short_name": "Bolhas!",
+   "url": "bolhas/",
+   "icons": [
+    {
+     "src": "bolhas/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
    "name": "Pinball do Porto",
    "short_name": "Pinball",
    "url": "pinball/",
