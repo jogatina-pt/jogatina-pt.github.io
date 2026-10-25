@@ -499,7 +499,7 @@ function zones(){
     for(let j=0;j<CP.length;j++){const c=CP[j],pts=c.pts;let d=1e9;
       for(let i=0;i<pts.length-1;i++){const ax=pts[i][0],ay=pts[i][1],bx=pts[i+1][0],by=pts[i+1][1],dx=bx-ax,dy=by-ay,L2=dx*dx+dy*dy||1,t=Math.max(0,Math.min(1,((x-ax)*dx+(y-ay)*dy)/L2)),e=Math.hypot(x-ax-dx*t,y-ay-dy*t);if(e<d)d=e}
       const zd=Math.max(0,c.zb-z,z-(c.zt+HZ)),tot=d+2*zd;if(tot<bd){bd=tot;bj=j}}
-    if(bj>G.reach+2){ZC.cut=(ZC.cut||0)+1;ZC.info=[bj,G.reach,Math.round(x-s.ox),Math.round(y),Math.round(z),P.ground?1:0,Math.round(bd)];G.falls++;sfx("fall");spawn(false);msg("Atalho! Não podes saltar tantas rampas",1.6);return}
+    /* sem limite: podes saltar várias rampas */
     if(bj>G.reach)G.reach=bj}
   if(s.haz)for(const q of s.haz){const dx=P.p[0]-q.cx,dy=P.p[1]-q.cy,a=dx*q.ux+dy*q.uy,l=dx*q.nx+dy*q.ny;
     if(Math.abs(a)<q.a+HX+14&&l>q.l0-HX-14&&l<q.l1+HX+14&&P.p[2]>q.z0-HZ&&P.p[2]<q.z1+HZ){G.falls++;sfx("fall");spawn(false);msg("Bateste num obstáculo! De volta ao início",1.4);return}}
