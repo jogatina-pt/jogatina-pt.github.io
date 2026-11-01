@@ -281,6 +281,18 @@
    ]
   },
   {
+   "name": "Arranha-Céus!",
+   "short_name": "Arranha-Céus!",
+   "url": "predio/",
+   "icons": [
+    {
+     "src": "predio/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
    "name": "Pinball do Porto",
    "short_name": "Pinball",
    "url": "pinball/",
