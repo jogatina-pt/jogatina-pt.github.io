@@ -305,6 +305,18 @@
    ]
   },
   {
+   "name": "Pulsar",
+   "short_name": "Pulsar",
+   "url": "pulsar/",
+   "icons": [
+    {
+     "src": "pulsar/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
    "name": "Pinball do Porto",
    "short_name": "Pinball",
    "url": "pinball/",
