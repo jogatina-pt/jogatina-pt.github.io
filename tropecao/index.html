@@ -208,7 +208,7 @@ header.top{flex:none}
 
 .maps{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px;width:100%}
 .mapb{border:0;border-radius:14px;padding:9px 8px;color:#fff;cursor:pointer;text-align:left;box-shadow:0 4px 12px rgba(0,0,0,.2),inset 0 0 0 2px rgba(255,255,255,.35)}.mapb b{display:block;font:900 15px system-ui,sans-serif}.mapb small{font:700 11px system-ui,sans-serif;opacity:.9}
-.mapb.m0{background:linear-gradient(135deg,#4fb0ff,#06d6a0)}.mapb.m1{background:linear-gradient(135deg,#ff70a6,#c77dff)}.mapb.m2{background:linear-gradient(135deg,#8ecae6,#5a8fb8)}.mapb.m3{background:linear-gradient(135deg,#ff7b39,#7a1f1f)}.mapb.mr{background:linear-gradient(135deg,#2b2d42,#5c5f7a)}
+.mapb.m0{background:linear-gradient(135deg,#4fb0ff,#06d6a0)}.mapb.m1{background:linear-gradient(135deg,#ff70a6,#c77dff)}.mapb.m2{background:linear-gradient(135deg,#8ecae6,#5a8fb8)}.mapb.m3{background:linear-gradient(135deg,#ff7b39,#7a1f1f)}.mapb.m4{background:linear-gradient(135deg,#00a6fb,#00d2d3)}.mapb.mr{background:linear-gradient(135deg,#2b2d42,#5c5f7a)}
 .rhud{position:absolute;left:10px;right:10px;top:10px;display:flex;gap:8px;align-items:center;z-index:3;pointer-events:none}.rhud[hidden]{display:none}.rhud .sp{flex:1}
 .rhud .pill{font:800 14px system-ui,-apple-system,"Segoe UI",sans-serif;color:#151320;background:rgba(255,255,255,.62);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:999px;padding:6px 12px;box-shadow:0 4px 14px rgba(0,0,0,.12);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55%}
 .rhud .rb{pointer-events:auto;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.62);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font:900 15px system-ui,sans-serif;color:#151320;box-shadow:0 4px 14px rgba(0,0,0,.12);cursor:pointer}
@@ -813,11 +813,11 @@ function initUI(o){
 const TG=-26,TJUMP=9.6,TRUN=7.4,TR=.45,THH=1.6,TDT=1/60;
 function trng(s){return function(){s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 /* ---------- percurso ---------- */
-const MAPS=[{id:"ilha",name:"Ilha dos Tombos"},{id:"doces",name:"Fábrica de Doces"},{id:"gelo",name:"Montanha Gelada"},{id:"vulcao",name:"Vulcão"}];
-function makeCourse(seed,map){map=map|0;const r=trng(seed),C={map,boxes:[],cyls:[],sweep:[],ham:[],tiles:[],doors:[],bump:[],belts:[],movers:[],pads:[],balls:[],jets:[],cps:[],way:[],finishZ:0,finishY:0,spawn:[]};
+const MAPS=[{id:"ilha",name:"Ilha dos Tombos"},{id:"doces",name:"Fábrica de Doces"},{id:"gelo",name:"Montanha Gelada"},{id:"vulcao",name:"Vulcão"},{id:"aqua",name:"Parque Aquático"}];
+function makeCourse(seed,map){map=map|0;const r=trng(seed),C={map,boxes:[],cyls:[],sweep:[],ham:[],tiles:[],doors:[],bump:[],belts:[],movers:[],pads:[],balls:[],jets:[],ramps:[],winds:[],cps:[],way:[],finishZ:0,finishY:0,spawn:[]};
   const box=(x0,x1,y0,y1,z0,z1,o)=>{const b=Object.assign({x0:Math.min(x0,x1),x1:Math.max(x0,x1),y0,y1,z0:Math.min(z0,z1),z1:Math.max(z0,z1),col:"plat"},o||{});C.boxes.push(b);return b};
   const W=(x,z,f)=>C.way.push([x,z,f||""]);
-  [course0,course1,course2,course3][map](C,r,box,W);
+  [course0,course1,course2,course3,course4][map](C,r,box,W);
   return C}
 function doorRows(C,r,box,rows,platCol){for(const [z,ri] of rows){const n=5,dw=2.6,gap=.5,tot=n*dw+(n+1)*gap,x0=-tot/2;const ok=new Set();while(ok.size<2)ok.add(Math.floor(r()*n));
     for(let i=0;i<=n;i++){const xa=x0+i*(dw+gap);box(xa,xa+gap,0,3.4,z-.4,z+.4,{col:"wall"})}
@@ -891,6 +891,32 @@ function course2(C,r,box,W){
   box(-4,4,2,3,-127,-135,{col:"snow"});C.pads.push({x:0,z:-133.5,r:1.5,y:3,v:14.5});W(0,-131);W(0,-133.5,"pad");
   box(-4,4,5,6,-138,-146,{col:"snow"});C.cps.push({z:-141,x:0,y:6});C.pads.push({x:0,z:-144.5,r:1.5,y:6,v:14.5});W(0,-141);W(0,-144.5,"pad");
   box(-6,6,8,9,-149,-162,{col:"finish"});C.finishZ=-155;C.finishY=9;W(0,-152);W(0,-160)}
+/* mapa 5: Parque Aquático — escorrega gigante, boias que flutuam, canhões de água, trampolins e insufláveis */
+function course4(C,r,box,W){
+  box(-7,7,11,12,6,-4,{col:"pooltile"});for(let i=0;i<8;i++)C.spawn.push([-4.5+(i%4)*3,12,2+Math.floor(i/4)*2.5]);C.cps.push({z:0,x:0,y:12});
+  /* escorrega: desce de 12 a 0 com bordas */
+  C.ramps.push({x0:-3,x1:3,z0:-4,z1:-40,y0:12,y1:0,col:"slide"});for(let k=0;k<9;k++){const za=-4-k*4,zb=za-4,ya=12-k*4/3,yb=ya-4/3;box(-3.5,-3,Math.min(ya,yb)-.3,Math.max(ya,yb)+.9,za,zb,{col:"rail"});box(3,3.5,Math.min(ya,yb)-.3,Math.max(ya,yb)+.9,za,zb,{col:"rail"})}
+  for(const [x,z] of [[-1.4,-14],[1.5,-22],[-1,-30]])C.bump.push({x,z,r:.9,h:14,ramp:1});
+  W(0,-8);W(0,-16);W(0,-24);W(0,-32);W(0,-39);
+  box(-5,5,-1,0,-40,-45,{col:"pooltile"});C.cps.push({z:-42.5,x:0,y:0});W(0,-43);
+  /* piscina com boias que sobem e descem */
+  [[-49,-1.6,0],[-54,1.6,1],[-59,-1.6,2],[-64,1.6,.5]].forEach(([z,x,ph])=>{C.movers.push({x0:x-1.5,x1:x+1.5,y0:-.5,y1:0,z0:z-1.5,z1:z+1.5,ax:0,ay:.45,w:1.6,ph,col:"buoy",plat:1});W(x,z+1.8,"j");W(x,z,"mv")});
+  box(-5,5,-1,0,-67,-72,{col:"pooltile"});C.cps.push({z:-69.5,x:0,y:0});W(0,-67.3,"j");W(0,-70);
+  /* ponte com canhões de água dos lados */
+  box(-3,3,-1,0,-72,-96,{col:"bridge2"});
+  [[-76,1,0],[-81,-1,1.1],[-86,1,2.2],[-91,-1,.6]].forEach(([z,s,ph])=>{C.winds.push({x0:-3.5,x1:3.5,z0:z-1.6,z1:z+1.6,h:3,fx:22*s,per:2.4,dur:1.1,ph,side:s})});
+  W(0,-78);W(0,-84);W(0,-90);W(0,-95);
+  box(-5,5,-1,0,-96,-101,{col:"pooltile"});C.cps.push({z:-98.5,x:0,y:0});W(0,-99);
+  /* trampolins sobre a água */
+  [[-106,0],[-113,0],[-120,0]].forEach(([z,x])=>{box(x-1.3,x+1.3,-1,0,z-1.3,z+1.3,{col:"buoy"});C.pads.push({x,z,r:1.2,y:0,v:12.5});W(x,z+.6,"pad")});
+  box(-5,5,-1,0,-125,-130,{col:"pooltile"});C.cps.push({z:-127.5,x:0,y:0});W(0,-128);
+  /* insufláveis: bolas grandes saltitonas e paredes que abanam */
+  box(-6,6,-1,0,-130,-152,{col:"inflate"});
+  for(const [x,z] of [[-3,-134],[2.5,-137],[-1,-141],[3.5,-145],[-3.5,-148]])C.bump.push({x,z,r:1.2,h:1.8});
+  C.movers.push({x0:-1.2,x1:1.2,y0:0,y1:1.6,z0:-143.5,z1:-142.5,ax:3.5,ay:0,w:1.4,ph:0,col:"inflwall"});
+  W(0,-133);W(-.5,-139);W(.5,-144);W(0,-150);
+  C.cyls.push({x:0,z:-158,r:6,y:0,col:"pooldisc"});box(-3,3,-1,0,-152,-152.5);C.sweep.push({x:0,z:-158,y:.42,len:6,w:.45,sp:1.3,ph:0,col:"noodle"});W(0,-153);W(0,-158,"sw");W(0,-163);
+  box(-3,3,-1,0,-164,-168);box(-6,6,-1,0,-168,-178,{col:"finish"});C.finishZ=-173;W(0,-176)}
 /* mapa 4: Vulcão — chão de hexágonos sobre lava, jatos de fogo, plataformas que sobem e descem, discos com varredoras, portas e pedras a rolar */
 function course3(C,r,box,W){
   box(-8,8,-1,0,6,-6,{col:"rock"});for(let i=0;i<8;i++)C.spawn.push([-5.25+(i%4)*3.5,0,2+Math.floor(i/4)*2.5]);C.cps.push({z:0,x:0,y:0});
@@ -918,6 +944,7 @@ function moverOff(m,t){const s=Math.sin(m.w*t+m.ph),c=Math.cos(m.w*t+m.ph);retur
 function surfaceAt(C,t,x,z,y){/* devolve [topo, vx, vz] da superfície por baixo dos pés (ou null) */
   let best=null;const take=(top,vx,vz)=>{if(y>=top-.45&&y<=top+.25&&(!best||top>best[0]))best=[top,vx,vz]};
   for(const b of C.boxes)if(!b.inv&&x>b.x0-.1&&x<b.x1+.1&&z>b.z0-.1&&z<b.z1+.1){take(b.y1,0,b.belt||0);if(best&&best[0]===b.y1)best[3]=b.ice?1:0}
+  for(const q of C.ramps)if(x>q.x0-.1&&x<q.x1+.1&&z>Math.min(q.z0,q.z1)-.1&&z<Math.max(q.z0,q.z1)+.1){const f=(z-q.z1)/(q.z0-q.z1),top=q.y1+(q.y0-q.y1)*f;take(top,0,0);if(best&&best[0]===top){best[3]=2;best[4]=q}}
   for(const m of C.movers)if(m.plat){const [ox,oy,vx,vy]=moverOff(m,t);if(x>m.x0+ox-.1&&x<m.x1+ox+.1&&z>m.z0-.1&&z<m.z1+.1)take(m.y1+oy,vx,0)}
   for(const c of C.cyls){const dx=x-c.x,dz=z-c.z;if(dx*dx+dz*dz<(c.r+.1)*(c.r+.1)){const w=c.spin?c.spin*.9:0;take(c.y,-dz*w,dx*w)}}
   for(const tl of C.tiles)if(tl.st<2&&x>tl.x0-.05&&x<tl.x1+.05&&z>tl.z0-.05&&z<tl.z1+.05)take(tl.y1+tl.dy,0,0);
@@ -927,7 +954,7 @@ function stepPawn(P,C,t,inp,others){const dt=TDT;
   let ix=inp.x||0,iz=inp.z||0;const il=Math.hypot(ix,iz);if(il>1){ix/=il;iz/=il}
   if(P.stun>0){P.stun-=dt;ix=iz=0}
   if(P.dive>0){P.dive-=dt;ix=iz=0}
-  const ctl=P.on?1:.45,acc=(P.on?(P.ice?16:55):22)*ctl;
+  const ctl=P.on?1:.45,acc=(P.on?(P.ice===2?10:P.ice?16:55):22)*ctl;
   if(ix||iz){P.yaw=Math.atan2(ix,iz)}
   const tvx=ix*TRUN,tvz=iz*TRUN;
   if(P.dive<=0&&P.stun<=0){const dvx=tvx-P.vx,dvz=tvz-P.vz,dl=Math.hypot(dvx,dvz),st=acc*dt;if(dl<=st){P.vx=tvx;P.vz=tvz}else{P.vx+=dvx/dl*st;P.vz+=dvz/dl*st}}
@@ -940,7 +967,7 @@ function stepPawn(P,C,t,inp,others){const dt=TDT;
   let carry=[0,0];if(P.on){const s=surfaceAt(C,t,P.x,P.z,P.y);if(s){carry=[s[1],s[2]]}}
   P.x+=(P.vx+carry[0])*dt;P.z+=(P.vz+carry[1])*dt;P.y+=P.vy*dt;
   /* chão */
-  P.on=false;P.ice=0;if(P.vy<=0){const s=surfaceAt(C,t,P.x,P.z,P.y);if(s){P.y=s[0];P.vy=0;P.on=true;P.ice=s[3]||0}}
+  P.on=false;P.ice=0;if(P.vy<=0){const s=surfaceAt(C,t,P.x,P.z,P.y);if(s){P.y=s[0];P.vy=0;P.on=true;P.ice=s[3]||0;if(s[4]){const q=s[4],sl=(q.y1-q.y0)/(q.z1-q.z0);P.vz-=sl*14*dt;if(P.vz>-4)P.vz-=6*dt;P.slide=1}else P.slide=0}}
   /* paredes (caixas, portas, pilaretes) — empurra para fora no plano */
   const push=(x0,x1,z0,z1,y0,y1,door)=>{if(P.y+THH<y0||P.y>y1-.05)return false;const cx=Math.max(x0,Math.min(P.x,x1)),cz=Math.max(z0,Math.min(P.z,z1)),dx=P.x-cx,dz=P.z-cz,d=Math.hypot(dx,dz);if(d>=TR)return false;
     if(door&&door.brk&&!door.open){door.open=true;door.ot=t;P.ev.push("door");P.vx*=.6;P.vz*=.6;return true}
@@ -951,6 +978,7 @@ function stepPawn(P,C,t,inp,others){const dt=TDT;
   for(const m of C.movers){if(m.plat)continue;const [ox,oy,vx]=moverOff(m,t);if(push(m.x0+ox,m.x1+ox,m.z0,m.z1,m.y0+oy,m.y1+oy)){P.x+=vx*dt*1.2;if(Math.abs(vx)>2.5&&P.stun<=0){P.vx=vx*1.0;P.vy=2.5;P.on=false;P.stun=.25;P.ev.push("hit")}}}
   if(P.on)for(const pd of C.pads){if(Math.hypot(P.x-pd.x,P.z-pd.z)<pd.r&&Math.abs(P.y-pd.y)<.3){P.vy=pd.v;P.on=false;P.ev.push("pad")}}
   for(const b of C.balls){const L=b.z1-b.z0;for(let k=0;k<b.n;k++){const s=((t*b.sp+k*L/b.n+b.ph*L)%L+L)%L,bz=b.z0+s,bx=b.x[k%b.x.length],by=b.y+b.r;const dx=P.x-bx,dy=P.y+.8-by,dz=P.z-bz,d=Math.hypot(dx,dy,dz);if(d<b.r+TR+.1&&P.stun<=0){P.vx=dx/(d||1)*4;P.vz=b.sp*1.1;P.vy=5;P.on=false;P.stun=.45;P.ev.push("hit")}}}
+  for(const wd of C.winds){if(jetOn(wd,t)&&P.x>wd.x0&&P.x<wd.x1&&P.z>wd.z0&&P.z<wd.z1&&P.y<wd.h)P.vx+=wd.fx*dt*(P.on?1:.6)}
   for(const j of C.jets){if(jetOn(j,t)&&Math.hypot(P.x-j.x,P.z-j.z)<j.r+TR*.5&&P.y<3.5&&P.stun<=0){P.vy=12;P.vx=(P.x-j.x)*4;P.vz=3;P.on=false;P.stun=.7;P.ev.push("hit")}}
   /* varredoras: barra que roda — empurrão */
   for(const s of C.sweep){const top=P.y+(P.dive>0?.65:1.6);if(s.y+s.w<P.y+.05||s.y-s.w>top||P.stun>0)continue;const a=sweepAng(s,t),ux=Math.cos(a),uz=Math.sin(a),rx=P.x-s.x,rz=P.z-s.z;const along=Math.max(-s.len,Math.min(s.len,rx*ux+rz*uz)),px=s.x+ux*along,pz=s.z+uz*along,dx=P.x-px,dz=P.z-pz,d=Math.hypot(dx,dz);
@@ -1029,8 +1057,9 @@ const THEMES=[
   {sky:["#4fb0ff","#a8dcff","#e9f7ff"],fog:0xbfe6ff,water:"#4cc9f0",isl:["#f4d6a0","#8ac926","#52b788"],cloud:"#ffffff"},
   {sky:["#ff8fc8","#ffc8e6","#fff0f8"],fog:0xffd6ec,water:"#c77dff",isl:["#ffd6a5","#ff70a6","#70d6ff"],cloud:"#fff5fb"},
   {sky:["#8ecae6","#cfe8f5","#ffffff"],fog:0xe3f2fb,water:"#a9def9",isl:["#ffffff","#e0f2ff","#b8e0f5"],cloud:"#ffffff"},
-  {sky:["#2b0f1e","#7a1f1f","#ff7b39"],fog:0x5a1a1a,water:"#ff5a1f",isl:["#3d2b2b","#5c3a3a","#ff7b39"],cloud:"#6b4a4a"}];
-const PALS={candy:["#ffe5f1","#ff70a6"],pusher:["#ffd23f","#ff9f1c"],snow:["#ffffff","#bcd9ea"],ice:["#e8f7ff","#8ecae6"],rock:["#5c4033","#3d2b22"],rock2:["#6b4c3b","#3d2b22"],rockp:["#ffb347","#8c4a1f"],start:["#9be564","#5aa83a"],plat:["#ffffff","#7fb7ff"],plat2:["#fff4d6","#ffb36b"],bridge:["#ffe0f0","#ff7fbf"],wall:["#b8a6ff","#7b5cff"],belt:["#3d405b","#2b2d42"],finish:["#fff5b8","#ffbe0b"],disc:["#ffffff","#06d6a0"],spin:["#e0fbff","#00bbf9"]};
+  {sky:["#2b0f1e","#7a1f1f","#ff7b39"],fog:0x5a1a1a,water:"#ff5a1f",isl:["#3d2b2b","#5c3a3a","#ff7b39"],cloud:"#6b4a4a"},
+  {sky:["#00a6fb","#7fd8ff","#e8fbff"],fog:0xc8f1ff,water:"#00d2d3",isl:["#ffe8a3","#2ec4b6","#ff9f1c"],cloud:"#ffffff"}];
+const PALS={pooltile:["#f4fdff","#7fdbff"],slide:["#ffd23f","#ff7f11"],rail:["#ff5d8f","#d63a6a"],buoy:["#ffffff","#ff5d5d"],bridge2:["#e0fbfc","#3a86ff"],inflate:["#ffe66d","#ff6b6b"],inflwall:["#ff6b6b","#d63a3a"],pooldisc:["#e0fbfc","#00bbf9"],candy:["#ffe5f1","#ff70a6"],pusher:["#ffd23f","#ff9f1c"],snow:["#ffffff","#bcd9ea"],ice:["#e8f7ff","#8ecae6"],rock:["#5c4033","#3d2b22"],rock2:["#6b4c3b","#3d2b22"],rockp:["#ffb347","#8c4a1f"],start:["#9be564","#5aa83a"],plat:["#ffffff","#7fb7ff"],plat2:["#fff4d6","#ffb36b"],bridge:["#ffe0f0","#ff7fbf"],wall:["#b8a6ff","#7b5cff"],belt:["#3d405b","#2b2d42"],finish:["#fff5b8","#ffbe0b"],disc:["#ffffff","#06d6a0"],spin:["#e0fbff","#00bbf9"]};
 let WORLD=null;const DYN={sweep:[],ham:[],tiles:[],doors:[],bump:[],belt:null,conf:[],movers:[],pads:[],balls:[],jets:[],water:null};
 function buildWorld(){const TH=THEMES[C.map||0];skyTheme(TH);if(WORLD)scene.remove(WORLD);WORLD=new THREE.Group();scene.add(WORLD);for(const k in DYN)DYN[k]=Array.isArray(DYN[k])?[]:null;DYN.conf=[];
   const boxM=(b)=>{const p=PALS[b.col]||PALS.plat,top=MT(p[0]),side=MT(p[1]);if(b.col==="belt"){top.map=TX.belt.clone();top.map.needsUpdate=true;top.map.repeat.set((b.x1-b.x0)/2,(b.z1-b.z0)/2);top.color.set("#ffffff");DYN.belt=top.map}else if(b.col!=="wall"){top.map=TX.top;}return[side,side,top,side,side,side]};
@@ -1038,18 +1067,23 @@ function buildWorld(){const TH=THEMES[C.map||0];skyTheme(TH);if(WORLD)scene.remo
   for(const c of C.cyls){const p=PALS[c.col]||PALS.disc,m=new THREE.Mesh(new THREE.CylinderGeometry(c.r,c.r*.92,1,40),[MT(p[1]),MT(p[0]),MT(p[1])]);m.position.set(c.x,c.y-.5,c.z);WORLD.add(m);
     if(c.spin){const ring=new THREE.Mesh(new THREE.TorusGeometry(c.r*.7,.08,6,40),MT("#ffd23f"));ring.rotation.x=Math.PI/2;ring.position.y=.51;m.add(ring);const arr=new THREE.Mesh(new THREE.ConeGeometry(.35,.7,3),MT("#ffd23f"));arr.rotation.z=-Math.PI/2*c.spin;arr.position.set(0,.6,c.r*.7);m.add(arr);DYN.tiles.push({spinMesh:m,c})}}
   for(const s of C.sweep){const g=new THREE.Group();g.position.set(s.x,s.y,s.z);const sm=MT("#ffffff");sm.map=TX.stripe;const bar=new THREE.Mesh(new THREE.CylinderGeometry(s.w,s.w,s.len*2,12),sm);bar.rotation.z=Math.PI/2;g.add(bar);
-    const hub=new THREE.Mesh(new THREE.CylinderGeometry(.7,.9,1.4,16),MT(s.col==="red"?"#ff5d5d":"#ffbe0b"));hub.position.y=0;g.add(hub);WORLD.add(g);DYN.sweep.push({g,s})}
+    if(s.col==="noodle"){bar.material=MT("#06d6a0");}const hub=new THREE.Mesh(new THREE.CylinderGeometry(.7,.9,1.4,16),MT(s.col==="red"?"#ff5d5d":s.col==="noodle"?"#ff5d8f":"#ffbe0b"));hub.position.y=0;g.add(hub);WORLD.add(g);DYN.sweep.push({g,s})}
   for(const h of C.ham){const piv=new THREE.Group();piv.position.set(h.x,h.py,h.z);const rod=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,h.len,8),MT("#8d99ae"));rod.position.y=-h.len/2;piv.add(rod);
     const hm=MT("#ffffff");hm.map=TX.stripe;const head=new THREE.Mesh(new THREE.CylinderGeometry(h.r*.9,h.r*.9,h.r*2.2,20),hm);head.rotation.x=Math.PI/2;head.position.y=-h.len;piv.add(head);
     const top=new THREE.Mesh(new THREE.BoxGeometry(9,.5,.6),MT("#7b5cff"));top.position.set(h.x,h.py+.3,h.z);WORLD.add(top);for(const sx of [-4.3,4.3]){const leg=new THREE.Mesh(new THREE.BoxGeometry(.5,h.py+.6,.5),MT("#7b5cff"));leg.position.set(h.x+sx,(h.py-.6)/2,h.z);WORLD.add(leg)}
     WORLD.add(piv);DYN.ham.push({piv,h})}
   const TC=[["#ffb3d1","#ffe3ef"],["#ffb3d1","#ffe3ef"],["#8ecae6","#e8f7ff"],["#8c4a1f","#ffb347"]][C.map||0];TC_=TC;for(const tl of C.tiles){const m=new THREE.Mesh(new THREE.CylinderGeometry(1.45,1.35,tl.y1-tl.y0,6),[MT(TC[0]),MT(TC[1]),MT(TC[0])]);m.position.set((tl.x0+tl.x1)/2,(tl.y0+tl.y1)/2,(tl.z0+tl.z1)/2);m.rotation.y=Math.PI/6;WORLD.add(m);DYN.tiles.push({m,tl,y:m.position.y})}
   for(const d of C.doors){const mt=MT("#ffffff");mt.map=TX.door;const m=new THREE.Mesh(new THREE.BoxGeometry(d.x1-d.x0,d.y1-d.y0,d.z1-d.z0),[MT("#5a3fd0"),MT("#5a3fd0"),MT("#5a3fd0"),MT("#5a3fd0"),mt,mt]);m.position.set((d.x0+d.x1)/2,(d.y0+d.y1)/2,(d.z0+d.z1)/2);WORLD.add(m);DYN.doors.push({m,d,fall:0})}
-  for(const b of C.bump){const mt=MT("#ffffff");mt.map=TX.stripe;const m=new THREE.Mesh(new THREE.CylinderGeometry(b.r,b.r,b.h,24),[mt,MT("#ff5d8f"),MT("#ff5d8f")]);m.position.set(b.x,b.h/2,b.z);WORLD.add(m);DYN.bump.push({m,b,k:0})}
+  for(const b of C.bump){let m;if(b.ramp||C.map===4){const s=surfaceAt(C,0,b.x,b.z,99)||[0];const top=C.ramps.length&&b.ramp?(()=>{const q=C.ramps[0],f=(b.z-q.z1)/(q.z0-q.z1);return q.y1+(q.y0-q.y1)*f})():0;const mt=MT("#ffffff");mt.map=TX.stripe;m=new THREE.Mesh(new THREE.SphereGeometry(b.r,20,14),mt);m.position.set(b.x,top+b.r*.9,b.z);void s}else{const mt=MT("#ffffff");mt.map=TX.stripe;m=new THREE.Mesh(new THREE.CylinderGeometry(b.r,b.r,b.h,24),[mt,MT("#ff5d8f"),MT("#ff5d8f")]);m.position.set(b.x,b.h/2,b.z)}WORLD.add(m);DYN.bump.push({m,b,k:0})}
+  for(const q of C.ramps){const L=Math.hypot(q.z1-q.z0,q.y1-q.y0),p=PALS[q.col]||PALS.slide,tm=MT(p[0]);tm.map=TX.stripe.clone();tm.map.needsUpdate=true;tm.map.repeat.set(1,L/3);tm.map.rotation=Math.PI/2;const mm=new THREE.Mesh(new THREE.BoxGeometry(q.x1-q.x0,.5,L),[MT(p[1]),MT(p[1]),tm,MT(p[1]),MT(p[1]),MT(p[1])]);
+    mm.position.set((q.x0+q.x1)/2,(q.y0+q.y1)/2-.25,(q.z0+q.z1)/2);mm.rotation.x=-Math.atan2(q.y0-q.y1,q.z0-q.z1);WORLD.add(mm);
+    const water=new THREE.Mesh(new THREE.PlaneGeometry(q.x1-q.x0-.4,L),new THREE.MeshBasicMaterial({color:"#7fd8ff",transparent:true,opacity:.35}));water.position.copy(mm.position);water.position.y+=.27;water.rotation.x=-Math.PI/2+mm.rotation.x;WORLD.add(water)}
+  for(const wd of C.winds){const g=new THREE.Group();const can=new THREE.Mesh(new THREE.CylinderGeometry(.45,.6,1.2,14),MT("#3a86ff"));can.rotation.z=Math.PI/2;g.add(can);g.position.set(wd.side>0?wd.x0-.8:wd.x1+.8,.8,(wd.z0+wd.z1)/2);WORLD.add(g);
+    const jet=new THREE.Mesh(new THREE.CylinderGeometry(.35,.9,wd.x1-wd.x0,12,1,true),new THREE.MeshBasicMaterial({color:"#bdf5ff",transparent:true,opacity:.55,side:THREE.DoubleSide}));jet.rotation.z=wd.side>0?-Math.PI/2:Math.PI/2;jet.position.set((wd.x0+wd.x1)/2,1,(wd.z0+wd.z1)/2);WORLD.add(jet);DYN.jets.push({fire:jet,glow:can.material,j:wd,wind:1})}
   for(const m of C.movers){const p=PALS[m.col]||PALS.plat;const mm=new THREE.Mesh(new THREE.BoxGeometry(m.x1-m.x0,m.y1-m.y0,m.z1-m.z0),[MT(p[1]),MT(p[1]),MT(p[0]),MT(p[1]),MT(p[1]),MT(p[1])]);if(m.col==="pusher"){const st=MT("#ffffff");st.map=TX.stripe;mm.material[0]=st;mm.material[1]=st}mm.position.set((m.x0+m.x1)/2,(m.y0+m.y1)/2,(m.z0+m.z1)/2);WORLD.add(mm);DYN.movers.push({mm,m,x:mm.position.x,y:mm.position.y})}
   for(const pd of C.pads){const g=new THREE.Group();g.position.set(pd.x,pd.y+.03,pd.z);const ring=new THREE.Mesh(new THREE.CylinderGeometry(pd.r,pd.r,.12,28),MT("#06d6a0"));g.add(ring);const top=new THREE.Mesh(new THREE.CylinderGeometry(pd.r*.75,pd.r*.75,.14,28),MT("#b9fbc0"));top.position.y=.02;g.add(top);
     for(let k=0;k<3;k++){const a=new THREE.Mesh(new THREE.ConeGeometry(.35,.5,4),MT("#ffffff"));a.position.y=.6+k*.55;g.add(a)}WORLD.add(g);DYN.pads.push({g,pd})}
-  for(const b of C.balls){const col=C.map===2?"#ffffff":C.map===3?"#5c3a3a":"#ff70a6";for(let k=0;k<b.n;k++){const mt=MT(col);if(C.map===1){mt.map=TX.stripe}const s=new THREE.Mesh(new THREE.SphereGeometry(b.r,20,14),mt);WORLD.add(s);DYN.balls.push({s,b,k})}}
+  for(const b of C.balls){const col=C.map===2?"#ffffff":C.map===3?"#5c3a3a":C.map===4?"#ffd23f":"#ff70a6";for(let k=0;k<b.n;k++){const mt=MT(col);if(C.map===1){mt.map=TX.stripe}const s=new THREE.Mesh(new THREE.SphereGeometry(b.r,20,14),mt);WORLD.add(s);DYN.balls.push({s,b,k})}}
   for(const j of C.jets){const base=new THREE.Mesh(new THREE.CylinderGeometry(j.r*.8,j.r,.25,16),MT("#3d2b22"));base.position.set(j.x,.12,j.z);WORLD.add(base);const fire=new THREE.Mesh(new THREE.CylinderGeometry(j.r*.55,j.r*.9,4,14,1,true),new THREE.MeshBasicMaterial({color:"#ffb703",transparent:true,opacity:.85,side:THREE.DoubleSide}));fire.position.set(j.x,2.1,j.z);WORLD.add(fire);const glow=new THREE.Mesh(new THREE.CircleGeometry(j.r*.9,20),new THREE.MeshBasicMaterial({color:"#ff4d00",transparent:true,opacity:.6}));glow.rotation.x=-Math.PI/2;glow.position.set(j.x,.26,j.z);WORLD.add(glow);DYN.jets.push({fire,glow,j})}
   /* meta: arco aos quadrados */
   {const z=C.finishZ,fy=C.finishY||0;const am=MT("#ffffff");am.map=TX.check;am.map.repeat.set(6,1);const arch=new THREE.Mesh(new THREE.TorusGeometry(5.6,.45,10,40,Math.PI),am);arch.position.set(0,fy,z);WORLD.add(arch);
@@ -1125,7 +1159,7 @@ function render(dt){const sky=scene.getObjectByName("sky");
     const TT=Math.max(0,T);for(const d of DYN.movers){const [ox,oy]=moverOff(d.m,TT);d.mm.position.x=d.x+ox;d.mm.position.y=d.y+oy}
     for(const d of DYN.pads){d.g.children.forEach((c,k)=>{if(k>=2)c.position.y=.6+(k-2)*.55+((performance.now()/400+k*.3)%1)*.3})}
     for(const d of DYN.balls){const b=d.b,L=b.z1-b.z0,s=((TT*b.sp+d.k*L/b.n+b.ph*L)%L+L)%L;d.s.position.set(b.x[d.k%b.x.length],b.y+b.r,b.z0+s);d.s.rotation.x=(b.z0+s)/b.r}
-    for(const d of DYN.jets){const on=jetOn(d.j,TT),soon=jetOn(d.j,TT+.5);d.fire.visible=on;d.fire.scale.set(1+Math.random()*.15,1,1+Math.random()*.15);d.glow.material.opacity=on?.9:soon?.5+Math.sin(performance.now()/60)*.3:.25}
+    for(const d of DYN.jets){const on=jetOn(d.j,TT),soon=jetOn(d.j,TT+.5);d.fire.visible=on;d.fire.scale.set(1+Math.random()*.15,1,1+Math.random()*.15);if(d.wind){d.glow.color.set(soon&&!on?"#ffd23f":"#3a86ff");continue}d.glow.material.opacity=on?.9:soon?.5+Math.sin(performance.now()/60)*.3:.25}
     if(DYN.water&&C.map===3)DYN.water.material.color.setHSL(.04,1,.5+Math.sin(performance.now()/700)*.04);
     for(const d of DYN.bump){d.k=Math.max(0,d.k-dt*4);d.m.scale.set(1+d.k*.25,1-d.k*.15,1+d.k*.25)}
     PAWNS.forEach((P,i)=>{const m=PM[i];if(!m)return;m.g.position.set(P.x,P.y,P.z);m.g.rotation.y=P.yaw;const sp=Math.hypot(P.vx,P.vz);const run=P.on&&sp>.5,ph=P.anim*2.4,sw=run?Math.sin(ph)*Math.min(1,sp/6):0;
@@ -1158,7 +1192,7 @@ const ov=$("ov");function showOv(h){ov.innerHTML=h;ov.hidden=false}
 function menu(){MODE=null;STATE="menu";$("hud").hidden=true;if(!C){C=makeCourse(1,0);buildWorld();camera.position.set(14,10,8);camera.lookAt(0,0,-30)}
   const sw=COLS.map((c,i)=>`<button type="button" class="sw${i===SAVE.col%COLS.length?" on":""}" data-c="${i}" style="background:${c}" aria-label="Cor ${i+1}"></button>`).join("");
   showOv(`<div class="panel"><h2>Tropeção!</h2><p>Corrida de obstáculos: chega à meta antes dos outros sem cair!</p><div class="eyebrow">A tua cor</div><div class="sws">${sw}</div>
-   <div class="eyebrow">Mapa</div><div class="maps">${MAPS.map((m,i)=>`<button type="button" class="mapb m${i}" data-m="${i}"><b>${m.name}</b><small>${["Fácil","Médio","Difícil","Difícil"][i]}</small></button>`).join("")}<button type="button" class="mapb mr" data-m="-1"><b>🎲 Aleatório</b><small>surpresa</small></button></div><button class="btn ghost" type="button" data-a="mp">👥 Correr com amigos</button><p class="note">Vitórias: ${SAVE.wins}${SAVE.best?" · melhor tempo "+fmtT(SAVE.best):""}</p></div>`)}
+   <div class="eyebrow">Mapa</div><div class="maps">${MAPS.map((m,i)=>`<button type="button" class="mapb m${i}" data-m="${i}"><b>${m.name}</b><small>${["Fácil","Médio","Difícil","Difícil","Médio"][i]}</small></button>`).join("")}<button type="button" class="mapb mr" data-m="-1"><b>🎲 Aleatório</b><small>surpresa</small></button></div><button class="btn ghost" type="button" data-a="mp">👥 Correr com amigos</button><p class="note">Vitórias: ${SAVE.wins}${SAVE.best?" · melhor tempo "+fmtT(SAVE.best):""}</p></div>`)}
 const fmtT=t=>Math.floor(t/60)+":"+(t%60).toFixed(1).padStart(4,"0");
 function showResults(ord){STATE="end";const o=ord||ORDER.concat(PAWNS.filter(p=>!ORDER.some(x=>x[0]===p.i)).sort((a,b)=>a.z-b.z).map(p=>[p.i,0]));const myPos=o.findIndex(x=>x[0]===ME)+1;
   if(MODE==="solo"){if(myPos===1)SAVE.wins++;const me=PAWNS[ME];if(me.fin&&(!SAVE.best||me.fin<SAVE.best))SAVE.best=me.fin;saveS()}
@@ -1204,7 +1238,7 @@ ROOM.game={id:"tropecao",title:"Tropeção!",maxp:8,minp:2,maxBots:0,botNames:[]
   stop(){STATE="menu";MODE=null},hostLost(){},
   drop(seat){const i=ROOM.seats.indexOf(seat);if(i>0){const p=PAWNS[i];if(p)p.gone=1;ROOM.seats.forEach(s=>ROOM.sendTo(s,{t:"gone",i}))}},
   onScreen(n){if(n==="game"){if(!ROOM.code){$("exitBtn").hidden=true;$("reactBtn").hidden=true;$("hubLink").hidden=false;if(!MODE)menu()}setTimeout(layout,30)}}};
-initUI({rules:`<ul><li>Chega à <b>meta</b> antes dos outros! Há 4 mapas: <b>Ilha dos Tombos</b>, <b>Fábrica de Doces</b>, <b>Montanha Gelada</b> e <b>Vulcão</b>, com varredoras, martelos, chão que cai, discos que rodam, portas (só algumas se partem!), empurradores, bolas a rolar, gelo, pads de salto e jatos de fogo.</li><li>As barras <b>altas</b> (amarelas) passam-se a <b>mergulhar</b>; as baixas, a <b>saltar</b>.</li><li><b>Telemóvel:</b> arrasta no lado esquerdo do ecrã para andar; botões à direita para <b>saltar</b> e <b>mergulhar</b>. <b>Computador:</b> WASD ou setas, espaço salta, Shift mergulha.</li><li>Se caíres, voltas ao último <b>ponto de controlo</b>.</li><li><b>Com amigos:</b> até 8 na mesma corrida, cada um no seu telemóvel; os lugares que sobram ficam com bonecos.</li></ul>`,privacy:privacyHTML(", as tuas vitórias")});
+initUI({rules:`<ul><li>Chega à <b>meta</b> antes dos outros! Há 5 mapas: <b>Ilha dos Tombos</b>, <b>Fábrica de Doces</b>, <b>Montanha Gelada</b>, <b>Vulcão</b> e <b>Parque Aquático</b>, com varredoras, martelos, chão que cai, discos que rodam, portas (só algumas se partem!), empurradores, bolas a rolar, gelo, pads de salto e jatos de fogo.</li><li>As barras <b>altas</b> (amarelas) passam-se a <b>mergulhar</b>; as baixas, a <b>saltar</b>.</li><li><b>Telemóvel:</b> arrasta no lado esquerdo do ecrã para andar; botões à direita para <b>saltar</b> e <b>mergulhar</b>. <b>Computador:</b> WASD ou setas, espaço salta, Shift mergulha.</li><li>Se caíres, voltas ao último <b>ponto de controlo</b>.</li><li><b>Com amigos:</b> até 8 na mesma corrida, cada um no seu telemóvel; os lugares que sobram ficam com bonecos.</li></ul>`,privacy:privacyHTML(", as tuas vitórias")});
 $("addBot").hidden=true;
 $("soloBtn").addEventListener("click",()=>{if(ROOM.code)leaveRoom();showScreen("game");menu()});
 if(matchMedia("(pointer:coarse)").matches||navigator.maxTouchPoints>0)document.body.classList.add("touch");
