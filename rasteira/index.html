@@ -820,7 +820,9 @@ const API={
   door(s,x,y,spd){const d=s.door;d.tx=x*TS+4;d.ty=y*TS+(d.up?0:TS-46);d.spd=spd;s.ev.push("door")},
   saw(s,o){s.saws.push(Object.assign({x:0,y:0,r:14,vx:0,vy:0,on:false,rot:0},o));return s.saws.length-1},
   later(s,dt,fn){s.timers.push({at:s.t+dt,fn})},
-  standing:(s,k)=>s.p.onG===k};
+  standing:(s,k)=>s.p.onG===k,
+  loop(s,k,dx,dy,spd){const g=s.groups[k];g.mode="loop";g.tx=dx*TS;g.ty=dy*TS;g.bx=g.ox;g.by=g.oy;g.spd=spd},
+  vanish(s,k){const g=s.groups[k];if(g.vis){g.vis=false;s.ev.push("pop")}}};
 function groupRects(s,g){return g.tiles.map(([c,r])=>[c*TS+g.ox,r*TS+g.oy,TS,TS])}
 const ovl=(ax,ay,aw,ah,bx,by,bw,bh)=>ax<bx+bw&&ax+aw>bx&&ay<by+bh&&ay+ah>by;
 function solidsNear(s,x,y,w,h){const out=[];const c0=Math.floor(x/TS)-1,c1=Math.floor((x+w)/TS)+1,r0=Math.floor(y/TS)-1,r1=Math.floor((y+h)/TS)+1;
@@ -844,7 +846,7 @@ function step(s,inp){const dt=DTF,p=s.p;if(s.dead||s.won)return;s.t+=dt;
   /* porta */
   for(const d of s.doors)if(d.tx!=null){const dx=d.tx-d.x,dy=d.ty-d.y,dd=Math.hypot(dx,dy),st=d.spd*dt;if(dd<=st||d.spd<=0){d.x=d.tx;d.y=d.ty;d.tx=null}else{d.x+=dx/dd*st;d.y+=dy/dd*st}}
   /* serras */
-  for(const w of s.saws)if(w.on){w.x+=w.vx*dt;w.y+=w.vy*dt;w.rot+=(w.vx>=0?1:-1)*dt*12;if(w.minx!=null&&(w.x<w.minx||w.x>w.maxx)){w.vx=-w.vx;w.x=Math.max(w.minx,Math.min(w.maxx,w.x))}}
+  for(const w of s.saws)if(w.on){w.x+=w.vx*dt;w.y+=w.vy*dt;w.rot+=(w.vx>=0?1:-1)*dt*12;if(w.minx!=null&&(w.x<w.minx||w.x>w.maxx)){w.vx=-w.vx;w.x=Math.max(w.minx,Math.min(w.maxx,w.x))}if(w.miny!=null&&(w.y<w.miny||w.y>w.maxy)){w.vy=-w.vy;w.y=Math.max(w.miny,Math.min(w.maxy,w.y))}}
   /* jogador */
   p.x+=carry[0];if(carry[1]*p.gs>0||p.gs<0)p.y+=carry[1];else p.y+=carry[1];
   let dir=(inp.r?1:0)-(inp.l?1:0);if(s.rev>0)dir=-dir;if(dir)p.face=dir;
@@ -871,7 +873,7 @@ function step(s,inp){const dt=DTF,p=s.p;if(s.dead||s.won)return;s.t+=dt;
   for(const k in s.groups){const g=s.groups[k];if(!g.kill||!g.vis)continue;for(const R of groupRects(s,g))if(spikeHit(p.x,p.y,PW,PH,R[0],R[1],g.dir))die(s,"spike")}
   for(const w of s.saws){const nx=Math.max(p.x,Math.min(w.x,p.x+PW)),ny=Math.max(p.y,Math.min(w.y,p.y+PH));if(Math.hypot(nx-w.x,ny-w.y)<w.r-2)die(s,"saw")}
   /* G: vira a gravidade */
-  for(let r=r0;r<=r1;r++)for(let c=c0;c<=c1;c++){if(r>=0&&r<GH&&c>=0&&c<GW&&s.g[r][c]==="G"&&p.gs>0){p.gs=-1;s.ev.push("flip")}}
+  for(let r=r0;r<=r1;r++)for(let c=c0;c<=c1;c++){if(r>=0&&r<GH&&c>=0&&c<GW&&s.g[r][c]==="G"&&p.gs>0){p.gs=-1;s.ev.push("flip")}if(r>=0&&r<GH&&c>=0&&c<GW&&s.g[r][c]==="N"&&p.gs<0){p.gs=1;s.ev.push("flip")}}
   if(p.y>GH*TS+40||p.y<-80)die(s,"fall");
   if(s.rev>0)s.rev-=dt;
   /* porta */
@@ -1074,6 +1076,295 @@ lvl("O grande final","Tudo o que aprendeste.",[
 "####################",
 "####################"],(s,A)=>{A.on(s,s=>A.px(s)>2.7,s=>A.pop(s,"1"));for(const k of "ab")A.on(s,s=>A.standing(s,k),s=>A.later(s,.25,s=>A.fall(s,k)));
   A.on(s,s=>A.px(s)>16.4&&A.py(s)<3,s=>A.pop(s,"2"))},P_[7]);
+/* ---------------- níveis 17–40: mais compridos e mais difíceis ---------------- */
+lvl("Corrida contra o chão","Não pares!",[
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+" P        1       D",
+"##aabbccddeeffgghh##",
+"##                ##"],(s,A)=>{A.on(s,s=>A.px(s)>2.3,s=>{[..."abcdefgh"].forEach((k,i)=>A.later(s,.15+i*.24,s=>A.fall(s,k)))});A.on(s,s=>A.px(s)>8.2,s=>A.pop(s,"1"))},P_[0]);
+lvl("Boleia","A plataforma leva-te… até certo ponto.",[
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+" P                D",
+"####aaa       ######",
+"####^^^^^^^^^^######"],(s,A)=>{A.loop(s,"a",7,0,110);A.on(s,s=>A.standing(s,"a")&&A.px(s)>10.5,s=>A.later(s,.55,s=>A.vanish(s,"a")))},P_[1]);
+lvl("Patrulha","Três serras, um caminho.",[
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+" P                 D",
+"####################",
+"####################"],(s,A)=>{const y=9*TS-14;A.saw(s,{x:5*TS,y,on:true,vx:170,minx:4*TS,maxx:8*TS});A.saw(s,{x:12*TS,y,on:true,vx:-210,minx:9*TS+16,maxx:13*TS});A.saw(s,{x:15*TS,y,on:true,vx:240,minx:14*TS+16,maxx:17*TS+16})},P_[2]);
+lvl("Escalada","Sobe sem olhar para baixo.",[
+"vvvvvvvvvvvvvvvvvvvv",
+"",
+"   D",
+"  #####",
+"",
+"         a^aa",
+"",
+"              ####",
+" P",
+"####################",
+"####################"],(s,A)=>{A.on(s,s=>A.standing(s,"a"),s=>A.later(s,.35,s=>A.fall(s,"a")))},P_[3]);
+lvl("Vai e volta","A gravidade muda de ideias.",[
+"####################",
+"         v   N",
+"",
+"",
+"",
+"",
+"",
+"",
+" P    G            D",
+"######^^^^^^^#######",
+"####################"],(s,A)=>{},P_[4]);
+lvl("Três portas","Só uma é a sério.",[
+"",
+"",
+"",
+"                  D",
+"                ####",
+"",
+"              i",
+"",
+" P D      D i",
+"########aaaa########",
+"########aaaa########"],(s,A)=>{s.doors[1].fake=true;s.doors[2].fake=true;A.on(s,s=>Math.abs(A.px(s)-10.5)<1.4&&A.py(s)>7.5,s=>A.fall(s,"a"))},P_[5]);
+lvl("Teto apressado","O teto também quer chegar à porta.",[
+"aaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaa",
+"",
+"",
+"",
+"",
+"",
+"      #       ##",
+" P    #   #   ##   D",
+"####################",
+"####################"],(s,A)=>{A.on(s,s=>A.px(s)>2.2,s=>{const g=A.G(s,"a");g.mode="move";g.tx=0;g.ty=5.6*TS;g.spd=46;s.ev.push("fall")})},P_[6]);
+lvl("Salto de fé","Confia no que não vês.",[
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"       ff   ff",
+" P                D",
+"####  i   i   i ####",
+"####^^^^^^^^^^^^####"],(s,A)=>{},P_[7]);
+lvl("Picos dançantes","Eles mexem-se ao ritmo.",[
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+" P    11    22     D",
+"####################",
+"####################"],(s,A)=>{const a=A.G(s,"1"),b=A.G(s,"2");a.vis=b.vis=true;A.loop(s,"1",3,0,130);A.loop(s,"2",-3,0,170)},P_[0]);
+lvl("Elevadores","Sobe, desce, sobe…",[
+"",
+"                  D",
+"                #####",
+"",
+"",
+"",
+"",
+"",
+" P   aa     bb",
+"####^^^^^^^^^^^^####",
+"####################"],(s,A)=>{A.loop(s,"a",0,-4,90);A.loop(s,"b",0,-6,120)},P_[1]);
+lvl("A porta teimosa","Ela não quer ser apanhada.",[
+"",
+"",
+"",
+"  ###          ###",
+"",
+"      ##    ##",
+"",
+"         ##",
+" P               D",
+"####################",
+"####################"],(s,A)=>{A.on(s,s=>Math.abs(A.px(s)-16.5)<2.6,s=>{A.door(s,16,-6,1800);A.later(s,.3,s=>A.door(s,3,-6,1400));A.later(s,.7,s=>A.door(s,3,2,900))});A.on(s,s=>s.f[0]&&s.door.tx==null&&Math.abs(A.px(s)-3.5)<2.3&&A.py(s)<4.5,s=>A.door(s,16,2,700));A.on(s,s=>s.f[1]&&s.door.tx==null&&Math.abs(A.px(s)-16.5)<2.3&&A.py(s)<4.5,s=>A.door(s,9,6,700))},P_[2]);
+lvl("Prensas","Espera pela tua vez.",[
+"####################",
+"     aa    bb",
+"     aa    bb",
+"",
+"",
+"",
+"",
+"",
+" P                 D",
+"####################",
+"####################"],(s,A)=>{A.loop(s,"a",0,5.6,260);A.later(s,.7,s=>A.loop(s,"b",0,5.6,300))},P_[3]);
+lvl("Serras no ar","Cima, baixo, cima…",[
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+" P                 D",
+"######  ####  ######",
+"######^^####^^######"],(s,A)=>{A.saw(s,{x:7*TS,y:7*TS,r:16,on:true,vy:150,miny:4*TS,maxy:9*TS+10});A.saw(s,{x:13*TS,y:9*TS,r:16,on:true,vy:-190,miny:4*TS,maxy:9*TS+10})},P_[4]);
+lvl("Ponte e serra","Duas ameaças ao mesmo tempo.",[
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+" P                 D",
+"##abcdefghabcdefgh##",
+"##^^^^^^^^^^^^^^^^##"],(s,A)=>{A.on(s,s=>A.px(s)>2.2,s=>{[..."abcdefgh"].forEach((k,i)=>A.later(s,.5+i*.28,s=>A.fall(s,k)))});const w=A.saw(s,{x:-40,y:8*TS+4,r:34});A.on(s,s=>A.px(s)>2.2,s=>{s.saws[w].on=true;s.saws[w].vx=175})},P_[5]);
+lvl("Tudo ao contrário","Esquerda, direita, cima, baixo…",[
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+" P               D",
+"#####   ####   #####",
+"#####^^^####^^^#####"],(s,A)=>{A.on(s,s=>A.px(s)>3,s=>{s.rev=99;s.ev.push("rev")});A.on(s,s=>A.px(s)>11.5,s=>{s.rev=0;s.ev.push("rev")})},P_[6]);
+lvl("Teto de serras","Lá em cima também há perigo.",[
+"####################",
+"                  U",
+"",
+"",
+"",
+"",
+"",
+"",
+" P   G",
+"#####^^^^^^^^^^^^^^#",
+"####################"],(s,A)=>{A.saw(s,{x:10*TS,y:TS+14,r:14,on:true,vx:200,minx:7*TS,maxx:16*TS})},P_[7]);
+lvl("Dominó","Cada degrau só aguenta um passo.",[
+"",
+"",
+"                  D",
+"                ####",
+"",
+"            dd",
+"",
+"        cc",
+"    bb",
+" P aa",
+"##^^^^^^^^^^^^^^^^##"],(s,A)=>{for(const k of "abcd")A.on(s,s=>A.standing(s,k),s=>A.later(s,.22,s=>A.fall(s,k)))},P_[0]);
+lvl("Porta no teto","Às vezes a porta está ao contrário.",[
+"####################",
+"  U    vv",
+"",
+"",
+"",
+"",
+"         a",
+"",
+" P       G",
+"##########^^^^^#####",
+"####################"],(s,A)=>{},P_[1]);
+lvl("Corredor apertado","Saltinhos pequenos!",[
+"####################",
+"####################",
+"",
+"",
+"",
+"vvvvvvvvvvvvvvvvvvvv",
+"",
+"",
+" P   ^   ^   ^    D",
+"####################",
+"####################"],(s,A)=>{},P_[2]);
+lvl("Chão que pisca","Agora vês, agora não vês.",[
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+" P                D",
+"####aa  bb  cc  ####",
+"####^^^^^^^^^^^^####"],(s,A)=>{const cyc=(k,ph)=>{const tog=s=>{const g=A.G(s,k);g.vis=!g.vis;A.later(s,.9,tog)};A.later(s,ph,tog)};cyc("a",.9);cyc("b",.6);cyc("c",.3)},P_[3]);
+lvl("Torre traiçoeira","Lá no alto espera-te a porta… talvez.",[
+"vvvvvvvvvvvvvvvvvvvv",
+"",
+"",
+"                  D",
+"               #####",
+"",
+"         bbb",
+"",
+"    aaa",
+" P        1",
+"####################"],(s,A)=>{A.on(s,s=>A.standing(s,"a"),s=>A.later(s,.4,s=>A.fall(s,"a")));A.on(s,s=>A.standing(s,"b"),s=>A.later(s,.4,s=>A.fall(s,"b")));A.on(s,s=>A.px(s)>8.5&&A.py(s)>8,s=>A.pop(s,"1"));A.saw(s,{x:16*TS,y:4*TS-14,r:14,on:true,vx:110,minx:15*TS+8,maxx:17*TS})},P_[4]);
+lvl("Ilusões","Os olhos enganam.",[
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"     fff     ",
+" P          D  D",
+"####ii##ffff####aa##",
+"####  ##    ####^^##"],(s,A)=>{s.doors[1].fake=true;A.on(s,s=>A.px(s)>15.5,s=>A.fall(s,"a"))},P_[5]);
+lvl("Fuga em dobro","Duas serras, uma porta que foge.",[
+"",
+"",
+"",
+"",
+"",
+"            ###",
+"",
+"     ###",
+" P                D",
+"####################",
+"####################"],(s,A)=>{const a=A.saw(s,{x:-40,y:8*TS,r:40});A.on(s,s=>A.px(s)>2.2,s=>{s.saws[a].on=true;s.saws[a].vx=160});A.on(s,s=>A.px(s)>15.5,s=>A.door(s,13,4,600))},P_[6]);
+lvl("O verdadeiro final","Tudo junto. Boa sorte!",[
+"####################",
+"                  U",
+"",
+"",
+"",
+"        cc",
+"",
+"    bb       2",
+" P     1     G",
+"###aa######^^^^^^^##",
+"###  ######^^^^^^^##"],(s,A)=>{A.on(s,s=>A.standing(s,"a"),s=>A.later(s,.25,s=>A.fall(s,"a")));A.on(s,s=>A.px(s)>5.2&&A.py(s)>7,s=>A.pop(s,"1"));A.on(s,s=>A.standing(s,"b"),s=>A.later(s,.3,s=>A.fall(s,"b")));A.on(s,s=>A.standing(s,"c"),s=>A.later(s,.3,s=>A.fall(s,"c")));A.on(s,s=>A.px(s)>11.5,s=>A.pop(s,"2"));A.saw(s,{x:15*TS,y:TS+14,r:14,on:true,vx:150,minx:12*TS,maxx:17*TS})},P_[7]);
 /*ENDENGINE*/
 
 /* ================= Rasteira! — jogo (desenho, sons, menus, online) ================= */
@@ -1169,7 +1460,8 @@ function draw(t){const pal=S?LEVELS[LV].pal:["#ffcf8b","#ffb36b","#3a2c3f","#e86
   cx.fillStyle="rgba(255,255,255,.18)";cx.font="900 210px system-ui,-apple-system,Segoe UI,sans-serif";cx.textAlign="center";cx.textBaseline="middle";cx.fillText(String(LV+1),VW/2,VH*.45);cx.textBaseline="alphabetic";
   drawTiles(pal);
   /* picos fixos */
-  for(let r=0;r<GH;r++)for(let c=0;c<GW;c++){const ch=S.g[r][c];if(ch==="^")spike(c*TS,r*TS,"up",pal[2]);else if(ch==="v")spike(c*TS,r*TS,"down",pal[2]);else if(ch==="G"){cx.fillStyle="rgba(255,255,255,.5)";cx.font="700 22px system-ui,sans-serif";cx.textAlign="center";cx.fillText("⇅",c*TS+16,r*TS+24+Math.sin(t*4)*3)}}
+  for(let r=0;r<GH;r++)for(let c=0;c<GW;c++){const ch=S.g[r][c];if(ch==="^")spike(c*TS,r*TS,"up",pal[2]);else if(ch==="v")spike(c*TS,r*TS,"down",pal[2]);else if(ch==="G"||ch==="N"){cx.fillStyle="rgba(255,255,255,.5)";cx.font="700 22px system-ui,sans-serif";cx.textAlign="center";cx.fillText(ch==="G"?"⇅":"⇵",c*TS+16,r*TS+24+Math.sin(t*4)*3)}
+    else if(ch==="i"&&S.deaths>1){cx.strokeStyle="rgba(255,255,255,.35)";cx.setLineDash([4,4]);cx.lineWidth=1.5;cx.strokeRect(c*TS+2,r*TS+2,TS-4,TS-4);cx.setLineDash([])}}
   /* grupos */
   for(const k in S.groups){const gp=S.groups[k];if(!gp.vis)continue;for(const [c,r] of gp.tiles){const x=c*TS+gp.ox,y=r*TS+gp.oy;
     if(gp.kill)spike(x,y,gp.dir,pal[2]);else{cx.fillStyle=pal[2];cx.fillRect(x,y,TS+.5,TS+.5);if(!gp.tiles.some(q=>q[0]===c&&q[1]===r-1)){cx.fillStyle=shade(pal[2],.18);cx.fillRect(x,y,TS+.5,4)}}}}
