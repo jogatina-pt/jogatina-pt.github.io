@@ -329,6 +329,18 @@
    ]
   },
   {
+   "name": "Tropeção!",
+   "short_name": "Tropeção!",
+   "url": "tropecao/",
+   "icons": [
+    {
+     "src": "tropecao/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
    "name": "Pinball do Porto",
    "short_name": "Pinball",
    "url": "pinball/",
