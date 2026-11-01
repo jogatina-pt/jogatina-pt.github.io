@@ -341,6 +341,18 @@
    ]
   },
   {
+   "name": "Tacada!",
+   "short_name": "Tacada!",
+   "url": "tacada/",
+   "icons": [
+    {
+     "src": "tacada/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
    "name": "Pinball do Porto",
    "short_name": "Pinball",
    "url": "pinball/",
