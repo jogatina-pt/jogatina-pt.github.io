@@ -29,6 +29,18 @@
  "description": "Jogos para jogar com amigos, cada um no seu telemóvel.",
  "shortcuts": [
   {
+   "name": "Cidade Turbo!",
+   "short_name": "Cidade",
+   "url": "turbo/",
+   "icons": [
+    {
+     "src": "turbo/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
    "name": "Floki Patrulha!",
    "short_name": "Floki",
    "url": "patrulha/",
