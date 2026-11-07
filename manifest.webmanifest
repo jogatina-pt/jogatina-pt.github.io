@@ -29,6 +29,18 @@
  "description": "Jogos para jogar com amigos, cada um no seu telemóvel.",
  "shortcuts": [
   {
+   "name": "Floki!",
+   "short_name": "Floki!",
+   "url": "floki/",
+   "icons": [
+    {
+     "src": "floki/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
    "name": "Panela de Pressão",
    "short_name": "Panela",
    "url": "panela/",
