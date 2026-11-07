@@ -1356,8 +1356,8 @@ function buildHole(){const th=THEMES[COURSES[CI].theme];skyTheme(th);if(HG){scen
   /* buraco, bandeira, saída */
   {const [cx,cz]=H.cup,y=floorAt(H,cx,cz);const hole=new THREE.Mesh(new THREE.CircleGeometry(CUPR,28),new THREE.MeshBasicMaterial({color:"#141414"}));hole.rotation.x=-Math.PI/2;hole.position.set(cx,y+.012,cz);HG.add(hole);
     const rim=new THREE.Mesh(new THREE.RingGeometry(CUPR,CUPR+.07,28),new THREE.MeshBasicMaterial({color:"#ffffff"}));rim.rotation.x=-Math.PI/2;rim.position.set(cx,y+.013,cz);HG.add(rim);
-    const pole=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,2.6,8),L("#f2f2f2"));pole.position.set(cx,y+1.3,cz);pole.castShadow=true;HG.add(pole);
-    const fg=new THREE.PlaneGeometry(1.1,.7,8,3);fg.translate(.55,0,0);const fl=new THREE.Mesh(fg,new THREE.MeshLambertMaterial({color:"#e63946",side:THREE.DoubleSide}));fl.position.set(cx+.03,y+2.25,cz);fl.castShadow=true;HG.add(fl);DYN.flag={m:fl,base:fg.attributes.position.array.slice()};
+    const pole=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,2.6,8),L("#f2f2f2"));pole.position.set(cx,y+1.3,cz);pole.castShadow=true;HG.add(pole);DYN.pole=pole;DYN.poleY=pole.position.y;DYN.cupFx=0;
+    const fg=new THREE.PlaneGeometry(1.1,.7,8,3);fg.translate(.55,0,0);const fl=new THREE.Mesh(fg,new THREE.MeshLambertMaterial({color:"#e63946",side:THREE.DoubleSide}));fl.position.set(cx+.03,y+2.25,cz);fl.castShadow=true;HG.add(fl);const ring=new THREE.Mesh(new THREE.RingGeometry(.3,.42,40),new THREE.MeshBasicMaterial({color:"#ffd23f",transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false}));ring.rotation.x=-Math.PI/2;ring.position.set(cx,y+.03,cz);HG.add(ring);DYN.ring=ring;DYN.flagY=fl.position.y;DYN.flag={m:fl,base:fg.attributes.position.array.slice()};
     const [tx,tz]=H.tee,ty=floorAt(H,tx,tz);const mat=new THREE.Mesh(new THREE.BoxGeometry(1.4,.04,1.4),L("#2d6a4f"));mat.position.set(tx,ty+.02,tz);mat.receiveShadow=true;HG.add(mat);
     for(const sx of [-.6,.6]){const k=new THREE.Mesh(new THREE.SphereGeometry(.09,10,8),L("#ffffff"));k.position.set(tx+sx,ty+.08,tz-.6);HG.add(k)}}
   /* obstáculos */
@@ -1385,9 +1385,11 @@ function buildHole(){const th=THEMES[COURSES[CI].theme];skyTheme(th);if(HG){scen
     HG.add(g)}}
 function trnd(s){let a=s>>>0||1;return()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 /* ---------- bolas e etiquetas ---------- */
-const BM={};const BALLG=new THREE.SphereGeometry(BR,20,14);
+const BM={},QT=new THREE.Quaternion(),AXV=new THREE.Vector3();const BALLG=new THREE.SphereGeometry(BR,20,14);
 function nameTag(txt,col){const t=texC(256,64,(g,w,h)=>{g.font="900 34px system-ui,sans-serif";g.textAlign="center";g.textBaseline="middle";g.lineWidth=8;g.strokeStyle="rgba(0,0,0,.55)";g.strokeText(txt,w/2,h/2);g.fillStyle=col;g.fillText(txt,w/2,h/2)});const s=new THREE.Sprite(new THREE.SpriteMaterial({map:t,depthTest:false,transparent:true}));s.scale.set(1.6,.4,1);s.renderOrder=5;return s}
-function ballMesh(p){if(BM[p.i])return BM[p.i];const me=p.i===ME,m=new THREE.Mesh(BALLG,new THREE.MeshLambertMaterial({color:me?"#ffffff":p.col,transparent:!me,opacity:me?1:.62}));m.castShadow=me;const g=new THREE.Group();g.add(m);
+function ballTex(col){return texC(256,128,(g,w,h)=>{g.fillStyle="#ffffff";g.fillRect(0,0,w,h);g.fillStyle="rgba(0,0,0,.13)";for(let y=6;y<h;y+=11)for(let x=(y/11%2)*6;x<w;x+=12){g.beginPath();g.arc(x,y,2.6,0,6.3);g.fill()}
+  g.fillStyle=col;g.fillRect(0,h/2-9,w,18);g.fillStyle="#151515";g.fillRect(0,h/2-10,w,2);g.fillRect(0,h/2+8,w,2);g.fillStyle=col;for(const x of [w*.25,w*.75]){g.beginPath();g.arc(x,h*.22,9,0,6.3);g.fill()}})}
+function ballMesh(p){if(BM[p.i])return BM[p.i];const me=p.i===ME,m=new THREE.Mesh(BALLG,new THREE.MeshLambertMaterial({map:ballTex(me?"#ff5d8f":p.col),color:me?"#ffffff":"#dddddd",transparent:!me,opacity:me?1:.7}));m.castShadow=me;const g=new THREE.Group();g.add(m);
   if(!me){const tag=nameTag(p.name,p.col);tag.position.y=.55;g.add(tag)}
   scene.add(g);BM[p.i]={g,m};return BM[p.i]}
 function clearBalls(){for(const k in BM){scene.remove(BM[k].g);delete BM[k]}}
@@ -1403,7 +1405,7 @@ const ahg=new THREE.BufferGeometry();ahg.setAttribute("position",new THREE.Float
 /* ---------- jogadores ---------- */
 function mkPlayers(names,humans,cols){clearBalls();PL=names.map((n,i)=>({i,name:n,col:cols[i]||PCOLS[i%6],bot:i>=humans,pts:0,str:0,ball:null,x:0,y:0,z:0,strokes:0,holed:0,plan:null,wait:0,skill:.45+Math.random()*.4}))}
 function startHole(h){HI=h;HT=0;FIRST=null;FIN=[];H=compileHole(CI,HI);buildHole();
-  for(const p of PL){p.strokes=0;p.holed=0;p.fin=0;p.gx=null;p.plan=null;if(p.i===ME||(p.bot&&isHost())){p.ball=newBall(H);p.wait=.8+Math.random()*1.4}else p.ball=null;p.x=H.tee[0];p.z=H.tee[1];p.y=floorAt(H,p.x,p.z)+BR}
+  for(const p of PL){p.strokes=0;p.holed=0;p.fin=0;p.gx=null;p.plan=null;p.hanim=null;if(p.i===ME||(p.bot&&isHost())){p.ball=newBall(H);p.wait=.8+Math.random()*1.4}else p.ball=null;p.x=H.tee[0];p.z=H.tee[1];p.y=floorAt(H,p.x,p.z)+BR}
   BALL=PL[ME].ball;STATE="play";$("chips").hidden=false;banner(`Buraco ${HI+1} · ${H.name}`,`Par ${H.par}`);ov.hidden=true;$("hud").hidden=false;$("camCtl").hidden=false;
   CAM.top=0;CAM.ahead=0;CAM.yaw=CAM.tyaw=aimHint(H.tee[0],H.tee[1]);CAM.pos=null;SFXG.start()}
 const isHost=()=>MODE==="solo"||ROOM.role==="host";
@@ -1424,8 +1426,8 @@ function tick(){HT+=PDT;
     if(p.bot&&isHost()&&!p.holed&&B.state==="rest")botStep(p)}
   if(MODE==="online"){netAcc+=PDT;if(netAcc>=.1){netAcc=0;const p=PL[ME];ROOM.send({t:"b",x:+p.x.toFixed(2),y:+p.y.toFixed(2),z:+p.z.toFixed(2),s:p.strokes,h:p.holed});if(isHost())ROOM.seats.forEach((s,k)=>{if(k>0)ROOM.sendTo(s,{t:"bb",b:PL.filter(q=>q.bot).map(q=>[q.i,+q.x.toFixed(2),+q.y.toFixed(2),+q.z.toFixed(2),q.strokes,q.holed])})})}}
   if(isHost()){const all=PL.every(p=>p.holed||p.gone),lim=FIRST!=null?FIRST+25:999;if(all||HT>lim||HT>110)endHole()}}
-function onHoled(p){if(p.fin)return;p.fin=1;const hio=p.strokes===1;
-  if(p.i===ME){SFXG.holed(hio);confetti();toast(hio?"BURACO À PRIMEIRA!":nameScore(p.strokes,H.par),hio?"#e63946":"#2b2d42",1);if(hio&&MODE==="solo"){SAVE.hio++;saveS()}
+function onHoled(p){if(p.fin)return;p.fin=1;const hio=p.strokes===1;const bm=BM[p.i];if(bm&&p.i===ME){const q=bm.g.position;p.hanim={t:0,x:q.x,z:q.z,a:Math.atan2(q.z-H.cup[1],q.x-H.cup[0])};DYN.cupFx=hio?2:1;DYN.cupT=0}
+  if(p.i===ME){setTimeout(()=>{SFXG.holed(hio);confetti()},380);toast(hio?"BURACO À PRIMEIRA!":nameScore(p.strokes,H.par),hio?"#e63946":"#2b2d42",1);if(hio&&MODE==="solo"){SAVE.hio++;saveS()}
     if(MODE==="online")ROOM.send({t:"in",s:p.strokes,h:HI})}
   if(isHost())hostFinish(p.i,p.strokes)}
 function hostFinish(i,s){if(FIN.some(f=>f[0]===i))return;if(FIRST==null)FIRST=HT;FIN.push([i,s]);const p=PL[i];if(p){p.holed=1}}
@@ -1448,7 +1450,7 @@ function botStep(p){if(p.wait>0){p.wait-=PDT;return}const B=p.ball;
   if(HT<P.t0+.4)return;const b=P.best,e=(1-p.skill),a=(b.ad+(Math.random()-.5)*e*26)*Math.PI/180,pw=Math.max(.08,Math.min(1,b.pw*(1+(Math.random()-.5)*e*.4)));
   shoot(B,...shotVel(Math.sin(a),-Math.cos(a),pw,H.pf));p.plan=null;p.wait=.6+Math.random()*1.2}
 /* ---------- câmara ---------- */
-const CAM={yaw:0,tyaw:0,pos:null,look:new THREE.Vector3(),top:0,spin:0,zoom:1,ahead:0};let CW=300,CHh=300;
+const CAM={yaw:0,tyaw:0,pos:null,look:new THREE.Vector3(),top:0,spin:0,zoom:1,ahead:0,mv:0};let CW=300,CHh=300;
 function layout(){const r=stage.getBoundingClientRect();CW=Math.max(100,r.width);CHh=Math.max(100,r.height);renderer.setSize(CW,CHh,false);camera.aspect=CW/CHh;camera.fov=CW<CHh?70:55;camera.updateProjectionMatrix()}
 function angLerp(a,b,k){let d=((b-a+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI;return a+d*k}
 function render(dt){const now=performance.now()/1000;
@@ -1457,16 +1459,20 @@ function render(dt){const now=performance.now()/1000;
     for(const d of DYN.bar)d.rot.rotation.y=-TT2*d.o.sp;
     for(const d of DYN.slide){const q=obsBoxes(H,d.o,TT2)[0];d.g.position.set(q.cx,d.y,q.cz)}
     if(DYN.flag){const a=DYN.flag.m.geometry.attributes.position,b=DYN.flag.base;for(let i=0;i<a.count;i++){const x=b[i*3];a.array[i*3+2]=Math.sin(now*5+x*3)*.12*x}a.needsUpdate=true}
+    if(DYN.cupFx&&DYN.pole){DYN.cupT+=dt;const T2=DYN.cupT,up=T2<.35?0:T2<.7?(T2-.35)/.35:T2<1.9?1:Math.max(0,1-(T2-1.9)/.5),hop=Math.sin(Math.min(1,up)*Math.PI/2)*.9;DYN.pole.position.y=DYN.poleY+hop;DYN.flag.m.position.y=DYN.flagY+hop;DYN.flag.m.rotation.y=T2>.35&&T2<1.9?(T2-.35)*9:0;
+      const rg=DYN.ring,k=Math.max(0,T2-.3);rg.scale.setScalar(1+k*(DYN.cupFx>1?10:6));rg.material.opacity=Math.max(0,.9-k*1.1);if(T2>2.5){DYN.cupFx=0;DYN.pole.position.y=DYN.poleY;DYN.flag.m.position.y=DYN.flagY;DYN.flag.m.rotation.y=0}}
     for(const d of DYN.bump){d.k=Math.max(0,d.k-dt*4);d.g.scale.set(1+d.k*.2,1-d.k*.15,1+d.k*.2)}
-    for(const p of PL){const bm=ballMesh(p);let x=p.x,y=p.y,z=p.z;if(p.i!==ME&&!p.ball){if(p.gx==null){p.gx=x;p.gy=y;p.gz=z}p.gx+=(x-p.gx)*.25;p.gy+=(y-p.gy)*.25;p.gz+=(z-p.gz)*.25;x=p.gx;y=p.gy;z=p.gz}
-      bm.g.position.set(x,y,z);bm.g.visible=!(p.holed&&p.i!==ME);if(p.i!==ME&&bm.g.children[1]){const me2=PL[ME];const dme=me2?Math.hypot(x-me2.x,z-me2.z):9;bm.g.children[1].visible=dme>1.3;bm.m.visible=dme>.45}if(p.ball&&p.ball.state==="move"){bm.m.rotation.x+=p.ball.vz*dt/BR;bm.m.rotation.z-=p.ball.vx*dt/BR}
+    for(const p of PL){const bm=ballMesh(p);let x=p.x,y=p.y,z=p.z;
+      if(p.hanim){const A=p.hanim;A.t+=dt;const fh=floorAt(H,H.cup[0],H.cup[1]),u=Math.min(1,A.t/.32),e=u*u*(3-2*u),ang=A.a+u*5;const rr=(1-e)*Math.hypot(A.x-H.cup[0],A.z-H.cup[1]);
+        x=H.cup[0]+Math.cos(ang)*rr*(1-e*.4);z=H.cup[1]+Math.sin(ang)*rr*(1-e*.4);const s=Math.max(0,A.t-.28);y=fh+BR-Math.min(.42,s*s*18)+(s>.2&&s<.34?Math.sin((s-.2)/.14*Math.PI)*.05:0);if(A.t>1.4)p.hanim=null}if(p.i!==ME&&!p.ball){if(p.gx==null){p.gx=x;p.gy=y;p.gz=z}p.gx+=(x-p.gx)*.25;p.gy+=(y-p.gy)*.25;p.gz+=(z-p.gz)*.25;x=p.gx;y=p.gy;z=p.gz}
+      bm.g.position.set(x,y,z);bm.g.visible=!(p.holed&&p.i!==ME);if(p.i!==ME&&bm.g.children[1]){const me2=PL[ME];const dme=me2?Math.hypot(x-me2.x,z-me2.z):9;bm.g.children[1].visible=dme>1.3;bm.m.visible=dme>.45}if(bm.lx!=null&&!p.hanim){const dx=x-bm.lx,dz=z-bm.lz,dd=Math.hypot(dx,dz);if(dd>1e-4&&dd<3){QT.setFromAxisAngle(AXV.set(dz/dd,0,-dx/dd),dd/BR);bm.m.quaternion.premultiply(QT)}}bm.lx=x;bm.lz=z;
       for(const d of DYN.bump)if(Math.hypot(x-d.b.x,z-d.b.z)<d.b.r+BR+.05)d.k=1}
     /* câmara atrás da bola, a olhar para onde vais tacar */
     const me=PL[ME],B=BALL;if(me){if(CAM.spin)CAM.tyaw+=CAM.spin*dt*1.8;
-      if(B&&B.state==="move"){const sp=Math.hypot(B.vx,B.vz);if(sp>2)CAM.tyaw=angLerp(CAM.tyaw,Math.atan2(B.vx,-B.vz),Math.min(1,dt*.8))}
+      const moving=B&&B.state==="move";if(moving){const sp=Math.hypot(B.vx,B.vz);if(sp>.8)CAM.tyaw=angLerp(CAM.tyaw,Math.atan2(B.vx,-B.vz),Math.min(1,dt*Math.min(3,.6+sp*.35)))}CAM.mv+=((moving?1:0)-CAM.mv)*Math.min(1,dt*2);if(me.holed)CAM.tyaw+=dt*.35;
       CAM.yaw=angLerp(CAM.yaw,CAM.tyaw,Math.min(1,dt*4));const fx=Math.sin(CAM.yaw),fz=-Math.cos(CAM.yaw);let tp,tl;
       if(CAM.top){const cx=H.ox+H.W*S/2,cz=H.oz+H.R*S/2,ext=Math.max(H.W,H.R)*S;tp=new THREE.Vector3(cx-fx*ext*.35,ext*.95,cz-fz*ext*.35);tl=new THREE.Vector3(cx,0,cz)}
-      else{const by=me.holed?floorAt(H,H.cup[0],H.cup[1]):me.y;if(FX.drag&&FX.drag.mode==="aim"||(B&&B.state==="move"))CAM.ahead=Math.max(0,CAM.ahead-dt*30);const zz=CAM.zoom,ah=CAM.ahead,ax=me.x+fx*ah,az=me.z+fz*ah,ay=ah>0?Math.max(by,floorAt(H,ax,az)>-1e8?floorAt(H,ax,az):by):by;tp=new THREE.Vector3(ax-fx*6.2*zz,ay+3.6*zz+ah*.12,az-fz*6.2*zz);tl=new THREE.Vector3(ax+fx*3.5,ay+.2,az+fz*3.5)}
+      else{const by=me.holed?floorAt(H,H.cup[0],H.cup[1]):me.y;if(FX.drag&&FX.drag.mode==="aim"||(B&&B.state==="move"))CAM.ahead=Math.max(0,CAM.ahead-dt*30);const zz=CAM.zoom,ah=CAM.ahead,ax=me.x+fx*ah,az=me.z+fz*ah,ay=ah>0?Math.max(by,floorAt(H,ax,az)>-1e8?floorAt(H,ax,az):by):by;const mv=CAM.mv,hz=me.holed?.7:1,cxp=me.holed?H.cup[0]:ax,czp=me.holed?H.cup[1]:az;tp=new THREE.Vector3(cxp-fx*(6.2+mv*1.8)*zz*hz,ay+(3.6+mv*1.4)*zz*hz+ah*.12,czp-fz*(6.2+mv*1.8)*zz*hz);tl=new THREE.Vector3(cxp+fx*(me.holed?0:3.5+mv*1.5),ay+.2,czp+fz*(me.holed?0:3.5+mv*1.5))}
       if(!CAM.pos){CAM.pos=tp.clone();CAM.look.copy(tl)}CAM.pos.lerp(tp,Math.min(1,dt*(CAM.top?3:5)));CAM.look.lerp(tl,Math.min(1,dt*6));camera.position.copy(CAM.pos);camera.lookAt(CAM.look);
       READY.visible=false;}
     for(const q of FX.conf){q.v.y-=9.8*dt;q.m.position.addScaledVector(q.v,dt);q.m.rotation.x+=dt*6;q.m.rotation.y+=dt*5;q.t+=dt}FX.conf=FX.conf.filter(q=>{if(q.t>3){scene.remove(q.m);return false}return true})}
