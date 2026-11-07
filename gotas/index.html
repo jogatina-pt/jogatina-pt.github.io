@@ -852,16 +852,16 @@ function initUI(o){
 const cv=$("cv"),ctx=cv.getContext("2d"),stage=$("stage");
 const W=1000,HH=520,GY=444,GW=74,GH=118,BR=12,TICK=1/60;
 const CHARS=[
-  {id:"mirtilo",name:"Mirtilo",col:"#3a86ff",acc:"none",sp:1,jp:1,sz:1},
-  {id:"tomate",name:"Tomate",col:"#e63946",acc:"leaf",sp:1.04,jp:.97,sz:1},
-  {id:"lima",name:"Lima",col:"#7bd389",acc:"band",sp:1.06,jp:1,sz:.95},
-  {id:"uva",name:"Uva",col:"#8e5bd8",acc:"stache",sp:.96,jp:1.02,sz:1.06},
-  {id:"limao",name:"Limão",col:"#ffd23f",acc:"shades",sp:1,jp:1.04,sz:.97},
-  {id:"menta",name:"Menta",col:"#2ec4b6",acc:"cap",sp:1.03,jp:.98,sz:1},
-  {id:"morango",name:"Morango",col:"#ff5d8f",acc:"seeds",sp:1,jp:1.02,sz:.98},
-  {id:"carvao",name:"Carvão",col:"#3d3d4a",acc:"glow",sp:.98,jp:1.05,sz:1},
-  {id:"neve",name:"Neve",col:"#eef4ff",acc:"scarf",sp:1,jp:1,sz:1.02},
-  {id:"tangerina",name:"Tangerina",col:"#ff8c1a",acc:"crown",sp:1.02,jp:1.01,sz:.98}];
+  {id:"mirtilo",name:"Mola",col:"#3a86ff",acc:"none",sp:1,jp:1,sz:1},
+  {id:"tomate",name:"Brasa",col:"#e63946",acc:"leaf",sp:1.04,jp:.97,sz:1},
+  {id:"lima",name:"Turbo",col:"#7bd389",acc:"band",sp:1.06,jp:1,sz:.95},
+  {id:"uva",name:"Titã",col:"#8e5bd8",acc:"stache",sp:.96,jp:1.02,sz:1.06},
+  {id:"limao",name:"Faísca",col:"#ffd23f",acc:"shades",sp:1,jp:1.04,sz:.97},
+  {id:"menta",name:"Íman",col:"#2ec4b6",acc:"cap",sp:1.03,jp:.98,sz:1},
+  {id:"morango",name:"Mirra",col:"#ff5d8f",acc:"seeds",sp:1,jp:1.02,sz:.98},
+  {id:"carvao",name:"Sombra",col:"#3d3d4a",acc:"glow",sp:.98,jp:1.05,sz:1},
+  {id:"neve",name:"Gelo",col:"#eef4ff",acc:"scarf",sp:1,jp:1,sz:1.02},
+  {id:"tangerina",name:"Muralha",col:"#ff8c1a",acc:"crown",sp:1.02,jp:1.01,sz:.98}];
 const POW=["Super salto","Remate de fogo","Turbo","Gigante","Relâmpago","Íman","Encolhe o outro","Sombra","Congela a bola","Muralha"];
 const POWD=["Saltas muito mais alto durante 5 s","O próximo toque dispara a bola em chamas para a baliza","Corres muito mais depressa durante 5 s","Ficas enorme durante 6 s","O outro fica parado 1,5 s","A bola é puxada para ti durante 2,5 s","O outro fica pequenino durante 6 s","Teletransportas-te para debaixo da bola","A bola para no ar e cai a direito","Pões um muro na tua baliza durante 5 s"];
 const SAVE=(()=>{try{return JSON.parse(store.get("gotas")||"{}")}catch(e){return{}}})();SAVE.ch=SAVE.ch??0;SAVE.ch2=SAVE.ch2??1;SAVE.wins=SAVE.wins||0;SAVE.goals=SAVE.goals||0;const saveS=()=>store.set("gotas",JSON.stringify(SAVE));
