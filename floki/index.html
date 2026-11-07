@@ -842,7 +842,7 @@ const COLS=["#f7f2e8","#e63946","#2fbf71","#3a86ff","#9a9aa8"],CNAME=["branco","
 const PCOLS=["#ff5d8f","#3a86ff","#ff9f1c","#06d6a0","#9b5de5","#e63946"],BOTN=["Zé","Mia","Tó","Rita","Kiko","Bia","Nuno"];
 const SAVE=(()=>{try{return JSON.parse(store.get("floki")||"{}")}catch(e){return{}}})();SAVE.wins=SAVE.wins||0;SAVE.best=SAVE.best||0;const saveS=()=>store.set("floki",JSON.stringify(SAVE));
 const DECK=24;
-let MODE=null,ME=0,PL=[],STATE="menu",CARD=null,CN=0,LOCK={},WON=-1,DIFF=1,TIMERS=[];
+let MODE=null,ME=0,PL=[],STATE="menu",CARD=null,CN=0,LOCK={},WON=-1,DIFF=1,NBOT=1,TIMERS=[];
 /* ---------- desenhos (SVG) ---------- */
 function shade(hex,k){const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;r=Math.round(r*k);g=Math.round(g*k);b=Math.round(b*k);return`rgb(${Math.min(255,r)},${Math.min(255,g)},${Math.min(255,b)})`}
 function objG(o,col){const S='stroke="#151515" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';const white=col===COLS[0];
@@ -933,17 +933,17 @@ function menu(){MODE=null;STATE="menu";clearTimers();PL=[];$("hud").hidden=true;
   showOv(`<div class="panel"><span class="flokipic">${drawObj(0,COLS[0])}</span><h2>Floki!</h2><p>Sai uma carta com dois desenhos. <b>Toca no objeto certo antes de toda a gente!</b></p>
    <div class="rulesmini"><div><b>1.</b> Se um desenho tem a <b>cor certa</b>, apanha esse.</div><div><b>2.</b> Se nenhum tem, apanha o que <b>não aparece</b> nem na forma nem na cor.</div></div>
    <div class="seg" role="group">${["Fácil","Normal","Rápido"].map((n,i)=>`<button type="button" class="${DIFF===i?"on":""}" data-a="d${i}">${n}</button>`).join("")}</div>
+   <div class="seg" role="group">${[1,2,3].map(n=>`<button type="button" class="${NBOT===n?"on":""}" data-a="n${n}">${n===1?"1 boneco":n+" bonecos"}</button>`).join("")}</div>
    <button class="btn" type="button" data-a="solo">Jogar contra bonecos ▶</button><button class="btn ghost" type="button" data-a="mp">👥 Jogar com amigos</button><p class="note">Vitórias: ${SAVE.wins} · melhor: ${SAVE.best} cartas</p></div>`)}
-function startSolo(){MODE="solo";ME=0;const bn=shuffle(BOTN.slice());mkPlayers(["Tu",bn[0],bn[1],bn[2]],1);startMatch()}
+function startSolo(){MODE="solo";ME=0;const bn=shuffle(BOTN.slice());mkPlayers(["Tu"].concat(bn.slice(0,NBOT)),1);startMatch()}
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;e.stopPropagation();unlockAudio();const a=b.dataset.a;
-  if(a[0]==="d"&&a.length===2){DIFF=+a[1];menu()}else if(a==="solo")startSolo();else if(a==="mp")showScreen("setup");else if(a==="menu")menu();else if(a==="resume")ov.hidden=true;
+  if(a[0]==="d"&&a.length===2){DIFF=+a[1];menu()}else if(a[0]==="n"&&a.length===2){NBOT=+a[1];menu()}else if(a==="solo")startSolo();else if(a==="mp")showScreen("setup");else if(a==="menu")menu();else if(a==="resume")ov.hidden=true;
   else if(a==="again"){if(ROOM.role==="host")beginHost(ROOM.seats)}else if(a==="lobby"){bcast({t:"lobby"});STATE="menu";MODE=null;ROOM.backToLobby()}else if(a==="leave")leaveRoom()});
 $("menuBtn").addEventListener("click",()=>{if(MODE==="solo")showOv(`<div class="panel"><h2>Pausa</h2><button class="btn" type="button" data-a="resume">Voltar ▶</button><button class="btn ghost" type="button" data-a="menu">Sair para o menu</button></div>`)});
 /* ---------- online ---------- */
 function cleanOpts(o){o=o||{};const d=+o.d;return{d:d>=0&&d<3?d:1}}
-function renderOpts(el,o,host){o=cleanOpts(o);el.innerHTML=`<div class="optrow"><span class="eyebrow">Bonecos</span><div class="seg" role="group">${["Fácil","Normal","Rápido"].map((n,i)=>`<button type="button" class="${o.d===i?"on":""}" data-k="d" data-v="${i}" ${host?"":"disabled"}>${n}</button>`).join("")}</div></div><p class="note">Se forem menos de 3, entra um boneco para animar.</p>`;
-  if(host)el.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{ROOM.opts=cleanOpts({d:b.dataset.v});lobbyBroadcast()})}
-function beginHost(seats){const names=seats.map(s=>cleanName(s.name)||"Jogador"),humans=names.length;const bn=shuffle(BOTN.slice());let k=0;while(names.length<3)names.push(bn[k++]);DIFF=cleanOpts(ROOM.opts).d;
+function renderOpts(el,o,host){el.innerHTML=`<p class="note">Só jogam as pessoas que estão na sala: a partir de 2.</p>`}
+function beginHost(seats){const names=seats.map(s=>cleanName(s.name)||"Jogador"),humans=names.length;const bn=shuffle(BOTN.slice());void bn;DIFF=cleanOpts(ROOM.opts).d;
   seats.forEach((s,i)=>ROOM.sendTo(s,{t:"go",me:i,names,humans}))}
 ROOM.game={id:"floki",title:"Floki!",maxp:6,minp:2,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"Precisas de pelo menos mais uma pessoa. Envia o link aos amigos.",
   start(seats){beginHost(seats)},
