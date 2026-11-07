@@ -29,6 +29,18 @@
  "description": "Jogos para jogar com amigos, cada um no seu telemóvel.",
  "shortcuts": [
   {
+   "name": "Muralhas!",
+   "short_name": "Muralhas!",
+   "url": "muralhas/",
+   "icons": [
+    {
+     "src": "muralhas/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
    "name": "Magnata!",
    "short_name": "Magnata!",
    "url": "magnata/",
