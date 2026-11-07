@@ -3,25 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Mais Uma!</title>
+<title>Jogo de Copos</title>
 <meta name="description" content="Jogo para beber com amigos, cada um no seu telemóvel: Eu nunca, Quem é mais provável, verdades, desafios e regras. Só para maiores de 18.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Mais Uma! O jogo para beber com os amigos">
+<meta property="og:title" content="Jogo de Copos O jogo para beber com os amigos">
 <meta property="og:description" content="Eu nunca, Quem é mais provável, verdades e desafios, cada um no seu telemóvel. Só para maiores de 18.">
 <meta property="og:url" content="https://jogatina-pt.github.io/maisuma/">
 <meta property="og:image" content="https://jogatina-pt.github.io/maisuma/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Mais Uma!, jogo para beber">
+<meta property="og:image:alt" content="Jogo de Copos, jogo para beber">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Mais Uma!">
+<meta name="apple-mobile-web-app-title" content="Jogo de Copos">
 <meta name="theme-color" content="#f4eee3">
 <link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
@@ -232,12 +232,13 @@ input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
 :root:not([data-pp-theme="light"]) .panel .stats span,:root:not([data-pp-theme="light"]) .panel .u small,:root:not([data-pp-theme="light"]) .panel .who small{color:#aaa}
 :root:not([data-pp-theme="light"]) .panel .who button.on{background:#4a3d12}
 
+.brand h1.long{font-size:clamp(19px,5.4vw,30px)!important;line-height:.95}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Mais <span>Uma!</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1 class="long">Jogo de <span>Copos</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
       <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
@@ -1106,7 +1107,7 @@ const RULES=`<ul>
   <li>De vez em quando há <b>pausa para água</b>. Ninguém é obrigado a beber álcool: dá para jogar com água, sumo ou cerveja sem álcool.</li>
   <li>Qualquer pessoa pode passar à próxima carta. Quem criou a sala termina a noite e vê os prémios.</li>
 </ul><p class="note">Só para maiores de 18. Bebe com moderação. Quem conduz não bebe.</p>`;
-ROOM.game={id:"maisuma",title:"Mais Uma!",maxp:12,minp:2,maxBots:0,botNames:[],
+ROOM.game={id:"maisuma",title:"Jogo de Copos",maxp:12,minp:2,maxBots:0,botNames:[],
   lobbyHelpFew:"São precisas pelo menos 2 pessoas. Envia o link a quem está contigo.",
   start:muStart,msg:muMsg,client:muClient,stop:()=>{muStop();stopTick()},cleanOpts,renderOpts,
   back(seat){ROOM.sendTo(seat,{t:"start"});if(G)broadcast()},

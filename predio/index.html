@@ -284,12 +284,13 @@ body.touch .ctl{display:flex}
 .foot{flex:none;margin:0;text-align:center;font-size:12px}
 @media (max-width:380px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:26px}.brand a.home{font-size:0}.brand a.home::before{content:"← menu";font-size:12px}.tools{gap:5px}.tools .btn.sm{padding:4px 8px}}
 @media (max-height:560px){.foot{display:none}.who button svg{height:38px}.upg{gap:4px}}
+.brand h1.long{font-size:clamp(19px,5.4vw,30px)!important;line-height:.95}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Arranha-<span>Céus!</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1 class="long">Arranha-<span>Céus!</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
       <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>

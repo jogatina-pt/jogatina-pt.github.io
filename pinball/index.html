@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Pinball do Porto</title>
+<title>Pinball</title>
 <meta name="description" content="Pinball em 3D com a Ponte Luís I, a Torre dos Clérigos e a francesinha. Grátis, sem conta e sem publicidade.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Pinball do Porto">
+<meta property="og:title" content="Pinball">
 <meta property="og:description" content="Multibola na Ponte Luís I, bola extra nos Clérigos. Bates o meu recorde?">
 <meta property="og:url" content="https://jogatina-pt.github.io/pinball/">
 <meta property="og:image" content="https://jogatina-pt.github.io/pinball/og.jpg">
@@ -220,7 +220,7 @@ header.top{flex:none}
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Pinball <span>do Porto</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1>Pinb<span>all</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="mute" type="button" aria-pressed="true" aria-label="Som" title="Som">🔊</button>
       <button class="btn ghost sm ico" id="themeBtn" type="button" aria-label="Tema escuro" title="Tema escuro">☾</button>
@@ -577,7 +577,7 @@ function hud(){if(!G)return;setT("hScore",G.score.toLocaleString("pt-PT"));setT(
   $("charge").hidden=G.state!=="launch";if(G.state==="launch")$("chargeBar").style.height=(G.charge*100).toFixed(0)+"%"}
 function msg(t,s){const m=$("hMsg");m.textContent=t;m.hidden=false;G.msgT=s||1.5}
 const ov=$("ov");function showOv(h){ov.innerHTML=h;ov.hidden=false}
-function menu(){G=null;showOv(`<div class="panel"><h2>Pinball do Porto</h2><p>Toca na metade <b>esquerda</b> ou <b>direita</b> do ecrã para os flippers. Para lançar a bola, mantém o dedo e solta.</p><p class="note">🌉 Ponte Luís I: 3 vezes = multibola (e jackpot na 🥪 francesinha) · 🗼 Clérigos: 8 vezes = bola extra · P-O-R-T-O = multiplicador · 🚇 túnel do Metro · 🚠 funicular · pistas S-Ã-O = pipas valem mais (os flippers mudam as luzes)</p><p class="note">Acerta nos 6 sítios para a <b>Noite de São João</b> 🎆 (tudo a dobrar). Desliza o dedo para cima para abanar a mesa — sem exagerar!</p><button class="btn" type="button" data-a="go">Jogar ▶</button><p class="note">Recorde: ${BEST.toLocaleString("pt-PT")}</p></div>`)}
+function menu(){G=null;showOv(`<div class="panel"><h2>Pinball</h2><p>Toca na metade <b>esquerda</b> ou <b>direita</b> do ecrã para os flippers. Para lançar a bola, mantém o dedo e solta.</p><p class="note">🌉 Ponte Luís I: 3 vezes = multibola (e jackpot na 🥪 francesinha) · 🗼 Clérigos: 8 vezes = bola extra · P-O-R-T-O = multiplicador · 🚇 túnel do Metro · 🚠 funicular · pistas S-Ã-O = pipas valem mais (os flippers mudam as luzes)</p><p class="note">Acerta nos 6 sítios para a <b>Noite de São João</b> 🎆 (tudo a dobrar). Desliza o dedo para cima para abanar a mesa — sem exagerar!</p><button class="btn" type="button" data-a="go">Jogar ▶</button><p class="note">Recorde: ${BEST.toLocaleString("pt-PT")}</p></div>`)}
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;unlock();if(b.dataset.a==="go"){ov.hidden=true;newGame();tourHud();$("hud").hidden=false;keepAwake(true)}else if(b.dataset.a==="resume"){ov.hidden=true;G.state=G.prev||"play"}else if(b.dataset.a==="menu")menu()});
 function pause(){if(!G||G.state==="over"||G.state==="pause")return;G.prev=G.state;G.state="pause";showOv(`<div class="panel"><h2>Pausa</h2><p>${G.score.toLocaleString("pt-PT")} pontos</p><button class="btn" type="button" data-a="resume">Continuar</button><button class="btn ghost" type="button" data-a="menu">Desistir</button></div>`)}
 /* ---------- comandos ---------- */

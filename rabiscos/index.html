@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Rabiscos!</title>
+<title>Desenha e Adivinha</title>
 <meta name="description" content="Desenha no telemóvel, o desenho aparece na TV e os outros adivinham. Grátis, sem conta e sem publicidade.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Rabiscos! Desenha e adivinha">
+<meta property="og:title" content="Desenha e Adivinha Desenha e adivinha">
 <meta property="og:description" content="Desenha no telemóvel, adivinha na TV">
 <meta property="og:url" content="https://jogatina-pt.github.io/rabiscos/">
 <meta property="og:image" content="https://jogatina-pt.github.io/rabiscos/og.jpg">
@@ -20,7 +20,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Rabiscos!">
+<meta name="apple-mobile-web-app-title" content="Desenha e Adivinha">
 <meta name="theme-color" content="#f4eee3">
 <link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
@@ -399,12 +399,13 @@ body.touch .ctl{display:flex}
 .foot{flex:none;margin:0;text-align:center;font-size:12px}
 @media (max-width:380px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:26px}.brand a.home{font-size:0}.brand a.home::before{content:"← menu";font-size:12px}.tools{gap:5px}.tools .btn.sm{padding:4px 8px}}
 @media (max-height:560px){.foot{display:none}.who button svg{height:38px}.upg{gap:4px}}
+.brand h1.long{font-size:clamp(19px,5.4vw,30px)!important;line-height:.95}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Rabis<span>cos!</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1 class="long">Desenha e <span>Adivinha</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
       <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
@@ -439,7 +440,7 @@ body.touch .ctl{display:flex}
     <button class="btn ghost sm" id="leaveBtn" type="button">Sair da sala</button>
   </section>
   <section id="game" class="egame">
-  <main class="stage tvg" id="stage" aria-label="Jogo Rabiscos!">
+  <main class="stage tvg" id="stage" aria-label="Jogo Desenha e Adivinha">
     <canvas id="cv" hidden></canvas>
     <div class="tv" id="tv" hidden></div>
     <div class="pad" id="pad" hidden></div>
@@ -969,12 +970,13 @@ function padGuess(len,time,drawerName){DR=null;VIEW=[];padShow(`<div class="ptop
 const SFXR={go:()=>[523,784].forEach((f,i)=>tone(f,.1,{type:"triangle",v:.06,at:i*.08})),ok:()=>[784,1047,1319].forEach((f,i)=>tone(f,.1,{type:"square",v:.05,at:i*.07})),end:()=>[659,523,392].forEach((f,i)=>tone(f,.14,{type:"triangle",v:.06,at:i*.1}))};
 /* ---------- menus ---------- */
 function showOv(h){ov.innerHTML=h;ov.hidden=false}
-function menu(){MODE=null;tv.hidden=true;pad.hidden=true;showOv(`<div class="panel"><h2>Rabiscos!</h2><p>Um desenha no <b>telemóvel</b>, o desenho aparece na <b>TV ou no PC</b> e os outros escrevem o que acham que é. Quem adivinha mais depressa ganha mais pontos!</p>
-  <button class="btn" type="button" data-a="tv">📺 Criar sala neste ecrã</button><p class="note">Os jogadores entram com o telemóvel pelo QR code ou pelo código. ${WORDS.length} palavras em português.</p></div>`)}
+function menu(){MODE=null;tv.hidden=true;pad.hidden=true;showOv(`<div class="panel"><h2>Desenha e Adivinha</h2><p>Um desenha no <b>telemóvel</b>, o desenho aparece na <b>TV ou no PC</b> e os outros escrevem o que acham que é. Quem adivinha mais depressa ganha mais pontos!</p>
+  <button class="btn" type="button" data-a="tv">📺 Criar sala neste ecrã</button><button class="btn ghost" type="button" data-a="pj">📱 Tenho um código: entrar como jogador</button><p class="note">Os jogadores entram com o telemóvel pelo QR code ou pelo código. ${WORDS.length} palavras em português.</p></div>`)}
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;unlockAudio();const a=b.dataset.a;
+  if(a==="pj"){showScreen("setup");if($("myName").value==="TV")$("myName").value="";setTimeout(()=>{const c=$("joinCode");c&&c.focus()},60);return}
   if(a==="tv"){showScreen("setup");if(!$("myName").value)$("myName").value="TV";setTimeout(()=>$("hostBtn").click(),50)}
   else if(a==="again"){ov.hidden=true;clearT();tv.innerHTML="";beginGame(ROOM.seats)}else if(a==="lobby"){clearT();bcast({t:"lobby"});MODE=null;ROOM.backToLobby()}});
-ROOM.game={id:"rabiscos",title:"Rabiscos!",maxp:13,minp:3,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"São precisos pelo menos 2 jogadores com telemóvel (lê o QR code).",
+ROOM.game={id:"rabiscos",title:"Desenha e Adivinha",maxp:13,minp:3,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"São precisos pelo menos 2 jogadores com telemóvel (lê o QR code).",
   start(seats){tv.innerHTML="";beginGame(seats)},
   msg(seat,d){if(!d||!ST)return;const i=ROOM.seats.indexOf(seat)-1;if(i<0)return;if(d.t==="pick"&&i===ST.drawer)pickWord(String(d.w||""));else if(d.t==="st")hostStroke(i,d);else if(d.t==="g")hostGuess(i,String(d.v||"").slice(0,30))},
   client(d){if(!d)return;if(d.t==="go"){ME=d.me|0;MYNAME=cleanName(d.name);MODE="pad";showScreen("game");ov.hidden=true;padShow(`<div class="pbig">📺 Olha para a TV!</div>`);return}

@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Gota-Gol!</title>
+<title>Futebol de Gotas</title>
 <meta name="description" content="Futebol de gotas saltitonas: salta, cabeceia e marca na baliza do outro. Contra o computador, a dois no mesmo ecrã ou online 1 contra 1. Grátis, sem conta e sem publicidade.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Gota-Gol! Futebol de gotas">
+<meta property="og:title" content="Futebol de Gotas Futebol de gotas">
 <meta property="og:description" content="Salta, cabeceia e marca: 1 contra 1!">
 <meta property="og:url" content="https://jogatina-pt.github.io/gotas/">
 <meta property="og:image" content="https://jogatina-pt.github.io/gotas/og.jpg">
@@ -20,7 +20,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Gota-Gol!">
+<meta name="apple-mobile-web-app-title" content="Futebol de Gotas">
 <meta name="theme-color" content="#f4eee3">
 <link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
@@ -362,12 +362,13 @@ body.touch .ctl{display:flex}
 .foot{flex:none;margin:0;text-align:center;font-size:12px}
 @media (max-width:380px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:26px}.brand a.home{font-size:0}.brand a.home::before{content:"← menu";font-size:12px}.tools{gap:5px}.tools .btn.sm{padding:4px 8px}}
 @media (max-height:560px){.foot{display:none}.who button svg{height:38px}.upg{gap:4px}}
+.brand h1.long{font-size:clamp(19px,5.4vw,30px)!important;line-height:.95}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Gota-<span>Gol!</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1 class="long">Futebol de <span>Gotas</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
       <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
@@ -402,7 +403,7 @@ body.touch .ctl{display:flex}
     <button class="btn ghost sm" id="leaveBtn" type="button">Sair da sala</button>
   </section>
   <section id="game" class="egame">
-  <main class="stage gg" id="stage" aria-label="Jogo Gota-Gol!">
+  <main class="stage gg" id="stage" aria-label="Jogo Futebol de Gotas">
     <canvas id="cv" class="ggcv"></canvas>
     <button class="rb rotb" id="rotBtn" type="button" aria-label="Rodar o ecrã" title="Rodar o ecrã">🔄</button><div class="rhud" id="hud" hidden><span class="sp"></span><button class="rb" id="menuBtn" type="button" aria-label="Pausa">❚❚</button></div>
     <div class="touch" id="touch" hidden><button type="button" id="tL" aria-label="Esquerda">◀</button><button type="button" id="tR" aria-label="Direita">▶</button><span class="sp"></span><button type="button" id="tP" class="powb" aria-label="Poder">⚡</button><button type="button" id="tJ" class="jump" aria-label="Saltar">⤒</button></div>
@@ -1066,7 +1067,7 @@ function interp(dt){const v=NET.view,m=NET.tgt;if(!v||!m)return;NET.age+=dt;cons
 const ov=$("ov");function showOv(h){ov.innerHTML=h;ov.hidden=false}
 function charGrid(sel,act){return`<div class="chars">${CHARS.map((c,i)=>`<button type="button" class="ch${sel===i?" on":""}" data-a="${act}${i}" aria-label="${c.name}"><canvas width="96" height="64" data-ch="${i}"></canvas><small>${c.name}</small></button>`).join("")}</div>`}
 function menu(){stage.classList.remove("playing");document.body.classList.remove("ingame");MODE=null;STATE="menu";G=null;NET.view=null;$("touch").hidden=true;$("hud").hidden=true;
-  showOv(`<div class="panel wide"><h2>Gota-Gol!</h2><p>Futebol de gotas saltitonas. Mexe-te, salta e dá com a cabeça na bola para a meter na baliza do outro!</p>
+  showOv(`<div class="panel wide"><h2>Futebol de Gotas</h2><p>Futebol de gotas saltitonas. Mexe-te, salta e dá com a cabeça na bola para a meter na baliza do outro!</p>
    <p class="eyebrow">A tua gota</p>${charGrid(SAVE.ch,"c")}<p class="note">⚡ <b>${POW[SAVE.ch]}</b>: ${POWD[SAVE.ch]}</p>
    <div class="seg" role="group">${["Fácil","Normal","Difícil"].map((n,i)=>`<button type="button" class="${DIFF===i?"on":""}" data-a="d${i}">${n}</button>`).join("")}</div>
    <div class="seg" role="group"><button type="button" class="${RULE===0?"on":""}" data-a="r0">Primeiro a 5</button><button type="button" class="${RULE===1?"on":""}" data-a="r1">2 minutos</button></div>
@@ -1092,7 +1093,7 @@ ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)retur
   if(/^c\d+$/.test(a)){SAVE.ch=+a.slice(1);saveS();menu()}else if(/^k\d+$/.test(a)){SAVE.ch2=+a.slice(1);saveS();pick2()}else if(/^d\d$/.test(a)){DIFF=+a[1];menu()}else if(/^r\d$/.test(a)){RULE=+a[1];menu()}
   else if(a==="solo"){let o;do{o=Math.floor(Math.random()*CHARS.length)}while(o===SAVE.ch);ME=0;start("solo",["Tu",CHARS[o].name],SAVE.ch,o)}
   else if(a==="rot")toggleRot();else if(a==="local")pick2();else if(a==="go2"){ME=0;start("local",["Jogador 1","Jogador 2"],SAVE.ch,SAVE.ch2)}
-  else if(a==="mp"){ROOM.opts=cleanOpts({r:RULE,tv:0});showScreen("setup")}else if(a==="tvm"){ROOM.opts=cleanOpts({r:RULE,tv:1});TV=1;showScreen("setup");if(!$("myName").value)$("myName").value="TV";setTimeout(()=>$("hostBtn").click(),60)}else if(a==="menu")menu();else if(a==="resume"){ov.hidden=true;STATE="play"}
+  else if(a==="mp"){ROOM.game.maxp=2;ROOM.opts=cleanOpts({r:RULE,tv:0});showScreen("setup")}else if(a==="tvm"){ROOM.game.maxp=3;ROOM.opts=cleanOpts({r:RULE,tv:1});TV=1;showScreen("setup");if(!$("myName").value)$("myName").value="TV";setTimeout(()=>$("hostBtn").click(),60)}else if(a==="menu")menu();else if(a==="resume"){ov.hidden=true;STATE="play"}
   else if(a==="again"){if(ROOM.role==="host")beginHost(ROOM.seats)}else if(a==="lobby"){ROOM.seats.forEach((s,k)=>{if(k>0)ROOM.sendTo(s,{t:"lobby"})});STATE="menu";MODE=null;ROOM.backToLobby()}else if(a==="leave")leaveRoom()});
 $("rotBtn").addEventListener("click",e=>{e.stopPropagation();toggleRot()});
 $("menuBtn").addEventListener("click",()=>{if(MODE==="solo"||MODE==="local"){STATE="pause";showOv(`<div class="panel"><h2>Pausa</h2><button class="btn" type="button" data-a="resume">Continuar ▶</button><button class="btn ghost" type="button" data-a="menu">Sair para o menu</button></div>`)}});
@@ -1106,7 +1107,7 @@ function beginHost(seats){const O=cleanOpts(ROOM.opts);RULE=O.r;
   if(O.tv){if(seats.length<3){flash("Faltam jogadores: entram dois telemóveis.");return}PEND={tv:1,names:seats.slice(1,3).map(s=>cleanName(s.name)||"Jogador"),c:[null,null]};ROOM.sendTo(seats[1],{t:"askch"});ROOM.sendTo(seats[2],{t:"askch"});return}
   if(seats.length<2)return;if(seats.length>2)flash("Só jogam os dois primeiros.");PEND={names:seats.slice(0,2).map(s=>cleanName(s.name)||"Jogador"),c:[SAVE.ch,null]};ROOM.sendTo(seats[1],{t:"askch"})}
 function hostGo(){const P=PEND;if(!P||P.c[1]==null||P.c[0]==null)return;if(P.tv){let c0=P.c[0],c1=P.c[1];if(c1===c0)c1=(c1+1)%CHARS.length;const m={t:"go",names:P.names,c:[c0,c1],r:RULE,tv:1};ROOM.seats.forEach((s,k)=>ROOM.sendTo(s,Object.assign({me:k-1},m)));PEND=null;return}let c1=P.c[1];if(c1===P.c[0])c1=(c1+1)%CHARS.length;const m={t:"go",names:P.names,c:[P.c[0],c1],r:RULE};ROOM.seats.forEach((s,k)=>ROOM.sendTo(s,Object.assign({me:k},m)));PEND=null}
-ROOM.game={id:"gotas",title:"Gota-Gol!",maxp:3,minp:2,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"Precisas de mais uma pessoa. Envia o link a um amigo.",
+ROOM.game={id:"gotas",title:"Futebol de Gotas",maxp:2,minp:2,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"Precisas de mais uma pessoa. Envia o link a um amigo.",
   start(seats){beginHost(seats)},
   msg(seat,d){if(!d)return;const i=ROOM.seats.indexOf(seat);if(i<0)return;
     if(TV&&i>0){const pi=i-1;if(d.t==="in"&&G&&G.p[pi]){G.p[pi].in={l:d.l?1:0,r:d.r?1:0,j:d.j?1:0,k:d.k?1:0};return}if(d.t==="ch"&&PEND&&PEND.tv){PEND.c[pi]=Math.max(0,Math.min(CHARS.length-1,d.c|0));hostGo();return}}

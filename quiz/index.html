@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Sabichão!</title>
+<title>Quiz Português</title>
 <meta name="description" content="Quiz em português para a sala: as perguntas aparecem na TV ou no PC e cada um responde no telemóvel. Grátis, sem conta e sem publicidade.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Sabichão! Quiz na TV">
+<meta property="og:title" content="Quiz Português Quiz na TV">
 <meta property="og:description" content="Perguntas na TV, respostas no telemóvel">
 <meta property="og:url" content="https://jogatina-pt.github.io/quiz/">
 <meta property="og:image" content="https://jogatina-pt.github.io/quiz/og.jpg">
@@ -20,7 +20,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Sabichão!">
+<meta name="apple-mobile-web-app-title" content="Quiz Português">
 <meta name="theme-color" content="#f4eee3">
 <link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
@@ -399,12 +399,13 @@ body.touch .ctl{display:flex}
 .foot{flex:none;margin:0;text-align:center;font-size:12px}
 @media (max-width:380px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:26px}.brand a.home{font-size:0}.brand a.home::before{content:"← menu";font-size:12px}.tools{gap:5px}.tools .btn.sm{padding:4px 8px}}
 @media (max-height:560px){.foot{display:none}.who button svg{height:38px}.upg{gap:4px}}
+.brand h1.long{font-size:clamp(19px,5.4vw,30px)!important;line-height:.95}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Sabi<span>chão!</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1 class="long">Quiz <span>Português</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
       <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
@@ -439,7 +440,7 @@ body.touch .ctl{display:flex}
     <button class="btn ghost sm" id="leaveBtn" type="button">Sair da sala</button>
   </section>
   <section id="game" class="egame">
-  <main class="stage tvg" id="stage" aria-label="Jogo Sabichão!">
+  <main class="stage tvg" id="stage" aria-label="Jogo Quiz Português">
     <canvas id="cv" hidden></canvas>
     <div class="tv" id="tv" hidden></div>
     <div class="pad" id="pad" hidden></div>
@@ -1025,7 +1026,7 @@ function rankOf(p){return ST.pl.slice().sort((a,b)=>b.sc-a.sc).indexOf(p)+1}
 function final(){ST.ph="end";drawBoard("Resultado final",true);bcast({t:"end",o:ST.pl.slice().sort((a,b)=>b.sc-a.sc).map(p=>[p.name,p.sc])});SFXQ.end();
   later(1500,()=>{showOv(`<div class="panel"><h2>Fim!</h2><button class="btn" type="button" data-a="again">Jogar outra vez ▶</button><button class="btn ghost" type="button" data-a="lobby">Voltar à sala</button></div>`)})}
 /* ---------- desenho no ecrã grande ---------- */
-function drawIntro(){tv.innerHTML=`<div class="tvc intro"><h1>Sabichão!</h1><p>${ST.qs.length} perguntas · responde no telemóvel · mais rápido = mais pontos</p><div class="who">${ST.pl.map(p=>`<span>${esc(p.name)}</span>`).join("")}</div></div>`}
+function drawIntro(){tv.innerHTML=`<div class="tvc intro"><h1>Quiz Português</h1><p>${ST.qs.length} perguntas · responde no telemóvel · mais rápido = mais pontos</p><div class="who">${ST.pl.map(p=>`<span>${esc(p.name)}</span>`).join("")}</div></div>`}
 function drawQ(){const q=ST.cur.q,o=ST.cur.opts;const n=Object.keys(ST.ans).length,tot=ST.pl.filter(p=>!p.gone).length;
   tv.innerHTML=`<div class="tvc"><div class="qtop"><span class="pill">${ST.qi+1}/${ST.qs.length}</span><span class="pill">${CATS[q[0]]}</span><span class="pill">✋ ${n}/${tot}</span></div>
   <h2 class="qq">${esc(q[1])}</h2><div class="timer"><i style="animation-duration:${QTIME}s"></i></div>
@@ -1046,12 +1047,13 @@ let MYNAME="";
 const SFXQ={q:()=>[523,659].forEach((f,i)=>tone(f,.1,{type:"triangle",v:.06,at:i*.08})),tick:()=>tone(880,.04,{type:"square",v:.03}),rev:()=>[659,784,1047].forEach((f,i)=>tone(f,.12,{type:"square",v:.05,at:i*.09})),end:()=>[523,659,784,1047,1319].forEach((f,i)=>tone(f,.16,{type:"triangle",v:.08,at:i*.12}))};
 /* ---------- menus ---------- */
 function showOv(h){ov.innerHTML=h;ov.hidden=false}
-function menu(){MODE=null;tv.hidden=true;pad.hidden=true;showOv(`<div class="panel"><h2>Sabichão!</h2><p>Quiz em português para a sala: as perguntas aparecem na <b>TV ou no PC</b> e cada um responde no seu <b>telemóvel</b>. Quem acerta mais depressa ganha mais pontos!</p>
-  <button class="btn" type="button" data-a="tv">📺 Criar sala neste ecrã</button><p class="note">Os jogadores entram com o telemóvel pelo QR code ou pelo código da sala. ${QS.length} perguntas sobre Portugal, história, comida, desporto, cultura e o mundo.</p></div>`)}
+function menu(){MODE=null;tv.hidden=true;pad.hidden=true;showOv(`<div class="panel"><h2>Quiz Português</h2><p>Quiz em português para a sala: as perguntas aparecem na <b>TV ou no PC</b> e cada um responde no seu <b>telemóvel</b>. Quem acerta mais depressa ganha mais pontos!</p>
+  <button class="btn" type="button" data-a="tv">📺 Criar sala neste ecrã</button><button class="btn ghost" type="button" data-a="pj">📱 Tenho um código: entrar como jogador</button><p class="note">Os jogadores entram com o telemóvel pelo QR code ou pelo código da sala. ${QS.length} perguntas sobre Portugal, história, comida, desporto, cultura e o mundo.</p></div>`)}
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;unlockAudio();const a=b.dataset.a;
+  if(a==="pj"){showScreen("setup");if($("myName").value==="TV")$("myName").value="";setTimeout(()=>{const c=$("joinCode");c&&c.focus()},60);return}
   if(a==="tv"){showScreen("setup");if(!$("myName").value)$("myName").value="TV";setTimeout(()=>$("hostBtn").click(),50)}
   else if(a==="again"){ov.hidden=true;clearT();beginGame(ROOM.seats)}else if(a==="lobby"){clearT();bcast({t:"lobby"});MODE=null;ROOM.backToLobby()}});
-ROOM.game={id:"quiz",title:"Sabichão!",maxp:13,minp:2,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"Falta pelo menos um jogador: lê o QR code com o telemóvel.",
+ROOM.game={id:"quiz",title:"Quiz Português",maxp:13,minp:2,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"Falta pelo menos um jogador: lê o QR code com o telemóvel.",
   start(seats){beginGame(seats)},
   msg(seat,d){if(!d)return;const i=ROOM.seats.indexOf(seat)-1;if(i<0)return;if(d.t==="a")hostAnswer(i,Math.max(0,Math.min(3,d.a|0)))},
   client(d){if(!d)return;if(d.t==="go"){ME=d.me|0;MYNAME=cleanName(d.name);MODE="pad";showScreen("game");ov.hidden=true;padShow(`<div class="pbig">📺 Olha para a TV!<small>As perguntas vão aparecer lá; respondes aqui.</small></div>`);return}

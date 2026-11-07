@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Tropeção!</title>
+<title>Corrida de Obstáculos</title>
 <meta name="description" content="Corrida de obstáculos em 3D: varredoras, martelos, chão que cai e portas que se partem. Contra bonecos ou com até 8 amigos online. Grátis, sem conta e sem publicidade.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Tropeção! Corrida de obstáculos">
+<meta property="og:title" content="Corrida de Obstáculos Corrida de obstáculos">
 <meta property="og:description" content="Chega à meta antes dos outros… sem cair!">
 <meta property="og:url" content="https://jogatina-pt.github.io/tropecao/">
 <meta property="og:image" content="https://jogatina-pt.github.io/tropecao/og.jpg">
@@ -20,7 +20,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Tropeção!">
+<meta name="apple-mobile-web-app-title" content="Corrida de Obstáculos">
 <meta name="theme-color" content="#f4eee3">
 <link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
@@ -310,12 +310,13 @@ body.touch .ctl{display:flex}
 .foot{flex:none;margin:0;text-align:center;font-size:12px}
 @media (max-width:380px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:26px}.brand a.home{font-size:0}.brand a.home::before{content:"← menu";font-size:12px}.tools{gap:5px}.tools .btn.sm{padding:4px 8px}}
 @media (max-height:560px){.foot{display:none}.who button svg{height:38px}.upg{gap:4px}}
+.brand h1.long{font-size:clamp(19px,5.4vw,30px)!important;line-height:.95}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Trope<span>ção!</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1 class="long">Corrida de <span>Obstáculos</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
       <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
@@ -350,7 +351,7 @@ body.touch .ctl{display:flex}
     <button class="btn ghost sm" id="leaveBtn" type="button">Sair da sala</button>
   </section>
   <section id="game" class="egame">
-  <main class="stage" id="stage" aria-label="Jogo Tropeção!">
+  <main class="stage" id="stage" aria-label="Jogo Corrida de Obstáculos">
     <canvas id="cv"></canvas>
     <div class="rhud" id="hud" hidden><span class="pill big" id="hPos">1.º</span><span class="pill" id="hTime">0:00</span><span class="sp"></span><button class="rb" id="menuBtn" type="button" aria-label="Menu">❚❚</button></div><div class="tbar"><i id="hBar"></i></div><div class="tmsg" id="tmsg" hidden></div><div class="joy" id="joy" hidden><i id="knob"></i></div><div class="tbtns"><button class="tb2" id="bDive" type="button" aria-label="Mergulhar">🤸</button><button class="tb2 big" id="bJump" type="button" aria-label="Saltar">⤒</button></div>
     <ul id="chips" hidden></ul>
@@ -1252,7 +1253,7 @@ const SFXT={jump:()=>tone(480,.12,{type:"square",v:.04,f2:760}),dive:()=>tone(30
 const ov=$("ov");function showOv(h){ov.innerHTML=h;ov.hidden=false}
 function menu(){MODE=null;STATE="menu";$("hud").hidden=true;if(!C){C=makeCourse(1,0);buildWorld();camera.position.set(14,10,8);camera.lookAt(0,0,-30)}
   const sw=COLS.map((c,i)=>`<button type="button" class="sw${i===SAVE.col%COLS.length?" on":""}" data-c="${i}" style="background:${c}" aria-label="Cor ${i+1}"></button>`).join("");
-  showOv(`<div class="panel"><h2>Tropeção!</h2><p>Corrida de obstáculos: chega à meta antes dos outros sem cair!</p><div class="eyebrow">A tua cor</div><div class="sws">${sw}</div>
+  showOv(`<div class="panel"><h2>Corrida de Obstáculos</h2><p>Corrida de obstáculos: chega à meta antes dos outros sem cair!</p><div class="eyebrow">A tua cor</div><div class="sws">${sw}</div>
    <div class="eyebrow">Mapa</div><div class="maps">${MAPS.map((m,i)=>`<button type="button" class="mapb m${i}" data-m="${i}"><b>${m.name}</b><small>${["Fácil","Médio","Difícil","Difícil","Médio","Rápido"][i]}</small></button>`).join("")}<button type="button" class="mapb mr" data-m="-1"><b>🎲 Aleatório</b><small>surpresa</small></button></div><button class="btn ghost" type="button" data-a="mp">👥 Correr com amigos</button><p class="note">Vitórias: ${SAVE.wins}${SAVE.best?" · melhor tempo "+fmtT(SAVE.best):""}</p></div>`)}
 const fmtT=t=>Math.floor(t/60)+":"+(t%60).toFixed(1).padStart(4,"0");
 function showResults(ord){STATE="end";const o=ord||ORDER.concat(PAWNS.filter(p=>!ORDER.some(x=>x[0]===p.i)).sort((a,b)=>a.z-b.z).map(p=>[p.i,0]));const myPos=o.findIndex(x=>x[0]===ME)+1;
@@ -1279,7 +1280,7 @@ function renderOpts(el,o,host){o=cleanOpts(o);el.innerHTML=`<div class="optrow">
   if(host)el.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const nn=Object.assign({},o);nn[b.dataset.k]=b.dataset.v;ROOM.opts=cleanOpts(nn);lobbyBroadcast()})}
 function beginHost(seats){const humans=seats.length,names=seats.map(s=>cleanName(s.name)||"Jogador"),bn=BOTN.slice().sort(()=>Math.random()-.5);let k=0;while(names.length<8)names.push(bn[k++]);
   const cols=names.map((_,i)=>COLS[(i*3+1)%COLS.length]);const seed=(Math.random()*1e9)|0;let map=cleanOpts(ROOM.opts).map;if(map<0)map=Math.floor(Math.random()*MAPS.length);ROOM.__ended=0;seats.forEach((s,i)=>ROOM.sendTo(s,{t:"go",seed,me:i,names,humans,cols,map}))}
-ROOM.game={id:"tropecao",title:"Tropeção!",maxp:8,minp:2,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"Precisas de pelo menos mais uma pessoa. Os lugares que sobram ficam com bonecos.",
+ROOM.game={id:"tropecao",title:"Corrida de Obstáculos",maxp:8,minp:2,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"Precisas de pelo menos mais uma pessoa. Os lugares que sobram ficam com bonecos.",
   start(seats){beginHost(seats)},
   msg(seat,d){if(!d)return;const i=ROOM.seats.indexOf(seat);if(i<0)return;
     if(d.t==="p"){const m={t:"ps",i,x:+d.x||0,y:+d.y||0,z:+d.z||0,yaw:+d.yaw||0,dv:d.dv?1:0,st:d.st?1:0};ROOM.seats.forEach((s,k)=>{if(k!==i)ROOM.sendTo(s,m)});return}

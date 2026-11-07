@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Senhor Branco</title>
+<title>Impostor</title>
 <meta name="description" content="Jogo de grupo grátis: descobre quem tem a palavra diferente e quem não tem palavra nenhuma. Na mesma sala ou à distância.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Senhor Branco: quem é o impostor?">
+<meta property="og:title" content="Impostor: quem é o impostor?">
 <meta property="og:description" content="Todos têm a mesma palavra, menos os impostores. Descobre-os antes que te descubram. Grátis, cada um no seu telemóvel.">
 <meta property="og:url" content="https://jogatina-pt.github.io/branco/">
 <meta property="og:image" content="https://jogatina-pt.github.io/branco/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Senhor Branco, jogo de grupo">
+<meta property="og:image:alt" content="Impostor, jogo de grupo">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -257,7 +257,7 @@ input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Senhor <span>Branco</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1>Impo<span>stor</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
       <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
@@ -1152,7 +1152,7 @@ const RULES=`<ul>
   <li>Os civis ganham quando saem todos os impostores. Os impostores ganham quando ficam tantos quantos os civis.</li>
   <li>Pontos: civis <b>+${PTS.civ}</b>, infiltrados <b>+${PTS.inf}</b>, Senhor Branco <b>+${PTS.sb}</b>. Joguem várias rondas e somem os pontos.</li>
 </ul>`;
-ROOM.game={id:"branco",title:"Senhor Branco",maxp:10,minp:3,maxBots:0,botNames:[],
+ROOM.game={id:"branco",title:"Impostor",maxp:10,minp:3,maxBots:0,botNames:[],
   lobbyHelpFew:"São precisas pelo menos 3 pessoas. Envia o link aos amigos. Fica melhor com 5 ou mais.",
   start:brancoStart,msg:brancoMsg,client:brancoClient,stop:()=>{brancoStop();stopTick()},cleanOpts,renderOpts,
   back(seat){ROOM.sendTo(seat,{t:"start"});if(G)broadcast()},

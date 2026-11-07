@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Conversa de Tasca</title>
+<title>Respostas Parvas</title>
 <meta name="description" content="Jogo de cartas grátis para jogar com amigos: completa a frase com a carta mais engraçada. Modo família e modo adulto.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Conversa de Tasca: quem tem a resposta mais parva?">
+<meta property="og:title" content="Respostas Parvas: quem tem a resposta mais parva?">
 <meta property="og:description" content="Completa a frase com a carta mais engraçada. Jogo grátis, cada um no seu telemóvel.">
 <meta property="og:url" content="https://jogatina-pt.github.io/tasca/">
 <meta property="og:image" content="https://jogatina-pt.github.io/tasca/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Conversa de Tasca, jogo de cartas">
+<meta property="og:image:alt" content="Respostas Parvas, jogo de cartas">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -231,12 +231,13 @@ input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
 :root:not([data-pp-theme="light"]) .panel .stats span,:root:not([data-pp-theme="light"]) .panel .u small,:root:not([data-pp-theme="light"]) .panel .who small{color:#aaa}
 :root:not([data-pp-theme="light"]) .panel .who button.on{background:#4a3d12}
 
+.brand h1.long{font-size:clamp(19px,5.4vw,30px)!important;line-height:.95}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Conversa de <span>Tasca</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1 class="long">Respostas <span>Parvas</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
       <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
@@ -1550,7 +1551,7 @@ const RULES=`<ul>
   <li>Há três modos: <b>Família</b>, para todas as idades; <b>Adulto +18</b>, com humor porco e negro; e <b>Clássico +18</b>, com cartas traduzidas e adaptadas do Cards Against Humanity.</li>
   <li class="credit">O modo Clássico usa cartas do <a href="https://cardsagainsthumanity.com/" target="_blank" rel="noopener">Cards Against Humanity</a>, distribuídas com a licença <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.pt" target="_blank" rel="noopener">CC BY-NC-SA</a>. Esta tradução segue a mesma licença e não tem fins comerciais. Este jogo não tem ligação ao Cards Against Humanity.</li>
 </ul>`;
-ROOM.game={id:"tasca",title:"Conversa de Tasca",maxp:8,minp:3,maxBots:3,botNames:["Sr. Américo","Tia Rosa","Avó Lurdes"],
+ROOM.game={id:"tasca",title:"Respostas Parvas",maxp:8,minp:3,maxBots:3,botNames:["Sr. Américo","Tia Rosa","Avó Lurdes"],
   lobbyHelpFew:"São precisas pelo menos 3 pessoas (contando com o juiz). Envia o link aos amigos ou junta o computador.",
   start:tascaStart,msg:tascaMsg,client:tascaClient,stop:()=>{tascaStop();stopTick()},cleanOpts,renderOpts,
   back(seat){ROOM.sendTo(seat,{t:"start"});if(G)broadcast()},

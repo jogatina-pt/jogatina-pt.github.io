@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Tacada!</title>
+<title>Minigolfe</title>
 <meta name="description" content="Mini-golfe em 3D em que todos jogam ao mesmo tempo: quem meter primeiro ganha mais pontos. 18 buracos em 3 campos, contra bonecos ou amigos online. Grátis, sem conta e sem publicidade.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Tacada! Mini-golfe a correr">
+<meta property="og:title" content="Minigolfe Mini-golfe a correr">
 <meta property="og:description" content="Sem esperar pela vez: taca, mete e ganha!">
 <meta property="og:url" content="https://jogatina-pt.github.io/tacada/">
 <meta property="og:image" content="https://jogatina-pt.github.io/tacada/og.jpg">
@@ -20,7 +20,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Tacada!">
+<meta name="apple-mobile-web-app-title" content="Minigolfe">
 <meta name="theme-color" content="#f4eee3">
 <link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
@@ -317,7 +317,7 @@ body.touch .ctl{display:flex}
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Taca<span>da!</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1>Minig<span>olfe</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
       <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
@@ -352,7 +352,7 @@ body.touch .ctl{display:flex}
     <button class="btn ghost sm" id="leaveBtn" type="button">Sair da sala</button>
   </section>
   <section id="game" class="egame">
-  <main class="stage" id="stage" aria-label="Jogo Tacada!">
+  <main class="stage" id="stage" aria-label="Jogo Minigolfe">
     <canvas id="cv"></canvas>
     <div class="rhud" id="hud" hidden><span class="pill" id="hHole">Buraco 1</span><span class="pill" id="hStr">0</span><span class="pill tm" id="hTimer"></span><span class="sp"></span><button class="rb" id="menuBtn" type="button" aria-label="Pausa">❚❚</button></div>
     <ul id="chips" hidden></ul>
@@ -1525,7 +1525,7 @@ const SFXG={hit:()=>{tone(900,.05,{type:"square",v:.06,f2:300});tone(200,.08,{ty
 /* ---------- menus ---------- */
 const ov=$("ov");function showOv(h){ov.innerHTML=h;ov.hidden=false}
 function menu(){MODE=null;STATE="menu";PL=[];clearBalls();$("hud").hidden=true;$("camCtl").hidden=true;$("chips").hidden=true;if(!H){CI=0;H=compileHole(0,2);buildHole()}
-  showOv(`<div class="panel"><h2>Tacada!</h2><p>Mini-golfe em 3D em que <b>todos jogam ao mesmo tempo</b>: tacas quando a tua bola parar. Quem meter primeiro ganha mais pontos!</p>
+  showOv(`<div class="panel"><h2>Minigolfe</h2><p>Mini-golfe em 3D em que <b>todos jogam ao mesmo tempo</b>: tacas quando a tua bola parar. Quem meter primeiro ganha mais pontos!</p>
    <div class="maps">${COURSES.map((c,i)=>`<button type="button" class="mapb g${i}" data-a="solo${i}"><b>${c.name}</b><small>${c.holes.length} buracos${i===2?" · gravidade baixa":""}</small></button>`).join("")}</div>
    <button class="btn ghost" type="button" data-a="mp">👥 Jogar com amigos</button><p class="note">Vitórias: ${SAVE.wins} · buracos à primeira: ${SAVE.hio}</p></div>`)}
 function startSolo(ci){MODE="solo";CI=ci;ME=0;const bn=BOTN.slice().sort(()=>Math.random()-.5);NAMES=["Tu",bn[0],bn[1],bn[2]];HUMANS=1;mkPlayers(NAMES,1,PCOLS);layout();startHole(0)}
@@ -1537,7 +1537,7 @@ function cleanOpts(o){o=o||{};const c=+o.c;return{c:c>=0&&c<COURSES.length?c:0}}
 function renderOpts(el,o,host){o=cleanOpts(o);el.innerHTML=`<div class="optrow"><span class="eyebrow">Campo</span><div class="seg" role="group">${COURSES.map((c,i)=>`<button type="button" class="${o.c===i?"on":""}" data-k="c" data-v="${i}" ${host?"":"disabled"}>${c.name}</button>`).join("")}</div></div><p class="note">Só jogam as pessoas que estão na sala: a partir de 2.</p>`;
   if(host)el.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const nn=Object.assign({},o);nn[b.dataset.k]=b.dataset.v;ROOM.opts=cleanOpts(nn);lobbyBroadcast()})}
 function beginHost(seats){const names=seats.map(s=>cleanName(s.name)||"Jogador"),humans=names.length,ci=cleanOpts(ROOM.opts).c;seats.forEach((s,i)=>ROOM.sendTo(s,{t:"go",me:i,names,humans,ci}))}
-ROOM.game={id:"tacada",title:"Tacada!",maxp:6,minp:2,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"Precisas de pelo menos mais uma pessoa. Envia o link aos amigos.",
+ROOM.game={id:"tacada",title:"Minigolfe",maxp:6,minp:2,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"Precisas de pelo menos mais uma pessoa. Envia o link aos amigos.",
   start(seats){beginHost(seats)},
   msg(seat,d){if(!d)return;const i=ROOM.seats.indexOf(seat);if(i<0)return;
     if(d.t==="b"){const m={t:"pb",i,x:+d.x||0,y:+d.y||0,z:+d.z||0,s:d.s|0,h:d.h?1:0};ROOM.seats.forEach((s,k)=>{if(k!==i)ROOM.sendTo(s,m)});if(PL[i]&&i!==0){PL[i].strokes=m.s}return}

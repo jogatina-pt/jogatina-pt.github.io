@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Voa Voa</title>
+<title>Pássaro Voador</title>
 <meta name="description" content="Toca para voar e passa entre os pilares. Joga com o macaco ou com a girafa. Grátis, sem conta e sem publicidade.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Voa Voa: quantos pilares passas?">
+<meta property="og:title" content="Pássaro Voador: quantos pilares passas?">
 <meta property="og:description" content="Toca para voar, passa entre os pilares e não caias. Bates o meu recorde?">
 <meta property="og:url" content="https://jogatina-pt.github.io/voa/">
 <meta property="og:image" content="https://jogatina-pt.github.io/voa/og.jpg">
@@ -20,7 +20,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Voa Voa">
+<meta name="apple-mobile-web-app-title" content="Pássaro Voador">
 <meta name="theme-color" content="#f4eee3">
 <link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
@@ -181,12 +181,13 @@ header.top{flex:none}
 .hint[hidden]{display:none}
 .foot{flex:none;margin:0;text-align:center;font-size:12px}
 @media (max-width:380px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:28px}.brand a.home{font-size:0}.brand a.home::before{content:"← menu";font-size:12px}.tools{gap:5px}.tools .btn.sm{padding:4px 8px}}
+.brand h1.long{font-size:clamp(19px,5.4vw,30px)!important;line-height:.95}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Voa <span>Voa</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1 class="long">Pássaro <span>Voador</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="mute" type="button" aria-pressed="true" aria-label="Som" title="Som">🔊</button>
       <button class="btn ghost sm ico" id="themeBtn" type="button" aria-label="Tema escuro" title="Tema escuro">☾</button>
@@ -413,7 +414,7 @@ function loop(t){
 function pickScreen(){
   state="pick";hint.hidden=true;reset();keepAwake(false);
   const card=k=>`<button type="button" data-who="${k}" class="${who===k?"on":""}">${SPR[k].svg.replace("<svg ",'<svg aria-hidden="true" ')}${k==="macaco"?"Macaco":"Girafa"}<small>${k==="macaco"?"Imperial na mão":"Óculos e livro"}</small></button>`;
-  ov.innerHTML=`<div class="panel"><h2>Voa Voa!</h2><p>Escolhe quem vai voar</p><div class="pick">${card("macaco")}${card("girafa")}</div>
+  ov.innerHTML=`<div class="panel"><h2>Pássaro Voador</h2><p>Escolhe quem vai voar</p><div class="pick">${card("macaco")}${card("girafa")}</div>
     <button class="btn" type="button" data-a="go">Jogar</button><p>Recorde: ${best}</p></div>`;
   ov.hidden=false;
 }

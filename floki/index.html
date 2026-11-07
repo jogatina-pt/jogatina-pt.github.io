@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Floki!</title>
+<title>Floki Rápido</title>
 <meta name="description" content="Jogo de reflexos com o gato Floki: sai uma carta e toca no objeto certo antes de toda a gente. Contra bonecos ou com amigos online. Grátis, sem conta e sem publicidade.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Floki! Apanha o objeto certo">
+<meta property="og:title" content="Floki Rápido Apanha o objeto certo">
 <meta property="og:description" content="Reflexos, cores e um gato: quem toca primeiro?">
 <meta property="og:url" content="https://jogatina-pt.github.io/floki/">
 <meta property="og:image" content="https://jogatina-pt.github.io/floki/og.jpg">
@@ -20,7 +20,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Floki!">
+<meta name="apple-mobile-web-app-title" content="Floki Rápido">
 <meta name="theme-color" content="#f4eee3">
 <link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
@@ -342,7 +342,7 @@ body.touch .ctl{display:flex}
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Flo<span>ki!</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1>Floki <span>Rápido</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
       <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
@@ -377,7 +377,7 @@ body.touch .ctl{display:flex}
     <button class="btn ghost sm" id="leaveBtn" type="button">Sair da sala</button>
   </section>
   <section id="game" class="egame">
-  <main class="stage fk" id="stage" aria-label="Jogo Floki!">
+  <main class="stage fk" id="stage" aria-label="Jogo Floki Rápido">
     <div class="rhud" id="hud" hidden><span class="pill" id="hCard">Carta 1</span><span class="sp"></span><button class="rb" id="menuBtn" type="button" aria-label="Pausa">❚❚</button></div>
     <ul id="chips" class="fkchips" hidden></ul>
     <div class="fkcard back" id="card"><div class="slot" id="s0"></div></div>
@@ -931,7 +931,7 @@ $("table").addEventListener("pointerdown",e=>{const b=e.target.closest(".obj");i
 addEventListener("keydown",e=>{const k="12345".indexOf(e.key);if(k>=0)tap(k)});
 /* ---------- menus ---------- */
 function menu(){MODE=null;STATE="menu";clearTimers();PL=[];$("hud").hidden=true;$("chips").hidden=true;buildTable();clearMarks();showCard(null);
-  showOv(`<div class="panel"><span class="flokipic">${drawObj(0,COLS[0])}</span><h2>Floki!</h2><p>Sai uma carta com dois desenhos. <b>Toca no objeto certo antes de toda a gente!</b></p>
+  showOv(`<div class="panel"><span class="flokipic">${drawObj(0,COLS[0])}</span><h2>Floki Rápido</h2><p>Sai uma carta com dois desenhos. <b>Toca no objeto certo antes de toda a gente!</b></p>
    <div class="rulesmini"><div><b>1.</b> Se um desenho tem a <b>cor certa</b>, apanha esse.</div><div><b>2.</b> Se nenhum tem, apanha o que <b>não aparece</b> nem na forma nem na cor.</div></div>
    <div class="seg" role="group">${["Fácil","Normal","Rápido"].map((n,i)=>`<button type="button" class="${DIFF===i?"on":""}" data-a="d${i}">${n}</button>`).join("")}</div>
    <div class="seg" role="group">${[1,2,3].map(n=>`<button type="button" class="${NBOT===n?"on":""}" data-a="n${n}">${n===1?"1 boneco":n+" bonecos"}</button>`).join("")}</div>
@@ -946,7 +946,7 @@ function cleanOpts(o){o=o||{};const d=+o.d;return{d:d>=0&&d<3?d:1}}
 function renderOpts(el,o,host){el.innerHTML=`<p class="note">Só jogam as pessoas que estão na sala: a partir de 2.</p>`}
 function beginHost(seats){const names=seats.map(s=>cleanName(s.name)||"Jogador"),humans=names.length;const bn=shuffle(BOTN.slice());void bn;DIFF=cleanOpts(ROOM.opts).d;
   seats.forEach((s,i)=>ROOM.sendTo(s,{t:"go",me:i,names,humans}))}
-ROOM.game={id:"floki",title:"Floki!",maxp:6,minp:2,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"Precisas de pelo menos mais uma pessoa. Envia o link aos amigos.",
+ROOM.game={id:"floki",title:"Floki Rápido",maxp:6,minp:2,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"Precisas de pelo menos mais uma pessoa. Envia o link aos amigos.",
   start(seats){beginHost(seats)},
   msg(seat,d){if(!d)return;const i=ROOM.seats.indexOf(seat);if(i<0)return;
     if(d.t==="grab"){grab(i,d.o|0,d.n|0);return}

@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Encaixa!</title>
+<title>Blocos</title>
 <meta name="description" content="Azulejos a cair: encaixa as peças, completa linhas e aguenta o máximo que conseguires. Grátis, sem conta e sem publicidade.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Encaixa!: quantas linhas fazes?">
+<meta property="og:title" content="Blocos: quantas linhas fazes?">
 <meta property="og:description" content="Azulejos a cair: encaixa-os e limpa linhas. Bates o meu recorde?">
 <meta property="og:url" content="https://jogatina-pt.github.io/encaixa/">
 <meta property="og:image" content="https://jogatina-pt.github.io/encaixa/og.jpg">
@@ -20,7 +20,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Encaixa!">
+<meta name="apple-mobile-web-app-title" content="Blocos">
 <meta name="theme-color" content="#f4eee3">
 <link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
@@ -195,7 +195,7 @@ header.top{flex:none}
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Encai<span>xa!</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1>Blo<span>cos</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="mute" type="button" aria-pressed="true" aria-label="Som" title="Som">🔊</button>
       <button class="btn ghost sm ico" id="themeBtn" type="button" aria-label="Tema escuro" title="Tema escuro">☾</button>
@@ -363,7 +363,7 @@ async function keepAwake(on){try{if(on&&!WL&&navigator.wakeLock&&!document.hidde
 /* ---------- ecrãs ---------- */
 const ov=$("ov");
 function showOv(h){ov.innerHTML=h;ov.hidden=false}
-function menu(){showOv(`<div class="panel"><h2>Encaixa!</h2><p>Encaixa os azulejos e completa linhas. Quatro de uma vez é um ENCAIXA!</p>
+function menu(){showOv(`<div class="panel"><h2>Blocos</h2><p>Encaixa os azulejos e completa linhas. Quatro de uma vez é um ENCAIXA!</p>
   <ul class="how"><li><b>Tocar</b> roda a peça</li><li><b>Arrastar</b> para os lados mexe</li><li><b>Puxar para baixo</b> desce; <b>atirar</b> deixa cair</li><li><b>Deslizar para cima</b> guarda a peça</li></ul>
   <button class="btn" type="button" data-a="go">Jogar</button><p class="note">Também dá com os botões em baixo ou o teclado · Recorde: ${best}</p></div>`)}
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;unlock();if(b.dataset.a==="go")start();else if(b.dataset.a==="resume")resume();else if(b.dataset.a==="menu"){S=null;menu()}});

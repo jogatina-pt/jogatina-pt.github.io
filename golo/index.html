@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Golo!</title>
+<title>Penáltis</title>
 <meta name="description" content="Penáltis e livres em 3D: remata com o dedo ou defende com as luvas. Sozinho ou contra um amigo. Grátis, sem conta e sem publicidade.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Golo! Penáltis e livres">
+<meta property="og:title" content="Penáltis Penáltis e livres">
 <meta property="og:description" content="Desenha o remate com o dedo ou defende com as luvas. Aceitas o desafio?">
 <meta property="og:url" content="https://jogatina-pt.github.io/golo/">
 <meta property="og:image" content="https://jogatina-pt.github.io/golo/og.jpg">
@@ -20,7 +20,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Golo!">
+<meta name="apple-mobile-web-app-title" content="Penáltis">
 <meta name="theme-color" content="#f4eee3">
 <link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
@@ -275,7 +275,7 @@ header.top{flex:none}
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Go<span>lo!</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1>Pená<span>ltis</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
       <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
@@ -1079,7 +1079,7 @@ function sbar(){
 let KIND=store.get("golo-kind")||"pen";
 function menu(){
   G=null;$("sbar").hidden=true;tip("");GLOVES.visible=false;
-  showOv(`<div class="panel"><h2>Golo!</h2>
+  showOv(`<div class="panel"><h2>Penáltis</h2>
     <div class="seg2"><button type="button" data-k="pen" class="${KIND==="pen"?"on":""}">⚽ Penáltis</button><button type="button" data-k="livre" class="${KIND==="livre"?"on":""}">🧱 Livres</button></div>
     <button class="btn" type="button" data-a="marcar">🦶 Rematar (5 remates)</button>
     <button class="btn" type="button" data-a="defender">🧤 Defender (5 remates)</button>
@@ -1213,7 +1213,7 @@ function hgKick(){
 function cleanOpts(o){o=o||{};return{kind:o.kind==="livre"?"livre":"pen"}}
 function renderOpts(el,o,host){o=cleanOpts(o);el.innerHTML=`<div class="optrow"><span class="eyebrow">Tipo de remate</span><div class="seg" role="group"><button type="button" data-k="kind" data-v="pen" class="${o.kind==="pen"?"on":""}" ${host?"":"disabled"}>⚽ Penáltis</button><button type="button" data-k="kind" data-v="livre" class="${o.kind==="livre"?"on":""}" ${host?"":"disabled"}>🧱 Livres</button></div></div>`;
   if(host)el.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{ROOM.opts=cleanOpts({kind:b.dataset.v});lobbyBroadcast()})}
-ROOM.game={id:"golo",title:"Golo!",maxp:2,minp:2,maxBots:0,botNames:[],cleanOpts,renderOpts,
+ROOM.game={id:"golo",title:"Penáltis",maxp:2,minp:2,maxBots:0,botNames:[],cleanOpts,renderOpts,
   lobbyHelpFew:"Precisas de mais uma pessoa. Envia o link a um amigo.",
   start(seats){const o=cleanOpts(ROOM.opts);HG={seats,kind:o.kind,seed:Math.floor(Math.random()*1e9),score:[0,0],marks:[[],[]],n:0};seats.forEach((s,i)=>ROOM.sendTo(s,{t:"go",me:i,names:seats.map(x=>x.name),kind:o.kind}));setTimeout(()=>HG&&hgKick(),1200)},
   msg(seat,d){if(!HG||!d)return;const i=HG.seats.indexOf(seat);if(i<0)return;const c=HG.cur;

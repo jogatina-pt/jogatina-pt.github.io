@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Floki Patrulha!</title>
+<title>Floki Polícia</title>
 <meta name="description" content="O gato Floki salta em trampolins e usa portas para recuperar as coisas roubadas pelos guaxinins ladrões. Jogo de arcada grátis, sem conta e sem publicidade.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Floki Patrulha!">
+<meta property="og:title" content="Floki Polícia">
 <meta property="og:description" content="Trampolins, portas e guaxinins ladrões!">
 <meta property="og:url" content="https://jogatina-pt.github.io/patrulha/">
 <meta property="og:image" content="https://jogatina-pt.github.io/patrulha/og.jpg">
@@ -20,7 +20,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Floki Patrulha!">
+<meta name="apple-mobile-web-app-title" content="Floki Polícia">
 <meta name="theme-color" content="#f4eee3">
 <link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
@@ -362,12 +362,13 @@ body.touch .ctl{display:flex}
 .foot{flex:none;margin:0;text-align:center;font-size:12px}
 @media (max-width:380px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:26px}.brand a.home{font-size:0}.brand a.home::before{content:"← menu";font-size:12px}.tools{gap:5px}.tools .btn.sm{padding:4px 8px}}
 @media (max-height:560px){.foot{display:none}.who button svg{height:38px}.upg{gap:4px}}
+.brand h1.long{font-size:clamp(19px,5.4vw,30px)!important;line-height:.95}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Floki <span>Patrulha!</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1 class="long">Floki <span>Polícia</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
       <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
@@ -402,7 +403,7 @@ body.touch .ctl{display:flex}
     <button class="btn ghost sm" id="leaveBtn" type="button">Sair da sala</button>
   </section>
   <section id="game" class="egame">
-  <main class="stage gg" id="stage" aria-label="Jogo Floki Patrulha!">
+  <main class="stage gg" id="stage" aria-label="Jogo Floki Polícia">
     <canvas id="cv" class="ggcv"></canvas>
     <button class="rb rotb" id="rotBtn" type="button" aria-label="Rodar o ecrã" title="Rodar o ecrã">🔄</button><div class="rhud" id="hud" hidden><span class="sp"></span><button class="rb" id="menuBtn" type="button" aria-label="Pausa">❚❚</button></div>
     <div class="touch" id="touch" hidden><button type="button" id="tL" aria-label="Esquerda">◀</button><button type="button" id="tR" aria-label="Direita">▶</button><span class="sp"></span><button type="button" id="tD" class="jump doorb" aria-label="Porta">PORTA</button></div>
@@ -1006,7 +1007,7 @@ let last=0,acc=0;function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t
 /* ---------- menus ---------- */
 const ov=$("ov");function showOv(h){ov.innerHTML=h;ov.hidden=false}
 function menu(){STATE="menu";L=makeLevel(1);P=null;DOGS=[];$("hud").hidden=true;$("touch").hidden=true;layout();
-  showOv(`<div class="panel"><div class="flokihero"></div><h2>Floki Patrulha!</h2><p>Os guaxinins ladrões roubaram as coisas da casa. Ajuda o <b>Floki</b> a recuperar tudo!</p>
+  showOv(`<div class="panel"><div class="flokihero"></div><h2>Floki Polícia</h2><p>Os guaxinins ladrões roubaram as coisas da casa. Ajuda o <b>Floki</b> a recuperar tudo!</p>
    <div class="rulesmini"><div>🟢 Cai nos <b>poços</b> e salta nos <b>trampolins</b>; carrega ◀ ▶ quando passares por um andar para saíres. Lá em cima estás a salvo, mas à 5.ª vez seguida o trampolim rebenta!</div><div>🚪 <b>Portas</b> (espaço/↑ ou botão PORTA): abrir de repente atordoa os guaxinins. As portas <b>mágicas</b> ✨ soltam uma onda que os apanha.</div><div>🎁 Apanha tudo para passar de nível. Dois iguais seguidos valem o dobro!</div></div>
    <button class="btn rotm ghost" type="button" data-a="rot">🔄 Rodar ecrã</button><button class="btn" type="button" data-a="play">Jogar ▶</button>${SAVE.lvl>1?`<button class="btn ghost" type="button" data-a="cont">Começar no nível ${SAVE.lvl}</button>`:""}<p class="note">Recorde: ${SAVE.best}</p></div>`);$("ov").querySelector(".flokihero").innerHTML=FLOKI_SVG}
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;e.stopPropagation();unlockAudio();const a=b.dataset.a;if(a==="play")startGame(1);else if(a==="cont")startGame(SAVE.lvl);else if(a==="menu")menu();else if(a==="resume"){ov.hidden=true;STATE="play"}else if(a==="rot")toggleRot()});
@@ -1015,7 +1016,7 @@ function setRot(on){document.body.classList.toggle("rot90",!!on);setTimeout(layo
 function toggleRot(){if(document.body.classList.contains("rot90"))setRot(false);else if(innerHeight>innerWidth)setRot(true)}
 $("rotBtn").addEventListener("click",e=>{e.stopPropagation();toggleRot()});addEventListener("resize",()=>{if(document.body.classList.contains("rot90")&&innerWidth>innerHeight)setRot(false)});
 /* ---------- sala (só para jogar sozinho) ---------- */
-ROOM.game={id:"patrulha",title:"Floki Patrulha!",maxp:1,minp:1,maxBots:0,botNames:[],start(){},msg(){},client(){},stop(){},hostLost(){},drop(){},onScreen(n){if(n==="game"){$("exitBtn").hidden=true;$("reactBtn").hidden=true;$("hubLink").hidden=false;setTimeout(layout,30)}}};
+ROOM.game={id:"patrulha",title:"Floki Polícia",maxp:1,minp:1,maxBots:0,botNames:[],start(){},msg(){},client(){},stop(){},hostLost(){},drop(){},onScreen(n){if(n==="game"){$("exitBtn").hidden=true;$("reactBtn").hidden=true;$("hubLink").hidden=false;setTimeout(layout,30)}}};
 initUI({rules:`<ul><li>Os <b>guaxinins ladrões</b> roubaram as coisas da casa: televisões, rádios, computadores, quadros e cofres. Apanha-as todas para passar de nível.</li><li>Anda com <b>◀ ▶</b> (setas ou A/D). Ao chegares a um <b>poço</b>, cais para o <b>trampolim</b> e saltas. Quando passares à altura de um andar, carrega ◀ ou ▶ para saíres para esse lado.</li><li>No trampolim estás a salvo dos guaxinins, mas ele muda de cor a cada salto (verde, azul, amarelo, laranja, vermelho) e <b>rebenta à 5.ª vez seguida</b>. Sai para um andar para ele recuperar.</li><li><b>Portas</b> (espaço, ↑, W ou o botão PORTA): abrem e fecham. Se abrires uma porta com um guaxinim do outro lado, ele fica atordoado. Portas fechadas fazem os guaxinins dar meia volta.</li><li><b>Portas mágicas ✨</b>: ao abrir, soltam uma onda que apanha todos os guaxinins no caminho (200, 400, 800… pontos).</li><li>Apanhar <b>duas coisas iguais seguidas</b> dá o dobro (e vai dobrando). A cada 4 níveis há uma <b>ronda bónus</b>: apanha os peixes no ar antes de o tempo acabar.</li><li>O <b>chefe</b> (guaxinim grande de chapéu) é mais rápido. Se demorares muito, os guaxinins aceleram. Vida extra a cada 20000 pontos.</li></ul>`,privacy:privacyHTML(", o teu recorde e o nível a que chegaste")});
 $("soloBtn")&&$("soloBtn").addEventListener("click",()=>{showScreen("game");menu()});
 addEventListener("resize",()=>{clearTimeout(window.__rz);window.__rz=setTimeout(layout,60)});try{new ResizeObserver(()=>layout()).observe(stage)}catch(e){}

@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Corre Neon</title>
+<title>Corre na Linha</title>
 <meta name="description" content="Lisboa, ano 2099: foge do robô pela autoestrada de néon. Salta, rebola, apanha moedas e corre contra os amigos. Grátis, sem conta e sem publicidade.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Corre Neon: foge do robô!">
+<meta property="og:title" content="Corre na Linha: foge do robô!">
 <meta property="og:description" content="Lasers, drones e carros voadores. Sozinho ou em corrida com amigos. Bates o meu recorde?">
 <meta property="og:url" content="https://jogatina-pt.github.io/eletrico/">
 <meta property="og:image" content="https://jogatina-pt.github.io/eletrico/og.jpg">
@@ -20,7 +20,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Corre Neon">
+<meta name="apple-mobile-web-app-title" content="Corre na Linha">
 <meta name="theme-color" content="#f4eee3">
 <link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
@@ -261,12 +261,13 @@ header.top{flex:none}
 .foot{flex:none;margin:0;text-align:center;font-size:12px}
 @media (max-width:380px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:26px}.brand a.home{font-size:0}.brand a.home::before{content:"← menu";font-size:12px}.tools{gap:5px}.tools .btn.sm{padding:4px 8px}}
 @media (max-height:560px){.foot{display:none}.who button svg{height:38px}.upg{gap:4px}}
+.brand h1.long{font-size:clamp(19px,5.4vw,30px)!important;line-height:.95}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Corre <span>Neon</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1 class="long">Corre na <span>Linha</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
       <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
@@ -1307,7 +1308,7 @@ let HG=null;
 const num=(v,a,b)=>{v=+v;return isFinite(v)?Math.max(a,Math.min(b,v)):a};
 function hgEnd(){if(!HG||HG.done||HG.alive.some(Boolean))return;HG.done=true;const res=HG.seats.map((s,i)=>({n:s.name,d:Math.floor(HG.dist[i])})).sort((a,b)=>b.d-a.d);HG.seats.forEach(s=>ROOM.sendTo(s,{t:"end",res}))}
 function hgDead(i,dist){if(!HG||!HG.alive[i])return;HG.alive[i]=false;HG.dist[i]=Math.max(HG.dist[i],dist);HG.seats.forEach((s,k)=>{if(k!==i)ROOM.sendTo(s,{t:"dd",i,dist:HG.dist[i]})});hgEnd()}
-ROOM.game={id:"eletrico",title:"Corre Neon",maxp:4,minp:2,maxBots:0,botNames:[],
+ROOM.game={id:"eletrico",title:"Corre na Linha",maxp:4,minp:2,maxBots:0,botNames:[],
   lobbyHelpFew:"São precisas pelo menos 2 pessoas. Envia o link aos amigos.",
   start(seats){HG={seats,seed:1+Math.floor(Math.random()*2e9),alive:seats.map(s=>s.kind!=="remote"||s.online),dist:seats.map(()=>0),done:false};
     seats.forEach((s,i)=>ROOM.sendTo(s,{t:"go",seed:HG.seed,me:i,names:seats.map(x=>x.name)}))},

@@ -189,12 +189,13 @@ header.top{flex:none}
 @media (max-height:640px),(orientation:landscape){.pad{display:none}}
 @media (max-height:620px){.foot{display:none}}
 @media (max-width:420px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:23px;white-space:nowrap}.brand a.home{font-size:0}.brand a.home::before{content:"← menu";font-size:12px}.tools{gap:5px}.tools .btn.sm{padding:4px 8px}}
+.brand h1.long{font-size:clamp(19px,5.4vw,30px)!important;line-height:.95}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Papa-<span>Tremoços</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1 class="long">Papa-<span>Tremoços</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="mute" type="button" aria-pressed="true" aria-label="Som" title="Som">🔊</button>
       <button class="btn ghost sm ico" id="themeBtn" type="button" aria-label="Tema escuro" title="Tema escuro">☾</button>
