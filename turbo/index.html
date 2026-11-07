@@ -1170,8 +1170,8 @@ function busted(){BUST=0;const lose=Math.max(50,Math.round(SAVE.money*.1));SAVE.
 /* ---------- desenho ---------- */
 let SHK=0;const shake=v=>{SHK=Math.min(1,SHK+v)};
 let CW=300,CHh=300,DPR=1;
-function layout(){CW=stage.clientWidth||300;CHh=stage.clientHeight||300;DPR=Math.min(1.5,devicePixelRatio||1);cv.width=Math.round(CW*DPR);cv.height=Math.round(CHh*DPR);cv.style.width=CW+"px";cv.style.height=CHh+"px"}
-function texP(w,h,f){const c=document.createElement("canvas");c.width=w;c.height=h;f(c.getContext("2d"),w,h);return ctx.createPattern(c,"repeat")}
+function layout(){CW=stage.clientWidth||300;CHh=stage.clientHeight||300;DPR=Math.min(1.5,devicePixelRatio||1);cv.width=Math.round(CW*DPR);cv.height=Math.round(CHh*DPR);cv.style.width=CW+"px";cv.style.height=CHh+"px";if(R3&&R3.resize)R3.resize()}
+function texP(w,h,f){const c=document.createElement("canvas");c.width=w;c.height=h;f(c.getContext("2d"),w,h);const p=ctx.createPattern(c,"repeat");p.src=c;return p}
 const rnd=(()=>{let s=7;return()=>{s=(s*16807)%2147483647;return s/2147483647}})();
 const PAT={
  road:texP(128,128,(g,w,h)=>{g.fillStyle="#4d4f57";g.fillRect(0,0,w,h);for(let i=0;i<900;i++){const v=60+rnd()*40|0;g.fillStyle=`rgba(${v},${v},${v+6},.5)`;g.fillRect(rnd()*w,rnd()*h,1.5,1.5)}g.strokeStyle="rgba(20,20,25,.35)";g.lineWidth=1;g.beginPath();g.moveTo(20,10);g.lineTo(34,22);g.lineTo(31,40);g.moveTo(90,80);g.lineTo(104,95);g.stroke()}),
@@ -1277,7 +1277,7 @@ function renderInterior(){const g=ctx,S=SCENE;g.setTransform(DPR,0,0,DPR,0,0);g.
   for(const s of S.spots){const on=NEAR===s,px=s.x*TS,py=s.y*TS;g.globalAlpha=on?.9:.45;g.strokeStyle="#ffd23f";g.lineWidth=3;g.beginPath();g.arc(px,py,16+Math.sin(T*5)*2,0,6.3);g.stroke();g.globalAlpha=1;if(on){g.font="900 13px system-ui";g.lineWidth=4;g.strokeStyle="#151515";g.fillStyle="#ffd23f";g.strokeText(s.lab,px,py-24);g.fillText(s.lab,px,py-24)}}
   drawPerson(g,P.x,P.y,P.a,SAVE.shirt,"#3d2b1f",false,P.ws);g.restore();
   g.font="900 18px system-ui";g.textAlign="left";g.textBaseline="top";g.lineWidth=5;g.strokeStyle="#151515";g.fillStyle="#fff";g.strokeText(S.n,12,12);g.fillText(S.n,12,12);hud(g,1);if(FADE>0){FADE-=1/60;g.fillStyle=`rgba(0,0,0,${Math.min(1,FADE)})`;g.fillRect(0,0,CW,CHh)}}
-function render(){if(SCENE)return renderInterior();const g=ctx;g.setTransform(DPR,0,0,DPR,0,0);g.fillStyle="#6b6c74";g.fillRect(0,0,CW,CHh);
+function render(){if(SCENE)return renderInterior();if(R3&&R3.on&&R3.ready){R3.frame();return}const g=ctx;g.setTransform(DPR,0,0,DPR,0,0);g.fillStyle="#6b6c74";g.fillRect(0,0,CW,CHh);
   const z=CAM.z*Math.min(1.25,Math.max(.62,Math.min(CW,CHh)/620)),sx=(Math.random()-.5)*SHK*8,sy=(Math.random()-.5)*SHK*8;g.save();g.translate(CW/2+sx,CHh/2+sy);g.scale(z,z);g.translate(-CAM.x,-CAM.y);
   const ux0=Math.floor((CAM.x-CW/2/z)/TS)-1,ux1=Math.ceil((CAM.x+CW/2/z)/TS)+1,uy0=Math.floor((CAM.y-CHh/2/z)/TS)-1,uy1=Math.ceil((CAM.y+CHh/2/z)/TS)+1;
   const x0=Math.max(0,ux0),x1=Math.min(MW-1,ux1),y0=Math.max(0,uy0),y1=Math.min(MH-1,uy1);const OUTT=[];
@@ -1377,19 +1377,171 @@ let last=0,acc=0;function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t
 const ov=$("ov");function showOv(h){ov.innerHTML=h;ov.hidden=false}
 function menu(){STATE="menu";showOv(`<div class="panel"><h2>Gamanço!</h2><p>Uma cidade inteira para explorar: anda a pé, entra em qualquer carro, faz as missões do <b>Rui</b> e foge à polícia!</p>
   <div class="rulesmini"><div>🏠 Começas em <b>casa</b>. Entra em cafés e lojas pelas portas (ícones no chão).</div><div>☕ O <b>Rui</b> está no café: fala com ele para teres missões.</div><div>🎯 No <b>Armeiro</b> compras armas; na <b>Mercearia</b> comida e colete.</div><div>⭐ Asneiras dão <b>estrelas</b> e a polícia vem atrás de ti. Esconde-te até as estrelas sumirem ou vai à <b>Pinta Já</b> 🎨.</div><div>🔧 A <b>oficina</b> arranja o carro. Há <b>20 envelopes</b> com dinheiro escondidos pela cidade.</div></div>
-  <button class="btn ghost rotm" type="button" data-a="rot">🔄 Rodar ecrã (jogar na horizontal)</button><button class="btn" type="button" data-a="play">${SAVE.mis||SAVE.money!==200?"Continuar ▶":"Jogar ▶"}</button>${SAVE.mis||SAVE.env.length?`<button class="btn ghost" type="button" data-a="reset">Começar do zero</button>`:""}<p class="note">Missões: ${Math.min(SAVE.mis,MIS.length)}/${MIS.length} · envelopes: ${SAVE.env.length}/20 · ${SAVE.money} €</p></div>`)}
+  <button class="btn ghost" type="button" data-a="g3d" id="g3dB">Gráficos: ${R3&&R3.on?"3D ✔ (mudar para 2D)":"2D (mudar para 3D)"}</button><p class="note" id="r3st"></p><button class="btn ghost rotm" type="button" data-a="rot">🔄 Rodar ecrã (jogar na horizontal)</button><button class="btn" type="button" data-a="play">${SAVE.mis||SAVE.money!==200?"Continuar ▶":"Jogar ▶"}</button>${SAVE.mis||SAVE.env.length?`<button class="btn ghost" type="button" data-a="reset">Começar do zero</button>`:""}<p class="note">Missões: ${Math.min(SAVE.mis,MIS.length)}/${MIS.length} · envelopes: ${SAVE.env.length}/20 · ${SAVE.money} €</p></div>`);if(R3&&R3.status)R3.status()}
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;e.stopPropagation();unlockAudio();const a=b.dataset.a;
   if(a==="play"){ov.hidden=true;STATE="play";$("hud").hidden=false;$("touch").hidden=!matchMedia("(pointer:coarse)").matches;layout();if(!P.started){P.started=1;goInside("casa",true);say("Estás em casa. Sai pela porta de baixo. O Rui tem trabalho no café ☕.",4)}else say(SAVE.mis<MIS.length?"O Rui está no café ☕ (o ! amarelo no mapa).":"Explora a cidade!",3)}
-  else if(a==="buy"){buy(b.dataset.k,+b.dataset.i)}else if(a==="wear"){SAVE.shirt=b.dataset.c;saveS();closet()}else if(a==="accept"){ov.hidden=true;STATE="play";startMission();say("Sai do café e segue a seta verde!",3)}else if(a==="rot"){toggleRot()}
+  else if(a==="buy"){buy(b.dataset.k,+b.dataset.i)}else if(a==="wear"){SAVE.shirt=b.dataset.c;saveS();closet()}else if(a==="accept"){ov.hidden=true;STATE="play";startMission();say("Sai do café e segue a seta verde!",3)}else if(a==="rot"){toggleRot()}else if(a==="g3d"){SAVE.g3d=R3.on?0:1;saveS();R3.setOn(SAVE.g3d===1);menu()}
   else if(a==="resume"){ov.hidden=true;STATE="play"}else if(a==="menu"){menu()}else if(a==="reset"){if(confirmReset()){SAVE.money=200;SAVE.mis=0;SAVE.env=[];SAVE.wp=["punho"];SAVE.ammo={};SAVE.cw="punho";SAVE.clothes=["#ff5d8f"];SAVE.shirt="#ff5d8f";SAVE.arm=0;saveS();STARS=0;MISSION=null;SCENE=null;COPF=[];spawnPlayer();menu()}}});
 function confirmReset(){return true}
 $("menuBtn").addEventListener("click",()=>{if(STATE==="play"){STATE="pause";showOv(`<div class="panel"><h2>Pausa</h2><p class="note">${SAVE.money} € · missões ${Math.min(SAVE.mis,MIS.length)}/${MIS.length} · envelopes ${SAVE.env.length}/20</p><button class="btn" type="button" data-a="resume">Continuar ▶</button><button class="btn ghost" type="button" data-a="menu">Menu</button></div>`)}});
 ROOM.game={id:"turbo",title:"Gamanço!",maxp:1,minp:1,maxBots:0,botNames:[],start(){},msg(){},client(){},stop(){},hostLost(){},drop(){},onScreen(n){if(n==="game"){$("exitBtn").hidden=true;$("reactBtn").hidden=true;$("hubLink").hidden=false;setTimeout(layout,30)}}};
-initUI({rules:`<ul><li><b>Andar e conduzir:</b> setas ou WASD. Ao pé de um carro carrega <b>E</b> (ou o botão ENTRAR) para entrar; outra vez para sair. Espaço é o travão de mão (para derrapar). No telemóvel, o joystick aponta para onde queres ir.</li><li><b>Casa e lojas:</b> começas em casa. Nas portas com ícone carrega <b>E</b> (ou ENTRAR) para entrar. Em casa podes <b>dormir</b> (vida cheia, estrelas a zero e jogo guardado) e mudar de roupa. Café e Mercearia: comida para a vida e colete. Armeiro: armas e balas. Moda Lusa: roupa nova (com 1 ou 2 estrelas a polícia deixa de te reconhecer).</li><li><b>Armas:</b> a pé, Espaço (ou o botão vermelho) dispara e mira sozinho no alvo mais próximo à tua frente; Q (ou 🔁) muda de arma; H (ou ✋) guarda a arma; Shift (ou CORRER) corre. É tudo em desenho animado: quem leva um tiro cai tonto e levanta-se. Disparar ou bater em pessoas dá estrelas; na polícia, mais ainda. A partir de 2 estrelas, os polícias a pé também disparam: se ficares sem vida, acordas no hospital e pagas a conta.</li><li><b>Missões:</b> fala com o <b>Rui</b> dentro do café (o "!" amarelo). Entregas, corridas, um carro para roubar, táxi e fugas. Cada missão paga em euros.</li><li><b>Polícia:</b> tirar carros com gente lá dentro, atropelar pessoas (elas caem e levantam-se) ou bater na polícia dá ⭐. Com estrelas, a polícia persegue-te: se te encostarem e estiveres parado, és apanhado e pagas multa. Se ninguém te vir durante uns segundos, perdes uma estrela. A <b>Pinta Já</b> 🎨 (150 €) apaga-as todas.</li><li><b>Oficina</b> 🔧 (100 €) arranja o carro. Se o carro avariar (fumo preto), arranja outro.</li><li><b>Mapa:</b> tecla M ou o botão 🗺️. Há <b>20 envelopes</b> com 100 € escondidos pela cidade.</li><li>O jogo guarda o teu dinheiro e as missões feitas neste aparelho.</li></ul>`,privacy:privacyHTML(", o teu dinheiro e as missões feitas")});
+initUI({rules:`<ul><li><b>Andar e conduzir:</b> setas ou WASD. Ao pé de um carro carrega <b>E</b> (ou o botão ENTRAR) para entrar; outra vez para sair. Espaço é o travão de mão (para derrapar). No telemóvel, o joystick aponta para onde queres ir.</li><li><b>Casa e lojas:</b> começas em casa. Nas portas com ícone carrega <b>E</b> (ou ENTRAR) para entrar. Em casa podes <b>dormir</b> (vida cheia, estrelas a zero e jogo guardado) e mudar de roupa. Café e Mercearia: comida para a vida e colete. Armeiro: armas e balas. Moda Lusa: roupa nova (com 1 ou 2 estrelas a polícia deixa de te reconhecer).</li><li><b>Armas:</b> a pé, Espaço (ou o botão vermelho) dispara e mira sozinho no alvo mais próximo à tua frente; Q (ou 🔁) muda de arma; H (ou ✋) guarda a arma; Shift (ou CORRER) corre. É tudo em desenho animado: quem leva um tiro cai tonto e levanta-se. Disparar ou bater em pessoas dá estrelas; na polícia, mais ainda. A partir de 2 estrelas, os polícias a pé também disparam: se ficares sem vida, acordas no hospital e pagas a conta.</li><li><b>Missões:</b> fala com o <b>Rui</b> dentro do café (o "!" amarelo). Entregas, corridas, um carro para roubar, táxi e fugas. Cada missão paga em euros.</li><li><b>Polícia:</b> tirar carros com gente lá dentro, atropelar pessoas (elas caem e levantam-se) ou bater na polícia dá ⭐. Com estrelas, a polícia persegue-te: se te encostarem e estiveres parado, és apanhado e pagas multa. Se ninguém te vir durante uns segundos, perdes uma estrela. A <b>Pinta Já</b> 🎨 (150 €) apaga-as todas.</li><li><b>Oficina</b> 🔧 (100 €) arranja o carro. Se o carro avariar (fumo preto), arranja outro.</li><li><b>Mapa:</b> tecla M ou o botão 🗺️. Há <b>20 envelopes</b> com 100 € escondidos pela cidade.</li><li>O jogo guarda o teu dinheiro e as missões feitas neste aparelho.</li><li><b>Gráficos:</b> por defeito a cidade é em 3D; se o teu telemóvel ficar lento, muda para 2D no menu. Modelos 3D de Kenney (kenney.nl), de uso livre (CC0).</li></ul>`,privacy:privacyHTML(", o teu dinheiro e as missões feitas")});
 addEventListener("resize",()=>{clearTimeout(window.__rz);window.__rz=setTimeout(layout,60)});try{new ResizeObserver(()=>layout()).observe(stage)}catch(e){}
 showScreen("game");layout();menu();
 window.TB={get SCENE(){return SCENE},get MSG(){return MSG},get NEAR(){return NEAR},goInside,goOutside,get COPF(){return COPF},fire,nextWeapon,WPN,DOORS,DECOR,get P(){return P},get CARS(){return CARS},get STARS(){return STARS},set STARS(v){STARS=v},get MISSION(){return MISSION},SPOTS,IN,tickGame,startMission,get STATE(){return STATE},SAVE,enterExit,TL,MW};
 requestAnimationFrame(t=>{last=t;loop(t)});
+
+/* ================= Gamanço! em 3D — desenha a mesma simulação com modelos 3D (Kenney, licença CC0) =================
+   A cidade, o trânsito, a polícia e as missões são os mesmos do modo 2D; aqui só muda o desenho.
+   Os interiores (casa, café, lojas) continuam desenhados em 2D. */
+var R3={on:false,ready:false,loading:false,err:null,prog:0};
+(function(){
+let T3,SKU,renderer,scene,camera,cv3,BAS={},SZ={},CHR=null,clipIdle=null,clipRun=null,SKINIMG={},SKINTEX={},SHADTEX=null;
+const W_=v=>v/TS;/* píxeis da simulação -> unidades 3D (1 unidade = 1 quadrado do mapa) */
+const CARK=["sedan","sedan-sports","hatchback-sports","suv","van","taxi","police","ambulance","delivery","race"];
+const COMK=["building-a","building-b","building-c","building-d","building-e","building-f","building-g","building-h","building-i","building-j"],SKYK=["building-skyscraper-a","building-skyscraper-b","building-skyscraper-c","building-skyscraper-d","building-skyscraper-e"];
+const SUBK=["building-type-a","building-type-b","building-type-c","building-type-d","building-type-f","building-type-h","building-type-k","building-type-m"];
+const FILES=[...CARK.map(k=>[k,"car/"+k]),...COMK.map(k=>[k,"com/"+k]),...SKYK.map(k=>[k,"com/"+k]),["parasol","com/detail-parasol-a"],...SUBK.map(k=>[k,"sub/"+k]),["tree-large","sub/tree-large"],["tree-small","sub/tree-small"],["traffic-light","road/traffic-light"],["lamp","road/light-square"],["dumpster","road/dumpster"],["cone","road/construction-cone"]];
+const hsh=(a,b)=>{let h=(a*374761393+b*668265263)|0;h=(h^(h>>>13))*1274126177;return((h^(h>>>16))>>>0)};
+function status(){const bb=document.getElementById("g3dB");if(bb)bb.textContent=R3.on?"Gráficos: 3D ✔ (mudar para 2D)":"Gráficos: 2D (mudar para 3D)";const e=document.getElementById("r3st");if(!e)return;e.textContent=R3.err?"⚠ Não deu para usar o 3D neste aparelho; o jogo fica em 2D.":R3.ready?"✅ Cidade 3D pronta.":R3.loading?`A carregar a cidade 3D… ${Math.round(R3.prog*100)}%`:""}
+R3.status=status;
+R3.setOn=function(v){R3.on=!!v;if(cv3)cv3.style.display=R3.on?"block":"none";if(R3.on&&!R3.ready&&!R3.loading)R3.load()};
+R3.load=async function(){if(R3.loading||R3.ready)return;R3.loading=true;R3.prog=0;status();
+  try{T3=await import("../lib/three.module.min.js");const {GLTFLoader}=await import("../lib/GLTFLoader.js");const {FBXLoader}=await import("../lib/FBXLoader.js");SKU=await import("../lib/SkeletonUtils.js");
+    initRenderer();const gl=new GLTFLoader(),fl=new FBXLoader();const total=FILES.length+3+4;let done=0;const tick=()=>{done++;R3.prog=done/total;status()};
+    await Promise.all(FILES.map(async([k,f])=>{const g=await gl.loadAsync("m/"+f+".glb");BAS[k]=g.scene;const b=new T3.Box3().setFromObject(g.scene);SZ[k]={x:b.max.x-b.min.x,y:b.max.y-b.min.y,z:b.max.z-b.min.z,cx:(b.max.x+b.min.x)/2,cz:(b.max.z+b.min.z)/2,y0:b.min.y};tick()}));
+    const [base,idle,run]=await Promise.all([fl.loadAsync("m/chr/characterMedium.fbx").then(r=>{tick();return r}),fl.loadAsync("m/chr/idle.fbx").then(r=>{tick();return r}),fl.loadAsync("m/chr/run.fbx").then(r=>{tick();return r})]);
+    CHR=base;clipIdle=idle.animations[0];clipRun=run.animations[0];{const b=new T3.Box3().setFromObject(base);CHR.userData.h=b.max.y-b.min.y}
+    await Promise.all(["skaterMaleA","skaterFemaleA","cyborgFemaleA","criminalMaleA"].map(n=>new Promise((ok,ko)=>{const im=new Image();im.onload=()=>{SKINIMG[n]=im;tick();ok()};im.onerror=ko;im.src="m/chr/"+n+".jpg"})));
+    buildWorld();R3.ready=true}catch(e){console.warn(e);R3.err=String(e&&e.message||e);R3.on=false;if(cv3)cv3.style.display="none"}
+  R3.loading=false;status()};
+function initRenderer(){cv3=document.createElement("canvas");cv3.id="cv3";cv3.className="ggcv";cv3.style.pointerEvents="none";stage.insertBefore(cv3,cv);
+  renderer=new T3.WebGLRenderer({canvas:cv3,antialias:!TOUCHUI,powerPreference:"high-performance"});renderer.setPixelRatio(Math.min(TOUCHUI?1.25:1.6,devicePixelRatio||1));renderer.outputColorSpace=T3.SRGBColorSpace;
+  scene=new T3.Scene();scene.background=new T3.Color("#9fd0ee");scene.fog=new T3.Fog("#a8d3ee",55,110);camera=new T3.PerspectiveCamera(46,1,.3,120);
+  scene.add(new T3.HemisphereLight(0xfff8ee,0x5d6b52,1.25));const sun=new T3.DirectionalLight(0xfff1d8,1.65);sun.position.set(-30,60,25);scene.add(sun);R3.resize()}
+R3.resize=function(){if(!renderer)return;renderer.setSize(CW,CHh,false);cv3.style.width=CW+"px";cv3.style.height=CHh+"px";camera.aspect=CW/Math.max(1,CHh);camera.updateProjectionMatrix()};
+/* ---------- mundo estático ---------- */
+const tmpM=()=>new T3.Matrix4();
+function place(key,x,z,ry,s,sy){const S=SZ[key];const m=new T3.Matrix4().makeTranslation(x,0,z);m.multiply(new T3.Matrix4().makeRotationY(ry));m.multiply(new T3.Matrix4().makeScale(s,sy||s,s));m.multiply(new T3.Matrix4().makeTranslation(-S.cx,-S.y0,-S.cz));return m}
+const PL={};const addP=(k,m)=>(PL[k]=PL[k]||[]).push(m);
+/* cada modelo é desenhado por blocos de 16x16 quadrados: o que está fora do ecrã nem chega à placa gráfica */
+function flushInstances(){for(const k in PL){const root=BAS[k];root.updateMatrixWorld(true);const ch={};for(const m of PL[k]){const key=Math.floor(m.elements[12]/16)+","+Math.floor(m.elements[14]/16);(ch[key]=ch[key]||[]).push(m)}
+  const t=new T3.Matrix4();for(const key in ch){const mats=ch[key];root.traverse(o=>{if(!o.isMesh)return;const im=new T3.InstancedMesh(o.geometry,o.material,mats.length);mats.forEach((m,i)=>{t.multiplyMatrices(m,o.matrixWorld);im.setMatrixAt(i,t)});im.instanceMatrix.needsUpdate=true;im.computeBoundingSphere();scene.add(im)})}}}
+function bakeGround(){const S=16,c=document.createElement("canvas");c.width=MW*S;c.height=MH*S;const g=c.getContext("2d");g.scale(S/TS,S/TS);
+  const pat=p=>p&&p.src?g.createPattern(p.src,"repeat"):null;const TP=[pat(PAT.road),pat(PAT.walk),"#6b6d73",pat(PAT.grass),pat(PAT.water),pat(PAT.grass),pat(PAT.lot),pat(PAT.dock)];
+  for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){const t=TL[y*MW+x];g.fillStyle=TP[t]||TCOL[t];g.fillRect(x*TS,y*TS,TS+.5,TS+.5);
+    if(t===1){const ax=inBand(x),ay=inBand(y);g.fillStyle="#d8d5cf";if(ax===0)g.fillRect(x*TS+TS-3,y*TS,3,TS);if(ax===3)g.fillRect(x*TS,y*TS,3,TS);if(ay===0)g.fillRect(x*TS,y*TS+TS-3,TS,3);if(ay===3)g.fillRect(x*TS,y*TS,TS,3)}
+    if(t===0){const lx=inBand(x),ly=inBand(y);if(!(lx>=0&&ly>=0)){g.fillStyle="#e8e8e8";if(lx===1){if(y%2)g.fillRect(x*TS+TS-1,y*TS+6,2,TS-12)}else if(ly===1){if(x%2)g.fillRect(x*TS+6,y*TS+TS-1,TS-12,2)}}}
+    if(t===0&&(x*7+y*13)%37===0){g.fillStyle="#3a3c43";g.beginPath();g.arc(x*TS+16,y*TS+16,6,0,6.3);g.fill()}}
+  for(const by of BANDS)for(const bx of BANDS){if(by>DOCK-4)continue;const px=bx*TS,py=by*TS;g.fillStyle="rgba(255,255,255,.75)";for(let k=0;k<5;k++){g.fillRect(px+TS+4+k*11,py-6,6,10);g.fillRect(px+TS+4+k*11,py+4*TS-4,6,10);g.fillRect(px-6,py+TS+4+k*11,10,6);g.fillRect(px+4*TS-4,py+TS+4+k*11,10,6)}}
+  drawFields(g);for(const d of DECOR)if(d.k==="pool"||d.k==="fountain")drawDecor(g,d,false);
+  for(const b of BUILD){if(b.awn){for(let xx=b.x+10,i=0;xx<b.x+b.w-14;xx+=12,i++){g.fillStyle=i%2?"#fff":b.awn;g.fillRect(xx,b.y+b.h,12,10)}}if(b.door){g.fillStyle="#6b3f22";g.fillRect(b.door-13,b.y+b.h,26,8)}}
+  /* sombras suaves dos prédios (o sol vem de noroeste) */g.fillStyle="rgba(10,15,30,.22)";for(const b of BUILD){const s=Math.min(70,(b.roof==="house"?18:b.ht)*1.1);g.beginPath();g.moveTo(b.x+b.w,b.y);g.lineTo(b.x+b.w+s*.5,b.y+s*.35);g.lineTo(b.x+b.w+s*.5,b.y+b.h+s*.35);g.lineTo(b.x+s*.5,b.y+b.h+s*.35);g.lineTo(b.x,b.y+b.h);g.closePath();g.fill()}
+  const tx=new T3.CanvasTexture(c);tx.colorSpace=T3.SRGBColorSpace;tx.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+  const m=new T3.Mesh(new T3.PlaneGeometry(MW,MH),new T3.MeshLambertMaterial({map:tx}));m.rotation.x=-Math.PI/2;m.position.set(MW/2,0,MH/2);scene.add(m)}
+function buildWorld(){/* chão e arredores: floresta, praia e mar */
+  const flat=(w,h,x,z,y,col,op)=>{const m=new T3.Mesh(new T3.PlaneGeometry(w,h),new T3.MeshLambertMaterial({color:col,transparent:!!op,opacity:op||1}));m.rotation.x=-Math.PI/2;m.position.set(x,y,z);scene.add(m);return m};
+  flat(MW+240,MH+240,MW/2,MH/2,-.05,"#3f8a45");flat(3,SEA+120,MW+1.5,(SEA-120)/2,-.03,"#e6d29a");R3.sea=[flat(140,MH+240,MW+3+70,MH/2,-.02,"#2a86c9"),flat(MW+240,130,MW/2,SEA+65,-.025,"#2a86c9")];
+  bakeGround();
+  /* prédios */const SCL=new Set();
+  for(const b of BUILD){const bx=W_(b.x),bz=W_(b.y),bw=W_(b.w),bh=W_(b.h),hk=hsh(b.x,b.y);
+    if(b.roof==="house"){const k=SUBK[hk%SUBK.length],S=SZ[k];const s=Math.min(bw/S.x,bh/S.z)*.97;addP(k,place(k,bx+bw/2,bz+bh/2,0,s));continue}
+    const nx=Math.max(1,Math.round(bw/3.2)),nz=Math.max(1,Math.round(bh/3.2)),cw=bw/nx,ch=bh/nz;const tall=b.ht>58&&!b.label;
+    for(let i=0;i<nx;i++)for(let j=0;j<nz;j++){const h2=hsh(b.x+i*7,b.y+j*13);const k=tall&&h2%3?SKYK[h2%SKYK.length]:COMK[h2%COMK.length],S=SZ[k];const cx=bx+cw*(i+.5),cz=bz+ch*(j+.5);
+      const ry=j===nz-1?0:j===0?Math.PI:i===0?-Math.PI/2:Math.PI/2;const sw=(ry===0||ry===Math.PI)?[cw,ch]:[ch,cw];const s=Math.min(sw[0]/S.x,sw[1]/S.z)*.96;const sy=b.label?Math.min(s,3.4/S.y):Math.min(s*(tall?1:.9+(h2%5)*.08),8.5/S.y);addP(k,place(k,cx,cz,ry,s,sy))}
+    if(b.label)labelSprite(b.label,bx+bw/2,bz+bh,b.roof==="heli"?"#e63946":"#151515")}
+  /* árvores, candeeiros, semáforos, chapéus de sol */
+  for(const [tx,tz] of TREES){const h=hsh(tx,tz);addP("tree-large",place("tree-large",tx+.5,tz+.5,h%6,2.4+(h%5)*.2))}
+  for(const d of DECOR){if(d.k==="stree")addP("tree-small",place("tree-small",W_(d.x),W_(d.y),hsh(d.x,d.y)%6,2.2));else if(d.k==="umbrella")addP("parasol",place("parasol",W_(d.x),W_(d.y),0,1.2/Math.max(SZ.parasol.x,SZ.parasol.z)));else if(d.k==="bin")addP("dumpster",place("dumpster",W_(d.x),W_(d.y),0,.9))}
+  for(const [lx,ly] of LAMPS)addP("lamp",place("lamp",W_(lx),W_(ly),Math.PI/4,2.4));
+  for(const by of BANDS)for(const bx of BANDS){if(by>DOCK-5)continue;for(const [ox,oz,r] of [[-.15,-.15,Math.PI],[4.15,4.15,0]])addP("traffic-light",place("traffic-light",bx+ox,by+oz,r,2.6))}
+  /* floresta à volta */for(let y=-14;y<MH+2;y++)for(let x=-14;x<MW+14;x++){if(x>=0&&y>=0&&x<MW&&y<MH)continue;if(outK(x,y)!==0)continue;const h=outH(x,y);if(h<58)addP(h%3?"tree-large":"tree-small",place(h%3?"tree-large":"tree-small",x+.5+((h>>3)%5-2)*.12,y+.5+((h>>6)%5-2)*.12,h%6,2.6+(h%7)*.25))}
+  flushInstances();
+  /* coisas simples feitas à mão: bancos, bocas de incêndio, bombas de gasolina, caixotes, paragens */
+  const simple=(geo,col,list)=>{if(!list.length)return;const im=new T3.InstancedMesh(geo,new T3.MeshLambertMaterial({color:col}),list.length);list.forEach((m,i)=>im.setMatrixAt(i,m));im.frustumCulled=false;scene.add(im)};
+  const at=(x,y,z,sx,sy,sz,ry)=>{const m=new T3.Matrix4().makeTranslation(x,y,z);m.multiply(new T3.Matrix4().makeRotationY(ry||0));m.multiply(new T3.Matrix4().makeScale(sx,sy,sz));return m};
+  const box=new T3.BoxGeometry(1,1,1),cyl=new T3.CylinderGeometry(.5,.5,1,10);const L={bench:[],hyd:[],pump:[],crate:[],glass:[],canopy:[],pole:[]};
+  for(const d of DECOR){const x=W_(d.x),z=W_(d.y);if(d.k==="bench"||d.k==="bench2")L.bench.push(at(x,.18,z,.9,.12,.32));else if(d.k==="hydrant")L.hyd.push(at(x,.15,z,.16,.3,.16));else if(d.k==="pump")L.pump.push(at(x,.35,z,.42,.7,.3));else if(d.k==="crate"){L.crate.push(at(x,.3,z,.6,.6,.6,hsh(d.x,d.y)%3));L.crate.push(at(x+.5,.25,z+.3,.5,.5,.5,.4))}
+    else if(d.k==="bus"){L.glass.push(at(x,.55,z,d.a?.2:1.3,1.1,d.a?1.3:.2));L.canopy.push(at(x,1.12,z,d.a?.5:1.4,.06,d.a?1.4:.5))}else if(d.k==="canopy"){L.canopy.push(at(x+W_(d.w)/2,1.6,z+W_(d.h)/2,W_(d.w),.18,W_(d.h)));for(const [u,v] of [[0,0],[1,0],[0,1],[1,1]])L.pole.push(at(x+.3+u*(W_(d.w)-.6),.8,z+.3+v*(W_(d.h)-.6),.12,1.6,.12))}}
+  simple(box,"#8d5a34",L.bench);simple(cyl,"#e63946",L.hyd);simple(box,"#2fbf71",L.pump);simple(box,"#b5844f",L.crate);simple(box,"#f2f4f6",L.canopy);simple(box,"#9aa0a8",L.pole);
+  {const im=new T3.InstancedMesh(box,new T3.MeshLambertMaterial({color:"#aad7ff",transparent:true,opacity:.45}),Math.max(1,L.glass.length));L.glass.forEach((m,i)=>im.setMatrixAt(i,m));im.count=L.glass.length;im.frustumCulled=false;scene.add(im)}
+  /* portas: ícone a flutuar */for(const d of DOORS){const ic={casa:"🏠",cafe:"☕",mercearia:"🛒",armeiro:"🎯",roupa:"👕"}[d.k]||"🚪";const sp=iconSprite(ic);sp.position.set(W_(d.x),1.5,W_(d.y)+.25);sp.scale.set(.9,.9,.9);scene.add(sp)}
+  /* marcadores (anéis com feixe de luz) */R3.mk={};for(const [k,col] of [["mis","#2fbf71"],["race","#ff5d8f"],["chefe","#ffd23f"],["ofi","#c8ccd2"],["pinta","#e86fa8"]]){const g=new T3.Group();const ring=new T3.Mesh(new T3.TorusGeometry(.8,.09,8,28),new T3.MeshBasicMaterial({color:col}));ring.rotation.x=Math.PI/2;ring.position.y=.08;const beam=new T3.Mesh(new T3.CylinderGeometry(.75,.75,7,20,1,true),new T3.MeshBasicMaterial({color:col,transparent:true,opacity:.18,depthWrite:false,side:T3.DoubleSide}));beam.position.y=3.5;g.add(ring,beam);g.visible=false;scene.add(g);R3.mk[k]=g}
+  /* envelopes */R3.env=ENV.map(e=>{const m=new T3.Mesh(new T3.BoxGeometry(.5,.08,.34),new T3.MeshLambertMaterial({color:"#f4e2a8",emissive:"#5a4a10"}));m.position.set(W_(e.x),.6,W_(e.y));scene.add(m);return m});
+  SHADTEX=(()=>{const c=document.createElement("canvas");c.width=c.height=64;const g=c.getContext("2d");const gr=g.createRadialGradient(32,32,4,32,32,32);gr.addColorStop(0,"rgba(0,0,0,.55)");gr.addColorStop(1,"rgba(0,0,0,0)");g.fillStyle=gr;g.fillRect(0,0,64,64);const t=new T3.CanvasTexture(c);return t})();
+  R3.trail=new T3.LineSegments(new T3.BufferGeometry(),new T3.LineBasicMaterial({color:"#fff3a0",transparent:true,opacity:.9}));R3.trail.frustumCulled=false;scene.add(R3.trail)}
+function canvasTex(w,h,f){const c=document.createElement("canvas");c.width=w;c.height=h;f(c.getContext("2d"),w,h);const t=new T3.CanvasTexture(c);t.colorSpace=T3.SRGBColorSpace;return t}
+function iconSprite(ic){const t=canvasTex(64,64,(g)=>{g.fillStyle="#fff";g.strokeStyle="#151515";g.lineWidth=4;g.beginPath();g.arc(32,32,27,0,6.3);g.fill();g.stroke();g.font="34px system-ui";g.textAlign="center";g.textBaseline="middle";g.fillText(ic,32,35)});return new T3.Sprite(new T3.SpriteMaterial({map:t,depthTest:true}))}
+function labelSprite(txt,x,z,col){const w=Math.max(128,txt.length*26+40);const t=canvasTex(w,64,(g)=>{g.fillStyle="#fff";g.strokeStyle=col;g.lineWidth=6;g.beginPath();g.roundRect(4,6,w-8,52,14);g.fill();g.stroke();g.fillStyle=col;g.font="900 34px system-ui";g.textAlign="center";g.textBaseline="middle";g.fillText(txt,w/2,33)});const s=new T3.Sprite(new T3.SpriteMaterial({map:t}));s.scale.set(w/64*1.1,1.1,1);s.position.set(x,4.6,z+.2);scene.add(s)}
+/* ---------- carros ---------- */
+const CARO=new Map();
+function carKey(c){if(c.amb)return"ambulance";if(c.m===4)return"police";if(c.m===2)return"taxi";if(c.m===3)return"race";if(c.m===1)return c.mis?"delivery":"van";const k=Math.floor((c.id||.3)*1000)%4;return["sedan","hatchback-sports","suv","sedan-sports"][k]}
+function mkCarObj(c){const k=carKey(c),S=SZ[k],M=MODELS[c.m];const o=BAS[k].clone(true);const s=W_(M.l)/S.z*1.08;o.scale.setScalar(s);o.userData.mats=[];o.traverse(m=>{if(m.isMesh){m.material=m.material.clone();o.userData.mats.push(m.material)}});
+  const g=new T3.Group();o.position.set(-S.cx*s,-S.y0*s,-S.cz*s);g.add(o);const sh=new T3.Mesh(new T3.PlaneGeometry(W_(M.w)*1.5,W_(M.l)*1.25),new T3.MeshBasicMaterial({map:SHADTEX,transparent:true,depthWrite:false}));sh.rotation.x=-Math.PI/2;sh.position.y=.02;g.add(sh);
+  if(c.m===4){const mk=(col)=>{const s2=new T3.Sprite(new T3.SpriteMaterial({color:col,transparent:true,opacity:.85,depthWrite:false}));s2.scale.set(.5,.5,.5);s2.position.set(0,S.y*s+.15,0);g.add(s2);return s2};g.userData.lr=mk("#ff3b4a");g.userData.lb=mk("#4c8dff")}
+  scene.add(g);return g}
+/* a carroçaria dos carros usa algumas colunas da paleta: para mudar a cor, faz-se uma paleta nova só com essas colunas pintadas */
+const ATL={};function atlasFor(col,img){if(ATL[col])return ATL[col];const c=document.createElement("canvas");c.width=img.width;c.height=img.height;const g=c.getContext("2d");g.drawImage(img,0,0);const W=c.width,cw=W/8;const d=g.getImageData(0,0,W,W),a=d.data;const tc=new T3.Color(col),th={};tc.getHSL(th);const q=new T3.Color(),h={};
+  for(const cx of [3,6,7])for(let y=Math.floor(cw*2);y<cw*4;y++)for(let x=Math.floor(cx*cw);x<(cx+1)*cw;x++){const i=(y*W+x)*4;q.setRGB(a[i]/255,a[i+1]/255,a[i+2]/255);q.getHSL(h);if(h.s<.25)continue;q.setHSL(th.h,Math.max(.25,th.s*.95),Math.min(.85,Math.max(.12,h.l*(th.l/.55))));a[i]=q.r*255;a[i+1]=q.g*255;a[i+2]=q.b*255}
+  g.putImageData(d,0,0);const t=new T3.CanvasTexture(c);t.flipY=false;t.colorSpace=T3.SRGBColorSpace;return ATL[col]=t}
+function tintCar(c,o){const own=(c.m===0||c.m===3||c.mine)&&c.col;const want=(own?c.col:"-")+(c.hp<=0?"x":"");if(o.userData.tint===want)return;o.userData.tint=want;
+  for(const m of o.children[0].userData.mats){if(!m.userData.map0)m.userData.map0=m.map;m.map=own&&m.userData.map0&&m.userData.map0.image?atlasFor(c.col,m.userData.map0.image):m.userData.map0;m.color.set(c.hp<=0?"#5a5a60":"#ffffff");m.needsUpdate=true}}
+/* ---------- pessoas (com animação de correr/parado) ---------- */
+const PPL=new Map();
+function skinTex(base,col){const key=base+"|"+(col||"");if(SKINTEX[key])return SKINTEX[key];const im=SKINIMG[base],c=document.createElement("canvas");c.width=im.width;c.height=im.height;const g=c.getContext("2d");g.drawImage(im,0,0);
+  if(col){const d=g.getImageData(0,0,c.width,c.height),a=d.data,W=c.width,H=c.height;const tc=new T3.Color(col);const tr=tc.r*255,tg=tc.g*255,tb=tc.b*255;
+    for(let y=Math.floor(H*.47);y<H;y++)for(let x=0;x<Math.floor(W*.62);x++){const i=(y*W+x)*4,r=a[i],gg=a[i+1],b=a[i+2];const red=r>150&&gg<130&&b<120&&r-gg>60;const blk=base==="skaterFemaleA"&&r<70&&gg<70&&b<70&&x>W*.13&&x<W*.47;if(!red&&!blk)continue;const l=blk?.55:Math.min(1.25,(r+gg+b)/3/150);a[i]=Math.min(255,tr*l);a[i+1]=Math.min(255,tg*l);a[i+2]=Math.min(255,tb*l)}g.putImageData(d,0,0)}
+  const t=new T3.CanvasTexture(c);t.colorSpace=T3.SRGBColorSpace;t.flipY=true;return SKINTEX[key]=t}
+function mkPerson(base,col,extra){const o=SKU.clone(CHR);const s=.82/CHR.userData.h;o.scale.setScalar(s);const tx=skinTex(base,col);const mat=new T3.MeshLambertMaterial({map:tx});o.traverse(m=>{if(m.isMesh||m.isSkinnedMesh){m.material=mat;m.frustumCulled=false}});
+  const g=new T3.Group();g.add(o);const sh=new T3.Mesh(new T3.PlaneGeometry(.7,.7),new T3.MeshBasicMaterial({map:SHADTEX,transparent:true,depthWrite:false}));sh.rotation.x=-Math.PI/2;sh.position.y=.02;g.add(sh);
+  const mx=new T3.AnimationMixer(o);const ai=mx.clipAction(clipIdle),ar=mx.clipAction(clipRun);ai.play();ar.play();ar.setEffectiveWeight(0);g.userData={o,mx,ai,ar,lx:null,ly:null,sp:0};
+  if(extra==="gun"||extra==="player"){const gun=new T3.Mesh(new T3.BoxGeometry(.06,.06,.26),new T3.MeshLambertMaterial({color:"#2a2a30"}));gun.position.set(.18,.42,.2);g.add(gun);g.userData.gun=gun}
+  if(extra==="cop"){const cap=new T3.Mesh(new T3.CylinderGeometry(.13,.14,.07,12),new T3.MeshLambertMaterial({color:"#1b2c5a"}));cap.position.set(0,.86,0);g.add(cap)}
+  scene.add(g);return g}
+const PEDB=["skaterMaleA","skaterFemaleA","cyborgFemaleA","criminalMaleA"];
+function syncPerson(g,x,y,a,down,dt){const u=g.userData;const wx=W_(x),wz=W_(y);const sp=u.lx==null?0:Math.hypot(wx-u.lx,wz-u.ly)/Math.max(dt,1e-3);u.lx=wx;u.ly=wz;u.sp+=(sp-u.sp)*Math.min(1,dt*8);
+  g.position.set(wx,0,wz);const tr=Math.PI/2-a;let d=tr-g.rotation.y;d=Math.atan2(Math.sin(d),Math.cos(d));g.rotation.y+=d*Math.min(1,dt*12);
+  if(down){u.o.rotation.x=-Math.PI/2;u.o.position.y=.12;u.mx.timeScale=0;return}u.o.rotation.x=0;u.o.position.y=0;const run=Math.min(1,u.sp/1.2);u.ar.setEffectiveWeight(run);u.ai.setEffectiveWeight(1-run);u.mx.timeScale=.6+Math.min(1.4,u.sp/3);u.mx.update(dt)}
+/* ---------- desenhar uma imagem ---------- */
+const V3=()=>new T3.Vector3();let VTMP=null;
+function proj(x,y,h){VTMP.set(W_(x),h||0,W_(y)).project(camera);return{x:(VTMP.x+1)/2*CW,y:(1-VTMP.y)/2*CHh,ok:VTMP.z<1}}
+R3.proj=(x,y,h)=>proj(x,y,h);R3.info=()=>({calls:renderer.info.render.calls,tris:renderer.info.render.triangles,geos:renderer.info.memory.geometries,tex:renderer.info.memory.textures,cars:CARO.size,ppl:PPL.size});
+let lastT=performance.now();
+R3.frame=function(){const now=performance.now(),dt=Math.min(.05,(now-lastT)/1000);lastT=now;if(!VTMP)VTMP=new T3.Vector3();
+  /* câmara: vista de cima, inclinada, a seguir o jogador (como nos GTA antigos) */const tx=W_(CAM.x),tz=W_(CAM.y),d=(P.car?12.5:10.8)/CAM.z*(CW<CHh?1.2:1);const sx=(Math.random()-.5)*SHK*.4,sz=(Math.random()-.5)*SHK*.4;
+  camera.position.set(tx+sx,d*.92,tz+d*.5+sz);camera.lookAt(tx+sx,0,tz-d*.06+sz);
+  /* carros */const seen=new Set();const near=(x,y,r)=>Math.abs(W_(x)-tx)<r&&Math.abs(W_(y)-tz)<r;
+  for(const c of CARS){seen.add(c);let o=CARO.get(c);if(!near(c.x,c.y,48)){if(o)o.visible=false;continue}if(!o){o=mkCarObj(c);CARO.set(c,o)}o.visible=true;o.position.set(W_(c.x),0,W_(c.y));o.rotation.y=Math.PI/2-c.a;tintCar(c,o);
+    if(o.userData.lr){const on=Math.floor(T*8)%2&&(c.ai==="cop"||c.ai==="copPark");o.userData.lr.visible=!!on;o.userData.lb.visible=!on&&(c.ai==="cop"||c.ai==="copPark")}}
+  for(const [c,o] of CARO)if(!seen.has(c)){scene.remove(o);CARO.delete(c)}
+  /* pessoas */const pseen=new Set();
+  const person=(key,obj,base,col,x,y,a,down,extra)=>{pseen.add(key);let g=PPL.get(key);if(!near(x,y,30)){if(g)g.visible=false;return null}if(!g||g.userData.col!==col){if(g)scene.remove(g);g=mkPerson(base,col,extra);g.userData.col=col;PPL.set(key,g)}g.visible=true;syncPerson(g,x,y,a,down,dt);return g};
+  for(const p of PEDS){const b=PEDB[Math.floor((p.sp||30)*7)%4];person(p,p,b,b==="criminalMaleA"||b==="cyborgFemaleA"?null:p.col,p.x,p.y,DIRS[p.dir]?Math.atan2(DIRS[p.dir][1],DIRS[p.dir][0]):0,p.down>0)}
+  for(const o of COPF)person(o,o,"skaterMaleA","#1d3fa3",o.x,o.y,o.a,o.down>0,"cop");
+  {const g=!P.car?person("P",P,"skaterMaleA",SAVE.shirt,P.x,P.y,P.a,false,"player"):null;if(g&&g.userData.gun)g.userData.gun.visible=!WPN[SAVE.cw].melee}
+  for(const [k,g] of PPL)if(!pseen.has(k)){scene.remove(g);PPL.delete(k)}
+  /* marcadores */const mk=R3.mk,pulse=1+Math.sin(T*4)*.08;for(const k in mk)mk[k].visible=false;const put=(k,p)=>{const g=mk[k];g.visible=true;g.position.set(W_(p.x),0,W_(p.y));g.scale.set(pulse,1,pulse)};
+  if(!MISSION&&SAVE.mis<MIS.length)put("chefe",SPOTS.chefe);if(MISSION&&MISSION.tgt)put(MISSION.M.kind==="race"?"race":"mis",MISSION.tgt);if(SPOTS.oficina)put("ofi",SPOTS.oficina);if(SPOTS.pinta)put("pinta",SPOTS.pinta);
+  R3.env.forEach((m,i)=>{m.visible=!SAVE.env.includes(i);m.rotation.y=T*2+i;m.position.y=.6+Math.sin(T*3+i)*.1});
+  /* tiros */{const pos=[];for(const t of TRC)pos.push(W_(t.x1),.35,W_(t.y1),W_(t.x2),.35,W_(t.y2));R3.trail.geometry.setAttribute("position",new T3.Float32BufferAttribute(pos,3));}
+  R3.sea.forEach(s=>s.material.color.setHSL(.57,.62,.44+Math.sin(T*.8)*.015));
+  renderer.render(scene,camera);overlay()};
+/* ---------- sobreposição 2D (textos, efeitos, painel) ---------- */
+function overlay(){const g=ctx;g.setTransform(DPR,0,0,DPR,0,0);g.clearRect(0,0,CW,CHh);g.textAlign="center";
+  for(const c of CARS)if(c.hp<40){const p=proj(c.x,c.y,.7);if(!p.ok||p.x<-40||p.x>CW+40||p.y<-40||p.y>CHh+40)continue;for(let k=0;k<3;k++){const a=T*3+k*2,v=c.hp<=0?55:125;g.fillStyle=`rgba(${v},${v},${v},.4)`;g.beginPath();g.arc(p.x+Math.cos(a)*6,p.y-((T*30+k*10)%26),7+k*2.5,0,6.3);g.fill()}}
+  for(const f of FX){const o=f.o||f;const p=proj(o.x,o.y,f.k==="stars"?.7:.35);if(!p.ok)continue;if(f.k==="spark"){g.fillStyle="#ffd23f";for(let k=0;k<5;k++){const a=k*1.26,r=10-f.t*30;g.fillRect(p.x+Math.cos(a)*r,p.y+Math.sin(a)*r,3,3)}}else if(f.k==="flash"){g.fillStyle="rgba(255,230,120,.95)";g.beginPath();g.arc(p.x,p.y,8,0,6.3);g.fill()}else if(f.k==="stars"){g.font="15px system-ui";g.fillStyle="#ffd23f";for(let k=0;k<3;k++){const a=T*5+k*2.1;g.fillText("★",p.x+Math.cos(a)*13,p.y+Math.sin(a)*5)}}}
+  g.font="800 12px system-ui";for(const p of PEDS)if(p.sayT>0&&p.say){const q=proj(p.x,p.y,.95);if(!q.ok)continue;g.lineWidth=3;g.strokeStyle="#151515";g.fillStyle="#fff";g.strokeText(p.say,q.x,q.y);g.fillText(p.say,q.x,q.y)}
+  if(!MISSION&&SAVE.mis<MIS.length){const q=proj(SPOTS.chefe.x,SPOTS.chefe.y,2.2);if(q.ok){g.font="900 26px system-ui";g.lineWidth=5;g.strokeStyle="#151515";g.fillStyle="#ffd23f";g.strokeText("!",q.x,q.y);g.fillText("!",q.x,q.y)}}
+  if(MISSION&&MISSION.tgt&&MISSION.M.kind==="race"){const q=proj(MISSION.tgt.x,MISSION.tgt.y,2.2);if(q.ok){g.font="900 22px system-ui";g.lineWidth=5;g.strokeStyle="#151515";g.fillStyle="#fff";g.strokeText(MISSION.cp+1,q.x,q.y);g.fillText(MISSION.cp+1,q.x,q.y)}}
+  {const nd=!P.car&&nearDoor();if(nd){const q=proj(nd.x,nd.y,2.4);const yy=q.y+Math.sin(T*6)*3;g.fillStyle="#ffd23f";g.strokeStyle="#151515";g.lineWidth=2;g.beginPath();g.moveTo(q.x-9,yy-9);g.lineTo(q.x+9,yy-9);g.lineTo(q.x,yy);g.closePath();g.fill();g.stroke();g.font="900 13px system-ui";g.lineWidth=4;g.strokeText("ENTRAR",q.x,yy-15);g.fillStyle="#fff";g.fillText("ENTRAR",q.x,yy-15)}}
+  /* seta para o objetivo quando está fora do ecrã */if(MISSION&&MISSION.tgt){const q=proj(MISSION.tgt.x,MISSION.tgt.y,0);if(q.x<20||q.x>CW-20||q.y<20||q.y>CHh-20){const a=Math.atan2(q.y-CHh/2,q.x-CW/2),r=Math.min(CW,CHh)/2-40;g.save();g.translate(CW/2+Math.cos(a)*r,CHh/2+Math.sin(a)*r);g.rotate(a);g.fillStyle="#2fbf71";g.strokeStyle="#151515";g.lineWidth=3;g.beginPath();g.moveTo(16,0);g.lineTo(-10,-11);g.lineTo(-4,0);g.lineTo(-10,11);g.closePath();g.fill();g.stroke();g.restore()}}
+  {const vg=g.createRadialGradient(CW/2,CHh/2,Math.min(CW,CHh)*.4,CW/2,CHh/2,Math.max(CW,CHh)*.78);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(0,0,0,.22)");g.fillStyle=vg;g.fillRect(0,0,CW,CHh)}
+  if(HURT>0){g.fillStyle=`rgba(230,30,40,${Math.min(.5,HURT)})`;g.fillRect(0,0,CW,CHh)}g.textBaseline="alphabetic";hud(g);if(FADE>0){FADE-=1/60;g.fillStyle=`rgba(0,0,0,${Math.min(1,FADE)})`;g.fillRect(0,0,CW,CHh)}}
+})();
+/* ligar o 3D (por defeito, se o aparelho deixar) */
+SAVE.g3d=SAVE.g3d??1;{let ok=false;try{const c=document.createElement("canvas");ok=!!(c.getContext("webgl2")||c.getContext("webgl"))}catch(e){}if(!ok)SAVE.g3d=0}
+R3.setOn(SAVE.g3d===1);
+window.R3=R3;
 
 </script>
 <script>
