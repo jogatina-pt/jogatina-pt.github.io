@@ -1002,15 +1002,23 @@ function setTile(t,n){
   for(const m of [t.road,...t.walk,...t.curb,t.wire]){placeWarp(m,z0);m.visible=true}
   [-1,1].forEach((sd,i)=>{
     const id=n*2+(i?1:0),fl=5+Math.floor(hash(id)*10),ci=Math.floor(hash(n*7+i*3)*FAC.length),st=Math.floor(hash(id*13+5)*3);
-    const b=t.bld[i],h=bH(fl);b.geometry=bGeo(fl);b.userData.e.geometry=bEdge(fl);b.userData.e.material=EDGEM(new THREE.Color(TINT[(ci+st)%TINT.length]).getHex());b.material=buildingMat(ci,fl,st,sd);
-    const zm=z0+SEG/2;b.position.set(sd*(WALK+BDEPTH/2),HL(zm)-2+h/2,-zm);b.visible=true;
+    const b=t.bld[i];let h=bH(fl);const zm=z0+SEG/2;
+    if(KN.bld){const nm=KBN[Math.floor(hash(id*29+3)*KBN.length)],M=KN.bm[nm];t.kc=t.kc||[{},{}];const kc=t.kc[i];for(const k in kc)kc[k].visible=false;
+      let m=kc[nm];if(!m){m=M.sc.clone();kc[nm]=m;scene.add(m)}const sc=SEG*1.02/M.size.x,sy=sc*(nm.includes("sky")?1:1+hash(id*41+9)*.7);
+      m.scale.set(sc,sy,sc);m.rotation.y=sd<0?Math.PI/2:-Math.PI/2;const dep=M.size.z*sc;
+      /* centra o modelo: depois de rodar, o eixo z do modelo fica no eixo x do mundo */
+      m.position.set(0,HL(zm)-2-M.min.y*sy,-zm);m.updateMatrixWorld();
+      {const bb=new THREE.Box3().setFromObject(m),cc=bb.getCenter(new THREE.Vector3());m.position.x+=sd*(WALK+dep/2)-cc.x;m.position.z+=-zm-cc.z}
+      m.visible=true;h=M.size.y*sy+2;b.material=KHID;b.userData.e.visible=false}
+    else{b.geometry=bGeo(fl);b.userData.e.geometry=bEdge(fl);b.userData.e.material=EDGEM(new THREE.Color(TINT[(ci+st)%TINT.length]).getHex());b.material=buildingMat(ci,fl,st,sd)}
+    b.position.set(sd*(WALK+BDEPTH/2),HL(zm)-2+h/2,-zm);b.visible=true;
     const sgOn=hash(id*31+7)<.45;b.userData.sg.visible=sgOn;if(sgOn){b.userData.sg.material.map=signTex(Math.floor(hash(id*17)*SIGNW.length));b.userData.sg.position.set(-sd*(BDEPTH/2+.03),-h/2+2+3.2+hash(id*5)*Math.min(8,h-8),0)}
     b.userData.an.visible=hash(id*3+1)<.5;b.userData.an.position.set(0,h/2,0);
     const p=t.pole[i];p.visible=n%2===0;p.position.set(sd*(TRACK+.35),HL(z0)+.1,-z0);
   });
   t.arch.visible=n%5===0;t.arch.position.set(0,HL(z0),-z0);
 }
-function hideTile(t){for(const m of [t.road,...t.walk,...t.curb,t.wire,...t.bld,...t.pole,t.arch])m.visible=false}
+function hideTile(t){for(const m of [t.road,...t.walk,...t.curb,t.wire,...t.bld,...t.pole,t.arch])m.visible=false;if(t.kc)for(const kc of t.kc)for(const k in kc)kc[k].visible=false}
 function syncTiles(){
   const n0=Math.floor((P.z-9)/SEG),n1=Math.floor((P.z+FAR)/SEG);
   for(const [n,t] of TILES)if(n<n0||n>n1){hideTile(t);TILES.delete(n);FREE.push(t)}
@@ -1089,9 +1097,49 @@ const coinGeo=new THREE.CylinderGeometry(.24,.24,.07,18).rotateX(Math.PI/2);
 const COINS=new THREE.InstancedMesh(coinGeo,M("#ffd23f",{emissive:0x8a5a00}),MAXC),COINO=new THREE.InstancedMesh(coinGeo,OUT,MAXC);
 COINS.castShadow=true;COINS.frustumCulled=COINO.frustumCulled=false;scene.add(COINO);scene.add(COINS);
 const PWT={};function pwTex(k){return PWT[k]||(PWT[k]=tex(128,128,(g)=>{g.fillStyle="#fff";g.strokeStyle="#29e3ff";g.lineWidth=10;g.beginPath();g.arc(64,64,54,0,7);g.fill();g.stroke();g.font="70px sans-serif";g.textAlign="center";g.textBaseline="middle";g.fillText(UPG.find(u=>u.k===k).ic,64,70)}))}
+/* ---------- modelos Kenney (CC0): boneco animado e prédios ---------- */
+const KN={ok:0,bld:0,bm:{}};const KB="../turbo/m/";
+const KBN=["building-a","building-b","building-c","building-d","building-f","building-g","building-h","building-i","building-skyscraper-a","building-skyscraper-b","building-skyscraper-c","building-skyscraper-d","building-skyscraper-e"];
+(async()=>{try{const [{FBXLoader},SK]=await Promise.all([import("../lib/FBXLoader.js"),import("../lib/SkeletonUtils.js")]);KN.SK=SK;const fl=new FBXLoader();
+  const [base,run,jump,idle]=await Promise.all(["characterMedium","run","jump","idle"].map(n=>fl.loadAsync(KB+"chr/"+n+".fbx")));
+  const pick=(L,n)=>L.find(a=>new RegExp(n,"i").test(a.name))||L[0];KN.clips={run:pick(run.animations,"run"),jump:pick(jump.animations,"jump"),idle:pick(idle.animations,"idle")};
+  KN.chr=base;const bx=new THREE.Box3().setFromObject(base);KN.h=bx.max.y-bx.min.y;
+  const tl=new THREE.TextureLoader();KN.skin={};await Promise.all([["ze","skaterMaleA"],["rita","skaterFemaleA"]].map(([k,f])=>tl.loadAsync(KB+"chr/"+f+".jpg").then(t=>{t.colorSpace=THREE.SRGBColorSpace;KN.skin[k]=t})));
+  KN.ok=1;KIDWHO=null;for(const k in GH){scene.remove(GH[k].K.root);delete GH[k]}}catch(e){console.warn("kenney chr",e)}})();
+(async()=>{try{const {GLTFLoader}=await import("../lib/GLTFLoader.js");const gl=new GLTFLoader();const gs=await Promise.all(KBN.map(n=>gl.loadAsync(KB+"com/"+n+".glb")));
+  let cmap=null;gs[0].scene.traverse(o=>{if(o.isMesh&&o.material.map&&!cmap)cmap=o.material.map});
+  /* à noite: janelas (azul claro / branco da paleta) acendem */
+  const im=cmap.image,c=document.createElement("canvas");c.width=im.width;c.height=im.height;const g=c.getContext("2d");g.drawImage(im,0,0);const d=g.getImageData(0,0,c.width,c.height),a=d.data;
+  for(let i=0;i<a.length;i+=4){const r=a[i],gg=a[i+1],b=a[i+2],lit=(b>230&&b-r>=35)||(b>180&&b-r>=50);if(lit){const k=(i>>2)%7;a[i]=k<2?255:120;a[i+1]=k<2?220:225;a[i+2]=k<2?150:255}else{a[i]=a[i+1]=a[i+2]=0}}g.putImageData(d,0,0);
+  const em=new THREE.CanvasTexture(c);em.colorSpace=THREE.SRGBColorSpace;em.flipY=cmap.flipY;em.magFilter=THREE.NearestFilter;
+  const mat=new THREE.MeshToonMaterial({map:cmap,color:0x6a6f9c,emissive:0xffffff,emissiveMap:em,emissiveIntensity:1.2,gradientMap:GRAD});
+  KBN.forEach((n,i)=>{const sc=gs[i].scene;sc.traverse(o=>{if(o.isMesh){o.material=mat;o.receiveShadow=true}});const b=new THREE.Box3().setFromObject(sc);KN.bm[n]={sc,min:b.min.clone(),size:b.getSize(new THREE.Vector3())}});
+  KN.bld=1;for(const [n,t] of TILES)setTile(t,n)}catch(e){console.warn("kenney bld",e)}})();
+const KHID=new THREE.MeshBasicMaterial({visible:false});
+function makeKidK(who){
+  const c=WHO[who],root=new THREE.Group(),body=new THREE.Group();root.add(body);
+  const o=KN.SK.clone(KN.chr),s=1.8/KN.h;o.scale.setScalar(s);o.rotation.y=Math.PI;o.position.y=-.9;body.add(o);
+  const mat=new THREE.MeshToonMaterial({map:KN.skin[who]||KN.skin.ze,gradientMap:GRAD});o.traverse(m=>{if(m.isMesh){m.material=mat;m.castShadow=true;m.frustumCulled=false}});
+  /* aro de néon à cintura, para se ver bem no escuro */
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(.3,.025,6,24),new THREE.MeshBasicMaterial({color:new THREE.Color(c.glow)}));ring.rotation.x=Math.PI/2;ring.position.y=.02;body.add(ring);
+  const mx=new THREE.AnimationMixer(o),A={};for(const k in KN.clips){A[k]=mx.clipAction(KN.clips[k]);if(k==="jump"){A[k].setLoop(THREE.LoopOnce,1);A[k].clampWhenFinished=true}}A.run.play();
+  const board=new THREE.Group();board.add(at(part(BOX(.4,.07,1.05),"#2a2f4a"),0,.1,0));board.add(at(new THREE.Mesh(BOX(.42,.02,1.07),new THREE.MeshBasicMaterial({color:new THREE.Color(c.glow)})),0,.145,0));board.add(at(new THREE.Mesh(BOX(.3,.02,.9),new THREE.MeshBasicMaterial({color:0x29e3ff,transparent:true,opacity:.6})),0,.03,0));board.visible=false;root.add(board);
+  return{root,body,board,mx,A,cur:"run",kn:1};
+}
+function animKidK(K,pose,run){
+  const now=performance.now(),dt=Math.min(.1,K.lt?(now-K.lt)/1000:0);K.lt=now;
+  K.body.rotation.set(0,0,0);K.body.position.set(0,.9,0);K.body.scale.set(1,1,1);let want="run",ts=1.35;
+  if(pose==="roll"){want="jump";K.body.position.y=.5;K.body.rotation.x=-run*16;K.body.scale.setScalar(.62)}
+  else if(pose==="down"){want="idle";K.body.rotation.x=-1.45;K.body.position.set(0,.25,-.2)}
+  else if(pose==="board"){want="idle";K.body.rotation.y=.35;K.body.position.y=.98}
+  else if(pose==="air")want="jump";
+  if(K.throwT>0){const u=1-K.throwT/.4;K.body.rotation.y=(K.throwB?.6:-.6)*Math.sin(u*Math.PI)}
+  if(K.cur!==want){const a=K.A[want],b=K.A[K.cur];a.reset().play();if(b)a.crossFadeFrom(b,.12,false);K.cur=want}
+  K.A[want].timeScale=want==="jump"?1.4:ts;K.mx.update(dt);
+}
 /* ---------- personagens ---------- */
 function limbPivot(parent,x,y,z){const p=new THREE.Group();p.position.set(x,y,z);parent.add(p);return p}
-function makeKid(who){
+function makeKid(who){if(KN.ok)return makeKidK(who);
   const c=WHO[who],root=new THREE.Group(),body=new THREE.Group();root.add(body);
   const hips=limbPivot(body,0,.74,0);
   const legs=[-1,1].map(sd=>{const th=limbPivot(hips,sd*.12,0,0);th.add(at(part(CAP(.085,.22),c.legs),0,-.17,0));const kn=limbPivot(th,0,-.36,0);kn.add(at(part(CAP(.08,.2),c.legs),0,-.15,0));
@@ -1115,7 +1163,7 @@ function makeKid(who){
   root.traverse(o=>{if(o.isMesh&&o.material!==OUT)o.castShadow=true});
   return{root,body,hips,legs,torso,arms,head,tail,board};
 }
-function animKid(K,pose,run,dt){
+function animKid(K,pose,run,dt){if(K.kn)return animKidK(K,pose,run);
   const ph=run*13,s=Math.sin(ph),air=pose==="air";
   K.body.rotation.set(0,0,0);K.body.position.set(0,0,0);K.body.scale.set(1,1,1);
   if(pose==="roll"){K.body.position.y=.45;K.body.rotation.x=-run*16;K.body.scale.setScalar(.78);K.hips.position.y=-.1;
@@ -1303,7 +1351,7 @@ function loop(t){
   if(G){step(dt);draw();hud();if(MP.on&&t-MP.sendT>150&&(G.state==="play"||G.state==="dead")){MP.sendT=t;ROOM.send({t:"pos",z:+P.z.toFixed(2),x:+P.x.toFixed(2),y:+P.y.toFixed(2),r:P.roll>0?1:0,v:+G.v.toFixed(1),w:SAVE.who,d:P.dead?1:0,h:MP.lives,b:G.pw.skate>0?1:0})}}
   requestAnimationFrame(loop);
 }
-window.EL={get G(){return G},get P(){return P},act:a=>act(a),LX,ROOF,crash:o=>crash(o),get SAVE(){return SAVE}};
+window.EL={KN,get G(){return G},get P(){return P},act:a=>act(a),LX,ROOF,crash:o=>crash(o),get SAVE(){return SAVE}};
 /* ---------- corrida com amigos (cada um no seu telemóvel) ----------
    Quem criou a sala só escolhe a "semente": todos geram exatamente o mesmo percurso e correm cada um no seu telemóvel.
    As posições vão para quem criou a sala, que as reenvia aos outros (6 vezes por segundo). */
