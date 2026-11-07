@@ -965,7 +965,7 @@ function endNight(){
 }
 function viewFor(i){
   const g=G,c=g.c,ph=g.phase,nm=k=>g.seats[k].name;
-  const v={t:"v",gid:g.id,n:g.n,phase:ph,me:i,host:i===0,opts:g.opts,rule:g.rule,
+  const v={t:"v",gid:g.id,n:g.n,phase:ph,me:i,host:i===0,hostName:G.seats[0]&&G.seats[0].name,opts:g.opts,rule:g.rule,
     players:g.seats.map((s,j)=>({name:s.name,goles:g.goles[j],off:s.online===false,
       done:ph==="ask"&&(c.kind==="rapido"?c.taps.includes(j)||c.early.includes(j):c.answers[j]!=null)})),
     kind:c.kind,text:c.text,target:c.target,targetName:c.target!=null?nm(c.target):null,
@@ -994,7 +994,7 @@ function muMsg(seat,d){
     else if(c.kind==="rapido"){if(!c.taps.includes(i)&&!c.early.includes(i)){if(Date.now()<c.goAt)c.early.push(i);else c.taps.push(i)}}
     if(allIn())reveal();else broadcast();return;
   }
-  if(d.t==="next"&&G.phase==="reveal"){nextCard();return}
+  if(i===0&&d.t==="next"&&G.phase==="reveal"){nextCard();return}
   if(d.t==="react"){relayReact(G.seats,seat,d);return}
   if(i===0&&d.t==="endnight"&&(G.phase==="reveal"||G.phase==="ask")){endNight();return}
   if(i===0&&d.t==="again"&&G.phase==="end"){ROOM.started=false;ROOM.seats=ROOM.seats.filter(s=>s.kind!=="remote"||s.online);hostStart();return}
@@ -1076,9 +1076,9 @@ function drawReveal(v,fresh){
   if(v.kind==="agua")html+=`<p class="lead">💧 Hidratar faz parte do jogo. Quem conduz não bebe álcool, nem hoje nem nunca.</p>`;
   if(v.drink&&v.drink.length)html+=`<div class="drink"><div class="eyebrow">Bebem</div>${v.drink.map(d=>`<p class="${d.me?"me":""}"><b>${esc(d.name)}</b><span>🍺 ${g1(d.g)}</span></p>`).join("")}</div>`;
   else if(["mp","nunca","verdade","desafio","rapido"].includes(v.kind))html+=`<p class="wait">Ninguém bebe desta vez.</p>`;
-  html+=`<div class="choices"><button class="btn" type="button" id="nextBtn">Próxima carta</button>${v.host?'<button class="btn ghost" type="button" id="endBtn">Terminar a noite</button>':""}</div>`;
+  html+=v.host?`<div class="choices"><button class="btn" type="button" id="nextBtn">Próxima carta</button><button class="btn ghost" type="button" id="endBtn">Terminar a noite</button></div>`:`<p class="wait">À espera que ${esc(v.hostName||"quem criou a sala")} passe à próxima carta…</p>`;
   P.innerHTML=html;
-  $("nextBtn").onclick=()=>{unlockAudio();$("nextBtn").disabled=true;ROOM.send({t:"next"})};
+  if($("nextBtn"))$("nextBtn").onclick=()=>{unlockAudio();$("nextBtn").disabled=true;ROOM.send({t:"next"})};
   if($("endBtn"))$("endBtn").onclick=()=>ROOM.send({t:"endnight"});
   if(fresh&&v.drink&&v.drink.some(d=>d.me))playSfx("lie");
 }
