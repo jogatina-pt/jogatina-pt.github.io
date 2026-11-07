@@ -927,8 +927,8 @@ function stepActor(a,dt,inp,sp){/* andar / poço / trampolim — usado pelo Flok
   if(a.st==="floor"){const nx=a.x+inp*sp*dt;if(inp)a.face=inp;const d=doorBlocks(a.f,a.x,nx+inp*8);if(d){a.blocked=1}else{a.blocked=0;a.x=nx}
     const c=shaftAt(a.x);if(c>=0&&Math.abs(a.x-(c+.5)*T)<T*.35){a.st="air";a.shaft=c;a.x=(c+.5)*T;a.vy=0;a.lf=a.f;a.arm=0;return"fall"}
     a.x=Math.max(T*1.4,Math.min(WW-T*1.4,a.x));return}
-  if(a.st==="air"){a.py=a.y;a.vy+=GR*dt;a.y+=a.vy*dt;if(!a.arm&&(a.lf==null||Math.abs(a.y-floorY(L,a.lf))>30))a.arm=1;const bot=L.bottom-6;
-    if(a.y>=bot){a.y=bot;const n=(a===P?++a.bounces:0);if(a===P&&n>=5){return"break"}a.vy=-Math.sqrt(2*GR*(bot-APEX()));return"bounce"}
+  if(a.st==="air"){a.py=a.y;a.vy+=GR*dt;a.y+=a.vy*dt;const bot=L.bottom-6;
+    if(a.y>=bot){a.y=bot;const n=(a===P?++a.bounces:0);if(a===P&&n>=5){return"break"}a.vy=-Math.sqrt(2*GR*(bot-APEX()));a.arm=1;return"bounce"}
     return}}
 function tryExit(a,inp){/* sair do poço para um andar quando passa à altura dele (ou o cruzou neste passo) */if(a.st!=="air"||!inp||!a.arm)return false;const y0=a.py==null?a.y:a.py;for(let f=0;f<L.NF;f++){const fy=floorY(L,f);if(Math.abs(a.y-fy)<10||(y0-fy)*(a.y-fy)<0){const c=a.shaft+inp;if(L.floors[f][c]==="."){a.st="floor";a.f=f;a.y=fy;a.x=(c+.5)*T-inp*6;a.face=inp;a.vy=0;a.shaft=-1;a.hop=.18;if(a===P){a.bounces=0;TR[c-inp]=0;a.inv=Math.max(a.inv,.35)}return true}}}return false}
 function toggleDoor(){if(P.st!=="floor")return;let best=null,bd=1e9;for(const d of L.doors){if(d.f!==P.f)continue;const dx=(d.c*T-P.x)*P.face;if(dx>-6&&dx<T*1.4&&dx<bd){bd=dx;best=d}}if(!best)return;
@@ -937,7 +937,7 @@ function toggleDoor(){if(P.st!=="floor")return;let best=null,bd=1e9;for(const d 
   if(best.magic){best.magic=false;WAVES.push({f:P.f,x:best.c*T,dir:P.face,t:0,n:0});SFXP.wave();return}
   /* a porta abre-se de repente e atordoa os guaxinins do outro lado */for(const g of DOGS){if(g.st!=="floor"||g.f!==P.f||g.cap)continue;const dx=(g.x-best.c*T)*P.face;if(dx>0&&dx<T*1.8){g.stun=2.6;g.x+=P.face*14;add(50,g.x,g.y-40)}}}
 function add(p,x,y,txt){SCORE+=p;POPS.push({x,y,t:1.2,txt:txt||("+"+p)});if(SCORE>=20000*(EXTRA+1)){EXTRA++;LIVES++;MSG={t:1.6,txt:"Vida extra!"};SFXP.life()}}
-function dogAI(g,dt){if(g.cap){if(g.rsh==null)g.rsh=L.sh.slice().sort((a,b)=>Math.abs((b+.5)*T-P.x)-Math.abs((a+.5)*T-P.x))[0];g.cap-=dt;if(g.cap<=0){g.cap=0;g.st="air";g.shaft=g.rsh;g.rsh=null;g.x=(g.shaft+.5)*T;g.y=TOP-30;g.vy=0;g.lf=null;g.arm=1}return}
+function dogAI(g,dt){if(g.cap){if(g.rsh==null)g.rsh=L.sh.slice().sort((a,b)=>Math.abs((b+.5)*T-P.x)-Math.abs((a+.5)*T-P.x))[0];g.cap-=dt;if(g.cap<=0){g.cap=0;g.st="air";g.shaft=g.rsh;g.rsh=null;g.x=(g.shaft+.5)*T;g.y=TOP-30;g.vy=0;g.lf=null;g.arm=0}return}
   if(g.st==="wait"){g.wait-=dt;if(g.wait<=0){g.st="floor"}return}if(g.stun>0){g.stun-=dt;return}
   const sp=L.speed*(g.boss?1.3:1)*(TIME>75?1.35:1);
   if(g.st==="floor"){/* quer ir para o andar do Floki: usa um poço; no mesmo andar, vai atrás dele */let inp;
@@ -947,8 +947,8 @@ function dogAI(g,dt){if(g.cap){if(g.rsh==null)g.rsh=L.sh.slice().sort((a,b)=>Mat
 function stepGame(dt){if(STATE!=="play"){if(STATE==="dead"){DEADT-=dt;if(DEADT<=0){if(LIVES<=0)gameOver();else{const keep=L.items.filter(i=>!i.got).length;startLevelKeep()}}}return}
   TIME+=L.bonus?-dt:dt;if(MSG){MSG.t-=dt;if(MSG.t<=0)MSG=null}if(P.inv>0)P.inv-=dt;
   const inp=(IN.r?1:0)-(IN.l?1:0);
-  if(P.st==="floor"){P.want=0;if(P.hop>0)P.hop-=dt;const r=stepActor(P,dt,inp,150);if(r==="fall"){SFXP.fall();P.want=0;P.nrel=inp?1:0}}
-  else{if(!inp)P.nrel=0;if(inp&&!P.nrel)P.want=inp;if(!tryExit(P,P.want||0)){const r=stepActor(P,dt,0,0);if(r==="bounce"){SFXP.boing(P.bounces);TR[P.shaft]=P.bounces}else if(r==="break"){TR[P.shaft]=5;die("O trampolim rebentou!");return}}else{SFXP.step()}}
+  if(P.st==="floor"){P.want=0;if(P.hop>0)P.hop-=dt;const r=stepActor(P,dt,inp,150);if(r==="fall"){SFXP.fall();P.want=0;P.nrel=inp}}
+  else{if(inp!==P.nrel)P.nrel=0;if(inp&&!P.nrel)P.want=inp;if(!tryExit(P,P.want||0)){const r=stepActor(P,dt,0,0);if(r==="bounce"){SFXP.boing(P.bounces);TR[P.shaft]=P.bounces}else if(r==="break"){TR[P.shaft]=5;die("O trampolim rebentou!");return}}else{SFXP.step()}}
   if(IN.d&&!IN.dd)toggleDoor();IN.dd=IN.d;
   for(const d of L.doors)if(d.swing>0)d.swing=Math.max(0,d.swing-dt*3);
   /* ondas das portas mágicas */for(const w of WAVES){w.t+=dt;w.x+=w.dir*420*dt;for(const g of DOGS){if(g.cap||g.st!=="floor"||g.f!==w.f)continue;if(Math.abs(g.x-w.x)<20){g.cap=4;g.st="cap";w.n++;add(200*Math.pow(2,w.n-1),g.x,g.y-40);SFXP.catch()}}}WAVES=WAVES.filter(w=>w.x>T&&w.x<WW-T&&w.t<3);
