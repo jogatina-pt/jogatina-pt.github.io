@@ -29,8 +29,8 @@
  "description": "Jogos para jogar com amigos, cada um no seu telemóvel.",
  "shortcuts": [
   {
-   "name": "Quiz Português",
-   "short_name": "Quiz",
+   "name": "Sabichão!",
+   "short_name": "Sabichão!",
    "url": "quiz/",
    "icons": [
     {
@@ -41,8 +41,8 @@
    ]
   },
   {
-   "name": "Desenha e Adivinha",
-   "short_name": "Desenha",
+   "name": "Rabiscos!",
+   "short_name": "Rabiscos!",
    "url": "rabiscos/",
    "icons": [
     {
@@ -53,8 +53,8 @@
    ]
   },
   {
-   "name": "Carrinhos de Choque",
-   "short_name": "Carrinhos",
+   "name": "Choque!",
+   "short_name": "Choque!",
    "url": "choque/",
    "icons": [
     {
@@ -65,8 +65,8 @@
    ]
   },
   {
-   "name": "Ladrão de Carros",
-   "short_name": "Ladrão",
+   "name": "Cidade Turbo!",
+   "short_name": "Cidade",
    "url": "turbo/",
    "icons": [
     {
@@ -77,7 +77,7 @@
    ]
   },
   {
-   "name": "Floki Polícia",
+   "name": "Floki Patrulha!",
    "short_name": "Floki",
    "url": "patrulha/",
    "icons": [
@@ -89,8 +89,8 @@
    ]
   },
   {
-   "name": "Futebol de Gotas",
-   "short_name": "Futebol",
+   "name": "Gota-Gol!",
+   "short_name": "Gota-Gol!",
    "url": "gotas/",
    "icons": [
     {
@@ -101,8 +101,8 @@
    ]
   },
   {
-   "name": "Floki Rápido",
-   "short_name": "Floki Rápido",
+   "name": "Floki!",
+   "short_name": "Floki!",
    "url": "floki/",
    "icons": [
     {
@@ -125,8 +125,8 @@
    ]
   },
   {
-   "name": "Verdade ou Peta",
-   "short_name": "Verdade",
+   "name": "Peta",
+   "short_name": "Peta",
    "url": "peta/",
    "icons": [
     {
@@ -137,8 +137,8 @@
    ]
   },
   {
-   "name": "Respostas Parvas",
-   "short_name": "Respostas",
+   "name": "Conversa de Tasca",
+   "short_name": "Conversa",
    "url": "tasca/",
    "icons": [
     {
@@ -149,8 +149,8 @@
    ]
   },
   {
-   "name": "Impostor",
-   "short_name": "Impostor",
+   "name": "Senhor Branco",
+   "short_name": "Senhor",
    "url": "branco/",
    "icons": [
     {
@@ -161,8 +161,8 @@
    ]
   },
   {
-   "name": "Jogo de Copos",
-   "short_name": "Jogo",
+   "name": "Mais Uma!",
+   "short_name": "Mais Uma!",
    "url": "maisuma/",
    "icons": [
     {
@@ -197,8 +197,8 @@
    ]
   },
   {
-   "name": "Pássaro Voador",
-   "short_name": "Pássaro",
+   "name": "Voa Voa",
+   "short_name": "Voa Voa",
    "url": "voa/",
    "icons": [
     {
@@ -245,8 +245,8 @@
    ]
   },
   {
-   "name": "Blocos",
-   "short_name": "Blocos",
+   "name": "Encaixa!",
+   "short_name": "Encaixa!",
    "url": "encaixa/",
    "icons": [
     {
@@ -305,8 +305,8 @@
    ]
   },
   {
-   "name": "Tira o Carro",
-   "short_name": "Tira o Carro",
+   "name": "Engarrafado",
+   "short_name": "Engarrafado",
    "url": "parque/",
    "icons": [
     {
@@ -329,8 +329,8 @@
    ]
   },
   {
-   "name": "Corre na Linha",
-   "short_name": "Corre",
+   "name": "Corre Neon",
+   "short_name": "Corre Neon",
    "url": "eletrico/",
    "icons": [
     {
@@ -341,8 +341,8 @@
    ]
   },
   {
-   "name": "Penáltis",
-   "short_name": "Penáltis",
+   "name": "Golo!",
+   "short_name": "Golo!",
    "url": "golo/",
    "icons": [
     {
@@ -389,8 +389,8 @@
    ]
   },
   {
-   "name": "Salta ao Ritmo",
-   "short_name": "Salta",
+   "name": "Pulsar",
+   "short_name": "Pulsar",
    "url": "pulsar/",
    "icons": [
     {
@@ -413,8 +413,8 @@
    ]
   },
   {
-   "name": "Corrida de Obstáculos",
-   "short_name": "Corrida",
+   "name": "Tropeção!",
+   "short_name": "Tropeção!",
    "url": "tropecao/",
    "icons": [
     {
@@ -425,8 +425,8 @@
    ]
   },
   {
-   "name": "Minigolfe",
-   "short_name": "Minigolfe",
+   "name": "Tacada!",
+   "short_name": "Tacada!",
    "url": "tacada/",
    "icons": [
     {

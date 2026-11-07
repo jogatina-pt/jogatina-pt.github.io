@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Carrinhos de Choque</title>
+<title>Choque!</title>
 <meta name="description" content="Carrinhos de choque na TV ou no PC, com os telemóveis como volante. Empurra os outros para fora da pista! Grátis, sem conta e sem publicidade.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Carrinhos de Choque Carrinhos na TV">
+<meta property="og:title" content="Choque! Carrinhos na TV">
 <meta property="og:description" content="Os telemóveis são os volantes">
 <meta property="og:url" content="https://jogatina-pt.github.io/choque/">
 <meta property="og:image" content="https://jogatina-pt.github.io/choque/og.jpg">
@@ -20,7 +20,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Carrinhos de Choque">
+<meta name="apple-mobile-web-app-title" content="Choque!">
 <meta name="theme-color" content="#f4eee3">
 <link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
@@ -405,7 +405,7 @@ body.touch .ctl{display:flex}
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1 class="long">Carrinhos de <span>Choque</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1>Cho<span>que!</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
       <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
@@ -440,7 +440,7 @@ body.touch .ctl{display:flex}
     <button class="btn ghost sm" id="leaveBtn" type="button">Sair da sala</button>
   </section>
   <section id="game" class="egame">
-  <main class="stage tvg" id="stage" aria-label="Jogo Carrinhos de Choque">
+  <main class="stage tvg" id="stage" aria-label="Jogo Choque!">
     <div class="tv" id="tv" hidden><canvas id="cv"></canvas></div>
     <div class="pad" id="pad" hidden></div>
     <div class="ov" id="ov"></div>
@@ -970,13 +970,13 @@ const SFXC={count:()=>[440,440,440,880].forEach((f,i)=>tone(f,.12,{type:"square"
 let last=0,acc=0;function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(MODE==="tv"){acc+=dt;while(acc>=TICK){step(TICK);acc-=TICK}render(t/1000)}requestAnimationFrame(loop)}
 /* ---------- menus ---------- */
 function showOv(h){ov.innerHTML=h;ov.hidden=false}
-function menu(){MODE=null;tv.hidden=true;pad.hidden=true;showOv(`<div class="panel"><h2>Carrinhos de Choque</h2><p>Carrinhos de choque na <b>TV ou no PC</b>; cada <b>telemóvel</b> é um volante. Empurra os outros para fora da pista e sê o último a ficar!</p>
+function menu(){MODE=null;tv.hidden=true;pad.hidden=true;showOv(`<div class="panel"><h2>Choque!</h2><p>Carrinhos de choque na <b>TV ou no PC</b>; cada <b>telemóvel</b> é um volante. Empurra os outros para fora da pista e sê o último a ficar!</p>
   <button class="btn" type="button" data-a="tv">📺 Criar sala neste ecrã</button><button class="btn ghost" type="button" data-a="pj">📱 Tenho um código: entrar como jogador</button><p class="note">Até 8 carrinhos. Os jogadores entram pelo QR code ou com o código da sala.</p></div>`)}
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;unlockAudio();const a=b.dataset.a;
   if(a==="pj"){showScreen("setup");if($("myName").value==="TV")$("myName").value="";setTimeout(()=>{const c=$("joinCode");c&&c.focus()},60);return}
   if(a==="tv"){showScreen("setup");if(!$("myName").value)$("myName").value="TV";setTimeout(()=>$("hostBtn").click(),50)}
   else if(a==="again"){ov.hidden=true;clearT();beginGame(ROOM.seats)}else if(a==="lobby"){clearT();bcast({t:"lobby"});MODE=null;ROOM.backToLobby()}});
-ROOM.game={id:"choque",title:"Carrinhos de Choque",maxp:9,minp:2,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"Falta pelo menos um jogador com telemóvel (lê o QR code). Podes juntar bonecos nas opções.",
+ROOM.game={id:"choque",title:"Choque!",maxp:9,minp:2,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"Falta pelo menos um jogador com telemóvel (lê o QR code). Podes juntar bonecos nas opções.",
   start(seats){beginGame(seats)},
   msg(seat,d){if(!d||!G)return;const i=ROOM.seats.indexOf(seat)-1;const p=G.pl[i];if(!p)return;if(d.t==="in")p.in={x:Math.max(-1,Math.min(1,+d.x||0)),y:Math.max(-1,Math.min(1,+d.y||0)),b:d.b?1:0}},
   client(d){if(!d)return;if(d.t==="go"){ME=d.me|0;MYNAME=cleanName(d.name);MODE="pad";showScreen("game");ov.hidden=true;padStart(d.col||"#fff");return}if(MODE!=="pad")return;

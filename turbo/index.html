@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Ladrão de Carros</title>
+<title>Cidade Turbo!</title>
 <meta name="description" content="Cidade aberta vista de cima: anda a pé, entra em qualquer carro, faz missões e foge à polícia. Grátis, sem conta e sem publicidade.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Ladrão de Carros">
+<meta property="og:title" content="Cidade Turbo!">
 <meta property="og:description" content="Carros, missões e fugas à polícia!">
 <meta property="og:url" content="https://jogatina-pt.github.io/turbo/">
 <meta property="og:image" content="https://jogatina-pt.github.io/turbo/og.jpg">
@@ -20,7 +20,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Ladrão de Carros">
+<meta name="apple-mobile-web-app-title" content="Cidade Turbo!">
 <meta name="theme-color" content="#f4eee3">
 <link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
@@ -384,7 +384,7 @@ body.rot90 .tctl{height:62%}body.rot90 .joy{width:min(30vw,130px)}body.rot90 .sh
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1 class="long">Ladrão de <span>Carros</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1>Cidade <span>Turbo!</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
       <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
@@ -419,7 +419,7 @@ body.rot90 .tctl{height:62%}body.rot90 .joy{width:min(30vw,130px)}body.rot90 .sh
     <button class="btn ghost sm" id="leaveBtn" type="button">Sair da sala</button>
   </section>
   <section id="game" class="egame">
-  <main class="stage gg" id="stage" aria-label="Jogo Ladrão de Carros">
+  <main class="stage gg" id="stage" aria-label="Jogo Cidade Turbo!">
     <canvas id="cv" class="ggcv"></canvas>
     <div class="rhud" id="hud" hidden><span class="sp"></span><button class="rb" id="mapB" type="button" aria-label="Mapa">🗺️</button><button class="rb rotb" id="rotBtn" type="button" aria-label="Rodar o ecrã" title="Rodar o ecrã">🔄</button><button class="rb" id="menuBtn" type="button" aria-label="Pausa">❚❚</button></div>
     <div class="tctl" id="touch" hidden><div class="joy" id="joy"><i id="joyK"></i></div><div class="tbtns"><button type="button" id="hbB">TRAVÃO</button><button type="button" id="actB" class="act">ENTRAR</button></div><button type="button" id="fireB" class="fireb" aria-label="Disparar">💥</button><button type="button" id="wpB" class="wpb" aria-label="Mudar de arma">🔁</button></div>
@@ -1360,7 +1360,7 @@ let sirenT=0;
 let last=0,acc=0;function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(STATE==="play"){acc+=dt;let n=0;while(acc>=TICK&&n<4){tickGame(TICK);acc-=TICK;n++}if(n>=4)acc=0;if(STARS){sirenT-=dt;if(sirenT<=0){sirenT=1.2;tone(760,.25,{type:"sine",v:.02,f2:980})}}if(!(Math.floor(t/1000)%5)&&t%1000<20)saveS()}render();requestAnimationFrame(loop)}
 /* ---------- menus ---------- */
 const ov=$("ov");function showOv(h){ov.innerHTML=h;ov.hidden=false}
-function menu(){STATE="menu";showOv(`<div class="panel"><h2>Ladrão de Carros</h2><p>Uma cidade inteira para explorar: anda a pé, entra em qualquer carro, faz as missões do <b>Rui</b> e foge à polícia!</p>
+function menu(){STATE="menu";showOv(`<div class="panel"><h2>Cidade Turbo!</h2><p>Uma cidade inteira para explorar: anda a pé, entra em qualquer carro, faz as missões do <b>Rui</b> e foge à polícia!</p>
   <div class="rulesmini"><div>🏠 Começas em <b>casa</b>. Entra em cafés e lojas pelas portas (ícones no chão).</div><div>☕ O <b>Rui</b> está no café: fala com ele para teres missões.</div><div>🎯 No <b>Armeiro</b> compras armas; na <b>Mercearia</b> comida e colete.</div><div>⭐ Asneiras dão <b>estrelas</b> e a polícia vem atrás de ti. Esconde-te até as estrelas sumirem ou vai à <b>Pinta Já</b> 🎨.</div><div>🔧 A <b>oficina</b> arranja o carro. Há <b>20 envelopes</b> com dinheiro escondidos pela cidade.</div></div>
   <button class="btn ghost rotm" type="button" data-a="rot">🔄 Rodar ecrã (jogar na horizontal)</button><button class="btn" type="button" data-a="play">${SAVE.mis||SAVE.money!==200?"Continuar ▶":"Jogar ▶"}</button>${SAVE.mis||SAVE.env.length?`<button class="btn ghost" type="button" data-a="reset">Começar do zero</button>`:""}<p class="note">Missões: ${Math.min(SAVE.mis,MIS.length)}/${MIS.length} · envelopes: ${SAVE.env.length}/20 · ${SAVE.money} €</p></div>`)}
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;e.stopPropagation();unlockAudio();const a=b.dataset.a;
@@ -1369,7 +1369,7 @@ ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)retur
   else if(a==="resume"){ov.hidden=true;STATE="play"}else if(a==="menu"){menu()}else if(a==="reset"){if(confirmReset()){SAVE.money=200;SAVE.mis=0;SAVE.env=[];SAVE.wp=["punho"];SAVE.ammo={};SAVE.cw="punho";SAVE.clothes=["#ff5d8f"];SAVE.shirt="#ff5d8f";SAVE.arm=0;saveS();STARS=0;MISSION=null;SCENE=null;COPF=[];spawnPlayer();menu()}}});
 function confirmReset(){return true}
 $("menuBtn").addEventListener("click",()=>{if(STATE==="play"){STATE="pause";showOv(`<div class="panel"><h2>Pausa</h2><p class="note">${SAVE.money} € · missões ${Math.min(SAVE.mis,MIS.length)}/${MIS.length} · envelopes ${SAVE.env.length}/20</p><button class="btn" type="button" data-a="resume">Continuar ▶</button><button class="btn ghost" type="button" data-a="menu">Menu</button></div>`)}});
-ROOM.game={id:"turbo",title:"Ladrão de Carros",maxp:1,minp:1,maxBots:0,botNames:[],start(){},msg(){},client(){},stop(){},hostLost(){},drop(){},onScreen(n){if(n==="game"){$("exitBtn").hidden=true;$("reactBtn").hidden=true;$("hubLink").hidden=false;setTimeout(layout,30)}}};
+ROOM.game={id:"turbo",title:"Cidade Turbo!",maxp:1,minp:1,maxBots:0,botNames:[],start(){},msg(){},client(){},stop(){},hostLost(){},drop(){},onScreen(n){if(n==="game"){$("exitBtn").hidden=true;$("reactBtn").hidden=true;$("hubLink").hidden=false;setTimeout(layout,30)}}};
 initUI({rules:`<ul><li><b>Andar e conduzir:</b> setas ou WASD. Ao pé de um carro carrega <b>E</b> (ou o botão ENTRAR) para entrar; outra vez para sair. Espaço é o travão de mão (para derrapar). No telemóvel, o joystick aponta para onde queres ir.</li><li><b>Casa e lojas:</b> começas em casa. Nas portas com ícone carrega <b>E</b> (ou ENTRAR) para entrar. Em casa podes <b>dormir</b> (vida cheia, estrelas a zero e jogo guardado) e mudar de roupa. Café e Mercearia: comida para a vida e colete. Armeiro: armas e balas. Moda Lusa: roupa nova (com 1 ou 2 estrelas a polícia deixa de te reconhecer).</li><li><b>Armas:</b> a pé, Espaço (ou o botão vermelho) dispara e mira sozinho no alvo mais próximo à tua frente; Q (ou 🔁) muda de arma; Shift (ou CORRER) corre. É tudo em desenho animado: quem leva um tiro cai tonto e levanta-se. Disparar ou bater em pessoas dá estrelas; na polícia, mais ainda. A partir de 2 estrelas, os polícias a pé também disparam: se ficares sem vida, acordas no hospital e pagas a conta.</li><li><b>Missões:</b> fala com o <b>Rui</b> dentro do café (o "!" amarelo). Entregas, corridas, um carro para roubar, táxi e fugas. Cada missão paga em euros.</li><li><b>Polícia:</b> tirar carros com gente lá dentro, atropelar pessoas (elas caem e levantam-se) ou bater na polícia dá ⭐. Com estrelas, a polícia persegue-te: se te encostarem e estiveres parado, és apanhado e pagas multa. Se ninguém te vir durante uns segundos, perdes uma estrela. A <b>Pinta Já</b> 🎨 (150 €) apaga-as todas.</li><li><b>Oficina</b> 🔧 (100 €) arranja o carro. Se o carro avariar (fumo preto), arranja outro.</li><li><b>Mapa:</b> tecla M ou o botão 🗺️. Há <b>20 envelopes</b> com 100 € escondidos pela cidade.</li><li>O jogo guarda o teu dinheiro e as missões feitas neste aparelho.</li></ul>`,privacy:privacyHTML(", o teu dinheiro e as missões feitas")});
 addEventListener("resize",()=>{clearTimeout(window.__rz);window.__rz=setTimeout(layout,60)});try{new ResizeObserver(()=>layout()).observe(stage)}catch(e){}
 showScreen("game");layout();menu();

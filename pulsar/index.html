@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Salta ao Ritmo</title>
+<title>Pulsar</title>
 <meta name="description" content="Salta ao ritmo da música, evita os picos e chega ao fim. Quatro níveis com música própria, nave, gravidade ao contrário e modo treino. Sozinho ou em desafio com amigos. Grátis, sem conta e sem publicidade.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
-<meta property="og:title" content="Salta ao Ritmo: salta ao ritmo">
+<meta property="og:title" content="Pulsar: salta ao ritmo">
 <meta property="og:description" content="Um toque errado e recomeças. Chegas aos 100%?">
 <meta property="og:url" content="https://jogatina-pt.github.io/pulsar/">
 <meta property="og:image" content="https://jogatina-pt.github.io/pulsar/og.jpg">
@@ -20,7 +20,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Salta ao Ritmo">
+<meta name="apple-mobile-web-app-title" content="Pulsar">
 <meta name="theme-color" content="#f4eee3">
 <link rel="preload" href="../fonts/bangers.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.dataset.ppTheme="light";try{if(localStorage.getItem("pp-tema")==="dark")delete document.documentElement.dataset.ppTheme}catch(e){}</script>
@@ -311,7 +311,7 @@ body.touch .ctl{display:flex}
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1 class="long">Salta ao <span>Ritmo</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
+    <div class="brand"><h1>Pul<span>sar</span></h1><a class="home" id="hubLink" href="../">← mais jogos</a></div>
     <div class="tools">
       <button class="btn ghost sm ico" id="reactBtn" type="button" aria-label="Reagir" title="Reagir" hidden>💬</button>
       <button class="btn ghost sm" id="rulesBtn" type="button">Regras</button>
@@ -346,7 +346,7 @@ body.touch .ctl{display:flex}
     <button class="btn ghost sm" id="leaveBtn" type="button">Sair da sala</button>
   </section>
   <section id="game" class="egame">
-  <main class="stage" id="stage" aria-label="Jogo Salta ao Ritmo">
+  <main class="stage" id="stage" aria-label="Jogo Pulsar">
     <canvas id="cv"></canvas>
     <div class="rhud" id="hud" hidden><span class="sp"></span><div class="pbar"><i id="pfill"></i></div><span class="pp" id="ppct">0%</span><span class="sp"></span><button class="rb" id="pauseBtn" type="button" aria-label="Pausa">❚❚</button></div>
     <ul id="chips" hidden></ul>
@@ -1010,7 +1010,7 @@ const ov=$("ov");function showOv(h){ov.innerHTML=h;ov.hidden=false}
 function menu(){MODE=null;S=null;musStop();$("hud").hidden=true;$("chips").hidden=true;
   const cards=LVS.map((l,i)=>`<div class="lcard" style="--c0:${l.col[0]};--c1:${l.col[1]}"><div class="lt"><b>${l.name}</b><span class="df">${DIFF[l.diff]} ${"★".repeat(l.diff)}</span></div>
     <div class="lbar"><i style="width:${SAVE.best[i]||0}%"></i></div><div class="lm"><span>${SAVE.done[i]?"✅ Completo":(SAVE.best[i]||0)+"%"} · ${SAVE.att[i]||0} tentativas</span><span class="lb"><button type="button" data-p="${i}" class="ghostb">Treino</button><button type="button" data-l="${i}">Jogar ▶</button></span></div></div>`).join("");
-  showOv(`<div class="panel wide"><h2>Salta ao Ritmo</h2><p>Toca (ou segura) para saltar ao ritmo da música. Um toque errado e recomeças!</p><div class="lcards">${cards}</div><button class="btn ghost" type="button" data-a="mp">👥 Desafio com amigos</button></div>`)}
+  showOv(`<div class="panel wide"><h2>Pulsar</h2><p>Toca (ou segura) para saltar ao ritmo da música. Um toque errado e recomeças!</p><div class="lcards">${cards}</div><button class="btn ghost" type="button" data-a="mp">👥 Desafio com amigos</button></div>`)}
 function showWin(){FX.shown=0;if(MODE==="online"){return}
   showOv(`<div class="panel"><h2>Nível completo!</h2><p>${esc(L.name)}${PRACT?" (treino)":""}</p><div class="stats"><div><span>Tentativas</span><b>${ATT}</b></div><div><span>Saltos</span><b>${JUMPS}</b></div></div><button class="btn" type="button" data-a="menu">Continuar</button></div>`)}
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a],[data-l],[data-p]");if(!b)return;e.stopPropagation();unlockAudio();
@@ -1031,7 +1031,7 @@ function showResults(){const {L2,html}=resultsHTML(),w=L2[0];musStop();S=null;$(
   const ctl=ROOM.role==="host"?`<button class="btn" type="button" data-a="again">Outra vez ▶</button><button class="btn ghost" type="button" data-a="lobby">Voltar à sala</button>`:`<p class="note">À espera de ${esc(NAMES[0]||"quem criou a sala")}…</p><button class="btn ghost" type="button" data-a="leave">Sair da sala</button>`;
   showOv(`<div class="panel"><h2>${w.i===ME?"Ganhaste!":esc(NAMES[w.i]||"")+" ganhou!"}</h2>${html}${ctl}</div>`)}
 function beginHost(seats){const names=seats.map(s=>cleanName(s.name)||"Jogador"),lv=cleanOpts(ROOM.opts).lv;ROOM.__ended=0;clearTimeout(ROOM.__tmr);ROOM.__tmr=setTimeout(()=>{if(!ROOM.__ended){ROOM.__ended=1;ROOM.seats.forEach(s=>ROOM.sendTo(s,{t:"end"}))}},240000);seats.forEach((s,i)=>ROOM.sendTo(s,{t:"go",me:i,names,lv}))}
-ROOM.game={id:"pulsar",title:"Salta ao Ritmo",maxp:4,minp:2,maxBots:0,botNames:[],lobbyHelpFew:"Precisas de pelo menos mais uma pessoa. Envia o link aos amigos.",cleanOpts,renderOpts,
+ROOM.game={id:"pulsar",title:"Pulsar",maxp:4,minp:2,maxBots:0,botNames:[],lobbyHelpFew:"Precisas de pelo menos mais uma pessoa. Envia o link aos amigos.",cleanOpts,renderOpts,
   start(seats){beginHost(seats)},
   msg(seat,d){if(!d)return;const i=ROOM.seats.indexOf(seat);if(i<0)return;
     if(d.t==="st"){const m={t:"st",i,best:Math.max(0,Math.min(100,d.best|0)),done:d.done?1:0,at:Date.now()};ROOM.seats.forEach(s=>ROOM.sendTo(s,m));if(m.done&&!ROOM.__ended){ROOM.__ended=1;clearTimeout(ROOM.__tmr);setTimeout(()=>ROOM.seats.forEach(s=>ROOM.sendTo(s,{t:"end"})),1500)}return}
