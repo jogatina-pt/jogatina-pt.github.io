@@ -260,6 +260,21 @@ html.sda .game{animation:cardTilt linear both;animation-timeline:view(inline);an
 @keyframes bubPop{0%{transform:scale(.85)}100%{transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.hero .mascot *,.hero .mascot{animation-duration:.01s!important}}
 @media (prefers-reduced-motion:reduce){.game{transition:none}}
+
+@media (max-width:560px){.hero .mascot{height:78px!important}.hero .bubble-say{font-size:14px!important}.hero .tagline{display:none}}
+/* ===== menu em lista ===== */
+.carousel{margin:0!important}.carousel .arrow,#dots{display:none!important}
+.hubsearch{flex:none}.hubsearch input{width:100%;box-sizing:border-box;border:2.5px solid var(--stroke);border-radius:999px;background:var(--surface);color:var(--ink);font:800 15px system-ui,sans-serif;padding:9px 16px;box-shadow:2px 2px 0 var(--stroke);outline:none}
+.games{--cw:auto!important;display:grid!important;grid-template-columns:1fr;grid-auto-rows:max-content;gap:10px!important;overflow-y:auto!important;overflow-x:hidden!important;scroll-snap-type:none!important;padding:6px 4px 16px!important;align-content:start;overscroll-behavior:contain}
+@media (min-width:760px){.games{grid-template-columns:1fr 1fr}}
+.game{flex:none!important;height:auto!important;max-height:none!important;align-self:auto!important;transform:none!important;opacity:1!important;animation:none!important;display:grid!important;grid-template-columns:64px 1fr auto;grid-template-rows:auto auto;column-gap:12px;row-gap:2px;align-items:center;min-height:82px!important;overflow:visible!important;padding:8px 12px 8px 8px!important;border-radius:18px!important;box-shadow:4px 4px 0 var(--stroke)!important}
+:root:not([data-pp-theme="light"]) .game{box-shadow:4px 4px 0 color-mix(in srgb,var(--gc) 30%,#000)!important}
+.game .pic{grid-row:1/3;width:64px;height:64px;flex:none!important;min-height:0!important;border-radius:14px!important;border-width:2.5px!important}.game .pic svg{height:78%!important;max-width:86%!important}.game .pic .macaco-mini{height:96%!important}
+.game h3{grid-column:2;font-size:22px!important;line-height:1!important;margin:0!important}
+.game p{grid-column:2;display:block!important;font-size:12.5px!important;line-height:1.25!important;display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.game .row{grid-column:3;grid-row:1/3}.game .row .tag{display:none}.game .play{font-size:15px!important;padding:5px 12px!important}
+.game:active{transform:translate(2px,2px)!important}
+.games .none{grid-column:1/-1;text-align:center;font-weight:800;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -326,9 +341,11 @@ html.sda .game{animation:cardTilt linear both;animation-timeline:view(inline);an
 </g>
 </g></svg>
   </section>
+  <div class="hubsearch"><input id="hubQ" type="search" placeholder="🔎 Procurar jogo…" aria-label="Procurar jogo" autocomplete="off"></div>
   <div class="filters" id="filters" role="group" aria-label="Escolher tipo de jogo"><button type="button" data-f="all">Todos</button><button type="button" data-f="rec" hidden>⭐ Recentes</button><button type="button" data-f="festa">🎉 Festa</button><button type="button" data-f="cartas">🃏 Cartas</button><button type="button" data-f="arcada">🕹️ Arcada</button><button type="button" data-f="puzzles">🧩 Puzzles</button></div>
   <div class="carousel"><button class="arrow l" type="button" id="prevG" aria-label="Jogo anterior">◀</button><button class="arrow r" type="button" id="nextG" aria-label="Jogo seguinte">▶</button>
-  <nav class="games" id="games" aria-label="Jogos" tabindex="0">
+  <nav class="games" id="games" aria-label="Jogos">
+    <p class="none" id="hubNone" hidden>Nenhum jogo encontrado.</p>
     <a class="game panela" data-c="cartas" href="panela/" data-m="online offline"><div class="pic" aria-hidden="true"><svg viewBox="0 0 48 44"><g stroke="#151515" stroke-width="2.4"><rect x="2" y="22" width="7" height="5" rx="2.5" fill="#8fa19c"/><rect x="39" y="22" width="7" height="5" rx="2.5" fill="#8fa19c"/><rect x="8" y="19" width="32" height="21" rx="5" fill="#dfe6e3"/><path d="M7 19q0-9 17-9t17 9z" fill="#8fa19c"/><rect x="21" y="5" width="6" height="5" rx="2" fill="#151515"/><rect x="32" y="5" width="4" height="6" rx="1.5" fill="#ffd23f"/></g><circle cx="18" cy="29" r="2.6" fill="#151515"/><circle cx="30" cy="29" r="2.6" fill="#151515"/><path d="M20 35q4 2.6 8 0" fill="none" stroke="#151515" stroke-width="2" stroke-linecap="round"/></svg></div><h3>Panela de Pressão</h3><p>Foge das panelas antes que rebentem!</p><div class="row"><span class="tag">2-6 · cartas</span><span class="play">Jogar ▶</span></div></a>
     <a class="game peta" data-c="festa" href="peta/" data-m="online"><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M6 6h34a5 5 0 0 1 5 5v15a5 5 0 0 1-5 5H20l-8 7v-7H6a5 5 0 0 1-5-5V11a5 5 0 0 1 5-5z" fill="#fff" stroke="#151515" stroke-width="2.4" stroke-linejoin="round"/><text x="23" y="24" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="15" fill="#151515">?!</text><path d="M34 20h24a4 4 0 0 1 4 4v11a4 4 0 0 1-4 4h-3v6l-7-6H34a4 4 0 0 1-4-4V24a4 4 0 0 1 4-4z" fill="#d23a6e" stroke="#151515" stroke-width="2.4" stroke-linejoin="round"/><circle cx="40" cy="30" r="2" fill="#fff"/><circle cx="46" cy="30" r="2" fill="#fff"/><circle cx="52" cy="30" r="2" fill="#fff"/></svg></div><h3>Peta</h3><p>Inventa mentiras e engana os amigos.</p><div class="row"><span class="tag">2-8 · bluff</span><span class="play">Jogar ▶</span></div></a>
     <a class="game tasca" data-c="festa" href="tasca/" data-m="online"><div class="pic" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="6" y="6" width="26" height="36" rx="4" fill="#1f2a28" stroke="#151515" stroke-width="2.4" transform="rotate(-8 19 24)"/><rect x="11" y="18" width="14" height="3" rx="1.5" fill="#fffaf1" transform="rotate(-8 19 24)"/><rect x="30" y="8" width="26" height="36" rx="4" fill="#fff" stroke="#151515" stroke-width="2.4" transform="rotate(9 43 26)"/><text x="44" y="32" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="12" fill="#4f7f23" transform="rotate(9 43 26)">AH!</text></svg></div><h3>Conversa de Tasca</h3><p>A resposta mais parva ganha.</p><div class="row"><span class="tag">3-8 · família/+18</span><span class="play">Jogar ▶</span></div></a>
@@ -431,57 +448,23 @@ tb.addEventListener("click",()=>setTheme(document.documentElement.dataset.ppThem
   sheet.addEventListener("click",e=>{if(e.target===sheet||e.target.closest("button"))sheet.hidden=true});
 })();
 
-/* carrossel dos jogos (com filtro) */
+/* lista dos jogos (com filtro e pesquisa) */
 (function(){
-  const box=document.getElementById("games"),all=[...box.querySelectorAll(".game")],dots=document.getElementById("dots"),prev=document.getElementById("prevG"),next=document.getElementById("nextG"),fl=document.getElementById("filters");
-  let cards=all,db=[],cur=-1,raf=0,filt="all",userMoved=false,settleT=0,shown=-1;
-  function settle(){if(shown===cur&&cards[cur]&&cards[cur].classList.contains("on"))return;const first=shown<0;shown=cur;cards.forEach((c,i)=>c.classList.toggle("on",i===cur));
-    const c=cards[cur];if(c)document.documentElement.style.setProperty("--hub",getComputedStyle(c).getPropertyValue("--gc").trim());
-    const t=db[cur];if(t)dots.scrollTo({left:t.offsetLeft+t.offsetWidth/2-dots.clientWidth/2,behavior:first?"auto":"smooth"})}
-  box.addEventListener("scroll",()=>{if(!box.classList.contains("mv"))box.classList.add("mv");clearTimeout(settleT);settleT=setTimeout(()=>{box.classList.remove("mv");settle()},140)},{passive:true});
-  const AC=()=>window.__hubAC||(window.__hubAC=new(window.AudioContext||window.webkitAudioContext)());
-  const beep=(A,f)=>{const t=A.currentTime,o=A.createOscillator(),g=A.createGain();o.type="square";o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*1.5,t+.05);g.gain.setValueAtTime(.03,t);g.gain.exponentialRampToValueAtTime(.0001,t+.09);o.connect(g).connect(A.destination);o.start(t);o.stop(t+.1)};
-  const blip=f=>{try{if(localStorage.getItem("pp-mute")==="1")return;const A=AC();if(A.state==="running")beep(A,f);else A.resume().then(()=>{if(A.state==="running")beep(A,f)}).catch(()=>{})}catch(e){}};
-  let unlocked=false;const wake=()=>{userMoved=true;if(unlocked)return;try{const A=AC();const b=A.createBuffer(1,1,22050),src=A.createBufferSource();src.buffer=b;src.connect(A.destination);src.start(0);A.resume().then(()=>{if(A.state==="running")unlocked=true}).catch(()=>{})}catch(x){}};
-  ["pointerdown","pointerup","touchstart","touchend","click","keydown","wheel"].forEach(ev=>addEventListener(ev,wake,{passive:true,capture:true}));
+  const box=document.getElementById("games"),all=[...box.querySelectorAll(".game")],fl=document.getElementById("filters"),q=document.getElementById("hubQ");
   const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
-  const center=i=>cards[i].offsetLeft+cards[i].offsetWidth/2-box.clientWidth/2;
-  const go=(i,smooth=true)=>{if(!cards.length)return;i=Math.max(0,Math.min(cards.length-1,i));box.scrollTo({left:center(i),behavior:smooth?"smooth":"auto"})};
-  let geo=[],cw=1;const SDA=window.CSS&&CSS.supports&&CSS.supports("animation-timeline","view()");if(SDA)document.documentElement.classList.add("sda");
-  function measure(){geo=cards.map(c=>c.offsetLeft+c.offsetWidth/2);cw=(cards[0]?cards[0].offsetWidth:300)+14}
-  function upd(){raf=0;if(geo.length!==cards.length)measure();const mid=box.scrollLeft+box.clientWidth/2;let best=0,bd=1e9;
-    cards.forEach((c,i)=>{const dx=(geo[i]-mid)/cw,d=Math.min(1,Math.abs(dx));if(SDA){if(Math.abs(dx)<bd){bd=Math.abs(dx);best=i}return}const k=d.toFixed(3)+Math.max(-1,Math.min(1,dx)).toFixed(3);if(c._k!==k){c._k=k;c.style.transform=`scale(${1-d*.1}) rotate(${Math.max(-1,Math.min(1,dx))*3}deg)`;c.style.opacity=1-d*.3}if(Math.abs(dx)<bd){bd=Math.abs(dx);best=i}});
-    if(best!==cur){const was=cur;cur=best;db.forEach((b,i)=>{b.classList.toggle("on",i===cur);b.setAttribute("aria-selected",String(i===cur))});
-      clearTimeout(settleT);settleT=setTimeout(settle,was<0?0:140);
-      if(was>=0&&userMoved)blip(560+cur*25);prev.disabled=cur===0;next.disabled=cur===cards.length-1;ls.set("hub-jogo",cards[cur]?cards[cur].classList[1]:"")}}
-  function applyFilter(f,keep){
-    filt=f;ls.set("hub-filtro",f);
-    fl.querySelectorAll("[data-f]").forEach(b=>{b.classList.toggle("on",b.dataset.f===f);b.setAttribute("aria-pressed",String(b.dataset.f===f))});
-    const rec=recent();
-    if(f==="rec"&&!rec.length)f=filt="all";
-    const order=f==="rec"?rec.map(id=>all.find(c=>c.classList[1]===id)).filter(Boolean):all;
-    order.forEach(c=>box.appendChild(c));
-    all.forEach(c=>{c.hidden=f==="rec"?!order.includes(c):f!=="all"&&c.dataset.c!==f});
-    cards=order.filter(c=>!c.hidden);fl.querySelectorAll("[data-f]").forEach(b=>{b.classList.toggle("on",b.dataset.f===f);b.setAttribute("aria-pressed",String(b.dataset.f===f))});
-    dots.innerHTML=cards.map((c,i)=>`<button type="button" role="tab" style="--c:${getComputedStyle(c).getPropertyValue("--gc").trim()}" aria-label="${c.querySelector("h3").textContent}" data-i="${i}">${c.querySelector(".pic").innerHTML}<span>${c.querySelector("h3").textContent}</span></button>`).join("");
-    db=[...dots.children];cur=-1;geo=[];
-    const want=keep?cards.findIndex(c=>c.classList[1]===keep):0;
-    requestAnimationFrame(()=>{go(Math.max(0,want),false);upd()});
-  }
-  box.addEventListener("scroll",()=>{if(!raf)raf=requestAnimationFrame(upd)},{passive:true});
-  addEventListener("resize",()=>{measure();go(cur<0?0:cur,false);upd()});
-  dots.addEventListener("click",e=>{const b=e.target.closest("[data-i]");if(b)go(+b.dataset.i)});
-  fl.addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(b&&b.dataset.f!==filt)applyFilter(b.dataset.f)});
-  prev.onclick=()=>go(cur-1);next.onclick=()=>go(cur+1);
-  box.addEventListener("keydown",e=>{if(e.key==="ArrowRight"){e.preventDefault();go(cur+1)}if(e.key==="ArrowLeft"){e.preventDefault();go(cur-1)}});
-  box.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.preventDefault();if(!box._w){box._w=1;go(cur+(e.deltaY>0?1:-1));setTimeout(()=>box._w=0,350)}}},{passive:false});
-  all.forEach(c=>c.addEventListener("click",e=>{const i=cards.indexOf(c);if(i!==cur){e.preventDefault();e.stopImmediatePropagation();go(i)}},true));
-  /* últimos jogos abertos */
+  const norm=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+  all.forEach(c=>{c._t=norm(c.querySelector("h3").textContent+" "+(c.querySelector("p")?c.querySelector("p").textContent:""))});
+  let filt=ls.get("hub-filtro")||"all";
   function recent(){try{return JSON.parse(ls.get("hub-rec")||"[]").filter(id=>all.some(c=>c.classList[1]===id))}catch(e){return[]}}
+  function apply(){const rec=recent();if(filt==="rec"&&!rec.length)filt="all";const s=norm(q.value.trim());
+    fl.querySelectorAll("[data-f]").forEach(b=>{b.classList.toggle("on",b.dataset.f===filt);b.setAttribute("aria-pressed",String(b.dataset.f===filt))});
+    const order=filt==="rec"?rec.map(id=>all.find(c=>c.classList[1]===id)).filter(Boolean).concat(all.filter(c=>!rec.includes(c.classList[1]))):all;order.forEach(c=>box.appendChild(c));
+    let n=0;all.forEach(c=>{const ok=(s?c._t.includes(s):true)&&(s||filt==="all"||(filt==="rec"?rec.includes(c.classList[1]):c.dataset.c===filt));c.hidden=!ok;if(ok)n++});
+    document.getElementById("hubNone").hidden=n>0;ls.set("hub-filtro",filt)}
+  fl.addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(!b)return;filt=b.dataset.f;q.value="";apply()});
+  q.addEventListener("input",apply);
   all.forEach(c=>c.addEventListener("click",()=>{const id=c.classList[1];const r=recent().filter(x=>x!==id);r.unshift(id);ls.set("hub-rec",JSON.stringify(r.slice(0,6)))}));
-  const recB=fl.querySelector('[data-f="rec"]');recB.hidden=!recent().length;
-  applyFilter("all",ls.get("hub-jogo"));
-  requestAnimationFrame(()=>{const on=fl.querySelector(".on");if(on)fl.scrollTo({left:on.offsetLeft-fl.clientWidth/2+on.offsetWidth/2})});
+  fl.querySelector('[data-f="rec"]').hidden=!recent().length;apply();
 })();
 /* bonecos do menu */
 (function(){
