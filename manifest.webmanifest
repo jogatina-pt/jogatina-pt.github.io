@@ -29,6 +29,42 @@
  "description": "Jogos para jogar com amigos, cada um no seu telemóvel.",
  "shortcuts": [
   {
+   "name": "Sabichão!",
+   "short_name": "Sabichão!",
+   "url": "quiz/",
+   "icons": [
+    {
+     "src": "quiz/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "Rabiscos!",
+   "short_name": "Rabiscos!",
+   "url": "rabiscos/",
+   "icons": [
+    {
+     "src": "rabiscos/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "Choque!",
+   "short_name": "Choque!",
+   "url": "choque/",
+   "icons": [
+    {
+     "src": "choque/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
    "name": "Cidade Turbo!",
    "short_name": "Cidade",
    "url": "turbo/",
