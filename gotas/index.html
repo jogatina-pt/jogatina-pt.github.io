@@ -1006,22 +1006,26 @@ function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(STATE==="play
 function sounds(g){if((g.ev||0)!==lastEv){lastEv=g.ev||0;SFXS.goal();burst(g.last===0?W-GW/2:GW/2,GY-GH/2);if(g.last===ME&&MODE!=="local"&&MODE)SAVE.goals++}
   const sp=Math.hypot(g.b.vx,g.b.vy);if(g._ls!=null&&Math.abs(sp-g._ls)>260)SFXS.kick();g._ls=sp}
 function b_(v){return v?1:0}
-function packG(g){const r=v=>Math.round(v);return{t:"st",b:[r(g.b.x),r(g.b.y),r(g.b.vx),r(g.b.vy)],p:g.p.map(p=>[r(p.x),r(p.y),r(p.vx),r(p.vy),+p.pw.toFixed(2),r(p.R),Object.keys(p.e).join(",")]),bf:[b_(g.b.fire),g.frz>0?1:0],pev:g.pev||0,plast:g.plast,sc:g.sc,ph:g.ph,pt:+g.pt.toFixed(2),tm:+g.t.toFixed(1),ev:g.ev||0,last:g.last,msg:g.msg,camp:g.camp.map(v=>+v.toFixed(1)),gold:g.gold?1:0}}
-function clientSim(dt){const v=NET.view,m=NET.tgt;if(!v)return;v.client=1;NET.acc=(NET.acc||0)+dt;
-  while(NET.acc>=TICK){NET.acc-=TICK;const me=v.p[ME],o=v.p[1-ME];me.in={l:IN[ME].l,r:IN[ME].r,j:IN[ME].j,k:0};
-    /* o outro: adivinha as teclas pela velocidade que o anfitrião mandou */o.in={l:o.vx<-50?1:0,r:o.vx>50?1:0,j:0};
-    const keepVy=o.vy;for(const p of v.p){const E=p.e;p.e={};const R=p.R;stepP(v,p,TICK);p.R=R;p.e=E}if(o.y<GY-.5&&keepVy<0&&o.vy>=0){}
-    if(v.ph==="play"&&!v.b.ice)for(let s=0;s<4;s++)stepBall(v,TICK/4,false);}
-  if(m&&m._fresh){m._fresh=0;const me=v.p[ME],o=v.p[1-ME],q=m.p,qm=q[ME],qo=q[1-ME],LAT=.07;
-    /* em vez de saltar para a posição recebida, guarda a diferença e vai-a desfazendo aos poucos */
-    const tgt=(x,y,vx,vy,isB)=>[x+vx*LAT,Math.min(isB?GY-BR:GY,y+vy*LAT)];
-    {const [tx,ty]=tgt(qo[0],qo[1],qo[2],qo[3]);const ex=tx-o.x,ey=ty-o.y;if(Math.hypot(ex,ey)>150){o.x=tx;o.y=ty;NET.eo=[0,0]}else NET.eo=[ex,ey];o.vx=qo[2];if(Math.abs(ey)>30)o.vy=qo[3]}
-    if(v.ph!=="play"){me.x=qm[0];me.y=qm[1]}if(me.e.stun){me.x=qm[0]}
-    const b=v.b;if(m.bf&&m.bf[1]){b.x=m.b[0];b.y=m.b[1];b.vx=b.vy=0;NET.eb=[0,0]}else{const [tx,ty]=tgt(m.b[0],m.b[1],m.b[2],m.b[3],1);const ex=tx-b.x,ey=ty-b.y;if(Math.hypot(ex,ey)>90||v.ph!=="play"){b.x=tx;b.y=ty;NET.eb=[0,0]}else NET.eb=[ex,ey];b.vx=m.b[2];b.vy=m.b[3]}
-    q.forEach((z,i)=>{const p=v.p[i];p.pw=z[4]||0;p.R=z[5]||p.R;p.e={};for(const k of (z[6]||"").split(","))if(k)p.e[k]=1});v.b.fire=m.bf&&m.bf[0];v.b.ice=m.bf&&m.bf[1];v.pev=m.pev;v.plast=m.plast}
-  {const k=Math.min(1,dt*9);for(const [key,obj] of [["eb",v.b],["eo",v.p[1-ME]]]){const e=NET[key];if(!e)continue;const ax=e[0]*k,ay=e[1]*k;obj.x+=ax;obj.y+=ay;e[0]-=ax;e[1]-=ay}}
-  for(const p of v.p)p.look=v.b.x>p.x?1:-1}
-function onState(m){if(!NET.view)return;const v=NET.view;m._fresh=1;v.sc=m.sc;v.ph=m.ph;v.pt=m.pt;v.t=m.tm;v.ev=m.ev;v.last=m.last;v.msg=m.msg;v.camp=m.camp;v.gold=m.gold;NET.tgt=m;NET.age=0;if(m.ph==="end")endMatch()}
+function packG(g){const r=v=>Math.round(v);return{t:"st",ht:+(g.tick/60).toFixed(3),b:[r(g.b.x),r(g.b.y),r(g.b.vx),r(g.b.vy)],p:g.p.map(p=>[r(p.x),r(p.y),r(p.vx),r(p.vy),+p.pw.toFixed(2),r(p.R),Object.keys(p.e).join(",")]),bf:[b_(g.b.fire),g.frz>0?1:0],pev:g.pev||0,plast:g.plast,sc:g.sc,ph:g.ph,pt:+g.pt.toFixed(2),tm:+g.t.toFixed(1),ev:g.ev||0,last:g.last,msg:g.msg,camp:g.camp.map(v=>+v.toFixed(1)),gold:g.gold?1:0}}
+/* quem entra na sala: a própria gota é local; a bola e a outra gota são mostradas "com um pequeno atraso",
+   a deslizar entre as posições recebidas (nunca saltam, mesmo que as mensagens cheguem aos solavancos) */
+const DELAY=.14;
+function clientSim(dt){const v=NET.view;if(!v)return;v.client=1;NET.acc=(NET.acc||0)+dt;
+  while(NET.acc>=TICK){NET.acc-=TICK;const me=v.p[ME];me.in={l:IN[ME].l,r:IN[ME].r,j:IN[ME].j,k:0};const E=me.e;me.e={};const R=me.R;stepP(v,me,TICK);me.R=R;me.e=E}
+  const B=NET.buf||[];if(!B.length)return;const last=B[B.length-1];
+  if(NET.rt==null)NET.rt=last.t-DELAY;NET.rt+=dt;const want=last.t-DELAY;if(Math.abs(want-NET.rt)>.6)NET.rt=want;else NET.rt+=(want-NET.rt)*Math.min(1,dt*2);
+  const rt=NET.rt;let A=null,C=null;for(let i=B.length-1;i>0;i--){if(B[i-1].t<=rt&&B[i].t>=rt){A=B[i-1];C=B[i];break}}
+  const o=v.p[1-ME],b=v.b;let bx,by,ox,oy;
+  if(A){const u=(rt-A.t)/Math.max(1e-4,C.t-A.t);const jump=Math.hypot(C.b[0]-A.b[0],C.b[1]-A.b[1])>220;/* golo/recomeço: não desliza */
+    bx=jump?C.b[0]:A.b[0]+(C.b[0]-A.b[0])*u;by=jump?C.b[1]:A.b[1]+(C.b[1]-A.b[1])*u;ox=A.o[0]+(C.o[0]-A.o[0])*u;oy=A.o[1]+(C.o[1]-A.o[1])*u;b.vx=C.b[2];b.vy=C.b[3];o.vx=C.o[2];o.vy=C.o[3]}
+  else{const S=rt<B[0].t?B[0]:last,e=Math.max(0,Math.min(.12,rt-S.t));bx=S.b[0]+S.b[2]*e;by=Math.min(GY-BR,S.b[1]+S.b[3]*e+450*e*e);ox=S.o[0]+S.o[2]*e;oy=Math.min(GY,S.o[1]+S.o[3]*e);b.vx=S.b[2];b.vy=S.b[3]}
+  b.sp+=(bx-b.x)/BR;b.x=bx;b.y=by;o.x=ox;o.y=oy;
+  const me=v.p[ME],qm=last.me;if(v.ph!=="play"&&qm){me.x=qm[0];me.y=qm[1]}if(me.e.stun&&qm){me.x=qm[0]}
+  for(const p of v.p)p.look=b.x>p.x?1:-1}
+function onState(m){if(!NET.view)return;const v=NET.view;m._fresh=1;
+  {const B=NET.buf||(NET.buf=[]);const tt=+m.ht||0;if(B.length&&tt<B[B.length-1].t-1){B.length=0;NET.rt=null}if(!B.length||tt>B[B.length-1].t){B.push({t:tt,b:m.b,o:m.p[1-ME],me:m.p[ME]});if(B.length>40)B.shift()}
+   m.p.forEach((z,i)=>{const p=v.p[i];p.pw=z[4]||0;p.R=z[5]||p.R;p.e={};for(const k of (z[6]||"").split(","))if(k)p.e[k]=1});v.b.fire=m.bf&&m.bf[0];v.b.ice=m.bf&&m.bf[1];v.pev=m.pev;v.plast=m.plast}
+v.sc=m.sc;v.ph=m.ph;v.pt=m.pt;v.t=m.tm;v.ev=m.ev;v.last=m.last;v.msg=m.msg;v.camp=m.camp;v.gold=m.gold;NET.tgt=m;NET.age=0;if(m.ph==="end")endMatch()}
 function interp(dt){const v=NET.view,m=NET.tgt;if(!v||!m)return;NET.age+=dt;const k=Math.min(1,dt*14);
   const ex=Math.min(.12,NET.age);const tx=m.b[0]+m.b[2]*ex,ty=Math.min(GY-BR,m.b[1]+m.b[3]*ex);v.b.x+=(tx-v.b.x)*k;v.b.y+=(ty-v.b.y)*k;v.b.vx=m.b[2];v.b.vy=m.b[3];v.b.sp+=m.b[2]*dt/BR;
   m.p.forEach((q,i)=>{const p=v.p[i];p.x+=(q[0]+q[2]*ex-p.x)*k;p.y+=(Math.min(GY,q[1]+q[3]*ex)-p.y)*k;p.vx=q[2];p.vy=q[3];p.look=v.b.x>p.x?1:-1;p.pw=q[4]||0;p.R=q[5]||p.R;p.e={};for(const k of (q[6]||"").split(","))if(k)p.e[k]=1});v.b.fire=m.bf&&m.bf[0];v.b.ice=m.bf&&m.bf[1];v.pev=m.pev;v.plast=m.plast}
