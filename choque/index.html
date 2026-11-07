@@ -400,6 +400,7 @@ body.touch .ctl{display:flex}
 @media (max-width:380px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:26px}.brand a.home{font-size:0}.brand a.home::before{content:"← menu";font-size:12px}.tools{gap:5px}.tools .btn.sm{padding:4px 8px}}
 @media (max-height:560px){.foot{display:none}.who button svg{height:38px}.upg{gap:4px}}
 .brand h1.long{font-size:clamp(19px,5.4vw,30px)!important;line-height:.95}
+.pfeed{flex:none;max-height:96px;font-size:13px;padding:6px 10px}.pboard li.me,.board.small li.win{background:#ffd23f;color:#151515}.ptimer{width:100%;height:9px}.pcv{width:100%;aspect-ratio:1;max-height:50vh;border-radius:14px;background:#1b1530;display:block;margin:0 auto}
 </style>
 </head>
 <body>
@@ -415,8 +416,8 @@ body.touch .ctl{display:flex}
     </div>
   </header>
   <section id="setup" class="setup" hidden>
-    <h2>Na <span>TV</span></h2>
-    <p>Abre este jogo na TV ou no PC e cria a sala. Cada jogador entra com o telemóvel pelo QR code ou com o código.</p>
+    <h2>Com <span>amigos</span></h2>
+    <p>Cria a sala (na TV/PC ou no teu telemóvel) ou entra com o código que te deram. Os outros entram pelo QR code ou pelo link.</p>
     <label class="field"><span class="eyebrow">O teu nome</span><input id="myName" maxlength="14" autocomplete="nickname" placeholder="Ex.: Ivo"></label>
     <div class="mode" id="onlineMode">
       <div class="eyebrow">2 a 6 jogadores</div>
@@ -445,7 +446,7 @@ body.touch .ctl{display:flex}
     <div class="pad" id="pad" hidden></div>
     <div class="ov" id="ov"></div>
   </main>
-  <p class="foot gfoot">A pista aparece no ecrã grande; o telemóvel é o volante.</p>
+  <p class="foot gfoot">Com TV, a pista aparece no ecrã grande. Sem TV, cada um vê a pista no telemóvel.</p>
   </section>
 </div>
 <div class="modal" id="rulesModal" hidden><div class="sheet" role="dialog" aria-modal="true"><h3 id="rulesTitle">Regras</h3><div class="body" id="rulesBody"></div><div class="actions"><button class="btn" id="rulesClose" type="button">Fechar</button></div></div></div>
@@ -901,16 +902,16 @@ function initUI(o){
 const ov=$("ov"),tv=$("tv"),pad=$("pad"),cv=$("cv"),ctx=cv.getContext("2d");
 const PCOL=["#ff5d8f","#3a86ff","#ffbe0b","#2fbf71","#9b5de5","#ff8c1a","#06d6a0","#e63946"],BOTN=["Zé","Mia","Tó","Rita","Kiko","Bia","Nuno","Lia"];
 const AR=330,CR=24,TICK=1/60;
-let MODE=null,G=null,ME=-1,MYNAME="",TIMERS=[];const later=(ms,f)=>{const t=setTimeout(f,ms);TIMERS.push(t)};const clearT=()=>{TIMERS.forEach(clearTimeout);TIMERS=[]};
-function bcast(m){ROOM.seats.forEach((s,k)=>{if(k>0)ROOM.sendTo(s,m)})}
+let MODE=null,G=null,ME=-1,MYNAME="",TIMERS=[],TVM=1,VS=null,PTV=1;const OFF=()=>TVM?1:0;const later=(ms,f)=>{const t=setTimeout(f,ms);TIMERS.push(t)};const clearT=()=>{TIMERS.forEach(clearTimeout);TIMERS=[]};
+function bcast(m){ROOM.seats.forEach((s,k)=>{if(k>0)ROOM.sendTo(s,m)});if(!TVM&&ROOM.role==="host")ROOM.game.client(m)}
 /* ---------- regras ---------- */
-function cleanOpts(o){o=o||{};const r=+o.r,b=+o.b;return{r:[3,5,7].includes(r)?r:5,b:[0,2,4].includes(b)?b:0}}
+function cleanOpts(o){o=o||{};const r=+o.r,b=+o.b,tv=o.tv===0||o.tv==="0"?0:1;return{tv,r:[3,5,7].includes(r)?r:5,b:[0,2,4].includes(b)?b:0}}
 function renderOpts(el,o,host){o=cleanOpts(o);el.innerHTML=`<div class="optrow"><span class="eyebrow">Rondas</span><div class="seg">${[3,5,7].map(n=>`<button type="button" class="${o.r===n?"on":""}" data-k="r" data-v="${n}" ${host?"":"disabled"}>${n}</button>`).join("")}</div></div>
-  <div class="optrow"><span class="eyebrow">Bonecos extra</span><div class="seg">${[0,2,4].map(n=>`<button type="button" class="${o.b===n?"on":""}" data-k="b" data-v="${n}" ${host?"":"disabled"}>${n||"Nenhum"}</button>`).join("")}</div></div><p class="note">📺 Este ecrã mostra a pista; cada telemóvel é um volante. Até 8 carrinhos.</p>`;
+  <div class="optrow"><span class="eyebrow">Bonecos extra</span><div class="seg">${[0,2,4].map(n=>`<button type="button" class="${o.b===n?"on":""}" data-k="b" data-v="${n}" ${host?"":"disabled"}>${n||"Nenhum"}</button>`).join("")}</div></div><p class="note">${o.tv?"📺 Este ecrã mostra a pista; cada telemóvel é um volante.":"📱 Sem TV: cada um vê a pista e guia no próprio telemóvel."} Até 8 carrinhos.</p>`;
   if(host)el.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{ROOM.opts=cleanOpts({...o,[b.dataset.k]:b.dataset.v});lobbyBroadcast()})}
-function beginGame(seats){const O=cleanOpts(ROOM.opts);const pl=seats.slice(1).map((s,i)=>({i,name:cleanName(s.name)||"Jogador",bot:false}));for(let k=0;k<O.b&&pl.length<8;k++)pl.push({i:pl.length,name:BOTN[k],bot:true});
-  pl.forEach((p,k)=>{p.col=PCOL[k%8];p.sc=0;p.in={x:0,y:0,b:0}});G={pl,O,round:0,ph:"intro",t:0};MODE="tv";showScreen("game");pad.hidden=true;tv.hidden=false;ov.hidden=true;layout();
-  seats.forEach((s,k)=>{if(k>0)ROOM.sendTo(s,{t:"go",me:k-1,name:pl[k-1].name,col:pl[k-1].col})});startRound()}
+function beginGame(seats){const O=cleanOpts(ROOM.opts);TVM=O.tv;const pl=seats.slice(OFF()).map((s,i)=>({i,name:cleanName(s.name)||"Jogador",bot:false}));for(let k=0;k<O.b&&pl.length<8;k++)pl.push({i:pl.length,name:BOTN[k],bot:true});
+  pl.forEach((p,k)=>{p.col=PCOL[k%8];p.sc=0;p.in={x:0,y:0,b:0}});G={pl,O,round:0,ph:"intro",t:0};MODE=TVM?"tv":"hostp";showScreen("game");ov.hidden=true;if(TVM){pad.hidden=true;tv.hidden=false;layout()}
+  const pls=pl.map(p=>[p.name,p.col]);pl.forEach(p=>{if(!p.bot)sendTo(p,{t:"go",me:p.i,name:p.name,col:p.col,tv:TVM,pls,r:O.r})});if(!TVM)MODE="hostp";startRound()}
 function startRound(){G.round++;G.ph="count";G.t=3;G.ring=AR;G.last=null;const n=G.pl.length;G.pl.forEach((p,k)=>{const a=k/n*Math.PI*2;Object.assign(p,{x:Math.cos(a)*AR*.6,y:Math.sin(a)*AR*.6,vx:0,vy:0,a:a+Math.PI,alive:true,fall:0,cd:0,dash:0,hitBy:null,hitT:0,ko:0})});bcast({t:"rd",n:G.round,of:G.O.r});SFXC.count()}
 function step(dt){if(!G)return;if(G.ph==="count"){G.t-=dt;if(G.t<=0){G.ph="play";G.t=0;SFXC.go()}return}if(G.ph!=="play")return;G.t+=dt;
   if(G.t>20)G.ring=Math.max(120,G.ring-dt*9);
@@ -924,14 +925,15 @@ function step(dt){if(!G)return;if(G.ph==="count"){G.t-=dt;if(G.t<=0){G.ph="play"
   /* cair da pista */for(const p of A){if(Math.hypot(p.x,p.y)>G.ring+CR*.4){p.alive=false;p.fall=0;SFXC.fall();if(p.hitBy&&p.hitT>0&&p.hitBy.alive){p.hitBy.sc+=1;p.hitBy.ko++;G.msg={t:1.6,s:`${p.hitBy.name} empurrou ${p.name}! +1`}}else G.msg={t:1.4,s:`${p.name} caiu sozinho!`};if(!p.bot)sendTo(p,{t:"out"})}}
   const alive=G.pl.filter(p=>p.alive);if(alive.length<=1&&G.ph==="play"){G.ph="rend";const w=alive[0];if(w){w.sc+=3;G.msg={t:3,s:`🏆 ${w.name} ganha a ronda! +3`};if(!w.bot)sendTo(w,{t:"win"})}else G.msg={t:3,s:"Empate!"};SFXC.win();
     bcast({t:"sc",sc:G.pl.map(p=>p.sc)});later(3200,()=>{if(G.round>=G.O.r)finish();else startRound()})}}
-function sendTo(p,m){const s=ROOM.seats[p.i+1];if(s)ROOM.sendTo(s,m)}
+function sendTo(p,m){const k=p.i+OFF();if(k===0){ROOM.game.client(m);return}const s=ROOM.seats[k];if(s)ROOM.sendTo(s,m)}
 function botIn(p){/* vai ao carro mais perto do centro e empurra-o para fora; foge da borda */const o=G.pl.filter(q=>q!==p&&q.alive);let t=null,bd=1e9;for(const q of o){const d=Math.hypot(q.x-p.x,q.y-p.y);if(d<bd){bd=d;t=q}}
   const r=Math.hypot(p.x,p.y);if(r>G.ring*.78||!t)return{x:-p.x/(r||1),y:-p.y/(r||1),b:0};const ax=t.x-p.x+t.x/Math.max(1,Math.hypot(t.x,t.y))*30,ay=t.y-p.y+t.y/Math.max(1,Math.hypot(t.x,t.y))*30;const l=Math.hypot(ax,ay)||1;return{x:ax/l,y:ay/l,b:bd<120&&Math.random()<.04?1:0}}
 function finish(){G.ph="end";const o=G.pl.slice().sort((a,b)=>b.sc-a.sc);bcast({t:"end",o:o.map(p=>[p.name,p.sc])});SFXC.win();
   later(800,()=>showOv(`<div class="panel"><h2>${esc(o[0].name)} ganhou!</h2><ol class="board">${o.map((p,i)=>`<li><span>${["🥇","🥈","🥉"][i]||(i+1)+"."} <i class="dot" style="background:${p.col}"></i>${esc(p.name)}</span><b>${p.sc} pts · ${p.ko||0} 💥</b></li>`).join("")}</ol><button class="btn" type="button" data-a="again">Revanche ▶</button><button class="btn ghost" type="button" data-a="lobby">Voltar à sala</button></div>`))}
 /* ---------- desenho (TV) ---------- */
 let CW=300,CHh=300,DPR=1;function layout(){const r=tv.getBoundingClientRect();CW=r.width||300;CHh=r.height||300;DPR=Math.min(1.5,devicePixelRatio||1);cv.width=CW*DPR;cv.height=CHh*DPR;cv.style.width=CW+"px";cv.style.height=CHh+"px"}
-function render(t){if(MODE!=="tv"||!G){return}const g=ctx;g.setTransform(DPR,0,0,DPR,0,0);g.fillStyle="#1b1530";g.fillRect(0,0,CW,CHh);const s=Math.min(CW,CHh)/(AR*2+120);g.save();g.translate(CW/2,CHh/2+12);g.scale(s,s);
+function render(t){if(MODE==="tv"&&G)drawArena(t,ctx,CW,CHh,DPR,G)}
+function drawArena(t,g,CW,CHh,DPR,G){g.setTransform(DPR,0,0,DPR,0,0);g.fillStyle="#1b1530";g.fillRect(0,0,CW,CHh);const s=Math.min(CW,CHh)/(AR*2+(TVM&&MODE==="tv"?120:60));g.save();g.translate(CW/2,CHh/2+12);g.scale(s,s);
   /* luzes à volta */for(let k=0;k<48;k++){const a=k/48*Math.PI*2,on=(Math.floor(t*4)+k)%3===0;g.fillStyle=on?"#ffd23f":"#5a4a2a";g.beginPath();g.arc(Math.cos(a)*(AR+40),Math.sin(a)*(AR+40),6,0,6.3);g.fill()}
   g.fillStyle="#2a2246";g.beginPath();g.arc(0,0,AR+28,0,6.3);g.fill();
   /* pista */const gr=g.createRadialGradient(0,0,10,0,0,G.ring);gr.addColorStop(0,"#5b6ad0");gr.addColorStop(1,"#3a3f8f");g.fillStyle=gr;g.beginPath();g.arc(0,0,G.ring,0,6.3);g.fill();g.strokeStyle="rgba(255,255,255,.12)";g.lineWidth=2;for(let r=60;r<G.ring;r+=60){g.beginPath();g.arc(0,0,r,0,6.3);g.stroke()}
@@ -946,44 +948,51 @@ function render(t){if(MODE!=="tv"||!G){return}const g=ctx;g.setTransform(DPR,0,0
     g.restore();if(p.alive){g.fillStyle="#fff";g.font="900 16px system-ui";g.textAlign="center";g.lineWidth=4;g.strokeStyle="#151515";g.strokeText(p.name,p.x,p.y-CR-10);g.fillText(p.name,p.x,p.y-CR-10)}}
   for(const k of G.sparks||[]){k.t-=1/60;g.fillStyle="#ffd23f";for(let i=0;i<6;i++){const a=i*1.05;g.fillRect(k.x+Math.cos(a)*(30-k.t*60),k.y+Math.sin(a)*(30-k.t*60),5,5)}}if(G.sparks)G.sparks=G.sparks.filter(k=>k.t>0);
   g.restore();
-  /* placar */g.font="900 15px system-ui";g.textAlign="left";g.textBaseline="middle";const o=G.pl.slice().sort((a,b)=>b.sc-a.sc);o.forEach((p,k)=>{const y=20+k*24;g.fillStyle="rgba(0,0,0,.45)";g.fillRect(8,y-10,150,21);g.fillStyle=p.col;g.fillRect(8,y-10,6,21);g.fillStyle=p.alive?"#fff":"#888";g.fillText(`${p.name}`,20,y+1);g.textAlign="right";g.fillText(p.sc,150,y+1);g.textAlign="left"});
+  /* placar */const sm=CW<500,fz=sm?11:15,rh=sm?17:24,bw=sm?96:150;g.font=`900 ${fz}px system-ui`;g.textAlign="left";g.textBaseline="middle";const o=G.pl.slice().sort((a,b)=>b.sc-a.sc);o.forEach((p,k)=>{const y=(sm?12:20)+k*rh;g.fillStyle="rgba(0,0,0,.45)";g.fillRect(6,y-rh/2+2,bw,rh-3);g.fillStyle=p.col;g.fillRect(6,y-rh/2+2,5,rh-3);g.fillStyle=p.alive?"#fff":"#888";g.fillText(`${p.name}`,15,y+1);g.textAlign="right";g.fillText(p.sc,bw,y+1);g.textAlign="left"});
   g.textAlign="center";g.fillStyle="#fff";g.fillText(`Ronda ${G.round}/${G.O.r}`,CW/2,16);
-  if(G.ph==="count"){g.font="900 90px system-ui";g.lineWidth=10;g.strokeStyle="#151515";const n=Math.ceil(G.t);g.strokeText(n,CW/2,CHh/2);g.fillStyle="#ffd23f";g.fillText(n,CW/2,CHh/2)}
-  if(G.msg&&G.msg.t>0){G.msg.t-=1/60;g.font="900 30px system-ui";g.lineWidth=7;g.strokeStyle="#151515";g.strokeText(G.msg.s,CW/2,CHh-40);g.fillStyle="#fff";g.fillText(G.msg.s,CW/2,CHh-40)}
+  if(G.ph==="count"){g.font=`900 ${CW<500?60:90}px system-ui`;g.lineWidth=10;g.strokeStyle="#151515";const n=Math.ceil(G.t);g.strokeText(n,CW/2,CHh/2);g.fillStyle="#ffd23f";g.fillText(n,CW/2,CHh/2)}
+  if(G.msg&&G.msg.t>0){G.msg.t-=1/60;g.font=`900 ${CW<500?16:30}px system-ui`;g.lineWidth=7;g.strokeStyle="#151515";g.strokeText(G.msg.s,CW/2,CHh-40);g.fillStyle="#fff";g.fillText(G.msg.s,CW/2,CHh-40)}
   if(G.ring<AR&&G.ph==="play"){g.font="900 16px system-ui";g.fillStyle="#ff5d5d";g.fillText("⚠ A pista está a encolher!",CW/2,40)}}
 function shadeC(hex,k){const n=parseInt(hex.slice(1),16);const f=v=>Math.round(Math.min(255,v*k));return`rgb(${f(n>>16)},${f(n>>8&255)},${f(n&255)})`}
 /* ---------- comando (telemóvel) ---------- */
 const PIN={x:0,y:0,b:0},PSENT={k:""};let PCD=0;
-function padStart(col){tv.hidden=true;pad.hidden=false;pad.innerHTML=`<div class="ptop" style="--pc:${col}"><b><i class="dot" style="background:${col}"></i>${esc(MYNAME)}</b><span id="pst">À espera…</span></div>
+function padStart(col){tv.hidden=true;pad.hidden=false;pad.innerHTML=`<div class="ptop" style="--pc:${col}"><b><i class="dot" style="background:${col}"></i>${esc(MYNAME)}</b><span id="pst">À espera…</span></div>${PTV?"":`<canvas id="pcv" class="pcv"></canvas>`}
   <div class="cpad"><div class="joy" id="joy"><i id="joyK"></i></div><button type="button" class="turbo" id="tb">TURBO<small id="tbc"></small></button></div><p class="note">Arrasta o círculo para guiar · TURBO para dar um encontrão</p>`;
   const jz=$("joy"),jk=$("joyK");let id=null,cx=0,cy=0;
   const mv=e=>{const r=jz.getBoundingClientRect().width/2;let dx=(e.clientX-cx)/r,dy=(e.clientY-cy)/r;const m=Math.hypot(dx,dy);if(m>1){dx/=m;dy/=m}PIN.x=dx;PIN.y=dy;jk.style.transform=`translate(calc(-50% + ${dx*r*.6}px),calc(-50% + ${dy*r*.6}px))`};
   jz.addEventListener("pointerdown",e=>{e.preventDefault();id=e.pointerId;jz.setPointerCapture(id);const r=jz.getBoundingClientRect();cx=r.left+r.width/2;cy=r.top+r.height/2;mv(e)});jz.addEventListener("pointermove",e=>{if(e.pointerId===id)mv(e)});
   const end=e=>{if(e.pointerId!==id)return;id=null;PIN.x=PIN.y=0;jk.style.transform="translate(-50%,-50%)"};jz.addEventListener("pointerup",end);jz.addEventListener("pointercancel",end);
   const tb=$("tb");tb.addEventListener("pointerdown",e=>{e.preventDefault();PIN.b=1;tb.classList.add("down")});const tu=e=>{e.preventDefault();PIN.b=0;tb.classList.remove("down")};tb.addEventListener("pointerup",tu);tb.addEventListener("pointercancel",tu);tb.addEventListener("pointerleave",tu)}
-setInterval(()=>{if(MODE!=="pad")return;const kx=(KEYS.ArrowRight||KEYS.KeyD?1:0)-(KEYS.ArrowLeft||KEYS.KeyA?1:0),ky=(KEYS.ArrowDown||KEYS.KeyS?1:0)-(KEYS.ArrowUp||KEYS.KeyW?1:0);const x=PIN.x||kx,y=PIN.y||ky,b=PIN.b||KEYS.Space?1:0;
-  const k=x.toFixed(2)+y.toFixed(2)+b;if(k!==PSENT.k){PSENT.k=k;ROOM.send({t:"in",x:+x.toFixed(2),y:+y.toFixed(2),b})}if(PCD>0){PCD-=.05;const c=$("tbc");if(c)c.textContent=PCD>0?Math.ceil(PCD)+"s":""}},50);
+setInterval(()=>{if(MODE!=="pad"&&MODE!=="hostp")return;const kx=(KEYS.ArrowRight||KEYS.KeyD?1:0)-(KEYS.ArrowLeft||KEYS.KeyA?1:0),ky=(KEYS.ArrowDown||KEYS.KeyS?1:0)-(KEYS.ArrowUp||KEYS.KeyW?1:0);const x=PIN.x||kx,y=PIN.y||ky,b=PIN.b||KEYS.Space?1:0;
+  const k=x.toFixed(2)+y.toFixed(2)+b;if(k!==PSENT.k){PSENT.k=k;const m={t:"in",x:+x.toFixed(2),y:+y.toFixed(2),b};if(ROOM.role==="host")ROOM.game.msg(ROOM.seats[0],m);else ROOM.send(m)}if(PCD>0){PCD-=.05;const c=$("tbc");if(c)c.textContent=PCD>0?Math.ceil(PCD)+"s":""}},50);
 const KEYS={};addEventListener("keydown",e=>{KEYS[e.code]=1});addEventListener("keyup",e=>{KEYS[e.code]=0});
 /* ---------- sons ---------- */
 const SFXC={count:()=>[440,440,440,880].forEach((f,i)=>tone(f,.12,{type:"square",v:.05,at:i*1})),go:()=>tone(880,.25,{type:"square",v:.06}),bump:v=>tone(160+Math.random()*60,.12,{type:"sawtooth",v:Math.min(.1,v/3000),f2:80}),dash:()=>tone(300,.18,{type:"sawtooth",v:.04,f2:900}),fall:()=>tone(600,.5,{type:"sine",v:.07,f2:120}),win:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.14,{type:"triangle",v:.08,at:i*.1}))};
 /* ---------- ciclo ---------- */
-let last=0,acc=0;function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(MODE==="tv"){acc+=dt;while(acc>=TICK){step(TICK);acc-=TICK}render(t/1000)}requestAnimationFrame(loop)}
+let last=0,acc=0,snapT=0,lastMsg=null;function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;
+  if(MODE==="tv"||MODE==="hostp"){acc+=dt;while(acc>=TICK){step(TICK);acc-=TICK}if(MODE==="tv")render(t/1000);else{snapT+=dt;if(snapT>=.05&&G){snapT=0;const m={t:"s",rd:G.round,ph:G.ph,tt:+G.t.toFixed(2),ring:Math.round(G.ring),p:G.pl.map(p=>[Math.round(p.x),Math.round(p.y),+p.a.toFixed(2),p.alive?1:0,+(p.fall||0).toFixed(2),p.dash>0?1:0,p.sc])};if(G.msg&&G.msg!==lastMsg){lastMsg=G.msg;m.msg=G.msg.s;m.mt=G.msg.t}ROOM.seats.forEach((s,k)=>{if(k>0)ROOM.sendTo(s,m)})}padArena(t/1000,G,dt)}}
+  else if(MODE==="pad"&&!PTV&&VS)padArena(t/1000,VS,dt);requestAnimationFrame(loop)}
+function padArena(t,S,dt){const c=$("pcv");if(!c)return;const w=c.clientWidth,h=c.clientHeight;if(!w)return;const d=Math.min(2,devicePixelRatio||1);if(c.width!==Math.round(w*d)){c.width=Math.round(w*d);c.height=Math.round(h*d)}
+  if(S===VS)for(const p of VS.pl){if(p.tx==null)continue;const k=Math.min(1,dt*14);p.x+=(p.tx-p.x)*k;p.y+=(p.ty-p.y)*k;let da=((p.ta-p.a+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI;p.a+=da*k}
+  drawArena(t,c.getContext("2d"),w,h,d,S)}
+function onSnap(d){if(!VS)return;VS.round=d.rd;VS.ph=d.ph;VS.t=d.tt;VS.ring=d.ring;(d.p||[]).forEach((q,i)=>{const p=VS.pl[i];if(!p)return;if(p.tx==null||Math.hypot(q[0]-p.x,q[1]-p.y)>200){p.x=q[0];p.y=q[1];p.a=q[2]}p.tx=q[0];p.ty=q[1];p.ta=q[2];p.alive=!!q[3];p.fall=q[4];p.dash=q[5];p.sc=q[6]});if(d.msg)VS.msg={s:d.msg,t:d.mt||2}}
 /* ---------- menus ---------- */
 function showOv(h){ov.innerHTML=h;ov.hidden=false}
 function menu(){MODE=null;tv.hidden=true;pad.hidden=true;showOv(`<div class="panel"><h2>Choque!</h2><p>Carrinhos de choque na <b>TV ou no PC</b>; cada <b>telemóvel</b> é um volante. Empurra os outros para fora da pista e sê o último a ficar!</p>
-  <button class="btn" type="button" data-a="tv">📺 Criar sala neste ecrã</button><button class="btn ghost" type="button" data-a="pj">📱 Tenho um código: entrar como jogador</button><p class="note">Até 8 carrinhos. Os jogadores entram pelo QR code ou com o código da sala.</p></div>`)}
+  <button class="btn" type="button" data-a="tv">📺 Criar sala neste ecrã (TV/PC)</button><button class="btn" type="button" data-a="notv">📱 Jogar sem TV (todos no telemóvel)</button><button class="btn ghost" type="button" data-a="pj">📱 Tenho um código: entrar como jogador</button><p class="note">Até 8 carrinhos. Os jogadores entram pelo QR code ou com o código da sala.</p></div>`)}
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;unlockAudio();const a=b.dataset.a;
   if(a==="pj"){showScreen("setup");if($("myName").value==="TV")$("myName").value="";setTimeout(()=>{const c=$("joinCode");c&&c.focus()},60);return}
-  if(a==="tv"){showScreen("setup");if(!$("myName").value)$("myName").value="TV";setTimeout(()=>$("hostBtn").click(),50)}
+  if(a==="notv"){TVM=0;ROOM.opts=cleanOpts({...(ROOM.opts||{}),tv:0});showScreen("setup");if($("myName").value==="TV")$("myName").value="";setTimeout(()=>{const c=$("myName");c&&c.focus()},60);return}
+  if(a==="tv"){TVM=1;ROOM.opts=cleanOpts({...(ROOM.opts||{}),tv:1});showScreen("setup");if(!$("myName").value)$("myName").value="TV";setTimeout(()=>$("hostBtn").click(),50)}
   else if(a==="again"){ov.hidden=true;clearT();beginGame(ROOM.seats)}else if(a==="lobby"){clearT();bcast({t:"lobby"});MODE=null;ROOM.backToLobby()}});
 ROOM.game={id:"choque",title:"Choque!",maxp:9,minp:2,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"Falta pelo menos um jogador com telemóvel (lê o QR code). Podes juntar bonecos nas opções.",
   start(seats){beginGame(seats)},
-  msg(seat,d){if(!d||!G)return;const i=ROOM.seats.indexOf(seat)-1;const p=G.pl[i];if(!p)return;if(d.t==="in")p.in={x:Math.max(-1,Math.min(1,+d.x||0)),y:Math.max(-1,Math.min(1,+d.y||0)),b:d.b?1:0}},
-  client(d){if(!d)return;if(d.t==="go"){ME=d.me|0;MYNAME=cleanName(d.name);MODE="pad";showScreen("game");ov.hidden=true;padStart(d.col||"#fff");return}if(MODE!=="pad")return;
+  msg(seat,d){if(!d||!G)return;const i=ROOM.seats.indexOf(seat)-OFF();const p=G.pl[i];if(!p)return;if(d.t==="in")p.in={x:Math.max(-1,Math.min(1,+d.x||0)),y:Math.max(-1,Math.min(1,+d.y||0)),b:d.b?1:0}},
+  client(d){if(!d)return;if(d.t==="go"){ME=d.me|0;MYNAME=cleanName(d.name);PTV=d.tv===0?0:1;if(ROOM.role!=="host")MODE="pad";showScreen("game");ov.hidden=true;if(!PTV)VS={pl:(d.pls||[]).map(x=>({name:x[0],col:x[1],x:0,y:0,a:0,alive:true,fall:0,dash:0,sc:0})),O:{r:d.r||5},round:1,ph:"count",t:3,ring:AR};padStart(d.col||"#fff");return}if(d.t==="s"){if(ROOM.role!=="host")onSnap(d);return}if(MODE!=="pad"&&MODE!=="hostp")return;
     const st=$("pst");const vib=v=>{try{navigator.vibrate&&navigator.vibrate(v)}catch(e){}};
-    if(d.t==="rd"){if(st)st.textContent=`Ronda ${d.n}/${d.of} — olha para a TV!`;vib(40)}else if(d.t==="hit")vib(60);else if(d.t==="out"){if(st)st.textContent="💥 Caíste! Espera pela próxima ronda.";vib([200,80,200])}
+    if(d.t==="rd"){if(st)st.textContent=`Ronda ${d.n}/${d.of}${PTV?" — olha para a TV!":""}`;vib(40)}else if(d.t==="hit")vib(60);else if(d.t==="out"){if(st)st.textContent="💥 Caíste! Espera pela próxima ronda.";vib([200,80,200])}
     else if(d.t==="win"){if(st)st.textContent="🏆 Ganhaste a ronda!";vib([60,40,60,40,120])}else if(d.t==="cd")PCD=d.v;else if(d.t==="end"){const o=d.o||[];const k=o.findIndex(x=>x[0]===MYNAME);if(st)st.textContent=k===0?"🏆 Ganhaste o jogo!":`Fim: ${k+1}.º lugar`}else if(d.t==="lobby")MODE=null},
-  stop(){clearT();MODE=null},hostLost(){},drop(seat){const i=ROOM.seats.indexOf(seat)-1;if(G&&G.pl[i]){G.pl[i].bot=true;G.pl[i].name+=" 🤖"}},
+  stop(){clearT();MODE=null},hostLost(){},drop(seat){const i=ROOM.seats.indexOf(seat)-OFF();if(G&&G.pl[i]){G.pl[i].bot=true;G.pl[i].name+=" 🤖"}},
   onScreen(n){if(n==="game"){if(!ROOM.code){$("exitBtn").hidden=true;$("reactBtn").hidden=true;$("hubLink").hidden=false;if(!MODE)menu()}setTimeout(layout,30)}}};
 initUI({rules:`<ul><li>Abre o jogo na <b>TV ou no PC</b> e carrega em "Criar sala neste ecrã". Os jogadores entram com o telemóvel (QR code ou código).</li><li>No telemóvel, <b>arrasta o círculo</b> para onde queres que o carrinho vá. <b>TURBO</b> dá um encontrão forte (espera 2 segundos para voltar a usar).</li><li>Quem sair da pista fica de fora até à próxima ronda. Depois de 20 segundos a pista começa a <b>encolher</b>.</li><li><b>Pontos:</b> +3 para o último que ficar, +1 por cada carrinho que empurrares para fora.</li><li>Se forem poucos, junta bonecos nas opções da sala.</li></ul>`,privacy:privacyHTML("")});
 $("addBot").hidden=true;$("soloBtn").hidden=true;

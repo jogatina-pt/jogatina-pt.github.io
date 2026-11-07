@@ -400,6 +400,7 @@ body.touch .ctl{display:flex}
 @media (max-width:380px){header.top{flex-wrap:nowrap;gap:6px}.brand h1{font-size:26px}.brand a.home{font-size:0}.brand a.home::before{content:"← menu";font-size:12px}.tools{gap:5px}.tools .btn.sm{padding:4px 8px}}
 @media (max-height:560px){.foot{display:none}.who button svg{height:38px}.upg{gap:4px}}
 .brand h1.long{font-size:clamp(19px,5.4vw,30px)!important;line-height:.95}
+.pfeed{flex:none;max-height:96px;font-size:13px;padding:6px 10px}.pboard li.me,.board.small li.win{background:#ffd23f;color:#151515}.ptimer{width:100%;height:9px}.pcv{width:100%;aspect-ratio:1;max-height:50vh;border-radius:14px;background:#1b1530;display:block;margin:0 auto}
 </style>
 </head>
 <body>
@@ -415,8 +416,8 @@ body.touch .ctl{display:flex}
     </div>
   </header>
   <section id="setup" class="setup" hidden>
-    <h2>Na <span>TV</span></h2>
-    <p>Abre este jogo na TV ou no PC e cria a sala. Cada jogador entra com o telemóvel pelo QR code ou com o código.</p>
+    <h2>Com <span>amigos</span></h2>
+    <p>Cria a sala (na TV/PC ou no teu telemóvel) ou entra com o código que te deram. Os outros entram pelo QR code ou pelo link.</p>
     <label class="field"><span class="eyebrow">O teu nome</span><input id="myName" maxlength="14" autocomplete="nickname" placeholder="Ex.: Ivo"></label>
     <div class="mode" id="onlineMode">
       <div class="eyebrow">2 a 6 jogadores</div>
@@ -446,7 +447,7 @@ body.touch .ctl{display:flex}
     <div class="pad" id="pad" hidden></div>
     <div class="ov" id="ov"></div>
   </main>
-  <p class="foot gfoot">Desenha e adivinha no telemóvel; o desenho aparece no ecrã grande.</p>
+  <p class="foot gfoot">Desenha e adivinha no telemóvel; com TV, o desenho também aparece no ecrã grande.</p>
   </section>
 </div>
 <div class="modal" id="rulesModal" hidden><div class="sheet" role="dialog" aria-modal="true"><h3 id="rulesTitle">Regras</h3><div class="body" id="rulesBody"></div><div class="actions"><button class="btn" id="rulesClose" type="button">Fechar</button></div></div></div>
@@ -901,24 +902,26 @@ function initUI(o){
 /* ================= Rabiscos! — um desenha no telemóvel, aparece na TV, os outros adivinham ================= */
 const ov=$("ov"),tv=$("tv"),pad=$("pad");
 const WORDS=("casa gato cão árvore sol lua carro bicicleta avião barco peixe pássaro flor chapéu óculos guarda-chuva bola livro telemóvel televisão cadeira mesa cama relógio chave porta janela ponte castelo comboio foguetão robô fantasma bruxa dragão coroa espada pizza gelado bolo banana maçã uva cenoura ovo sardinha bacalhau francesinha galo vaca porco ovelha cavalo coelho rato elefante girafa leão cobra tartaruga polvo caracol abelha aranha borboleta nuvem chuva neve arco-íris vulcão montanha praia ilha farol tenda fogueira guitarra piano tambor microfone baliza piscina skate trotinete mota autocarro ambulância bombeiro médico palhaço pirata sereia extraterrestre esqueleto anjo coração estrela sorriso nariz olho mão pé dente bigode sanita banheira frigorífico aspirador lâmpada vela prenda balão pião boneco-de-neve abóbora morcego coruja pinguim baleia tubarão caranguejo âncora mapa tesouro bússola câmara computador teclado auscultadores sapato meia cachecol luvas mochila mala dinheiro elétrico azulejo moinho espantalho trator igreja escola hospital semáforo passadeira escada cadeado tesoura martelo serrote vassoura balde regador cogumelo cacto palmeira rosa girassol queijo pão salsicha hambúrguer batatas-fritas chávena garrafa copo garfo colher faca panela tacho fogão cão-salsicha unicórnio coelhinho rainha rei princesa cavaleiro ninja mergulhador astronauta paraquedas helicóptero submarino tanque trompete violino microscópio telescópio lupa íman pilha ficha tomada ventoinha ar-condicionado cortina almofada tapete sofá candeeiro espelho escova pente perfume batom anel colar relâmpago tornado onda castanhas manjerico sardinhada galo-de-barcelos guitarra-portuguesa").split(" ");
-let MODE=null,ST=null,ME=-1,TIMERS=[],MYNAME="";
+let MODE=null,ST=null,ME=-1,TIMERS=[],MYNAME="",TVM=1,PTV=1;const OFF=()=>TVM?1:0;
+/* sem TV, quem cria a sala também joga: as mensagens para ele são tratadas aqui mesmo */
+function up(m){if(ROOM.role==="host")ROOM.game.msg(ROOM.seats[0],m);else ROOM.send(m)}
 const later=(ms,f)=>{const t=setTimeout(f,ms);TIMERS.push(t);return t};const clearT=()=>{TIMERS.forEach(clearTimeout);TIMERS=[]};
 const norm=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
 function lev(a,b){const m=a.length,n=b.length;if(Math.abs(m-n)>2)return 9;const d=[];for(let i=0;i<=m;i++){d[i]=[i]}for(let j=0;j<=n;j++)d[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[m][n]}
-function bcast(m){ROOM.seats.forEach((s,k)=>{if(k>0)ROOM.sendTo(s,m)})}
+function bcast(m){ROOM.seats.forEach((s,k)=>{if(k>0)ROOM.sendTo(s,m)});if(!TVM&&ROOM.role==="host")ROOM.game.client(m)}
 const PCOL=["#ff5d8f","#3a86ff","#ffbe0b","#2fbf71","#9b5de5","#ff8c1a","#06d6a0","#e63946","#7ad7ff","#8d5a34","#bfe39a","#f15bb5"];
 /* ---------- anfitrião ---------- */
-function cleanOpts(o){o=o||{};const r=+o.r,t=+o.t;return{r:[1,2,3].includes(r)?r:2,t:[60,80,100].includes(t)?t:80}}
+function cleanOpts(o){o=o||{};const r=+o.r,t=+o.t,tv=o.tv===0||o.tv==="0"?0:1;return{tv,r:[1,2,3].includes(r)?r:2,t:[60,80,100].includes(t)?t:80}}
 function renderOpts(el,o,host){o=cleanOpts(o);el.innerHTML=`<div class="optrow"><span class="eyebrow">Voltas</span><div class="seg">${[1,2,3].map(n=>`<button type="button" class="${o.r===n?"on":""}" data-k="r" data-v="${n}" ${host?"":"disabled"}>${n}</button>`).join("")}</div></div>
-  <div class="optrow"><span class="eyebrow">Tempo para desenhar</span><div class="seg">${[60,80,100].map(n=>`<button type="button" class="${o.t===n?"on":""}" data-k="t" data-v="${n}" ${host?"":"disabled"}>${n} s</button>`).join("")}</div></div><p class="note">📺 Este ecrã mostra o desenho; cada um desenha e adivinha no telemóvel. Mínimo 2 jogadores.</p>`;
+  <div class="optrow"><span class="eyebrow">Tempo para desenhar</span><div class="seg">${[60,80,100].map(n=>`<button type="button" class="${o.t===n?"on":""}" data-k="t" data-v="${n}" ${host?"":"disabled"}>${n} s</button>`).join("")}</div></div><p class="note">${o.tv?"":"📱 Sem TV: o desenho aparece no telemóvel de cada um. "}${o.tv?"📺 Este ecrã mostra o desenho; cada um desenha e adivinha no telemóvel. Mínimo 2 jogadores.":""}</p>`;
   if(host)el.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{ROOM.opts=cleanOpts({...o,[b.dataset.k]:b.dataset.v});lobbyBroadcast()})}
-function beginGame(seats){const O=cleanOpts(ROOM.opts);const pl=seats.slice(1).map((s,i)=>({i,name:cleanName(s.name)||"Jogador",sc:0,col:PCOL[i%PCOL.length]}));
+function beginGame(seats){const O=cleanOpts(ROOM.opts);TVM=O.tv;ROOM.game.minp=TVM?3:2;const pl=seats.slice(OFF()).map((s,i)=>({i,name:cleanName(s.name)||"Jogador",sc:0,col:PCOL[i%PCOL.length]}));
   const order=[];for(let r=0;r<O.r;r++)for(const p of pl)order.push(p.i);ST={pl,order,turn:-1,O,strokes:[],feed:[],used:new Set()};MODE="tv";showScreen("game");pad.hidden=true;tv.hidden=false;ov.hidden=true;
-  seats.forEach((s,k)=>{if(k>0)ROOM.sendTo(s,{t:"go",me:k-1,name:pl[k-1].name})});tvFrame();later(1500,nextTurn)}
+  pl.forEach(p=>sendTo(p.i,{t:"go",me:p.i,name:p.name,tv:TVM}));tvFrame();later(1500,nextTurn)}
 function nextTurn(){ST.turn++;while(ST.turn<ST.order.length&&ST.pl[ST.order[ST.turn]].gone)ST.turn++;if(ST.turn>=ST.order.length)return final();
   const d=ST.pl[ST.order[ST.turn]];ST.drawer=d.i;ST.word=null;ST.strokes=[];ST.guessed={};ST.ph="choose";const opts=[];while(opts.length<3){const w=WORDS[Math.floor(Math.random()*WORDS.length)];if(!opts.includes(w)&&!ST.used.has(w))opts.push(w)}ST.opts=opts;
   sendTo(d.i,{t:"choose",o:opts});bcast({t:"turn",drawer:d.i,name:d.name});ST.feed=[{s:`✏️ ${d.name} está a escolher a palavra…`}];tvFrame();later(15000,()=>{if(ST.ph==="choose")pickWord(opts[0])})}
-function sendTo(i,m){const s=ROOM.seats[i+1];if(s)ROOM.sendTo(s,m)}
+function sendTo(i,m){const k=i+OFF();if(k===0){ROOM.game.client(m);return}const s=ROOM.seats[k];if(s)ROOM.sendTo(s,m)}
 function pickWord(w){if(ST.ph!=="choose"||!ST.opts.includes(w))return;clearT();ST.word=w;ST.used.add(w);ST.ph="draw";ST.t0=performance.now();ST.hint=[...w].map(ch=>/[\s-]/.test(ch)?ch:"_");ST.feed=[{s:`✏️ ${ST.pl[ST.drawer].name} está a desenhar!`}];
   sendTo(ST.drawer,{t:"draw",w,time:ST.O.t});bcast({t:"guessing",drawer:ST.drawer,len:hintStr(),time:ST.O.t});SFXR.go();tvFrame();
   const T=ST.O.t*1000;later(T*.45,()=>revealLetter());later(T*.7,()=>revealLetter());later(T,()=>endTurn("time"))}
@@ -930,15 +933,15 @@ function hostGuess(i,txt){if(ST.ph!=="draw"||i===ST.drawer||ST.guessed[i]!=null|
   const close=lev(g,w)<=1&&w.length>3;ST.feed.push({s:`${p.name}: ${txt.slice(0,24)}`,c:p.col});if(ST.feed.length>9)ST.feed.shift();if(close)sendTo(i,{t:"close"});tvFrame()}
 function endTurn(why){if(ST.ph!=="draw")return;ST.ph="end";const d=ST.pl[ST.drawer];bcast({t:"turnEnd",w:ST.word});sendTo(ST.drawer,{t:"turnEnd",w:ST.word});
   ST.feed.push({s:`A palavra era: ${ST.word.toUpperCase()}`,c:"#ffd23f"});tvFrame(true);SFXR.end();later(5000,nextTurn)}
-function final(){ST.ph="final";const o=ST.pl.slice().sort((a,b)=>b.sc-a.sc);tv.innerHTML=`<div class="tvc"><h2 class="qq">Resultado final</h2><ol class="board">${o.map((p,i)=>`<li class="${i===0?"win":""}"><span>${["🥇","🥈","🥉"][i]||(i+1)+"."} ${esc(p.name)}</span><b>${p.sc}</b></li>`).join("")}</ol></div>`;
+function final(){ST.ph="final";const o=ST.pl.slice().sort((a,b)=>b.sc-a.sc);if(TVM)tv.innerHTML=`<div class="tvc"><h2 class="qq">Resultado final</h2><ol class="board">${o.map((p,i)=>`<li class="${i===0?"win":""}"><span>${["🥇","🥈","🥉"][i]||(i+1)+"."} ${esc(p.name)}</span><b>${p.sc}</b></li>`).join("")}</ol></div>`;
   bcast({t:"end",o:o.map(p=>[p.name,p.sc])});SFXR.end();later(1500,()=>showOv(`<div class="panel"><h2>Fim!</h2><button class="btn" type="button" data-a="again">Jogar outra vez ▶</button><button class="btn ghost" type="button" data-a="lobby">Voltar à sala</button></div>`))}
 /* traços: o telemóvel de quem desenha envia pedaços; o anfitrião junta e reenvia aos outros */
 function hostStroke(i,d){if(i!==ST.drawer||ST.ph!=="draw")return;if(d.clear){ST.strokes=[]}else if(d.undo){ST.strokes.pop()}else{for(const s of d.s||[]){let st=ST.strokes.find(x=>x.id===s[0]);if(!st){st={id:s[0],c:s[1],w:s[2],p:[]};ST.strokes.push(st)}st.p.push(...s[3])}}
-  paintStrokes($("tvc"),ST.strokes);ROOM.seats.forEach((s,k)=>{if(k>0&&k-1!==i)ROOM.sendTo(s,{t:"st",d})})}
+  if(TVM)paintStrokes($("tvc"),ST.strokes);ST.pl.forEach(p=>{if(p.i!==i)sendTo(p.i,{t:"st",d})})}
 function paintStrokes(c,strokes,mini){if(!c)return;const g=c.getContext("2d"),W=c.width,H=c.height;g.fillStyle="#fff";g.fillRect(0,0,W,H);g.lineCap="round";g.lineJoin="round";
   for(const s of strokes){g.strokeStyle=s.c;g.lineWidth=s.w*W/600;g.beginPath();for(let k=0;k<s.p.length;k+=2){const x=s.p[k]*W,y=s.p[k+1]*H;if(k===0){g.moveTo(x,y);g.lineTo(x+.1,y)}else g.lineTo(x,y)}g.stroke()}}
 /* ---------- ecrã grande ---------- */
-function tvFrame(showWord){const d=ST.drawer!=null?ST.pl[ST.drawer]:null;const left=ST.ph==="draw"?Math.max(0,Math.ceil(ST.O.t-(performance.now()-ST.t0)/1000)):"";
+function tvFrame(showWord){if(!TVM){if(ST&&ST.ph!=="final")bcast({t:"feed",f:ST.feed.slice(-4),b:ST.pl.slice().sort((a,b)=>b.sc-a.sc).map(p=>[p.name,p.sc,p.col,ST.guessed&&ST.guessed[p.i]!=null?1:0,p.i===ST.drawer?1:0])});return}const d=ST.drawer!=null?ST.pl[ST.drawer]:null;const left=ST.ph==="draw"?Math.max(0,Math.ceil(ST.O.t-(performance.now()-ST.t0)/1000)):"";
   if(!$("tvc")){tv.innerHTML=`<div class="tvd"><div class="tvl"><div class="tvhead" id="tvh"></div><canvas id="tvc" width="1200" height="900"></canvas></div><div class="tvr"><ol class="board small" id="tvb"></ol><ul class="feed" id="tvf"></ul></div></div>`}
   $("tvh").innerHTML=d?`<span class="pill">✏️ ${esc(d.name)}</span><span class="whint">${showWord||ST.ph==="end"?esc((ST.word||"").toUpperCase()):esc(ST.hint?hintStr():"")}</span><span class="pill" id="tvt">${left?"⏱ "+left:""}</span>`:"";
   $("tvb").innerHTML=ST.pl.slice().sort((a,b)=>b.sc-a.sc).map(p=>`<li><span><i class="dot" style="background:${p.col}"></i>${esc(p.name)}${ST.guessed&&ST.guessed[p.i]!=null?" ✅":""}${p.i===ST.drawer?" ✏️":""}</span><b>${p.sc}</b></li>`).join("");
@@ -946,12 +949,13 @@ function tvFrame(showWord){const d=ST.drawer!=null?ST.pl[ST.drawer]:null;const l
 setInterval(()=>{if(MODE==="tv"&&ST&&ST.ph==="draw"&&$("tvt"))$("tvt").textContent="⏱ "+Math.max(0,Math.ceil(ST.O.t-(performance.now()-ST.t0)/1000))},500);
 /* ---------- telemóvel ---------- */
 let DR=null;/* estado de quem desenha */let VIEW=[];
+let LASTB=null;function padBoard(o){return`<ol class="board small pboard">${o.map((x,i)=>`<li class="${x[0]===MYNAME?"me":""}"><span>${["🥇","🥈","🥉"][i]||(i+1)+"."} ${esc(x[0])}${x[3]?" ✅":""}${x[4]?" ✏️":""}</span><b>${x[1]}</b></li>`).join("")}</ol>`}
 function padShow(h){tv.hidden=true;pad.hidden=false;pad.innerHTML=h}
 function padChoose(o){padShow(`<div class="ptop"><b>${esc(MYNAME)}</b><span>É a tua vez de desenhar!</span></div><p class="pq">Escolhe uma palavra:</p><div class="wchoice">${o.map(w=>`<button type="button" data-w="${esc(w)}">${esc(w)}</button>`).join("")}</div>`);
-  pad.querySelectorAll("[data-w]").forEach(b=>b.onclick=()=>{ROOM.send({t:"pick",w:b.dataset.w});pad.innerHTML=`<div class="pbig">…</div>`})}
+  pad.querySelectorAll("[data-w]").forEach(b=>b.onclick=()=>{const w=b.dataset.w;pad.innerHTML=`<div class="pbig">…</div>`;up({t:"pick",w})})}
 const DCOLS=["#151515","#e63946","#ff8c1a","#ffd23f","#2fbf71","#3a86ff","#9b5de5","#8d5a34","#ffb3c1","#ffffff"];
 function padDraw(w,time){DR={c:"#151515",w:8,id:0,cur:null,pend:[],strokes:[],end:performance.now()+time*1000};
-  padShow(`<div class="ptop"><b>Desenha: ${esc(w.toUpperCase())}</b><span id="dtime"></span></div><canvas id="dc" width="800" height="600"></canvas>
+  padShow(`<div class="ptop"><b>Desenha: ${esc(w.toUpperCase())}</b><span id="dtime"></span></div><canvas id="dc" width="800" height="600"></canvas>${PTV?"":`<ul class="feed pfeed" id="pf"></ul>`}
    <div class="dtools"><div class="cols">${DCOLS.map(c=>`<button type="button" data-c="${c}" style="background:${c}" aria-label="cor"></button>`).join("")}</div><div class="sizes">${[4,8,16,30].map(s=>`<button type="button" data-s="${s}"><i style="width:${Math.max(4,s/2)}px;height:${Math.max(4,s/2)}px"></i></button>`).join("")}<button type="button" data-u="1">↶</button><button type="button" data-x="1">🗑️</button></div></div><p class="note">Não escrevas letras nem números! 😉</p>`);
   const c=$("dc");const pos=e=>{const r=c.getBoundingClientRect();return[Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),Math.max(0,Math.min(1,(e.clientY-r.top)/r.height))]};
   c.addEventListener("pointerdown",e=>{e.preventDefault();c.setPointerCapture(e.pointerId);const [x,y]=pos(e);DR.cur={id:++DR.id,c:DR.c,w:DR.w,p:[x,y]};DR.strokes.push(DR.cur);DR.pend.push([DR.cur.id,DR.cur.c,DR.cur.w,[x,y]]);paintStrokes(c,DR.strokes)});
@@ -959,27 +963,28 @@ function padDraw(w,time){DR={c:"#151515",w:8,id:0,cur:null,pend:[],strokes:[],en
   const up=()=>{DR.cur=null};c.addEventListener("pointerup",up);c.addEventListener("pointercancel",up);
   pad.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{DR.c=b.dataset.c;pad.querySelectorAll("[data-c]").forEach(x=>x.classList.toggle("on",x===b))});
   pad.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{DR.w=+b.dataset.s;pad.querySelectorAll("[data-s]").forEach(x=>x.classList.toggle("on",x===b))});
-  pad.querySelector("[data-u]").onclick=()=>{flushD();DR.strokes.pop();paintStrokes(c,DR.strokes);ROOM.send({t:"st",undo:1})};pad.querySelector("[data-x]").onclick=()=>{flushD();DR.strokes=[];paintStrokes(c,[]);ROOM.send({t:"st",clear:1})};
+  pad.querySelector("[data-u]").onclick=()=>{flushD();DR.strokes.pop();paintStrokes(c,DR.strokes);up({t:"st",undo:1})};pad.querySelector("[data-x]").onclick=()=>{flushD();DR.strokes=[];paintStrokes(c,[]);up({t:"st",clear:1})};
   paintStrokes(c,[])}
-function flushD(){if(DR&&DR.pend.length){ROOM.send({t:"st",s:DR.pend});DR.pend=[]}}
+function flushD(){if(DR&&DR.pend.length){const s=DR.pend;DR.pend=[];up({t:"st",s})}}
 setInterval(()=>{if(DR){flushD();const t=$("dtime");if(t)t.textContent="⏱ "+Math.max(0,Math.ceil((DR.end-performance.now())/1000))}},120);
 function padGuess(len,time,drawerName){DR=null;VIEW=[];padShow(`<div class="ptop"><b>${esc(MYNAME)}</b><span>${esc(drawerName||"")} está a desenhar</span></div><p class="hintp" id="ph">${esc(len)}</p><canvas id="gc" width="400" height="300"></canvas>
-  <form class="gform" id="gf"><input id="gi" autocomplete="off" autocapitalize="none" placeholder="Escreve o teu palpite…" maxlength="30"><button class="btn" type="submit">Enviar</button></form><p class="note" id="gn">Olha para a TV e escreve o que achas que é!</p>`);
-  paintStrokes($("gc"),[]);$("gf").addEventListener("submit",e=>{e.preventDefault();const v=$("gi").value.trim();if(!v)return;ROOM.send({t:"g",v});$("gi").value="";$("gi").focus()})}
+  <form class="gform" id="gf"><input id="gi" autocomplete="off" autocapitalize="none" placeholder="Escreve o teu palpite…" maxlength="30"><button class="btn" type="submit">Enviar</button></form><p class="note" id="gn">${PTV?"Olha para a TV e escreve o que achas que é!":"Escreve o que achas que é!"}</p>${PTV?"":`<ul class="feed pfeed" id="pf"></ul>`}`);
+  paintStrokes($("gc"),[]);$("gf").addEventListener("submit",e=>{e.preventDefault();const v=$("gi").value.trim();if(!v)return;up({t:"g",v});$("gi").value="";$("gi").focus()})}
 /* ---------- sons ---------- */
 const SFXR={go:()=>[523,784].forEach((f,i)=>tone(f,.1,{type:"triangle",v:.06,at:i*.08})),ok:()=>[784,1047,1319].forEach((f,i)=>tone(f,.1,{type:"square",v:.05,at:i*.07})),end:()=>[659,523,392].forEach((f,i)=>tone(f,.14,{type:"triangle",v:.06,at:i*.1}))};
 /* ---------- menus ---------- */
 function showOv(h){ov.innerHTML=h;ov.hidden=false}
 function menu(){MODE=null;tv.hidden=true;pad.hidden=true;showOv(`<div class="panel"><h2>Rabiscos!</h2><p>Um desenha no <b>telemóvel</b>, o desenho aparece na <b>TV ou no PC</b> e os outros escrevem o que acham que é. Quem adivinha mais depressa ganha mais pontos!</p>
-  <button class="btn" type="button" data-a="tv">📺 Criar sala neste ecrã</button><button class="btn ghost" type="button" data-a="pj">📱 Tenho um código: entrar como jogador</button><p class="note">Os jogadores entram com o telemóvel pelo QR code ou pelo código. ${WORDS.length} palavras em português.</p></div>`)}
+  <button class="btn" type="button" data-a="tv">📺 Criar sala neste ecrã (TV/PC)</button><button class="btn" type="button" data-a="notv">📱 Jogar sem TV (todos no telemóvel)</button><button class="btn ghost" type="button" data-a="pj">📱 Tenho um código: entrar como jogador</button><p class="note">Os jogadores entram com o telemóvel pelo QR code ou pelo código. ${WORDS.length} palavras em português.</p></div>`)}
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;unlockAudio();const a=b.dataset.a;
   if(a==="pj"){showScreen("setup");if($("myName").value==="TV")$("myName").value="";setTimeout(()=>{const c=$("joinCode");c&&c.focus()},60);return}
-  if(a==="tv"){showScreen("setup");if(!$("myName").value)$("myName").value="TV";setTimeout(()=>$("hostBtn").click(),50)}
+  if(a==="notv"){TVM=0;ROOM.game.minp=2;ROOM.opts=cleanOpts({...(ROOM.opts||{}),tv:0});showScreen("setup");if($("myName").value==="TV")$("myName").value="";setTimeout(()=>{const c=$("myName");c&&c.focus()},60);return}
+  if(a==="tv"){TVM=1;ROOM.game.minp=3;ROOM.opts=cleanOpts({...(ROOM.opts||{}),tv:1});showScreen("setup");if(!$("myName").value)$("myName").value="TV";setTimeout(()=>$("hostBtn").click(),50)}
   else if(a==="again"){ov.hidden=true;clearT();tv.innerHTML="";beginGame(ROOM.seats)}else if(a==="lobby"){clearT();bcast({t:"lobby"});MODE=null;ROOM.backToLobby()}});
 ROOM.game={id:"rabiscos",title:"Rabiscos!",maxp:13,minp:3,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"São precisos pelo menos 2 jogadores com telemóvel (lê o QR code).",
   start(seats){tv.innerHTML="";beginGame(seats)},
-  msg(seat,d){if(!d||!ST)return;const i=ROOM.seats.indexOf(seat)-1;if(i<0)return;if(d.t==="pick"&&i===ST.drawer)pickWord(String(d.w||""));else if(d.t==="st")hostStroke(i,d);else if(d.t==="g")hostGuess(i,String(d.v||"").slice(0,30))},
-  client(d){if(!d)return;if(d.t==="go"){ME=d.me|0;MYNAME=cleanName(d.name);MODE="pad";showScreen("game");ov.hidden=true;padShow(`<div class="pbig">📺 Olha para a TV!</div>`);return}
+  msg(seat,d){if(!d||!ST)return;const i=ROOM.seats.indexOf(seat)-OFF();if(i<0)return;if(d.t==="pick"&&i===ST.drawer)pickWord(String(d.w||""));else if(d.t==="st")hostStroke(i,d);else if(d.t==="g")hostGuess(i,String(d.v||"").slice(0,30))},
+  client(d){if(!d)return;if(d.t==="go"){ME=d.me|0;MYNAME=cleanName(d.name);PTV=d.tv===0?0:1;MODE="pad";showScreen("game");ov.hidden=true;padShow(PTV?`<div class="pbig">📺 Olha para a TV!</div>`:`<div class="pbig">✏️ Prepara-te!<small>À vez, um desenha e os outros adivinham no telemóvel.</small></div>`);return}
     if(MODE!=="pad")return;
     if(d.t==="choose")padChoose(d.o||[]);else if(d.t==="draw")padDraw(String(d.w),d.time|0);
     else if(d.t==="turn"&&d.drawer!==ME){DR=null;padShow(`<div class="pbig">✏️ ${esc(d.name)} está a escolher…</div>`);pad.dataset.dn=d.name}
@@ -988,10 +993,11 @@ ROOM.game={id:"rabiscos",title:"Rabiscos!",maxp:13,minp:3,maxBots:0,botNames:[],
     else if(d.t==="st"&&$("gc")){const s=d.d;if(s.clear)VIEW=[];else if(s.undo)VIEW.pop();else for(const q of s.s||[]){let st=VIEW.find(x=>x.id===q[0]);if(!st){st={id:q[0],c:q[1],w:q[2],p:[]};VIEW.push(st)}st.p.push(...q[3])}paintStrokes($("gc"),VIEW)}
     else if(d.t==="ok"){padShow(`<div class="pbig good">✅ Acertaste!<small>${esc(String(d.w).toUpperCase())} · +${d.p} pontos</small></div>`);try{navigator.vibrate&&navigator.vibrate(40)}catch(e){}}
     else if(d.t==="close"&&$("gn")){$("gn").textContent="🔥 Quase! Estás muito perto.";$("gn").classList.add("hot")}
-    else if(d.t==="turnEnd"){DR=null;padShow(`<div class="pbig">A palavra era<small>${esc(String(d.w).toUpperCase())}</small></div>`)}
-    else if(d.t==="end"){const o=d.o||[];const k=o.findIndex(x=>x[0]===MYNAME);padShow(`<div class="pbig">${k===0?"🏆 Ganhaste!":"Fim do jogo"}<small>${k>=0?(k+1)+".º lugar · "+o[k][1]+" pontos":""}</small></div>`)}
+    else if(d.t==="turnEnd"){DR=null;padShow(`<div class="pbig">A palavra era<small>${esc(String(d.w).toUpperCase())}</small></div>${!PTV&&LASTB?padBoard(LASTB):""}`)}
+    else if(d.t==="feed"){LASTB=d.b;const f=$("pf");if(f)f.innerHTML=(d.f||[]).map(x=>`<li style="color:${x.c||"inherit"}">${esc(x.s)}</li>`).join("")}
+    else if(d.t==="end"){const o=d.o||[];const k=o.findIndex(x=>x[0]===MYNAME);padShow(`<div class="pbig">${k===0?"🏆 Ganhaste!":"Fim do jogo"}<small>${k>=0?(k+1)+".º lugar · "+o[k][1]+" pontos":""}</small></div>${PTV?"":padBoard(o.map(x=>[x[0],x[1]]))}`)}
     else if(d.t==="lobby"){MODE=null;DR=null}},
-  stop(){clearT();MODE=null;DR=null},hostLost(){},drop(seat){const i=ROOM.seats.indexOf(seat)-1;if(ST&&ST.pl[i]){ST.pl[i].gone=1;if(ST.drawer===i&&ST.ph!=="end"){clearT();ST.ph="draw";endTurn("gone")}}},
+  stop(){clearT();MODE=null;DR=null},hostLost(){},drop(seat){const i=ROOM.seats.indexOf(seat)-OFF();if(ST&&ST.pl[i]){ST.pl[i].gone=1;if(ST.drawer===i&&ST.ph!=="end"){clearT();ST.ph="draw";endTurn("gone")}}},
   onScreen(n){if(n==="game"&&!ROOM.code){$("exitBtn").hidden=true;$("reactBtn").hidden=true;$("hubLink").hidden=false;if(!MODE)menu()}}};
 initUI({rules:`<ul><li>Abre o jogo na <b>TV ou no PC</b> e carrega em "Criar sala neste ecrã". Os jogadores entram com o telemóvel (QR code ou código).</li><li>À vez, cada um escolhe uma de 3 palavras e <b>desenha-a no telemóvel</b>. O desenho aparece na TV enquanto é feito.</li><li>Os outros <b>escrevem palpites</b> no telemóvel. Não faz mal falhar acentos ou maiúsculas. Se estiveres quase, o jogo avisa.</li><li>Com o tempo vão aparecendo letras da palavra como pista.</li><li><b>Pontos:</b> quem adivinha ganha mais se for rápido (e os 3 primeiros têm bónus); quem desenha ganha 80 por cada pessoa que acerta.</li><li>Proibido escrever letras ou números no desenho! 😉</li></ul>`,privacy:privacyHTML("")});
 $("addBot").hidden=true;$("soloBtn").hidden=true;
