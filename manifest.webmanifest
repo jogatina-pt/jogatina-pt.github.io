@@ -29,6 +29,18 @@
  "description": "Jogos para jogar com amigos, cada um no seu telemóvel.",
  "shortcuts": [
   {
+   "name": "Magnata!",
+   "short_name": "Magnata!",
+   "url": "magnata/",
+   "icons": [
+    {
+     "src": "magnata/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
    "name": "Sabichão!",
    "short_name": "Sabichão!",
    "url": "quiz/",
