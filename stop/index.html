@@ -184,6 +184,10 @@ input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shado
 .bigstop b{font-family:var(--display);font-weight:400;font-size:min(30vw,170px);color:#e0483e;-webkit-text-stroke:5px #151515;paint-order:stroke fill;text-shadow:7px 7px 0 #151515;line-height:.9}
 .bigstop span{font-family:var(--display);font-size:28px;background:#151515;color:#fff;border-radius:999px;padding:2px 14px}
 .bigstop.go{animation:bigin 1.6s ease forwards}@keyframes bigin{0%{transform:scale(.3);opacity:0}15%{transform:scale(1.1);opacity:1}75%{opacity:1}100%{opacity:0}}
+/* botões de opção: o escolhido tem de se ver bem */
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{background:var(--surface,#fff);color:var(--ink,#151515);border-radius:12px;padding:7px 12px;font-weight:800;cursor:pointer;transition:transform .08s}
+.seg button.on{background:var(--accent,#ffd23f);color:var(--accent-ink,#151515);transform:translate(2px,2px);box-shadow:0 0 0 var(--stroke)!important}.seg button.on::before{content:"✓ "}
+.seg button:disabled{cursor:default}.seg button:disabled:not(.on){opacity:.55}
 /* ===== Estilo banda desenhada (comum a todos os jogos) ===== */
 @font-face{font-family:"Bangers";font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/bangers.woff2) format("woff2")}
 :root{--display:"Bangers","Bowlby One",Impact,sans-serif;--stroke:#151515;--pop:#ffd23f;--pop-ink:#151515;

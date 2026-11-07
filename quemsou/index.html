@@ -248,6 +248,10 @@ input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shado
 .modeswitch{display:flex;gap:8px;flex-wrap:wrap}
 .modeswitch a,.modeswitch span{border:3px solid var(--stroke);box-shadow:2px 2px 0 var(--stroke);border-radius:999px;padding:6px 14px;font-weight:800;font-size:14px;text-decoration:none;color:var(--ink);background:var(--surface)}
 .modeswitch span{background:var(--accent);color:var(--accent-ink)}
+/* botões de opção: o escolhido tem de se ver bem */
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{background:var(--surface,#fff);color:var(--ink,#151515);border-radius:12px;padding:7px 12px;font-weight:800;cursor:pointer;transition:transform .08s}
+.seg button.on{background:var(--accent,#ffd23f);color:var(--accent-ink,#151515);transform:translate(2px,2px);box-shadow:0 0 0 var(--stroke)!important}.seg button.on::before{content:"✓ "}
+.seg button:disabled{cursor:default}.seg button:disabled:not(.on){opacity:.55}
 /* ===== Estilo banda desenhada (comum a todos os jogos) ===== */
 @font-face{font-family:"Bangers";font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/bangers.woff2) format("woff2")}
 :root{--display:"Bangers","Bowlby One",Impact,sans-serif;--stroke:#151515;--pop:#ffd23f;--pop-ink:#151515;
