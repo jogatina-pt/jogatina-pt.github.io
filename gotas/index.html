@@ -875,7 +875,7 @@ let _ctx=null,MODE=null,STATE="menu",ME=0,DIFF=1,RULE=0,G=null,CHOOSING=0;
 function newGame(c0,c1,names){return{p:[mkP(0,c0,names[0]),mkP(1,c1,names[1])],b:{x:W*.25,y:200,vx:0,vy:0,sp:0},sc:[0,0],t:RULE===1?120:0,ph:"kick",pt:1.4,msg:"",last:-1,camp:[0,0],tick:0}}
 function mkP(i,c,name){const C=CHARS[c];return{i,c,name,x:i?W*.75:W*.25,y:GY,vx:0,vy:0,R:48*C.sz,R0:48*C.sz,in:{l:0,r:0,j:0,k:0},look:i?-1:1,pw:0,e:{}}}
 function kickoff(g,side){for(const p of g.p){p.rx=null}/* a bola cai do lado de quem sofreu */g.b={x:side?W*.75:W*.25,y:160,vx:0,vy:0,sp:0};g.p[0].x=W*.25;g.p[1].x=W*.75;for(const p of g.p){p.y=GY;p.vx=p.vy=0}g.ph="kick";g.pt=1.1;g.camp=[0,0]}
-function stepGame(g,dt){g.tick++;
+function stepGame(g,dt){g.tick++;g.skip1=(MODE==="online"&&g===G)?2:0;
   if(g.ph==="goal"){g.pt-=dt;for(let s=0;s<4;s++)stepBall(g,dt/4,true);if(g.pt<=0){if(over(g)){g.ph="end";return}kickoff(g,g.last===0?1:0)}return}
   if(g.ph==="end")return;
   if(g.ph==="kick"){g.pt-=dt;for(const p of g.p)stepP(g,p,dt);if(g.pt>0)return;g.ph="play"}
@@ -897,7 +897,7 @@ function stepP(g,p,dt){if(p.rx!=null&&g===G&&MODE==="online"&&g.ph==="play"){p.r
 function stepBall(g,dt,ghost){const b=g.b;const px0=b.x,py0=b.y;if(!ghost&&g.frz>0){g.frz-=dt;b.vx=0;b.vy=0;if(g.frz<=0)b.vy=60;b.ice=1;return}b.ice=0;
   if(!ghost)for(const p of g.p)if(p.e.mag){const dx=p.x-b.x,dy=p.y-p.R-26-b.y,d=Math.hypot(dx,dy)||1;b.vx+=dx/d*1500*dt;b.vy+=dy/d*1500*dt-900*dt*.6}
   b.vy+=900*dt;b.x+=b.vx*dt;b.y+=b.vy*dt;b.sp+=b.vx*dt/BR;
-  if(!ghost)for(const p of g.p){const dx=b.x-p.x,dy=b.y-p.y,d=Math.hypot(dx,dy),R=p.R+BR;
+  if(!ghost)for(const p of g.p){if(g.skip1&&p.i===g.skip1-1)continue;const dx=b.x-p.x,dy=b.y-p.y,d=Math.hypot(dx,dy),R=p.R+BR;
     if(d<R&&dy<BR*.6){const nx=dx/(d||1),ny=dy/(d||1);if(dy>-2){/* lado da gota (por baixo do meio) */b.x=p.x+Math.sign(dx||1)*R;b.vx=Math.sign(dx||1)*Math.abs(b.vx-p.vx)*.8+p.vx}
       else{b.x=p.x+nx*R;b.y=p.y+ny*R;const rvx=b.vx-p.vx,rvy=b.vy-p.vy,vn=rvx*nx+rvy*ny;if(vn<0){b.vx-=1.7*vn*nx;b.vy-=1.7*vn*ny}b.vx+=p.vx*.18;b.vy+=Math.min(0,p.vy)*.22;g.hit=p.i;p.pw=Math.min(1,p.pw+.04);
         if(p.e.fire){delete p.e.fire;const tx=p.i?GW*.5:W-GW*.5,dx=tx-b.x;b.vx=Math.sign(dx)*900;b.vy=-Math.min(420,Math.abs(dx)*.45);b.fire=1.2}}}}
@@ -1009,7 +1009,7 @@ function b_(v){return v?1:0}
 function packG(g){const r=v=>Math.round(v);return{t:"st",ht:+(g.tick/60).toFixed(3),b:[r(g.b.x),r(g.b.y),r(g.b.vx),r(g.b.vy)],p:g.p.map(p=>[r(p.x),r(p.y),r(p.vx),r(p.vy),+p.pw.toFixed(2),r(p.R),Object.keys(p.e).join(",")]),bf:[b_(g.b.fire),g.frz>0?1:0],pev:g.pev||0,plast:g.plast,sc:g.sc,ph:g.ph,pt:+g.pt.toFixed(2),tm:+g.t.toFixed(1),ev:g.ev||0,last:g.last,msg:g.msg,camp:g.camp.map(v=>+v.toFixed(1)),gold:g.gold?1:0}}
 /* quem entra na sala: a própria gota é local; a bola e a outra gota são mostradas "com um pequeno atraso",
    a deslizar entre as posições recebidas (nunca saltam, mesmo que as mensagens cheguem aos solavancos) */
-const DELAY=.14;
+const DELAY=.14;let HITN=0;
 function clientSim(dt){const v=NET.view;if(!v)return;v.client=1;NET.acc=(NET.acc||0)+dt;
   while(NET.acc>=TICK){NET.acc-=TICK;const me=v.p[ME];me.in={l:IN[ME].l,r:IN[ME].r,j:IN[ME].j,k:0};const E=me.e;me.e={};const R=me.R;stepP(v,me,TICK);me.R=R;me.e=E}
   const B=NET.buf||[];if(!B.length)return;const last=B[B.length-1];
@@ -1019,9 +1019,19 @@ function clientSim(dt){const v=NET.view;if(!v)return;v.client=1;NET.acc=(NET.acc
   if(A){const u=(rt-A.t)/Math.max(1e-4,C.t-A.t);const jump=Math.hypot(C.b[0]-A.b[0],C.b[1]-A.b[1])>220;/* golo/recomeço: não desliza */
     bx=jump?C.b[0]:A.b[0]+(C.b[0]-A.b[0])*u;by=jump?C.b[1]:A.b[1]+(C.b[1]-A.b[1])*u;ox=A.o[0]+(C.o[0]-A.o[0])*u;oy=A.o[1]+(C.o[1]-A.o[1])*u;b.vx=C.b[2];b.vy=C.b[3];o.vx=C.o[2];o.vy=C.o[3]}
   else{const S=rt<B[0].t?B[0]:last,e=Math.max(0,Math.min(.12,rt-S.t));bx=S.b[0]+S.b[2]*e;by=Math.min(GY-BR,S.b[1]+S.b[3]*e+450*e*e);ox=S.o[0]+S.o[2]*e;oy=Math.min(GY,S.o[1]+S.o[3]*e);b.vx=S.b[2];b.vy=S.b[3]}
-  b.sp+=(bx-b.x)/BR;b.x=bx;b.y=by;o.x=ox;o.y=oy;
+  if(NET.lb>0){/* bola local depois de um toque nosso */NET.lb-=dt;const me=v.p[ME];NET.lacc=(NET.lacc||0)+dt;v.skip1=ME+1;
+    while(NET.lacc>=TICK){NET.lacc-=TICK;const keep=v.p[1-ME];v.p[1-ME]={...keep,x:-9999};for(let s=0;s<4;s++)stepBall(v,TICK/4,false);v.p[1-ME]=keep;if(myHit(v))sendHit(v)}
+    if(NET.lb<=0){NET.eb=[b.x-bx,b.y-by]}o.x=ox;o.y=oy;}
+  else{const e=NET.eb||[0,0];const k=Math.min(1,dt*6);e[0]-=e[0]*k;e[1]-=e[1]*k;b.sp+=(bx+e[0]-b.x)/BR;b.x=bx+e[0];b.y=by+e[1];o.x=ox;o.y=oy;
+    if(v.ph==="play"&&myHit(v))sendHit(v)}
+
   const me=v.p[ME],qm=last.me;if(v.ph!=="play"&&qm){me.x=qm[0];me.y=qm[1]}if(me.e.stun&&qm){me.x=qm[0]}
   for(const p of v.p)p.look=b.x>p.x?1:-1}
+function myHit(v){const b=v.b,p=v.p[ME];const dx=b.x-p.x,dy=b.y-p.y,d=Math.hypot(dx,dy),R=p.R+BR;if(!(d<R&&dy<BR*.6))return false;
+  const nx=dx/(d||1),ny=dy/(d||1);if(dy>-2){b.x=p.x+Math.sign(dx||1)*R;b.vx=Math.sign(dx||1)*Math.abs(b.vx-p.vx)*.8+p.vx}
+  else{b.x=p.x+nx*R;b.y=p.y+ny*R;const rvx=b.vx-p.vx,rvy=b.vy-p.vy,vn=rvx*nx+rvy*ny;if(vn<0){b.vx-=1.7*vn*nx;b.vy-=1.7*vn*ny}b.vx+=p.vx*.18;b.vy+=Math.min(0,p.vy)*.22}
+  const sp=Math.hypot(b.vx,b.vy);if(sp>820){b.vx*=820/sp;b.vy*=820/sp}return true}
+function sendHit(v){const b=v.b;NET.hn=(NET.hn||0)+1;ROOM.send({t:"hit",n:NET.hn,x:Math.round(b.x),y:Math.round(b.y),vx:Math.round(b.vx),vy:Math.round(b.vy)});NET.lb=DELAY+.35;NET.lacc=0;SFXS.kick()}
 function onState(m){if(!NET.view)return;const v=NET.view;m._fresh=1;
   {const B=NET.buf||(NET.buf=[]);const tt=+m.ht||0;if(B.length&&tt<B[B.length-1].t-1){B.length=0;NET.rt=null}if(!B.length||tt>B[B.length-1].t){B.push({t:tt,b:m.b,o:m.p[1-ME],me:m.p[ME]});if(B.length>40)B.shift()}
    m.p.forEach((z,i)=>{const p=v.p[i];p.pw=z[4]||0;p.R=z[5]||p.R;p.e={};for(const k of (z[6]||"").split(","))if(k)p.e[k]=1});v.b.fire=m.bf&&m.bf[0];v.b.ice=m.bf&&m.bf[1];v.pev=m.pev;v.plast=m.plast}
@@ -1049,7 +1059,7 @@ function setRot(on){document.body.classList.toggle("rot90",!!on);try{store.set("
 function toggleRot(){const portrait=innerHeight>innerWidth;if(document.body.classList.contains("rot90"))setRot(false);else if(portrait)setRot(true);else setRot(false)}
 addEventListener("resize",()=>{if(document.body.classList.contains("rot90")&&innerWidth>innerHeight)setRot(false)});
 function tryLand(){return;if(!matchMedia("(pointer:coarse)").matches)return;try{const el=document.documentElement;const p=document.fullscreenElement?Promise.resolve():(el.requestFullscreen?el.requestFullscreen({navigationUI:"hide"}):Promise.reject());p.then(()=>screen.orientation&&screen.orientation.lock&&screen.orientation.lock("landscape")).then(()=>setTimeout(layout,300)).catch(()=>{})}catch(e){}}
-function start(mode,names,c0,c1){stage.classList.add("playing");document.body.classList.add("ingame");tryLand();MODE=mode;G=newGame(c0,c1,names);STATE="play";ov.hidden=true;$("hud").hidden=false;$("touch").hidden=!(matchMedia("(pointer:coarse)").matches)||mode==="local";lastEv=0;layout();SFXS.whistle();unlockAudio()}
+function start(mode,names,c0,c1){HITN=0;stage.classList.add("playing");document.body.classList.add("ingame");tryLand();MODE=mode;G=newGame(c0,c1,names);STATE="play";ov.hidden=true;$("hud").hidden=false;$("touch").hidden=!(matchMedia("(pointer:coarse)").matches)||mode==="local";lastEv=0;layout();SFXS.whistle();unlockAudio()}
 function endMatch(){if(STATE!=="play")return;STATE="end";const g=VIEW();const sc=g.sc;let win;
   if(MODE==="local")win=sc[0]>sc[1]?0:1;else win=sc[ME]>sc[1-ME]?ME:1-ME;if(MODE==="solo"&&win===0){SAVE.wins++}saveS();SFXS.whistle();
   const n=g.p[win].name;const ctl=MODE==="online"?(ROOM.role==="host"?`<button class="btn" type="button" data-a="again">Revanche ▶</button><button class="btn ghost" type="button" data-a="lobby">Voltar à sala</button>`:`<p class="note">À espera de quem criou a sala…</p><button class="btn ghost" type="button" data-a="leave">Sair da sala</button>`):`<button class="btn" type="button" data-a="${MODE==="local"?"go2":"solo"}">Revanche ▶</button><button class="btn ghost" type="button" data-a="menu">Menu</button>`;
@@ -1073,6 +1083,8 @@ ROOM.game={id:"gotas",title:"Gota-Gol!",maxp:2,minp:2,maxBots:0,botNames:[],clea
   start(seats){beginHost(seats)},
   msg(seat,d){if(!d)return;const i=ROOM.seats.indexOf(seat);if(i<0)return;
     if(d.t==="in"&&i===1&&G){G.p[1].in={l:d.l?1:0,r:d.r?1:0,j:d.j?1:0,k:d.k?1:0};return}
+    if(d.t==="hit"&&i===1&&G&&G.ph==="play"&&(d.n|0)>HITN){HITN=d.n|0;const b=G.b,p=G.p[1];b.x=+d.x;b.y=Math.min(GY-BR,+d.y);b.vx=+d.vx;b.vy=+d.vy;G.hit=1;p.pw=Math.min(1,p.pw+.04);
+      if(p.e.fire){delete p.e.fire;const dx=GW*.5-b.x;b.vx=Math.sign(dx)*900;b.vy=-Math.min(420,Math.abs(dx)*.45);b.fire=1.2}return}
     if(d.t==="pos"&&i===1&&G){const p=G.p[1];if(G.ph==="play"){p.rx=+d.x||p.x;p.ry=Math.min(GY,+d.y||GY);p.rvx=+d.vx||0;p.rvy=+d.vy||0;p.rt=0}return}
     if(d.t==="ch"&&i===1&&PEND){PEND.c[1]=Math.max(0,Math.min(CHARS.length-1,d.c|0));hostGo();return}
     if(i===0&&d.t==="lobby"){STATE="menu";MODE=null;ROOM.backToLobby();return}
