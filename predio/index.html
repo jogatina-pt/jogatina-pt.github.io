@@ -438,7 +438,7 @@ async function hostRoom(reuse){
   unsubAll();
   Object.assign(ROOM,{role:"host",code,started:false,leaving:false,conns:{},me:0,seats:[{kind:"local",name,online:true}]});
   if(ROOM.game.cleanOpts)ROOM.opts=ROOM.game.cleanOpts(ROOM.opts);
-  sstore.set("ip-host",code);
+  sstore.set("ip-host",code+"|"+ROOM.game.id);
   /* se a ligação cair (ex.: foi enviar o link pelo WhatsApp) só se tira o "host": a sala e os pedidos para entrar ficam guardados até voltar */
   const room=roomRef();
   roomRef("host").onDisconnect().remove();
@@ -677,7 +677,8 @@ function initRoomUI(){
   if(m){$("joinCode").value=cleanCode(m[1]);$("joinArea").classList.add("fromlink");netNote("netNote","Escreve o teu nome e carrega em Entrar.");setTimeout(()=>($("myName").value?$("joinBtn"):$("myName")).focus(),50);
     if($("myName").value&&sstore.get("ip-room")===cleanCode(m[1])&&onlineReady())setTimeout(joinRoom,0)}
   if(!onlineReady())$("onlineMode").classList.add("nopeer");
-  else if(!m&&sstore.get("ip-host")&&$("myName").value)setTimeout(()=>hostRoom(cleanCode(sstore.get("ip-host"))),0);
+  else if(!m&&$("myName").value){/* só volta a abrir a sala se for a mesma página a recarregar (não ao entrar noutro jogo) */const h=(sstore.get("ip-host")||"").split("|");let reload=false;try{const nv=performance.getEntriesByType("navigation")[0];reload=!!nv&&nv.type==="reload"}catch(e){}
+    if(h[0]&&h[1]===G.id&&reload)setTimeout(()=>hostRoom(cleanCode(h[0])),0);else if(h[0])sstore.set("ip-host","")}
 }
 
 /* ================= ECRÃ (comum aos jogos de rondas) =================

@@ -392,7 +392,7 @@ body.touch .ctl{display:flex}
   <main class="stage gg" id="stage" aria-label="Jogo Gota-Gol!">
     <canvas id="cv" class="ggcv"></canvas>
     <div class="rhud" id="hud" hidden><span class="sp"></span><button class="rb" id="menuBtn" type="button" aria-label="Pausa">❚❚</button></div>
-    <div class="rot" id="rot">↻ Roda o telemóvel para jogar melhor</div><div class="touch" id="touch" hidden><button type="button" id="tL" aria-label="Esquerda">◀</button><button type="button" id="tR" aria-label="Direita">▶</button><span class="sp"></span><button type="button" id="tJ" class="jump" aria-label="Saltar">⤒</button></div>
+    <div class="touch" id="touch" hidden><button type="button" id="tL" aria-label="Esquerda">◀</button><button type="button" id="tR" aria-label="Direita">▶</button><span class="sp"></span><button type="button" id="tJ" class="jump" aria-label="Saltar">⤒</button></div>
     <div class="ov" id="ov"></div>
   </main>
   <p class="foot gfoot">Setas ou WASD para andar, ↑/W/espaço para saltar. A dois: WASD contra setas.</p>
@@ -503,7 +503,7 @@ async function hostRoom(reuse){
   unsubAll();
   Object.assign(ROOM,{role:"host",code,started:false,leaving:false,conns:{},me:0,seats:[{kind:"local",name,online:true}]});
   if(ROOM.game.cleanOpts)ROOM.opts=ROOM.game.cleanOpts(ROOM.opts);
-  sstore.set("ip-host",code);
+  sstore.set("ip-host",code+"|"+ROOM.game.id);
   /* se a ligação cair (ex.: foi enviar o link pelo WhatsApp) só se tira o "host": a sala e os pedidos para entrar ficam guardados até voltar */
   const room=roomRef();
   roomRef("host").onDisconnect().remove();
@@ -742,7 +742,8 @@ function initRoomUI(){
   if(m){$("joinCode").value=cleanCode(m[1]);$("joinArea").classList.add("fromlink");netNote("netNote","Escreve o teu nome e carrega em Entrar.");setTimeout(()=>($("myName").value?$("joinBtn"):$("myName")).focus(),50);
     if($("myName").value&&sstore.get("ip-room")===cleanCode(m[1])&&onlineReady())setTimeout(joinRoom,0)}
   if(!onlineReady())$("onlineMode").classList.add("nopeer");
-  else if(!m&&sstore.get("ip-host")&&$("myName").value)setTimeout(()=>hostRoom(cleanCode(sstore.get("ip-host"))),0);
+  else if(!m&&$("myName").value){/* só volta a abrir a sala se for a mesma página a recarregar (não ao entrar noutro jogo) */const h=(sstore.get("ip-host")||"").split("|");let reload=false;try{const nv=performance.getEntriesByType("navigation")[0];reload=!!nv&&nv.type==="reload"}catch(e){}
+    if(h[0]&&h[1]===G.id&&reload)setTimeout(()=>hostRoom(cleanCode(h[0])),0);else if(h[0])sstore.set("ip-host","")}
 }
 
 /* ================= ECRÃ (comum aos jogos de rondas) =================
@@ -907,13 +908,14 @@ function botIn(g,p){const b=g.b,side=p.i,own=side?W:0,dirAtk=side?-1:1;let tx;
 /* ---------- desenho ---------- */
 let SC=1,OX=0,OY=0,CW=300,CHh=300;
 function layout(){const r=stage.getBoundingClientRect();CW=r.width;CHh=r.height;const d=Math.min(2,devicePixelRatio||1);cv.width=Math.round(CW*d);cv.height=Math.round(CHh*d);cv.style.width=CW+"px";cv.style.height=CHh+"px";
-  SC=Math.min(CW/W,CHh/(HH+30));OX=(CW-W*SC)/2;OY=(CHh-HH*SC)/2+Math.min(20,CHh*.03);ctx.setTransform(d,0,0,d,0,0)}
+  PORT=CHh>CW*1.1;if(PORT){SC=Math.min(CW/(W*.5),CHh*.62/HH);OY=CHh*.06}else{SC=Math.min(CW/W,CHh/(HH+30));OY=(CHh-HH*SC)/2+Math.min(20,CHh*.03)}OX=(CW-W*SC)/2;CAMX=W/2;ctx.setTransform(d,0,0,d,0,0)}
+let PORT=false,CAMX=500;
 const CROWD=(()=>{const c=document.createElement("canvas");c.width=1000;c.height=120;const g=c.getContext("2d");const cols=["#ff5d8f","#3a86ff","#ffd23f","#06d6a0","#ffffff","#9b5de5","#ff8c1a"];for(let i=0;i<900;i++){g.fillStyle=cols[i%7];g.globalAlpha=.55+Math.random()*.45;const x=Math.random()*1000,y=10+Math.random()*105;g.beginPath();g.arc(x,y,3+Math.random()*2.5,0,6.3);g.fill()}return c})();
-function drawField(){const g=ctx;const sky=g.createLinearGradient(0,0,0,GY);sky.addColorStop(0,"#0d1b3d");sky.addColorStop(.55,"#1f3f7a");sky.addColorStop(1,"#3b6fb6");g.fillStyle=sky;g.fillRect(-OX/SC,-OY/SC,W+2*OX/SC,GY+OY/SC);
+function drawField(){const g=ctx;const sky=g.createLinearGradient(0,0,0,GY);sky.addColorStop(0,"#0d1b3d");sky.addColorStop(.55,"#1f3f7a");sky.addColorStop(1,"#3b6fb6");g.fillStyle=sky;g.fillRect(-2000,-OY/SC,W+4000,GY+2000);
   /* holofotes */for(const x of [120,880]){g.fillStyle="#2b2b3a";g.fillRect(x-3,40,6,170);g.fillStyle="#fffbe0";g.fillRect(x-26,26,52,18);const r=g.createRadialGradient(x,35,4,x,35,160);r.addColorStop(0,"rgba(255,250,210,.45)");r.addColorStop(1,"rgba(255,250,210,0)");g.fillStyle=r;g.fillRect(x-160,-120,320,320)}
-  /* bancada */g.fillStyle="#252a44";g.beginPath();g.moveTo(-OX/SC,GY-120);g.lineTo(W+OX/SC,GY-120);g.lineTo(W+OX/SC,GY-40);g.lineTo(-OX/SC,GY-40);g.fill();g.drawImage(CROWD,0,GY-160,W,120);g.fillStyle="#1b1f33";g.fillRect(-OX/SC,GY-46,W+2*OX/SC,10);
-  g.fillStyle="#e63946";g.fillRect(-OX/SC,GY-36,W+2*OX/SC,26);g.fillStyle="#fff";g.font="900 16px system-ui,sans-serif";g.textAlign="center";g.textBaseline="middle";for(let x=80;x<W;x+=210)g.fillText("GOTA-GOL!",x,GY-23);
-  /* relvado */for(let i=0;i<10;i++){g.fillStyle=i%2?"#3fa34d":"#4bb35a";g.fillRect(i*W/10,GY-10,W/10,HH-GY+10+OY/SC)}g.fillStyle="#4bb35a";g.fillRect(-OX/SC,GY-10,OX/SC,HH);g.fillRect(W,GY-10,OX/SC,HH);
+  /* bancada */g.fillStyle="#252a44";g.beginPath();g.moveTo(-2000,GY-120);g.lineTo(W+2000,GY-120);g.lineTo(W+2000,GY-40);g.lineTo(-2000,GY-40);g.fill();g.drawImage(CROWD,0,GY-160,W,120);g.fillStyle="#1b1f33";g.fillRect(-2000,GY-46,W+4000,10);
+  g.fillStyle="#e63946";g.fillRect(-2000,GY-36,W+4000,26);g.fillStyle="#fff";g.font="900 16px system-ui,sans-serif";g.textAlign="center";g.textBaseline="middle";for(let x=80;x<W;x+=210)g.fillText("GOTA-GOL!",x,GY-23);
+  /* relvado */for(let i=0;i<10;i++){g.fillStyle=i%2?"#3fa34d":"#4bb35a";g.fillRect(i*W/10,GY-10,W/10,HH-GY+10+2000)}g.fillStyle="#4bb35a";g.fillRect(-2000,GY-10,2000,HH+2000);g.fillRect(W,GY-10,2000,HH+2000);
   g.strokeStyle="rgba(255,255,255,.85)";g.lineWidth=3;g.beginPath();g.moveTo(0,GY+1);g.lineTo(W,GY+1);g.moveTo(W/2,GY-10);g.lineTo(W/2,GY+40);g.stroke();g.beginPath();g.ellipse(W/2,GY+16,60,14,0,0,6.3);g.stroke();
   for(const [x0,s] of [[0,1],[W,-1]]){const bar=GY-GH;/* rede */g.save();g.beginPath();g.rect(Math.min(x0,x0+s*GW),bar,GW,GH);g.clip();g.fillStyle="rgba(255,255,255,.12)";g.fillRect(Math.min(x0,x0+s*GW),bar,GW,GH);g.strokeStyle="rgba(255,255,255,.45)";g.lineWidth=1.3;for(let k=-GH;k<GW+GH;k+=12){g.beginPath();g.moveTo(Math.min(x0,x0+s*GW)+k,bar);g.lineTo(Math.min(x0,x0+s*GW)+k+GH,GY);g.moveTo(Math.min(x0,x0+s*GW)+k+GH,bar);g.lineTo(Math.min(x0,x0+s*GW)+k,GY);g.stroke()}g.restore();
     g.fillStyle="#fff";g.strokeStyle="#151515";g.lineWidth=2.5;g.beginPath();g.rect(Math.min(x0,x0+s*GW)-2,bar-5,GW+4,10);g.fill();g.stroke();g.beginPath();g.rect(x0+s*GW-5,bar-5,10,GH+5);g.fill();g.stroke()}}
@@ -940,10 +942,13 @@ function drawBall(b){const g=ctx;g.save();g.translate(b.x,b.y);g.fillStyle="rgba
   g.fillStyle="#fff";g.strokeStyle="#151515";g.lineWidth=2.5;g.beginPath();g.arc(0,0,BR,0,6.3);g.fill();g.stroke();g.fillStyle="#151515";g.beginPath();for(let k=0;k<5;k++){const a=k*1.2566-1.57;g.lineTo(Math.cos(a)*BR*.42,Math.sin(a)*BR*.42)}g.fill();
   for(let k=0;k<5;k++){const a=k*1.2566-1.57;g.beginPath();g.arc(Math.cos(a)*BR*.98,Math.sin(a)*BR*.98,BR*.26,0,6.3);g.fill()}g.restore()}
 const FXP=[];
-function render(){const g=ctx;g.save();g.clearRect(0,0,CW,CHh);g.fillStyle="#0d1b3d";g.fillRect(0,0,CW,CHh);g.translate(OX,OY);g.scale(SC,SC);drawField();
+function render(){const g=ctx;g.save();g.clearRect(0,0,CW,CHh);g.fillStyle="#0d1b3d";g.fillRect(0,0,CW,CHh);
+  let ox=OX;if(PORT){const gv=VIEW();const half=CW/SC/2;let tx=gv?gv.b.x*.6+(gv.p[ME]?gv.p[ME].x:W/2)*.4:W/2;tx=Math.max(half,Math.min(W-half,tx));CAMX+=(tx-CAMX)*.12;ox=CW/2-CAMX*SC}
+  g.translate(ox,OY);g.scale(SC,SC);drawField();
   const gm=VIEW();if(gm){for(const p of gm.p)drawSlime(p,gm.b.x,gm.b.y);drawBall(gm.b);
     for(const q of FXP){q.t+=1/60;q.x+=q.vx/60;q.y+=q.vy/60;q.vy+=500/60;g.fillStyle=q.c;g.globalAlpha=Math.max(0,1-q.t/1.4);g.fillRect(q.x,q.y,6,9);g.globalAlpha=1}for(let i=FXP.length-1;i>=0;i--)if(FXP[i].t>1.4)FXP.splice(i,1);
     /* aviso de baliza */for(const p of gm.p)if(gm.camp&&gm.camp[p.i]>.6){const f=Math.min(1,gm.camp[p.i]/2.6);g.fillStyle="rgba(0,0,0,.5)";g.fillRect(p.x-30,p.y-p.R-26,60,8);g.fillStyle="#ff5d5d";g.fillRect(p.x-30,p.y-p.R-26,60*f,8)}
+    /* placar e avisos: fixos no ecrã */g.restore();g.save();{const hs=PORT?Math.min(1.1,CW/380):SC;g.translate(CW/2-W/2*hs,PORT?OY:OY);g.scale(hs,hs)}
     /* placar */g.fillStyle="rgba(10,14,30,.82)";g.beginPath();g.roundRect(W/2-170,12,340,54,14);g.fill();g.font="900 17px system-ui,sans-serif";g.textBaseline="middle";g.fillStyle="#fff";
     g.textAlign="right";g.fillText(gm.p[0].name,W/2-58,39);g.textAlign="left";g.fillText(gm.p[1].name,W/2+58,39);g.textAlign="center";g.font="900 30px system-ui,sans-serif";g.fillStyle="#ffd23f";g.fillText(`${gm.sc[0]} - ${gm.sc[1]}`,W/2,40);
     g.font="800 12px system-ui,sans-serif";g.fillStyle="#cfd8ff";g.fillText(RULE===1?(gm.gold?"GOLO DE OURO":fmtT(gm.t)):"Primeiro a 5",W/2,78);
@@ -988,9 +993,11 @@ function menu(){stage.classList.remove("playing");MODE=null;STATE="menu";G=null;
    <button class="btn" type="button" data-a="solo">Contra o computador ▶</button><button class="btn ghost" type="button" data-a="local">⌨️ 2 jogadores neste ecrã</button><button class="btn ghost" type="button" data-a="mp">👥 Jogar online com um amigo</button>
    <p class="note">Vitórias: ${SAVE.wins} · golos marcados: ${SAVE.goals}</p></div>`);paintAll()}
 function pick2(){showOv(`<div class="panel wide"><h2>Jogador 2</h2><p class="note">Jogador 1: <b>WASD</b> · Jogador 2: <b>setas</b></p>${charGrid(SAVE.ch2,"k")}<button class="btn" type="button" data-a="go2">Começar ▶</button><button class="btn ghost" type="button" data-a="menu">Voltar</button></div>`);paintAll()}
-function paintAll(){ov.querySelectorAll("canvas[data-ch]").forEach(c=>{const g=c.getContext("2d"),i=+c.dataset.ch;g.clearRect(0,0,96,64);withCtx(g,()=>drawSlime({i:0,c:i,x:48,y:60,R:42,vy:0,look:1},96,0))})}
+function paintAll(){paintIn(ov)}
+function paintIn(root){root.querySelectorAll("canvas[data-ch]").forEach(c=>{const g=c.getContext("2d"),i=+c.dataset.ch;g.clearRect(0,0,96,64);withCtx(g,()=>drawSlime({i:0,c:i,x:48,y:60,R:42,vy:0,look:1},96,0))})}
 function withCtx(g,f){_ctx=g;try{f()}finally{_ctx=null}}
-function start(mode,names,c0,c1){stage.classList.add("playing");MODE=mode;G=newGame(c0,c1,names);STATE="play";ov.hidden=true;$("hud").hidden=false;$("touch").hidden=!(matchMedia("(pointer:coarse)").matches)||mode==="local";lastEv=0;layout();SFXS.whistle();unlockAudio()}
+function tryLand(){if(!matchMedia("(pointer:coarse)").matches)return;try{const el=document.documentElement;const p=document.fullscreenElement?Promise.resolve():(el.requestFullscreen?el.requestFullscreen({navigationUI:"hide"}):Promise.reject());p.then(()=>screen.orientation&&screen.orientation.lock&&screen.orientation.lock("landscape")).then(()=>setTimeout(layout,300)).catch(()=>{})}catch(e){}}
+function start(mode,names,c0,c1){stage.classList.add("playing");tryLand();MODE=mode;G=newGame(c0,c1,names);STATE="play";ov.hidden=true;$("hud").hidden=false;$("touch").hidden=!(matchMedia("(pointer:coarse)").matches)||mode==="local";lastEv=0;layout();SFXS.whistle();unlockAudio()}
 function endMatch(){if(STATE!=="play")return;STATE="end";const g=VIEW();const sc=g.sc;let win;
   if(MODE==="local")win=sc[0]>sc[1]?0:1;else win=sc[ME]>sc[1-ME]?ME:1-ME;if(MODE==="solo"&&win===0){SAVE.wins++}saveS();SFXS.whistle();
   const n=g.p[win].name;const ctl=MODE==="online"?(ROOM.role==="host"?`<button class="btn" type="button" data-a="again">Revanche ▶</button><button class="btn ghost" type="button" data-a="lobby">Voltar à sala</button>`:`<p class="note">À espera de quem criou a sala…</p><button class="btn ghost" type="button" data-a="leave">Sair da sala</button>`):`<button class="btn" type="button" data-a="${MODE==="local"?"go2":"solo"}">Revanche ▶</button><button class="btn ghost" type="button" data-a="menu">Menu</button>`;
@@ -1004,7 +1011,7 @@ ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)retur
 $("menuBtn").addEventListener("click",()=>{if(MODE==="solo"||MODE==="local"){STATE="pause";showOv(`<div class="panel"><h2>Pausa</h2><button class="btn" type="button" data-a="resume">Continuar ▶</button><button class="btn ghost" type="button" data-a="menu">Sair para o menu</button></div>`)}});
 /* ---------- online (1 contra 1, sem bonecos) ---------- */
 function cleanOpts(o){o=o||{};return{r:+o.r===1?1:0}}
-function renderOpts(el,o,host){o=cleanOpts(o);el.innerHTML=`<div class="optrow"><span class="eyebrow">Jogo</span><div class="seg" role="group"><button type="button" class="${o.r===0?"on":""}" data-k="r" data-v="0" ${host?"":"disabled"}>Primeiro a 5</button><button type="button" class="${o.r===1?"on":""}" data-k="r" data-v="1" ${host?"":"disabled"}>2 minutos</button></div></div><p class="note">1 contra 1. Cada um joga com a gota que escolheu no menu.</p>`;
+function renderOpts(el,o,host){o=cleanOpts(o);el.innerHTML=`<div class="optrow"><span class="eyebrow">Jogo</span><div class="seg" role="group"><button type="button" class="${o.r===0?"on":""}" data-k="r" data-v="0" ${host?"":"disabled"}>Primeiro a 5</button><button type="button" class="${o.r===1?"on":""}" data-k="r" data-v="1" ${host?"":"disabled"}>2 minutos</button></div></div><p class="eyebrow">A tua gota</p>${charGrid(SAVE.ch,"c")}<p class="note">1 contra 1. Cada um escolhe a sua gota aqui.</p>`;paintIn(el);el.querySelectorAll(".ch").forEach(b=>b.onclick=e=>{e.preventDefault();SAVE.ch=+b.dataset.a.slice(1);saveS();renderOpts(el,ROOM.opts,host)});
   if(host)el.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{ROOM.opts=cleanOpts({r:b.dataset.v});lobbyBroadcast()})}
 let PEND=null;
 function beginHost(seats){if(seats.length<2)return;RULE=cleanOpts(ROOM.opts).r;PEND={names:seats.slice(0,2).map(s=>cleanName(s.name)||"Jogador"),c:[SAVE.ch,null]};ROOM.sendTo(seats[1],{t:"askch"})}
@@ -1018,7 +1025,7 @@ ROOM.game={id:"gotas",title:"Gota-Gol!",maxp:2,minp:2,maxBots:0,botNames:[],clea
     if(d.t==="react")relayReact(ROOM.seats,seat,d)},
   client(d){if(!d)return;if(d.t==="react"){bubble(d.from,d.r);return}
     if(d.t==="askch"){ROOM.send({t:"ch",c:SAVE.ch});return}
-    if(d.t==="go"){ME=d.me|0;RULE=d.r?1:0;showScreen("game");const names=(d.names||[]).map(cleanName);if(ROOM.role==="host"){start("online",names,d.c[0],d.c[1])}else{MODE="online";NET.view=newGame(d.c[0]|0,d.c[1]|0,names);NET.tgt=null;NET.lk="";STATE="play";stage.classList.add("playing");ov.hidden=true;$("hud").hidden=false;$("touch").hidden=!matchMedia("(pointer:coarse)").matches;lastEv=0;layout();SFXS.whistle()}return}
+    if(d.t==="go"){ME=d.me|0;RULE=d.r?1:0;showScreen("game");const names=(d.names||[]).map(cleanName);if(ROOM.role==="host"){start("online",names,d.c[0],d.c[1])}else{MODE="online";NET.view=newGame(d.c[0]|0,d.c[1]|0,names);NET.tgt=null;NET.lk="";STATE="play";stage.classList.add("playing");tryLand();ov.hidden=true;$("hud").hidden=false;$("touch").hidden=!matchMedia("(pointer:coarse)").matches;lastEv=0;layout();SFXS.whistle()}return}
     if(MODE!=="online"||ROOM.role==="host")return;
     if(d.t==="st")onState(d);else if(d.t==="lobby"){STATE="menu";MODE=null}},
   stop(){STATE="menu";MODE=null},hostLost(){},
