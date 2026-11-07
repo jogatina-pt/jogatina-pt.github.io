@@ -195,6 +195,11 @@ header.top{flex:none}
 .stage{flex:1;min-height:0;position:relative;border:3px solid var(--stroke);box-shadow:6px 6px 0 var(--stroke);border-radius:20px;overflow:hidden;background:#0e1420;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
 #cv{display:none}
 
+.rotb{position:absolute;right:58px;top:10px;z-index:6;display:none;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.62);font:900 17px system-ui;align-items:center;justify-content:center;cursor:pointer}.rotm{display:none}
+@media (pointer:coarse){.rotb,.rotm{display:inline-flex}}
+body.rot90 .top,body.rot90 .gfoot{display:none!important}
+body.rot90 .stage.gg{position:fixed!important;top:0!important;left:100vw!important;width:100vh!important;height:100vw!important;max-width:none!important;max-height:none!important;margin:0!important;border-radius:0!important;transform-origin:0 0;transform:rotate(90deg);z-index:60}
+@supports (height:100dvh){body.rot90 .stage.gg{width:100dvh!important}}
 .stage.gg{background:#0d1b3d}.stage.gg::before,.stage.gg::after{display:none}
 .ggcv{display:block!important;position:absolute;inset:0;width:100%;height:100%;touch-action:none}
 .touch{position:absolute;left:10px;right:10px;bottom:10px;display:flex;gap:10px;z-index:4;pointer-events:none}.touch[hidden]{display:none}.touch .sp{flex:1}
@@ -392,7 +397,7 @@ body.touch .ctl{display:flex}
   <section id="game" class="egame">
   <main class="stage gg" id="stage" aria-label="Jogo Gota-Gol!">
     <canvas id="cv" class="ggcv"></canvas>
-    <div class="rhud" id="hud" hidden><span class="sp"></span><button class="rb" id="menuBtn" type="button" aria-label="Pausa">❚❚</button></div>
+    <button class="rb rotb" id="rotBtn" type="button" aria-label="Rodar o ecrã" title="Rodar o ecrã">🔄</button><div class="rhud" id="hud" hidden><span class="sp"></span><button class="rb" id="menuBtn" type="button" aria-label="Pausa">❚❚</button></div>
     <div class="touch" id="touch" hidden><button type="button" id="tL" aria-label="Esquerda">◀</button><button type="button" id="tR" aria-label="Direita">▶</button><span class="sp"></span><button type="button" id="tP" class="powb" aria-label="Poder">⚡</button><button type="button" id="tJ" class="jump" aria-label="Saltar">⤒</button></div>
     <div class="ov" id="ov"></div>
   </main>
@@ -921,7 +926,7 @@ function botIn(g,p){const b=g.b,side=p.i,own=side?W:0,dirAtk=side?-1:1;let tx;
   return o}
 /* ---------- desenho ---------- */
 let SC=1,OX=0,OY=0,CW=300,CHh=300;
-function layout(){const r=stage.getBoundingClientRect();CW=r.width;CHh=r.height;const d=Math.min(2,devicePixelRatio||1);cv.width=Math.round(CW*d);cv.height=Math.round(CHh*d);cv.style.width=CW+"px";cv.style.height=CHh+"px";
+function layout(){CW=stage.clientWidth||300;CHh=stage.clientHeight||300;const d=Math.min(2,devicePixelRatio||1);cv.width=Math.round(CW*d);cv.height=Math.round(CHh*d);cv.style.width=CW+"px";cv.style.height=CHh+"px";
   PORT=CHh>CW*1.1;if(PORT){SC=Math.min(CW/(W*.5),CHh*.62/HH);OY=CHh*.06}else{SC=Math.min(CW/W,CHh/(HH+30));OY=(CHh-HH*SC)/2+Math.min(20,CHh*.03)}OX=(CW-W*SC)/2;CAMX=W/2;ctx.setTransform(d,0,0,d,0,0)}
 let PORT=false,CAMX=500;
 const CROWD=(()=>{const c=document.createElement("canvas");c.width=1000;c.height=120;const g=c.getContext("2d");const cols=["#ff5d8f","#3a86ff","#ffd23f","#06d6a0","#ffffff","#9b5de5","#ff8c1a"];for(let i=0;i<900;i++){g.fillStyle=cols[i%7];g.globalAlpha=.55+Math.random()*.45;const x=Math.random()*1000,y=10+Math.random()*105;g.beginPath();g.arc(x,y,3+Math.random()*2.5,0,6.3);g.fill()}return c})();
@@ -1012,12 +1017,17 @@ function menu(){stage.classList.remove("playing");document.body.classList.remove
    <p class="eyebrow">A tua gota</p>${charGrid(SAVE.ch,"c")}<p class="note">⚡ <b>${POW[SAVE.ch]}</b>: ${POWD[SAVE.ch]}</p>
    <div class="seg" role="group">${["Fácil","Normal","Difícil"].map((n,i)=>`<button type="button" class="${DIFF===i?"on":""}" data-a="d${i}">${n}</button>`).join("")}</div>
    <div class="seg" role="group"><button type="button" class="${RULE===0?"on":""}" data-a="r0">Primeiro a 5</button><button type="button" class="${RULE===1?"on":""}" data-a="r1">2 minutos</button></div>
+   <button class="btn ghost rotm" type="button" data-a="rot">🔄 Rodar ecrã</button>
    <button class="btn" type="button" data-a="solo">Contra o computador ▶</button><button class="btn ghost" type="button" data-a="local">⌨️ 2 jogadores neste ecrã</button><button class="btn ghost" type="button" data-a="mp">👥 Jogar online com um amigo</button>
    <p class="note">Vitórias: ${SAVE.wins} · golos marcados: ${SAVE.goals}</p></div>`);paintAll()}
 function pick2(){showOv(`<div class="panel wide"><h2>Jogador 2</h2><p class="note">Jogador 1: <b>WASD</b> · Jogador 2: <b>setas</b></p>${charGrid(SAVE.ch2,"k")}<p class="note">⚡ <b>${POW[SAVE.ch2]}</b>: ${POWD[SAVE.ch2]}</p><button class="btn" type="button" data-a="go2">Começar ▶</button><button class="btn ghost" type="button" data-a="menu">Voltar</button></div>`);paintAll()}
 function paintAll(){paintIn(ov)}
 function paintIn(root){root.querySelectorAll("canvas[data-ch]").forEach(c=>{const g=c.getContext("2d"),i=+c.dataset.ch;g.clearRect(0,0,96,64);withCtx(g,()=>drawSlime({i:0,c:i,x:48,y:60,R:42,vy:0,look:1},96,0))})}
 function withCtx(g,f){_ctx=g;try{f()}finally{_ctx=null}}
+/* rodar o jogo à mão: roda o palco 90° quando o telemóvel está ao alto (mesmo com a rotação bloqueada) */
+function setRot(on){document.body.classList.toggle("rot90",!!on);try{store.set("gotas-rot",on?"1":"")}catch(e){}setTimeout(layout,30);setTimeout(layout,250)}
+function toggleRot(){const portrait=innerHeight>innerWidth;if(document.body.classList.contains("rot90"))setRot(false);else if(portrait)setRot(true);else setRot(false)}
+addEventListener("resize",()=>{if(document.body.classList.contains("rot90")&&innerWidth>innerHeight)setRot(false)});
 function tryLand(){return;if(!matchMedia("(pointer:coarse)").matches)return;try{const el=document.documentElement;const p=document.fullscreenElement?Promise.resolve():(el.requestFullscreen?el.requestFullscreen({navigationUI:"hide"}):Promise.reject());p.then(()=>screen.orientation&&screen.orientation.lock&&screen.orientation.lock("landscape")).then(()=>setTimeout(layout,300)).catch(()=>{})}catch(e){}}
 function start(mode,names,c0,c1){stage.classList.add("playing");document.body.classList.add("ingame");tryLand();MODE=mode;G=newGame(c0,c1,names);STATE="play";ov.hidden=true;$("hud").hidden=false;$("touch").hidden=!(matchMedia("(pointer:coarse)").matches)||mode==="local";lastEv=0;layout();SFXS.whistle();unlockAudio()}
 function endMatch(){if(STATE!=="play")return;STATE="end";const g=VIEW();const sc=g.sc;let win;
@@ -1027,9 +1037,10 @@ function endMatch(){if(STATE!=="play")return;STATE="end";const g=VIEW();const sc
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;e.stopPropagation();unlockAudio();const a=b.dataset.a;
   if(/^c\d+$/.test(a)){SAVE.ch=+a.slice(1);saveS();menu()}else if(/^k\d+$/.test(a)){SAVE.ch2=+a.slice(1);saveS();pick2()}else if(/^d\d$/.test(a)){DIFF=+a[1];menu()}else if(/^r\d$/.test(a)){RULE=+a[1];menu()}
   else if(a==="solo"){let o;do{o=Math.floor(Math.random()*CHARS.length)}while(o===SAVE.ch);ME=0;start("solo",["Tu",CHARS[o].name],SAVE.ch,o)}
-  else if(a==="local")pick2();else if(a==="go2"){ME=0;start("local",["Jogador 1","Jogador 2"],SAVE.ch,SAVE.ch2)}
+  else if(a==="rot")toggleRot();else if(a==="local")pick2();else if(a==="go2"){ME=0;start("local",["Jogador 1","Jogador 2"],SAVE.ch,SAVE.ch2)}
   else if(a==="mp")showScreen("setup");else if(a==="menu")menu();else if(a==="resume"){ov.hidden=true;STATE="play"}
   else if(a==="again"){if(ROOM.role==="host")beginHost(ROOM.seats)}else if(a==="lobby"){ROOM.seats.forEach((s,k)=>{if(k>0)ROOM.sendTo(s,{t:"lobby"})});STATE="menu";MODE=null;ROOM.backToLobby()}else if(a==="leave")leaveRoom()});
+$("rotBtn").addEventListener("click",e=>{e.stopPropagation();toggleRot()});
 $("menuBtn").addEventListener("click",()=>{if(MODE==="solo"||MODE==="local"){STATE="pause";showOv(`<div class="panel"><h2>Pausa</h2><button class="btn" type="button" data-a="resume">Continuar ▶</button><button class="btn ghost" type="button" data-a="menu">Sair para o menu</button></div>`)}});
 /* ---------- online (1 contra 1, sem bonecos) ---------- */
 function cleanOpts(o){o=o||{};return{r:+o.r===1?1:0}}
