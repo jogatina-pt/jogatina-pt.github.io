@@ -876,7 +876,7 @@ function newGame(c0,c1,names){return{p:[mkP(0,c0,names[0]),mkP(1,c1,names[1])],b
 function mkP(i,c,name){const C=CHARS[c];return{i,c,name,x:i?W*.75:W*.25,y:GY,vx:0,vy:0,R:48*C.sz,R0:48*C.sz,in:{l:0,r:0,j:0,k:0},look:i?-1:1,pw:0,e:{}}}
 function kickoff(g,side){/* a bola cai do lado de quem sofreu */g.b={x:side?W*.75:W*.25,y:160,vx:0,vy:0,sp:0};g.p[0].x=W*.25;g.p[1].x=W*.75;for(const p of g.p){p.y=GY;p.vx=p.vy=0}g.ph="kick";g.pt=1.1;g.camp=[0,0]}
 function stepGame(g,dt){g.tick++;
-  if(g.ph==="goal"){g.pt-=dt;stepBall(g,dt,true);if(g.pt<=0){if(over(g)){g.ph="end";return}kickoff(g,g.last===0?1:0)}return}
+  if(g.ph==="goal"){g.pt-=dt;for(let s=0;s<4;s++)stepBall(g,dt/4,true);if(g.pt<=0){if(over(g)){g.ph="end";return}kickoff(g,g.last===0?1:0)}return}
   if(g.ph==="end")return;
   if(g.ph==="kick"){g.pt-=dt;for(const p of g.p)stepP(g,p,dt);if(g.pt>0)return;g.ph="play"}
   if(RULE===1){g.t-=dt;if(g.t<=0){g.t=0;if(g.sc[0]!==g.sc[1]){g.ph="end";return}g.gold=1}}
@@ -885,7 +885,7 @@ function stepGame(g,dt){g.tick++;
   /* ficar dentro da própria baliza muito tempo dá golo ao outro */
   for(const p of g.p){const inG=p.i===0?p.x<GW:p.x>W-GW;g.camp[p.i]=inG?g.camp[p.i]+dt:0;if(g.camp[p.i]>2.6){goal(g,1-p.i,"Ficaste na baliza!");return}}
   /* bola parada muito tempo: volta a cair no meio */{const s=Math.hypot(g.b.vx,g.b.vy);g.idle=s<40?(g.idle||0)+dt:0;if(g.idle>5){g.idle=0;g.b={x:W/2,y:140,vx:0,vy:0,sp:0}}}
-  stepBall(g,dt,false)}
+  for(let s=0;s<4;s++)stepBall(g,dt/4,false)}
 function usePow(g,p){const o=g.p[1-p.i],E=p.e;p.pw=0;g.pev=(g.pev||0)+1;g.plast=p.i;
   switch(p.c){case 0:E.jump=5;break;case 1:E.fire=8;break;case 2:E.turbo=5;break;case 3:E.big=6;break;case 4:o.e.stun=1.5;break;case 5:E.mag=2.5;break;case 6:o.e.small=6;break;case 7:p.x=Math.max(p.R0*.6,Math.min(W-p.R0*.6,g.b.x-p.look*4));p.y=GY;E.flash=.4;break;case 8:g.frz=1.2;break;case 9:E.wall=5;break}}
 function stepP(g,p,dt){const C=CHARS[p.c],E=p.e;for(const k in E){E[k]-=dt;if(E[k]<=0)delete E[k]}
@@ -893,23 +893,24 @@ function stepP(g,p,dt){const C=CHARS[p.c],E=p.e;for(const k in E){E[k]-=dt;if(E[
   p.R=p.R0*(E.big?1.45:1)*(E.small?.62:1);const st=E.stun>0,sp=430*C.sp*(E.turbo?1.6:1);const dir=st?0:(p.in.r?1:0)-(p.in.l?1:0);p.vx=dir*sp;
   if(!st&&p.in.j&&p.y>=GY-.5)p.vy=-760*C.jp*(E.jump?1.4:1);p.vy+=1900*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.y>GY){p.y=GY;p.vy=0}
   const m=p.R*.55;p.x=Math.max(m,Math.min(W-m,p.x));const b=g.b;p.look=b.x>p.x?1:-1}
-function stepBall(g,dt,ghost){const b=g.b;if(!ghost&&g.frz>0){g.frz-=dt;b.vx=0;b.vy=0;if(g.frz<=0)b.vy=60;b.ice=1;return}b.ice=0;
+function stepBall(g,dt,ghost){const b=g.b;const px0=b.x,py0=b.y;if(!ghost&&g.frz>0){g.frz-=dt;b.vx=0;b.vy=0;if(g.frz<=0)b.vy=60;b.ice=1;return}b.ice=0;
   if(!ghost)for(const p of g.p)if(p.e.mag){const dx=p.x-b.x,dy=p.y-p.R-26-b.y,d=Math.hypot(dx,dy)||1;b.vx+=dx/d*1500*dt;b.vy+=dy/d*1500*dt-900*dt*.6}
   b.vy+=900*dt;b.x+=b.vx*dt;b.y+=b.vy*dt;b.sp+=b.vx*dt/BR;
   if(!ghost)for(const p of g.p){const dx=b.x-p.x,dy=b.y-p.y,d=Math.hypot(dx,dy),R=p.R+BR;
     if(d<R&&dy<BR*.6){const nx=dx/(d||1),ny=dy/(d||1);if(dy>-2){/* lado da gota (por baixo do meio) */b.x=p.x+Math.sign(dx||1)*R;b.vx=Math.sign(dx||1)*Math.abs(b.vx-p.vx)*.8+p.vx}
-      else{b.x=p.x+nx*R;b.y=p.y+ny*R;const rvx=b.vx-p.vx,rvy=b.vy-p.vy,vn=rvx*nx+rvy*ny;if(vn<0){b.vx-=1.85*vn*nx;b.vy-=1.85*vn*ny}b.vx+=p.vx*.18;b.vy+=Math.min(0,p.vy)*.22;g.hit=p.i;p.pw=Math.min(1,p.pw+.04);
-        if(p.e.fire){delete p.e.fire;const tx=p.i?GW*.5:W-GW*.5,dx=tx-b.x;b.vx=Math.sign(dx)*1050;b.vy=-Math.min(420,Math.abs(dx)*.45);b.fire=1.2}}}}
+      else{b.x=p.x+nx*R;b.y=p.y+ny*R;const rvx=b.vx-p.vx,rvy=b.vy-p.vy,vn=rvx*nx+rvy*ny;if(vn<0){b.vx-=1.7*vn*nx;b.vy-=1.7*vn*ny}b.vx+=p.vx*.18;b.vy+=Math.min(0,p.vy)*.22;g.hit=p.i;p.pw=Math.min(1,p.pw+.04);
+        if(p.e.fire){delete p.e.fire;const tx=p.i?GW*.5:W-GW*.5,dx=tx-b.x;b.vx=Math.sign(dx)*900;b.vy=-Math.min(420,Math.abs(dx)*.45);b.fire=1.2}}}}
   if(b.fire){b.fire-=dt;if(b.fire<=0)b.fire=0}
   if(!ghost)for(const p of g.p)if(p.e.wall){const wx=p.i?W-GW-14:GW+14;if(b.y>GY-GH-30&&Math.abs(b.x-wx)<BR+8){b.x=wx+(p.i?-1:1)*(BR+8);b.vx=(p.i?-1:1)*Math.abs(b.vx)*.8}}
-  const sp=Math.hypot(b.vx,b.vy),MX=b.fire?1300:1100;if(sp>MX){b.vx*=MX/sp;b.vy*=MX/sp}
+  const sp=Math.hypot(b.vx,b.vy),MX=b.fire?1050:820;if(sp>MX){b.vx*=MX/sp;b.vy*=MX/sp}
   if(b.y>GY-BR){b.y=GY-BR;b.vy=-Math.abs(b.vy)*.72;if(Math.abs(b.vy)<40)b.vy=0;b.vx*=.985}
   if(b.y<BR){b.y=BR;b.vy=Math.abs(b.vy)*.6}
   if(b.x<BR){b.x=BR;b.vx=Math.abs(b.vx)*.7}if(b.x>W-BR){b.x=W-BR;b.vx=-Math.abs(b.vx)*.7}
   /* barras (trave de cima) e postes */const bar=GY-GH;
-  for(const [x0,x1,px] of [[0,GW,GW],[W-GW,W,W-GW]]){if(b.x>x0-BR&&b.x<x1+BR&&Math.abs(b.y-bar)<BR+4){if(b.y<bar){b.y=bar-BR-4;b.vy=-Math.abs(b.vy)*.7;/* não fica parada em cima da trave */b.vx+=(px===GW?1:-1)*500*TICK}else{b.y=bar+BR+4;b.vy=Math.abs(b.vy)*.5}}
+  for(const [x0,x1,px] of [[0,GW,GW],[W-GW,W,W-GW]]){if(b.x>x0-BR&&b.x<x1+BR&&Math.abs(b.y-bar)<BR+4){if(b.y<bar){b.y=bar-BR-4;b.vy=-Math.abs(b.vy)*.7;/* não fica parada em cima da trave */b.vx+=(px===GW?1:-1)*500*dt}else{b.y=bar+BR+4;b.vy=Math.abs(b.vy)*.5}}
     const dx=b.x-px,dy=b.y-bar,d=Math.hypot(dx,dy);if(d<BR+5){const nx=dx/d,ny=dy/d;b.x=px+nx*(BR+5);b.y=bar+ny*(BR+5);const vn=b.vx*nx+b.vy*ny;if(vn<0){b.vx-=1.7*vn*nx;b.vy-=1.7*vn*ny}}}
-  if(!ghost&&b.y>bar+BR*.5){if(b.x<GW-BR*.4)goal(g,1);else if(b.x>W-GW+BR*.4)goal(g,0)}}
+  if(!ghost&&b.y>bar+BR*.5&&py0>bar+BR*.2){if(b.x<GW-BR*.4&&px0>=b.x-1)goal(g,1);else if(b.x>W-GW+BR*.4&&px0<=b.x+1)goal(g,0)}
+  /* se entrou por cima sem ser golo, sai pela frente */if(b.y>bar&&b.y<bar+BR+6&&(b.x<GW||b.x>W-GW)&&py0<=bar){b.y=bar-BR-4;b.vy=-Math.abs(b.vy)*.6}}
 function goal(g,who,msg){if(g.ph!=="play")return;g.sc[who]++;g.last=who;g.ph="goal";g.pt=1.8;g.msg=msg||"";g.ev=(g.ev||0)+1;if(g.gold)g.pt=2}
 function over(g){return RULE===0?Math.max(...g.sc)>=5:(g.t<=0&&g.sc[0]!==g.sc[1])}
 /* ---------- boneco ---------- */
