@@ -198,12 +198,12 @@ header.top{flex:none}
 .stage.fk::before{content:"";position:absolute;left:0;right:0;top:56%;bottom:0;background:repeating-linear-gradient(100deg,transparent 0 70px,rgba(120,70,30,.25) 70px 73px);pointer-events:none}
 .stage.fk::after{content:"";position:absolute;right:7%;top:14%;width:22%;max-width:150px;aspect-ratio:1;border:6px solid #b07c46;background:linear-gradient(#bfe6ff,#e8f6ff);border-radius:6px;box-shadow:inset 0 0 0 3px #fff;opacity:.6;pointer-events:none}
 #chips.fkchips{top:56px!important;bottom:auto!important;left:8px!important;right:auto!important;transform:none!important;flex-direction:column!important}
-.fkcard{position:absolute;left:50%;top:10%;transform:translateX(-50%);height:42%;aspect-ratio:1.45;max-width:78%;background:#fffdf8;border:4px solid #151515;border-radius:22px;box-shadow:6px 6px 0 #151515;display:flex;align-items:center;justify-content:space-around;padding:4%;box-sizing:border-box;z-index:2}
+.fkcard{position:absolute;left:50%;top:10%;transform:translateX(-50%);height:42%;aspect-ratio:1.43;max-width:62%;background:#fffdf8;border:4px solid #151515;border-radius:22px;box-shadow:6px 6px 0 #151515;display:flex;align-items:center;justify-content:space-around;padding:2%;box-sizing:border-box;z-index:2}
 .fkcard.back{background:repeating-linear-gradient(45deg,#ff5d8f 0 14px,#ff7aa3 14px 28px)}
 .fkcard.back::after{content:"🐾";font-size:clamp(40px,9vh,80px)}
 .fkcard.flip{animation:fkflip .28s ease-out}@keyframes fkflip{from{transform:translateX(-50%) rotateY(90deg) scale(.9)}to{transform:translateX(-50%) rotateY(0) scale(1)}}
 .fkcard.taken{animation:fktake .5s ease-in .5s forwards}@keyframes fktake{to{transform:translateX(-50%) translateY(-30%) scale(.6);opacity:0}}
-.fkcard .slot{height:92%;aspect-ratio:1;transition:transform .2s}.fkcard .slot svg{width:100%;height:100%;display:block}
+.fkcard{overflow:hidden}.fkcard .slot{width:100%;height:100%}.fkcard .slot svg{width:100%;height:100%;display:block}
 .fktable{position:absolute;left:2%;right:2%;bottom:5%;display:flex;justify-content:center;gap:2%;z-index:3}
 .obj{position:relative;flex:0 1 17%;max-width:150px;aspect-ratio:.86;border:3px solid #151515;border-radius:18px;background:rgba(255,253,248,.9);box-shadow:4px 4px 0 #151515;padding:6px 4px 2px;display:flex;flex-direction:column;align-items:center;cursor:pointer;touch-action:manipulation;transition:transform .08s}
 .obj:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #151515}
@@ -214,10 +214,10 @@ header.top{flex:none}
 .obj.wrong{animation:fkno .35s}@keyframes fkno{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 .obj.hint{box-shadow:0 0 0 5px #ffd23f,4px 4px 0 #151515}
 .obj.locked{opacity:.55}
-.flokipic{width:96px;height:96px;border-radius:50%;border:3px solid #151515;object-fit:cover;box-shadow:3px 3px 0 #151515}
+.flokipic{width:92px;height:92px;border-radius:50%;border:3px solid #151515;background:#ffe9c7;box-shadow:3px 3px 0 #151515;display:block;padding:8px;box-sizing:border-box}.flokipic svg{width:100%;height:100%;display:block}
 .rulesmini{display:flex;flex-direction:column;gap:5px;text-align:left;font-size:13px;font-weight:700;width:100%}.rulesmini div{background:#fff;border:2.5px solid #151515;border-radius:12px;padding:5px 9px}
 .toast{top:56%!important}
-@media (max-aspect-ratio:3/4){.fkcard{height:auto;width:84%;top:14%}.fktable{flex-wrap:wrap;gap:10px 3%;bottom:4%}.obj{flex-basis:28%}}
+@media (max-aspect-ratio:3/4){#chips.fkchips{flex-direction:row!important;flex-wrap:wrap;right:8px!important;gap:4px}.fkcard{height:auto;width:88%;max-width:88%;top:150px}.fktable{flex-wrap:wrap;gap:10px 3%;bottom:4%}.obj{flex-basis:28%}}
 
 .camctl{position:absolute;right:10px;bottom:52px;display:flex;flex-direction:column;gap:8px;z-index:4}.camctl[hidden]{display:none}
 .camctl .cb{width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font:900 20px system-ui,sans-serif;color:#151320;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer;touch-action:none}
@@ -380,7 +380,7 @@ body.touch .ctl{display:flex}
   <main class="stage fk" id="stage" aria-label="Jogo Floki!">
     <div class="rhud" id="hud" hidden><span class="pill" id="hCard">Carta 1</span><span class="sp"></span><button class="rb" id="menuBtn" type="button" aria-label="Pausa">❚❚</button></div>
     <ul id="chips" class="fkchips" hidden></ul>
-    <div class="fkcard back" id="card"><div class="slot" id="s0"></div><div class="slot" id="s1"></div></div>
+    <div class="fkcard back" id="card"><div class="slot" id="s0"></div></div>
     <div class="fktable" id="table"></div>
     <div class="toast" id="toast" hidden></div>
     <div class="ov" id="ov"></div>
@@ -837,36 +837,53 @@ function initUI(o){
 }
 
 /* ================= Floki! — jogo de reflexos com o gato Floki ================= */
-const OB=["floki","novelo","peixe","pena","sino"],ONAME=["o Floki","o novelo","o peixe","a pena","o sino"],ONAME1=["Floki","Novelo","Peixe","Pena","Sino"];
-const COLS=["#f7f2e8","#e63946","#3a86ff","#2fbf71","#ffd23f"],CNAME=["branco","vermelho","azul","verde","amarelo"];
+const OB=["floki","sofa","garrafa","livro","rato"],ONAME=["o Floki","o sofá","a garrafa","o livro","o rato"],ONAME1=["Floki","Sofá","Garrafa","Livro","Rato"];
+const COLS=["#f7f2e8","#e63946","#2fbf71","#3a86ff","#9a9aa8"],CNAME=["branco","vermelho","verde","azul","cinzento"];
 const PCOLS=["#ff5d8f","#3a86ff","#ff9f1c","#06d6a0","#9b5de5","#e63946"],BOTN=["Zé","Mia","Tó","Rita","Kiko","Bia","Nuno"];
 const SAVE=(()=>{try{return JSON.parse(store.get("floki")||"{}")}catch(e){return{}}})();SAVE.wins=SAVE.wins||0;SAVE.best=SAVE.best||0;const saveS=()=>store.set("floki",JSON.stringify(SAVE));
 const DECK=24;
 let MODE=null,ME=0,PL=[],STATE="menu",CARD=null,CN=0,LOCK={},WON=-1,DIFF=1,TIMERS=[];
 /* ---------- desenhos (SVG) ---------- */
 function shade(hex,k){const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;r=Math.round(r*k);g=Math.round(g*k);b=Math.round(b*k);return`rgb(${Math.min(255,r)},${Math.min(255,g)},${Math.min(255,b)})`}
-function drawObj(o,col){const S='stroke="#151515" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';const white=col===COLS[0];
-  if(o===0){/* Floki: gatinho fofo de pontas escuras */const pt=white?"#8e8a9c":shade(col,.62),bd=col,inner="#ffb3c1";
-    return`<svg viewBox="0 0 100 100"><path d="M70 78c14 2 22-8 18-18-3-7-10-6-10 0" fill="none" stroke="#151515" stroke-width="9" stroke-linecap="round"/><path d="M70 78c14 2 22-8 18-18-3-7-10-6-10 0" fill="none" stroke="${pt}" stroke-width="5" stroke-linecap="round"/>
-    <path d="M26 90c-4-20 4-36 24-36s28 16 24 36z" fill="${bd}" ${S}/><path d="M42 62l8 10 8-10" fill="none" stroke="${shade(col,.85)}" stroke-width="2"/>
+function objG(o,col){const S='stroke="#151515" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';const white=col===COLS[0];
+  if(o===0){/* Floki: gatinho fofo; branco tem as pontas cor de areia para não confundir com o cinzento */const pt=white?"#d6c2ab":shade(col,.62),bd=col,inner="#ffb3c1";
+    return`<path d="M70 78c14 2 22-8 18-18-3-7-10-6-10 0" fill="none" stroke="#151515" stroke-width="9" stroke-linecap="round"/><path d="M70 78c14 2 22-8 18-18-3-7-10-6-10 0" fill="none" stroke="${pt}" stroke-width="5" stroke-linecap="round"/>
+    <path d="M26 90c-4-20 4-36 24-36s28 16 24 36z" fill="${bd}" ${S}/>
     <ellipse cx="38" cy="90" rx="8" ry="5" fill="${pt}" ${S}/><ellipse cx="62" cy="90" rx="8" ry="5" fill="${pt}" ${S}/>
     <path d="M22 26l4-20 16 12zM78 26l-4-20-16 12z" fill="${pt}" ${S}/><path d="M26 22l2-10 8 6zM74 22l-2-10-8 6z" fill="${inner}"/>
     <path d="M50 14c20 0 32 12 32 28 0 16-14 24-32 24S18 58 18 42c0-16 12-28 32-28z" fill="${bd}" ${S}/>
-    <path d="M18 40l-6-2M19 46l-7 2M82 40l6-2M81 46l7 2" stroke="#151515" stroke-width="2"/>
-    <path d="M50 30c9 0 14 9 14 17 0 7-6 11-14 11s-14-4-14-11c0-8 5-17 14-17z" fill="${pt}" opacity=".55"/>
+    <path d="M50 30c9 0 14 9 14 17 0 7-6 11-14 11s-14-4-14-11c0-8 5-17 14-17z" fill="${pt}" opacity=".6"/>
     <ellipse cx="38" cy="40" rx="6.5" ry="5.5" fill="#7cc6ff" ${S}/><ellipse cx="62" cy="40" rx="6.5" ry="5.5" fill="#7cc6ff" ${S}/><ellipse cx="38" cy="40.5" rx="2" ry="4" fill="#151515"/><ellipse cx="62" cy="40.5" rx="2" ry="4" fill="#151515"/><circle cx="36.5" cy="38" r="1.4" fill="#fff"/><circle cx="60.5" cy="38" r="1.4" fill="#fff"/>
     <path d="M46 49h8l-4 4z" fill="#ff8fab" stroke="#151515" stroke-width="2" stroke-linejoin="round"/><path d="M50 53c0 4-4 5-6 3M50 53c0 4 4 5 6 3" fill="none" stroke="#151515" stroke-width="2" stroke-linecap="round"/>
-    <path d="M40 51l-14-2M40 54l-13 3M60 51l14-2M60 54l13 3" stroke="#151515" stroke-width="1.3" opacity=".7"/></svg>`}
-  if(o===1){/* novelo de lã */const d=shade(col,.75);return`<svg viewBox="0 0 100 100"><path d="M72 72c10 8 18 10 22 4" fill="none" stroke="#151515" stroke-width="6" stroke-linecap="round"/><path d="M72 72c10 8 18 10 22 4" fill="none" stroke="${col}" stroke-width="3" stroke-linecap="round"/>
-    <circle cx="48" cy="52" r="34" fill="${col}" ${S}/><path d="M20 40c14-6 40-4 58 14M16 56c18-8 46-4 62 12M26 76c10-14 30-30 50-34M34 22c-4 16 0 40 16 62M54 19c-6 20-4 44 6 64" fill="none" stroke="${d}" stroke-width="3" stroke-linecap="round"/><path d="M30 30c6-6 14-8 18-8" fill="none" stroke="#fff" stroke-width="3" opacity=".5" stroke-linecap="round"/></svg>`}
-  if(o===2){/* peixe */const d=shade(col,.72);return`<svg viewBox="0 0 100 100"><path d="M72 50l20-18v36z" fill="${d}" ${S}/><path d="M10 50c10-20 28-28 44-28 14 0 22 10 22 28s-8 28-22 28C38 78 20 70 10 50z" fill="${col}" ${S}/>
-    <path d="M40 24c6-12 18-12 22-2" fill="${d}" ${S}/><path d="M38 78c6 8 14 8 18 0" fill="${d}" ${S}/><path d="M46 30c6 6 6 34 0 40M56 28c5 7 5 37 0 44" fill="none" stroke="${d}" stroke-width="3"/>
-    <circle cx="26" cy="45" r="5" fill="#fff" ${S}/><circle cx="27" cy="45" r="2.2" fill="#151515"/><path d="M14 56c4 2 7 2 10 0" fill="none" stroke="#151515" stroke-width="2.5" stroke-linecap="round"/></svg>`}
-  if(o===3){/* pena de brincar */const d=shade(col,.7);return`<svg viewBox="0 0 100 100"><path d="M24 88C30 60 46 28 82 10c4 26-10 58-50 74z" fill="${col}" ${S}/>
-    <path d="M24 88C40 60 58 36 80 14" fill="none" stroke="${d}" stroke-width="3.5" stroke-linecap="round"/><path d="M44 58l-12-2M52 48l-14-4M60 38l-12-6M68 28l-10-7M48 56l10 6M56 46l12 4M64 36l12 2" stroke="${d}" stroke-width="2.4" stroke-linecap="round"/>
-    <path d="M24 88l-8 8" stroke="#151515" stroke-width="4" stroke-linecap="round"/></svg>`}
-  /* sino de coleira */const d=shade(col,.7);return`<svg viewBox="0 0 100 100"><path d="M40 16c0-8 20-8 20 0" fill="none" ${S} stroke-width="5"/><path d="M50 14c-20 0-32 16-32 36v16l-8 10h80l-8-10V50c0-20-12-36-32-36z" fill="${col}" ${S}/>
-    <path d="M24 64h52" stroke="${d}" stroke-width="4"/><path d="M30 34c4-8 10-11 16-12" fill="none" stroke="#fff" stroke-width="4" opacity=".55" stroke-linecap="round"/><circle cx="50" cy="84" r="8" fill="${d}" ${S}/></svg>`}
+    <path d="M38 51l-12-2M38 54l-11 3M62 51l12-2M62 54l11 3" stroke="#151515" stroke-width="1.3" opacity=".7"/>`}
+  if(o===1){/* sofá (cadeirão) */const d=shade(col,.72),l=white?"#e9e2d4":shade(col,1.12);
+    return`<rect x="20" y="84" width="7" height="10" rx="2" fill="#6b4a2b" ${S}/><rect x="73" y="84" width="7" height="10" rx="2" fill="#6b4a2b" ${S}/>
+    <path d="M20 60V24c0-8 6-12 14-12h32c8 0 14 4 14 12v36z" fill="${col}" ${S}/><path d="M30 22c6-4 34-4 40 0" fill="none" stroke="${d}" stroke-width="3" stroke-linecap="round"/>
+    <rect x="14" y="62" width="72" height="24" rx="6" fill="${col}" ${S}/><rect x="22" y="52" width="56" height="14" rx="6" fill="${l}" ${S}/>
+    <rect x="6" y="42" width="18" height="44" rx="9" fill="${col}" ${S}/><rect x="76" y="42" width="18" height="44" rx="9" fill="${col}" ${S}/><path d="M10 50c2-3 8-3 10 0M80 50c2-3 8-3 10 0" fill="none" stroke="${d}" stroke-width="2.5" stroke-linecap="round"/>`}
+  if(o===2){/* garrafa */const d=shade(col,.7);
+    return`<rect x="43" y="4" width="14" height="8" rx="2" fill="#c58b4c" ${S}/><path d="M44 12h12v18c0 6 14 10 14 24v36c0 4-3 6-6 6H36c-3 0-6-2-6-6V54c0-14 14-18 14-24z" fill="${col}" ${S}/>
+    <rect x="34" y="58" width="32" height="20" rx="3" fill="#fff6e0" ${S}/><path d="M40 64h20M42 71h16" stroke="${d}" stroke-width="2.5" stroke-linecap="round"/><path d="M38 50c2-6 6-9 8-10M36 84v4" fill="none" stroke="#fff" stroke-width="3.5" opacity=".55" stroke-linecap="round"/>`}
+  if(o===3){/* livro deitado */const d=shade(col,.68);
+    return`<path d="M10 44l60-14 22 18-60 14z" fill="${col}" ${S}/><path d="M10 44l22 18v14L10 58z" fill="${d}" ${S}/><path d="M32 62l60-14v14L32 76z" fill="#fff6e0" ${S}/>
+    <path d="M38 66l48-11M38 71l48-11" stroke="#d8c9a8" stroke-width="1.8"/><path d="M30 42l34-8 10 8-34 8z" fill="none" stroke="${white?"#d6c2ab":shade(col,1.25)}" stroke-width="2.5" stroke-linejoin="round"/>`}
+  /* rato sentado */const d=shade(col,.7),pk="#ffb3c1";
+  return`<path d="M24 80C10 82 4 70 10 60s14-4 10 2" fill="none" stroke="#151515" stroke-width="7" stroke-linecap="round"/><path d="M24 80C10 82 4 70 10 60s14-4 10 2" fill="none" stroke="${d}" stroke-width="3.5" stroke-linecap="round"/>
+    <ellipse cx="46" cy="68" rx="27" ry="22" fill="${col}" ${S}/><ellipse cx="38" cy="90" rx="9" ry="4" fill="${d}" ${S}/><ellipse cx="58" cy="90" rx="9" ry="4" fill="${d}" ${S}/>
+    <circle cx="62" cy="34" r="11" fill="${col}" ${S}/><circle cx="62" cy="34" r="6" fill="${pk}"/><circle cx="82" cy="36" r="10" fill="${col}" ${S}/><circle cx="82" cy="36" r="5.5" fill="${pk}"/>
+    <path d="M56 46c6-8 22-8 28 2 4 6 6 10 6 12-8 4-26 4-34-2z" fill="${col}" ${S}/><circle cx="91" cy="59" r="3.5" fill="#ff8fab" stroke="#151515" stroke-width="2"/><circle cx="74" cy="51" r="3" fill="#151515"/><circle cx="73" cy="50" r="1" fill="#fff"/>
+    <path d="M86 62l10 3M86 64l9 6M84 60l10-1" stroke="#151515" stroke-width="1.3" opacity=".7"/>`}
+function drawObj(o,col){return`<svg viewBox="0 0 100 100" overflow="visible">${objG(o,col)}</svg>`}
+/* carta: os dois objetos juntos numa só cena (o rato em cima do sofá, o gato sentado no livro…) */
+const BOT=[95,94,96,74,92],SEAT=[0,54,0,46,0],SIZE=[64,0,60,72,52];
+function cardSVG(s){const sup=o=>o===1||o===3;let A=s[0],B=s[1],parts;
+  let base=null,top=null;if(A[0]===1&&B[0]===3){base=A;top=B}else if(B[0]===1&&A[0]===3){base=B;top=A}else if(sup(A[0])&&!sup(B[0])){base=A;top=B}else if(sup(B[0])&&!sup(A[0])){base=B;top=A}
+  if(base){const Z=base[0]===1?116:128,bx=100-Z/2,by=136-Z*BOT[base[0]]/100,seat=by+Z*SEAT[base[0]]/100,ts=SIZE[top[0]],off=(Math.random()-.5)*26,tx=100-ts/2+off,ty=seat-ts*BOT[top[0]]/100+3;parts=[[base,bx,by,Z],[top,tx,ty,ts]]}
+  else{const [a,b]=Math.random()<.5?[A,B]:[B,A];const za=100,zb=64;parts=[[a,22,134-za*BOT[a[0]]/100,za],[b,112,134-zb*BOT[b[0]]/100,zb]]}
+  const g=parts.map(([o,x,y,z])=>`<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${(z/100).toFixed(3)})">${objG(o[0],COLS[o[1]])}</g>`).join("");
+  /* enquadra a cena para encher a carta */let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const [,x,y,z] of parts){x0=Math.min(x0,x+z*.04);y0=Math.min(y0,y+z*.02);x1=Math.max(x1,x+z*.98);y1=Math.max(y1,y+z*.97)}
+  const pad=7;x0-=pad;y0-=pad;x1+=pad;y1+=pad;let w=x1-x0,h=y1-y0;const R=1.43;if(w/h<R){const nw=h*R;x0-=(nw-w)/2;w=nw}else{const nh=w/R;y0-=(nh-h)/2;h=nh}
+  const fl=Math.random()<.5,cx=x0+w/2;return`<svg viewBox="${x0.toFixed(1)} ${y0.toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}"><g${fl?` transform="translate(${(2*cx).toFixed(1)} 0) scale(-1 1)"`:""}>${g}</g></svg>`}
 /* ---------- cartas ---------- */
 function rnd(n){return Math.floor(Math.random()*n)}
 function makeCard(){if(Math.random()<.45){/* um objeto na cor certa */const [x,y,w]=shuffle([0,1,2,3,4]);const s=[[x,x],[y,w]];if(Math.random()<.5)s.reverse();return{s,ans:x}}
@@ -874,8 +891,8 @@ function makeCard(){if(Math.random()<.45){/* um objeto na cor certa */const [x,y
 /* ---------- ecrã ---------- */
 const ov=$("ov");function showOv(h){ov.innerHTML=h;ov.hidden=false}
 function buildTable(){$("table").innerHTML=OB.map((o,i)=>`<button type="button" class="obj" data-o="${i}" aria-label="${ONAME1[i]} (${CNAME[i]})"><span class="art">${drawObj(i,COLS[i])}</span><small>${ONAME1[i]}</small><i class="gb"></i></button>`).join("")}
-function showCard(c){const el=$("card");if(!c){el.className="fkcard back";$("s0").innerHTML=$("s1").innerHTML="";return}
-  $("s0").innerHTML=drawObj(c.s[0][0],COLS[c.s[0][1]]);$("s1").innerHTML=drawObj(c.s[1][0],COLS[c.s[1][1]]);const r=()=>(Math.random()-.5)*24;$("s0").style.transform=`rotate(${r()}deg)`;$("s1").style.transform=`rotate(${r()}deg)`;
+function showCard(c){const el=$("card");if(!c){el.className="fkcard back";$("s0").innerHTML="";return}
+  $("s0").innerHTML=cardSVG(c.s);
   el.className="fkcard";void el.offsetWidth;el.className="fkcard flip"}
 function clearMarks(){document.querySelectorAll(".obj").forEach(b=>{b.className="obj";b.querySelector(".gb").textContent="";b.style.removeProperty("--pc")})}
 function mark(o,cls,p){const b=document.querySelector(`.obj[data-o="${o}"]`);if(!b)return;b.classList.add(cls);if(p){b.style.setProperty("--pc",p.col);b.querySelector(".gb").textContent=p.i===ME?"Tu":p.name}}
@@ -906,14 +923,14 @@ function onNone(m){mark(m.ans,"hint");say(`Era ${ONAME[m.ans]}!`,"#555")}
 function showEnd(o){STATE="end";clearTimers();$("hud").hidden=true;const win=o[0]===ME;if(MODE==="solo"){if(win)SAVE.wins++;SAVE.best=Math.max(SAVE.best,PL[ME].sc);saveS()}SFXF.end();if(win)SFXF.miau();
   const rows=o.map((i,k)=>{const p=PL[i];return`<div class="${i===ME?"me":""}"><span>${["🥇","🥈","🥉"][k]||(k+1)+".º"} <i class="dot" style="background:${p.col}"></i>${esc(i===ME?"Tu":p.name)}</span><b>${p.sc} cartas</b></div>`}).join("");
   const ctl=MODE==="online"?(ROOM.role==="host"?`<button class="btn" type="button" data-a="again">Outra vez ▶</button><button class="btn ghost" type="button" data-a="lobby">Voltar à sala</button>`:`<p class="note">À espera de quem criou a sala…</p><button class="btn ghost" type="button" data-a="leave">Sair da sala</button>`):`<button class="btn" type="button" data-a="solo">Outra vez ▶</button><button class="btn ghost" type="button" data-a="menu">Menu</button>`;
-  showOv(`<div class="panel"><img class="flokipic" src="floki.jpg" alt="O Floki"><h2>${win?"Ganhaste!":"Fim!"}</h2><div class="podium">${rows}</div>${ctl}</div>`)}
+  showOv(`<div class="panel"><span class="flokipic">${drawObj(0,COLS[0])}</span><h2>${win?"Ganhaste!":"Fim!"}</h2><div class="podium">${rows}</div>${ctl}</div>`)}
 /* ---------- tocar nos objetos ---------- */
 function tap(o){if(STATE!=="play"||!CARD||WON>=0||LOCK[ME])return;unlockAudio();if(isHost())grab(ME,o,CARD.n);else{ROOM.send({t:"grab",o,n:CARD.n});LOCK[ME]=LOCK[ME]||0}}
 $("table").addEventListener("pointerdown",e=>{const b=e.target.closest(".obj");if(!b)return;e.preventDefault();tap(+b.dataset.o)});
 addEventListener("keydown",e=>{const k="12345".indexOf(e.key);if(k>=0)tap(k)});
 /* ---------- menus ---------- */
 function menu(){MODE=null;STATE="menu";clearTimers();PL=[];$("hud").hidden=true;$("chips").hidden=true;buildTable();clearMarks();showCard(null);
-  showOv(`<div class="panel"><img class="flokipic" src="floki.jpg" alt="O Floki, o gato"><h2>Floki!</h2><p>Sai uma carta com dois desenhos. <b>Toca no objeto certo antes de toda a gente!</b></p>
+  showOv(`<div class="panel"><span class="flokipic">${drawObj(0,COLS[0])}</span><h2>Floki!</h2><p>Sai uma carta com dois desenhos. <b>Toca no objeto certo antes de toda a gente!</b></p>
    <div class="rulesmini"><div><b>1.</b> Se um desenho tem a <b>cor certa</b>, apanha esse.</div><div><b>2.</b> Se nenhum tem, apanha o que <b>não aparece</b> nem na forma nem na cor.</div></div>
    <div class="seg" role="group">${["Fácil","Normal","Rápido"].map((n,i)=>`<button type="button" class="${DIFF===i?"on":""}" data-a="d${i}">${n}</button>`).join("")}</div>
    <button class="btn" type="button" data-a="solo">Jogar contra bonecos ▶</button><button class="btn ghost" type="button" data-a="mp">👥 Jogar com amigos</button><p class="note">Vitórias: ${SAVE.wins} · melhor: ${SAVE.best} cartas</p></div>`)}
@@ -942,11 +959,11 @@ ROOM.game={id:"floki",title:"Floki!",maxp:6,minp:2,maxBots:0,botNames:[],cleanOp
   stop(){STATE="menu";MODE=null;clearTimers()},hostLost(){clearTimers()},
   drop(seat){const i=ROOM.seats.indexOf(seat);if(i>0&&PL[i]){PL[i].gone=1;bcast({t:"gone",i});chips()}},
   onScreen(n){if(n==="game"&&!ROOM.code){$("exitBtn").hidden=true;$("reactBtn").hidden=true;$("hubLink").hidden=false;if(!MODE)menu()}}};
-initUI({rules:`<ul><li>Há 5 objetos na mesa, cada um com a sua cor: <b>o Floki branco</b>, o <b>novelo vermelho</b>, o <b>peixe azul</b>, a <b>pena verde</b> e o <b>sino amarelo</b>.</li><li>Sai uma carta com dois desenhos. Todos ao mesmo tempo: <b>toca no objeto certo</b> primeiro (ou carrega 1 a 5 no teclado).</li><li><b>Regra 1:</b> se um dos desenhos está na sua cor verdadeira, é esse.</li><li><b>Regra 2:</b> se nenhum está na cor certa, é o objeto que <b>não aparece na carta</b>, nem como desenho nem como cor.</li><li>Acertar primeiro ganha a carta. Errar tira-te uma carta e ficas de fora até à próxima. Ao fim de ${DECK} cartas, ganha quem tiver mais.</li><li>O Floki é um gato a sério. 🐾</li></ul>`,privacy:privacyHTML(", as tuas vitórias")});
+initUI({rules:`<ul><li>Há 5 objetos na mesa, cada um com a sua cor: o <b>Floki branco</b>, o <b>sofá vermelho</b>, a <b>garrafa verde</b>, o <b>livro azul</b> e o <b>rato cinzento</b>.</li><li>Sai uma carta com dois desenhos. Todos ao mesmo tempo: <b>toca no objeto certo</b> primeiro (ou carrega 1 a 5 no teclado).</li><li><b>Regra 1:</b> se um dos desenhos está na sua cor verdadeira, é esse.</li><li><b>Regra 2:</b> se nenhum está na cor certa, é o objeto que <b>não aparece na carta</b>, nem como desenho nem como cor.</li><li>Acertar primeiro ganha a carta. Errar tira-te uma carta e ficas de fora até à próxima. Ao fim de ${DECK} cartas, ganha quem tiver mais.</li><li>O Floki é um gato a sério. 🐾</li></ul>`,privacy:privacyHTML(", as tuas vitórias")});
 $("addBot").hidden=true;
 $("soloBtn").addEventListener("click",()=>{if(ROOM.code)leaveRoom();showScreen("game");menu()});
 if(!/sala=/.test(location.hash)){showScreen("game");menu()}
-window.FK={startSolo,get CARD(){return CARD},get STATE(){return STATE},get PL(){return PL},makeCard,tap};
+window.cardSVGx=cardSVG;window.FK={startSolo,get CARD(){return CARD},get STATE(){return STATE},get PL(){return PL},makeCard,tap};
 
 </script>
 <script>
