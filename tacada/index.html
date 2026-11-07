@@ -1317,7 +1317,7 @@ const PTS=[5,3,2,1,1,1];
 let MODE=null,CI=0,HI=0,ME=0,PL=[],BALL=null,STATE="menu",HT=0,FIRST=null,FIN=[],NAMES=[],HUMANS=1,H=null;
 /* ---------- three.js ---------- */
 const renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,powerPreference:"high-performance"});renderer.setPixelRatio(Math.min(1.75,devicePixelRatio||1));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
 const scene=new THREE.Scene();scene.fog=new THREE.Fog(0xbfe6ff,60,170);
 const camera=new THREE.PerspectiveCamera(55,1,.1,600);
 const hemi=new THREE.HemisphereLight(0xffffff,0x6f8f5a,1.15);scene.add(hemi);
@@ -1333,9 +1333,15 @@ function skyTheme(th){const c=document.createElement("canvas");c.width=4;c.heigh
   const tx=new THREE.CanvasTexture(c);tx.colorSpace=THREE.SRGBColorSpace;if(SKYM.map)SKYM.map.dispose();SKYM.map=tx;SKYM.needsUpdate=true;scene.fog.color.setHex(th.fog);hemi.groundColor.setHex(th.hemiG)}
 const TX={stripe:texC(64,16,(g,w,h)=>{for(let i=0;i<8;i++){g.fillStyle=i%2?"#ffffff":"#e63946";g.fillRect(i*8,0,8,h)}}),
   wood:texC(64,64,(g,w,h)=>{g.fillStyle="#c58b4c";g.fillRect(0,0,w,h);g.fillStyle="#9c6a35";for(let y=0;y<h;y+=16)g.fillRect(0,y,w,2);g.fillStyle="rgba(255,255,255,.12)";for(let y=4;y<h;y+=16)g.fillRect(0,y,w,3)})};
-let HG=null;const DYN={mill:[],bar:[],slide:[],flag:null,bump:[]};
+let HG=null;const DYN={mill:[],bar:[],slide:[],flag:null,bump:[],isl:[]};
+/* decoração do Minigolf Kit (Kenney, CC0) nas ilhas à volta */
+const KIT={};(async()=>{try{const {GLTFLoader}=await import("../lib/GLTFLoader.js");const gl=new GLTFLoader();const N=["castle","structure-windmill","structure-gate-building","structure-gate-wide","tunnel-wide","flag-large-red"];
+  const gs=await Promise.all(N.map(n=>gl.loadAsync("m/"+n+".glb")));N.forEach((n,i)=>{gs[i].scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});KIT[n]=gs[i].scene});KIT.ok=1;kitDeco()}catch(e){console.warn("kit",e)}})();
+function kitDeco(){if(!KIT.ok||!HG||!DYN.isl.length)return;const P=[["castle",1],["structure-windmill",.9],["structure-gate-building",1.1],["tunnel-wide",.9],["structure-gate-wide",1],["castle",1]];
+  DYN.isl.forEach((d,i)=>{if(d.done)return;d.done=1;const [n,k]=P[i%P.length],m=KIT[n].clone();const sc=d.s*1.25*k;m.scale.setScalar(sc);m.position.set(0,d.top,0);m.rotation.y=Math.atan2(d.dx,d.dz)+Math.PI;d.g.add(m);
+    if(n==="castle"||n==="structure-gate-building"){const f=KIT["flag-large-red"].clone();f.scale.setScalar(sc*.9);f.position.set(d.s*.35,d.top+sc*.6,0);d.g.add(f)}})}
 /* ---------- construir o buraco ---------- */
-function buildHole(){const th=THEMES[COURSES[CI].theme];skyTheme(th);if(HG){scene.remove(HG);HG.traverse(o=>{if(o.geometry)o.geometry.dispose()})}HG=new THREE.Group();scene.add(HG);DYN.mill=[];DYN.bar=[];DYN.slide=[];DYN.bump=[];
+function buildHole(){const th=THEMES[COURSES[CI].theme];skyTheme(th);if(HG){scene.remove(HG);HG.traverse(o=>{if(o.geometry)o.geometry.dispose()})}HG=new THREE.Group();scene.add(HG);DYN.mill=[];DYN.bar=[];DYN.slide=[];DYN.bump=[];DYN.isl=[];
   const top=[],topC=[],side=[],sideC=[],col=new THREE.Color();
   const push=(arr,carr,c,...v)=>{for(const p of v){arr.push(p[0],p[1],p[2]);carr.push(c.r,c.g,c.b)}};
   const BASE=th.sea?-1.6:-2.4;
@@ -1383,11 +1389,12 @@ function buildHole(){const th=THEMES[COURSES[CI].theme];skyTheme(th);if(HG){scen
     const pl=new THREE.Mesh(new THREE.SphereGeometry(30,24,16),new THREE.MeshBasicMaterial({color:"#3a86ff",fog:false}));pl.position.set(cx-140,70,cz-220);HG.add(pl);const pl2=new THREE.Mesh(new THREE.SphereGeometry(31,24,16,0,Math.PI*2,0,Math.PI*.35),new THREE.MeshBasicMaterial({color:"#06d6a0",fog:false}));pl2.position.copy(pl.position);pl2.rotation.z=.6;HG.add(pl2)}
   const R=trnd(CI*31+HI*7+3);for(let i=0;i<26;i++){const a=R()*6.283,d=Math.max(H.W,H.R)*S*.5+8+R()*40,x=cx+Math.cos(a)*d,z=cz+Math.sin(a)*d*1.2,s=2.5+R()*5;const g=new THREE.Group();g.position.set(x,th.sea?-.5:-2,z);
     const isl=new THREE.Mesh(new THREE.CylinderGeometry(s,s*.55,s*.8,7),L(th.sea?th.side:"#4a4a60"));isl.position.y=-s*.25;g.add(isl);const tp=new THREE.Mesh(new THREE.CylinderGeometry(s,s,.3,7),L(th.sea?th.grass[0]:"#8f8fa6"));tp.position.y=s*.15+.1;g.add(tp);
+    if(DYN.isl.length<7&&th.deco!=="rock"&&s>3&&R()<.6){DYN.isl.push({g,s,top:s*.15+.25,dx:cx-x,dz:cz-z})}else
     if(th.deco==="tree")for(let k=0;k<2;k++){const tr=new THREE.Mesh(new THREE.CylinderGeometry(.18,.25,1.4,6),L("#7a4b2a"));tr.position.set((R()-.5)*s,s*.15+.8,(R()-.5)*s);g.add(tr);const cr=new THREE.Mesh(new THREE.IcosahedronGeometry(.9+R()*.6,0),L(R()<.5?"#2f8f3a":"#46b04f"));cr.position.set(tr.position.x,tr.position.y+1.1,tr.position.z);g.add(cr)}
     else if(th.deco==="palm"){const tr=new THREE.Mesh(new THREE.CylinderGeometry(.12,.2,3,6),L("#a0703a"));tr.position.set(0,s*.15+1.6,0);tr.rotation.z=.2;g.add(tr);for(let k=0;k<5;k++){const lf=new THREE.Mesh(new THREE.ConeGeometry(.35,2,4),L("#2fbf71"));lf.position.set(Math.cos(k*1.26)*.8+.3,s*.15+3,Math.sin(k*1.26)*.8);lf.rotation.set(Math.sin(k*1.26)*1.2,0,-Math.cos(k*1.26)*1.2);g.add(lf)}
       if(R()<.4){const um=new THREE.Mesh(new THREE.ConeGeometry(1.2,.6,10),L(R()<.5?"#ff5d8f":"#ffd23f"));um.position.set(s*.4,s*.15+1.6,0);g.add(um)}}
     else{const rk=new THREE.Mesh(new THREE.DodecahedronGeometry(.8+R()*1.2,0),L("#7a7a99"));rk.position.set(0,s*.15+.6,0);g.add(rk)}
-    HG.add(g)}}
+    HG.add(g)}kitDeco()}
 function trnd(s){let a=s>>>0||1;return()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 /* ---------- bolas e etiquetas ---------- */
 const BM={},QT=new THREE.Quaternion(),AXV=new THREE.Vector3();const BALLG=new THREE.SphereGeometry(BR,20,14);
@@ -1565,7 +1572,7 @@ $("addBot").hidden=true;
 $("soloBtn").addEventListener("click",()=>{if(ROOM.code)leaveRoom();showScreen("game");menu()});
 layout();addEventListener("resize",()=>{clearTimeout(window.__rz);window.__rz=setTimeout(layout,60)});
 if(!/sala=/.test(location.hash)){showScreen("game");menu()}
-window.TA={startHole,endHole,set CI(v){CI=v},get PL(){return PL},get BALL(){return BALL},get H(){return H},shoot,shotVel,startSolo,get STATE(){return STATE},get HI(){return HI},CAM,get HT(){return HT},planShot,planStep,ballScreen};
+window.TA={KIT,DYN,startHole,endHole,set CI(v){CI=v},get PL(){return PL},get BALL(){return BALL},get H(){return H},shoot,shotVel,startSolo,get STATE(){return STATE},get HI(){return HI},CAM,get HT(){return HT},planShot,planStep,ballScreen};
 requestAnimationFrame(t=>{last=t;loop(t)});
 
 </script>
