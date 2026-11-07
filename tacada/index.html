@@ -1246,7 +1246,7 @@ function floorAt(H,x,z){const c=Math.floor((x-H.ox)/S),r=Math.floor((z-H.oz)/S);
 function tileAt(H,x,z){const c=Math.floor((x-H.ox)/S),r=Math.floor((z-H.oz)/S);if(r<0||c<0||r>=H.R||c>=H.W)return" ";return H.t[r][c]}
 /* obstáculos que mexem: devolvem caixas orientadas {cx,cz,hx,hz,a,y0,y1,vx,vz} no tempo t */
 function obsBoxes(H,o,t){const cx=H.ox,cz=H.oz;
-  if(o.t==="mill"){/* pás do moinho tapam a passagem quando passam em baixo */const x=cx+(o.c+.5)*S,z=cz+o.r*S,a=t*o.sp;const out=[];for(let k=0;k<4;k++){const b=((a+k*Math.PI/2)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);if(Math.abs(b-Math.PI)<.42)out.push({cx:x,cz:z,hx:S/2,hz:.12,a:0,y0:-1,y1:9,vx:0,vz:0})}return out}
+  if(o.t==="mill"){/* pás do moinho tapam a passagem quando passam em baixo */const x=cx+(o.c+.5)*S,z=cz+o.r*S,a=t*o.sp;const out=[];for(let k=0;k<4;k++){const b=((a+k*Math.PI/2)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);if(Math.abs(b-Math.PI)<.3)out.push({cx:x,cz:z,hx:S/2,hz:.12,a:0,y0:-1,y1:9,vx:0,vz:0})}return out}
   if(o.t==="bar"){const x=cx+(o.c+.5)*S,z=cz+o.r*S,a=t*o.sp;return[{cx:x,cz:z,hx:o.len,hz:.16,a,y0:-1,y1:.6+(o.y||0),spin:o.sp,px:x,pz:z}]}
   if(o.t==="slide"){const ph=(t/o.p)%2,f=ph<1?ph:2-ph,e=f*f*(3-2*f),x=cx+(o.c0+(o.c1-o.c0)*e)*S,z=cz+o.r*S,de=6*f*(1-f)*(ph<1?1:-1)/o.p;return[{cx:x,cz:z,hx:o.w/2,hz:o.d/2,a:0,y0:-1,y1:.7,vx:(o.c1-o.c0)*S*de,vz:0}]}
   return[]}
@@ -1363,7 +1363,7 @@ function buildHole(){const th=THEMES[COURSES[CI].theme];skyTheme(th);if(HG){scen
   /* obstáculos */
   for(const o of H.obs){if(o.t==="mill"){const x=H.ox+(o.c+.5)*S,z=H.oz+o.r*S,y=floorAt(H,x,z+S*.6);const g=new THREE.Group();g.position.set(x,y,z);
       const body=new THREE.Mesh(new THREE.CylinderGeometry(1.9,2.4,4.2,8,1,true),L("#fff3e0"));body.position.set(0,BLK+2.1,0);body.castShadow=true;g.add(body);const roof=new THREE.Mesh(new THREE.ConeGeometry(2.3,1.8,8),L("#e63946"));roof.position.y=BLK+5.1;roof.castShadow=true;g.add(roof);
-      const door=new THREE.Mesh(new THREE.BoxGeometry(S*.9,1.2,S*2.05),L("#3d2b22"));door.position.set(0,.55,0);g.add(door);
+      /* túnel aberto: só uma moldura de madeira à entrada e à saída, para se ver a bola lá dentro */for(const zz of [S+.02,-S-.02]){const lin=new THREE.Mesh(new THREE.BoxGeometry(S*1.1,.3,.16),L("#8d5a34"));lin.position.set(0,BLK-.15,zz);g.add(lin);for(const sx of [-1,1]){const po=new THREE.Mesh(new THREE.BoxGeometry(.16,BLK,.16),L("#8d5a34"));po.position.set(sx*S*.5,BLK/2,zz);g.add(po)}}
       const hub=new THREE.Group();hub.position.set(0,2.6,S+.25);g.add(hub);const hubc=new THREE.Mesh(new THREE.CylinderGeometry(.28,.28,.3,12),L("#5c4033"));hubc.rotation.x=Math.PI/2;hub.add(hubc);
       for(let k=0;k<4;k++){const arm=new THREE.Group();arm.rotation.z=k*Math.PI/2;const bl=new THREE.Mesh(new THREE.BoxGeometry(.7,2.5,.06),L("#ffffff"));bl.position.y=1.45;bl.castShadow=true;arm.add(bl);const sp=new THREE.Mesh(new THREE.BoxGeometry(.1,2.7,.1),L("#8d6e4a"));sp.position.y=1.35;arm.add(sp);hub.add(arm)}
       HG.add(g);DYN.mill.push({hub,o})}
