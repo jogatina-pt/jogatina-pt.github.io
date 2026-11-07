@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Floki Patrulha!</title>
-<meta name="description" content="O gato Floki salta em trampolins e usa portas para recuperar as coisas roubadas pelos cães ladrões. Jogo de arcada grátis, sem conta e sem publicidade.">
+<meta name="description" content="O gato Floki salta em trampolins e usa portas para recuperar as coisas roubadas pelos guaxinins ladrões. Jogo de arcada grátis, sem conta e sem publicidade.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:site_name" content="Jogatina">
 <meta property="og:title" content="Floki Patrulha!">
-<meta property="og:description" content="Trampolins, portas e cães ladrões!">
+<meta property="og:description" content="Trampolins, portas e guaxinins ladrões!">
 <meta property="og:url" content="https://jogatina-pt.github.io/patrulha/">
 <meta property="og:image" content="https://jogatina-pt.github.io/patrulha/og.jpg">
 <meta property="og:image:width" content="1200">
@@ -860,8 +860,8 @@ function initUI(o){
   showScreen("setup");
 }
 
-/* ================= Floki Patrulha! — o gato Floki recupera as coisas roubadas pelos cães ladrões =================
-   Casa vista de lado com vários andares. Poços com trampolins ligam os andares; portas atordoam os cães;
+/* ================= Floki Patrulha! — o gato Floki recupera as coisas roubadas pelos guaxinins ladrões =================
+   Casa vista de lado com vários andares. Poços com trampolins ligam os andares; portas atordoam os guaxinins;
    portas mágicas soltam uma onda que os apanha. Tudo original (personagens, níveis e desenhos). */
 const cv=$("cv"),ctx=cv.getContext("2d"),stage=$("stage");
 const T=32,COLS=28,WW=COLS*T,FH=96,TOP=70,TICK=1/60;
@@ -879,23 +879,24 @@ const FLOKI_SVG=(()=>{const S='stroke="#151515" stroke-width="3" stroke-linejoin
 const FIMG=new Image();FIMG.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(FLOKI_SVG);
 function drawFloki(g,x,y,face,t,state){/* (x,y) = pés */const s=44,bob=state==="walk"?Math.abs(Math.sin(t*14))*3:0;g.save();g.translate(x,y-bob);if(face<0)g.scale(-1,1);
   if(state==="air"){g.rotate(Math.sin(t*10)*.15)}if(FIMG.complete)g.drawImage(FIMG,-s/2,-s,s,s);g.restore()}
-function drawDog(g,x,y,face,t,boss,stun,inShaft){const s=boss?1.25:1;g.save();g.translate(x,y);g.scale(face*s,s);const bob=Math.abs(Math.sin(t*12))*2;g.translate(0,-bob);
-  const body=boss?"#6d6d7d":"#b07a45",dark=boss?"#44444f":"#7a4f2a";g.strokeStyle="#151515";g.lineWidth=2.5;
-  g.fillStyle=dark;g.beginPath();g.moveTo(-14,-14);g.quadraticCurveTo(-24,-24,-22,-30);g.stroke();
-  g.fillStyle=body;g.beginPath();g.ellipse(-2,-12,15,10,0,0,6.3);g.fill();g.stroke();
-  for(const lx of [-10,6]){g.fillStyle=dark;g.fillRect(lx,-6,5,7);g.strokeRect(lx,-6,5,7)}
-  g.fillStyle=body;g.beginPath();g.arc(12,-24,10,0,6.3);g.fill();g.stroke();g.beginPath();g.ellipse(21,-21,6,4.5,0,0,6.3);g.fill();g.stroke();g.fillStyle="#151515";g.beginPath();g.arc(26,-22,2.5,0,6.3);g.fill();
-  g.fillStyle=dark;g.beginPath();g.ellipse(6,-26,4,9,.5,0,6.3);g.fill();g.stroke();
-  /* máscara de ladrão */g.fillStyle="#151515";g.fillRect(8,-29,15,5);g.fillStyle="#fff";g.beginPath();g.arc(16,-27,2.2,0,6.3);g.fill();g.fillStyle="#151515";g.beginPath();g.arc(16.6,-27,1.1,0,6.3);g.fill();
-  if(boss){g.fillStyle="#151515";g.fillRect(3,-40,18,4);g.fillRect(6,-48,12,9)}
-  g.restore();if(stun){g.font="14px system-ui";g.textAlign="center";for(let k=0;k<3;k++){const a=t*6+k*2.1;g.fillText("⭐",x+Math.cos(a)*12,y-42+Math.sin(a)*4)}}}
-const ITEMS=[{n:"Novelo",c:"#e63946"},{n:"Peixe",c:"#3a86ff"},{n:"Lata de atum",c:"#9a9aa8"},{n:"Almofada",c:"#9b5de5"},{n:"Sino",c:"#ffd23f"}];
-function drawItem(g,k,x,y,t){const c=ITEMS[k].c,b=Math.sin(t*3+x)*2;g.save();g.translate(x,y-14+b);g.strokeStyle="#151515";g.lineWidth=2.5;g.fillStyle=c;
-  if(k===0){g.beginPath();g.arc(0,0,11,0,6.3);g.fill();g.stroke();g.strokeStyle=shade(c,.7);g.beginPath();g.moveTo(-9,-4);g.quadraticCurveTo(0,-1,9,-6);g.moveTo(-9,4);g.quadraticCurveTo(0,1,10,3);g.moveTo(-3,-10);g.quadraticCurveTo(-1,0,-4,10);g.stroke()}
-  else if(k===1){g.beginPath();g.moveTo(-13,0);g.quadraticCurveTo(-2,-11,9,0);g.quadraticCurveTo(-2,11,-13,0);g.fill();g.stroke();g.beginPath();g.moveTo(8,0);g.lineTo(15,-7);g.lineTo(15,7);g.closePath();g.fill();g.stroke();g.fillStyle="#151515";g.beginPath();g.arc(-7,-2,1.6,0,6.3);g.fill()}
-  else if(k===2){g.beginPath();g.ellipse(0,-6,11,4,0,0,6.3);g.fill();g.stroke();g.fillRect(-11,-6,22,13);g.strokeRect(-11,-6,22,13);g.fillStyle="#3a86ff";g.fillRect(-11,-2,22,6);g.fillStyle="#fff";g.font="900 7px system-ui";g.textAlign="center";g.fillText("ATUM",0,3)}
-  else if(k===3){g.beginPath();g.moveTo(-13,-8);g.quadraticCurveTo(0,-13,13,-8);g.quadraticCurveTo(16,0,13,8);g.quadraticCurveTo(0,13,-13,8);g.quadraticCurveTo(-16,0,-13,-8);g.fill();g.stroke();g.fillStyle="#ffd23f";g.beginPath();g.arc(0,0,2.5,0,6.3);g.fill()}
-  else{g.beginPath();g.moveTo(-10,6);g.quadraticCurveTo(-10,-11,0,-11);g.quadraticCurveTo(10,-11,10,6);g.closePath();g.fill();g.stroke();g.fillRect(-12,6,24,3);g.strokeRect(-12,6,24,3);g.fillStyle=shade(c,.7);g.beginPath();g.arc(0,11,3,0,6.3);g.fill()}
+function drawDog(g,x,y,face,t,boss,stun,inShaft,alpha){/* guaxinim ladrão */const s=boss?1.25:1;g.save();if(alpha!=null)g.globalAlpha=alpha;g.translate(x,y);g.scale(face*s,s);const bob=inShaft?0:Math.abs(Math.sin(t*12))*2;g.translate(0,-bob);
+  const fur=boss?"#5c5f73":"#8a8f9e",dark="#3b3d4a",light="#e6e8ee";g.strokeStyle="#151515";g.lineWidth=2.5;
+  /* cauda às riscas */g.save();g.translate(-14,-14);g.rotate(-.7+Math.sin(t*8)*.15);for(let k=0;k<4;k++){g.fillStyle=k%2?dark:fur;g.beginPath();g.ellipse(-k*6,-k*3,6,5,0,0,6.3);g.fill();g.stroke()}g.restore();
+  g.fillStyle=fur;g.beginPath();g.ellipse(-2,-13,13,11,0,0,6.3);g.fill();g.stroke();g.fillStyle=light;g.beginPath();g.ellipse(1,-10,6,7,0,0,6.3);g.fill();
+  for(const lx of [-9,4]){g.fillStyle=dark;g.fillRect(lx,-5,5,6);g.strokeRect(lx,-5,5,6)}
+  /* saco do roubo */g.fillStyle="#c9a26b";g.beginPath();g.arc(-12,-24,6,0,6.3);g.fill();g.stroke();
+  g.fillStyle=fur;g.beginPath();g.arc(10,-26,10,0,6.3);g.fill();g.stroke();g.beginPath();g.moveTo(3,-33);g.lineTo(5,-40);g.lineTo(10,-35);g.closePath();g.fill();g.stroke();
+  g.fillStyle=light;g.beginPath();g.ellipse(16,-23,6,4,0,0,6.3);g.fill();g.fillStyle="#151515";g.beginPath();g.arc(21,-24,2.3,0,6.3);g.fill();
+  /* máscara natural */g.fillStyle=dark;g.beginPath();g.ellipse(12,-28,8,3.6,0,0,6.3);g.fill();g.fillStyle="#fff";g.beginPath();g.arc(14,-28,2.2,0,6.3);g.fill();g.fillStyle="#151515";g.beginPath();g.arc(14.6,-28,1.1,0,6.3);g.fill();
+  if(boss){g.fillStyle="#151515";g.fillRect(1,-42,18,3);g.fillRect(4,-50,12,9);g.fillStyle="#e63946";g.fillRect(4,-44,12,2)}
+  g.restore();if(stun){g.font="14px system-ui";g.textAlign="center";for(let k=0;k<3;k++){const a=t*6+k*2.1;g.fillText("⭐",x+Math.cos(a)*12,y-46+Math.sin(a)*4)}}}
+const ITEMS=[{n:"Televisão",c:"#3a86ff"},{n:"Rádio",c:"#e63946"},{n:"Computador",c:"#2fbf71"},{n:"Quadro",c:"#ffd23f"},{n:"Cofre",c:"#9a9aa8"}];
+function drawItem(g,k,x,y,t){const c=ITEMS[k].c,b=Math.sin(t*3+x)*1.5;g.save();g.translate(x,y-14+b);g.strokeStyle="#151515";g.lineWidth=2.2;
+  if(k===0){g.fillStyle=c;g.fillRect(-13,-10,26,19);g.strokeRect(-13,-10,26,19);g.fillStyle="#bfe6ff";g.fillRect(-10,-7,16,13);g.fillStyle="#151515";g.fillRect(8,-6,3,3);g.fillRect(8,0,3,3);g.beginPath();g.moveTo(-4,-10);g.lineTo(-8,-16);g.moveTo(2,-10);g.lineTo(6,-16);g.stroke()}
+  else if(k===1){g.fillStyle=c;g.fillRect(-14,-8,28,16);g.strokeRect(-14,-8,28,16);g.fillStyle="#fff";g.beginPath();g.arc(-6,0,5,0,6.3);g.fill();g.stroke();g.beginPath();g.arc(6,0,5,0,6.3);g.fill();g.stroke();g.beginPath();g.moveTo(-10,-8);g.lineTo(-4,-15);g.stroke()}
+  else if(k===2){g.fillStyle="#e8e8ee";g.fillRect(-13,-14,26,17);g.strokeRect(-13,-14,26,17);g.fillStyle=c;g.fillRect(-10,-11,20,11);g.fillStyle="#e8e8ee";g.fillRect(-4,3,8,4);g.strokeRect(-4,3,8,4);g.fillRect(-12,7,24,4);g.strokeRect(-12,7,24,4)}
+  else if(k===3){g.fillStyle=c;g.fillRect(-14,-12,28,22);g.strokeRect(-14,-12,28,22);g.fillStyle="#9ed8ff";g.fillRect(-10,-8,20,14);g.fillStyle="#2fbf71";g.beginPath();g.moveTo(-10,6);g.lineTo(-3,-3);g.lineTo(3,3);g.lineTo(7,-1);g.lineTo(10,6);g.closePath();g.fill();g.fillStyle="#ffd23f";g.beginPath();g.arc(5,-4,2,0,6.3);g.fill()}
+  else{g.fillStyle=c;g.fillRect(-12,-12,24,22);g.strokeRect(-12,-12,24,22);g.fillStyle="#6d6d7d";g.beginPath();g.arc(0,-1,6,0,6.3);g.fill();g.stroke();g.beginPath();g.moveTo(0,-1);g.lineTo(4,-4);g.stroke();g.fillStyle="#151515";g.fillRect(-11,10,4,3);g.fillRect(7,10,4,3)}
   g.restore()}
 /* ---------- níveis ---------- */
 function rng(s){let a=s>>>0||1;return()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
@@ -922,21 +923,21 @@ function startLevel(){L=makeLevel(LVL);P={x:(L.sh[0]+1.5)*T,f:L.NF-1,y:floorY(L,
 const GR=1100,APEX=()=>TOP+20;
 function shaftAt(x){const c=Math.floor(x/T);return L.sh.includes(c)?c:-1}
 function doorBlocks(f,x0,x1){/* há porta fechada entre x0 e x1? */for(const d of L.doors){if(d.f!==f||d.open)continue;const dx=d.c*T;if((x0<dx&&x1>=dx)||(x0>dx&&x1<=dx))return d}return null}
-function stepActor(a,dt,inp,sp){/* andar / poço / trampolim — usado pelo Floki e pelos cães */
+function stepActor(a,dt,inp,sp){/* andar / poço / trampolim — usado pelo Floki e pelos guaxinins */
   if(a.st==="floor"){const nx=a.x+inp*sp*dt;if(inp)a.face=inp;const d=doorBlocks(a.f,a.x,nx+inp*8);if(d){a.blocked=1}else{a.blocked=0;a.x=nx}
     const c=shaftAt(a.x);if(c>=0&&Math.abs(a.x-(c+.5)*T)<T*.35){a.st="air";a.shaft=c;a.x=(c+.5)*T;a.vy=0;a.lf=a.f;a.arm=0;return"fall"}
     a.x=Math.max(T*1.4,Math.min(WW-T*1.4,a.x));return}
-  if(a.st==="air"){a.vy+=GR*dt;a.y+=a.vy*dt;if(!a.arm&&(a.lf==null||Math.abs(a.y-floorY(L,a.lf))>30))a.arm=1;const bot=L.bottom-6;
+  if(a.st==="air"){a.py=a.y;a.vy+=GR*dt;a.y+=a.vy*dt;if(!a.arm&&(a.lf==null||Math.abs(a.y-floorY(L,a.lf))>30))a.arm=1;const bot=L.bottom-6;
     if(a.y>=bot){a.y=bot;const n=(a===P?++a.bounces:0);if(a===P&&n>=5){return"break"}a.vy=-Math.sqrt(2*GR*(bot-APEX()));return"bounce"}
     return}}
-function tryExit(a,inp){/* sair do poço para um andar quando passa à altura dele */if(a.st!=="air"||!inp||!a.arm)return false;for(let f=0;f<L.NF;f++){const fy=floorY(L,f);if(Math.abs(a.y-fy)<9){const c=a.shaft+inp;if(L.floors[f][c]==="."){a.st="floor";a.f=f;a.y=fy;a.x=(c+.5)*T+inp*2;a.face=inp;a.vy=0;a.shaft=-1;if(a===P){a.bounces=0;TR[c-inp]=0}return true}}}return false}
+function tryExit(a,inp){/* sair do poço para um andar quando passa à altura dele (ou o cruzou neste passo) */if(a.st!=="air"||!inp||!a.arm)return false;const y0=a.py==null?a.y:a.py;for(let f=0;f<L.NF;f++){const fy=floorY(L,f);if(Math.abs(a.y-fy)<10||(y0-fy)*(a.y-fy)<0){const c=a.shaft+inp;if(L.floors[f][c]==="."){a.st="floor";a.f=f;a.y=fy;a.x=(c+.5)*T-inp*6;a.face=inp;a.vy=0;a.shaft=-1;a.hop=.18;if(a===P){a.bounces=0;TR[c-inp]=0;a.inv=Math.max(a.inv,.35)}return true}}}return false}
 function toggleDoor(){if(P.st!=="floor")return;let best=null,bd=1e9;for(const d of L.doors){if(d.f!==P.f)continue;const dx=(d.c*T-P.x)*P.face;if(dx>-6&&dx<T*1.4&&dx<bd){bd=dx;best=d}}if(!best)return;
   if(best.open){best.open=false;SFXP.door();return}
   best.open=true;best.swing=1;best.dir=P.face;SFXP.door();
   if(best.magic){best.magic=false;WAVES.push({f:P.f,x:best.c*T,dir:P.face,t:0,n:0});SFXP.wave();return}
-  /* a porta abre-se de repente e atordoa os cães do outro lado */for(const g of DOGS){if(g.st!=="floor"||g.f!==P.f||g.cap)continue;const dx=(g.x-best.c*T)*P.face;if(dx>0&&dx<T*1.8){g.stun=2.6;g.x+=P.face*14;add(50,g.x,g.y-40)}}}
+  /* a porta abre-se de repente e atordoa os guaxinins do outro lado */for(const g of DOGS){if(g.st!=="floor"||g.f!==P.f||g.cap)continue;const dx=(g.x-best.c*T)*P.face;if(dx>0&&dx<T*1.8){g.stun=2.6;g.x+=P.face*14;add(50,g.x,g.y-40)}}}
 function add(p,x,y,txt){SCORE+=p;POPS.push({x,y,t:1.2,txt:txt||("+"+p)});if(SCORE>=20000*(EXTRA+1)){EXTRA++;LIVES++;MSG={t:1.6,txt:"Vida extra!"};SFXP.life()}}
-function dogAI(g,dt){if(g.cap){g.cap-=dt;if(g.cap<=0){g.cap=0;g.st="air";g.shaft=L.sh[Math.floor(Math.random()*L.sh.length)];g.x=(g.shaft+.5)*T;g.y=TOP-30;g.vy=0;g.lf=null;g.arm=1}return}
+function dogAI(g,dt){if(g.cap){if(g.rsh==null)g.rsh=L.sh.slice().sort((a,b)=>Math.abs((b+.5)*T-P.x)-Math.abs((a+.5)*T-P.x))[0];g.cap-=dt;if(g.cap<=0){g.cap=0;g.st="air";g.shaft=g.rsh;g.rsh=null;g.x=(g.shaft+.5)*T;g.y=TOP-30;g.vy=0;g.lf=null;g.arm=1}return}
   if(g.st==="wait"){g.wait-=dt;if(g.wait<=0){g.st="floor"}return}if(g.stun>0){g.stun-=dt;return}
   const sp=L.speed*(g.boss?1.3:1)*(TIME>75?1.35:1);
   if(g.st==="floor"){/* quer ir para o andar do Floki: usa um poço; no mesmo andar, vai atrás dele */let inp;
@@ -946,8 +947,8 @@ function dogAI(g,dt){if(g.cap){g.cap-=dt;if(g.cap<=0){g.cap=0;g.st="air";g.shaft
 function stepGame(dt){if(STATE!=="play"){if(STATE==="dead"){DEADT-=dt;if(DEADT<=0){if(LIVES<=0)gameOver();else{const keep=L.items.filter(i=>!i.got).length;startLevelKeep()}}}return}
   TIME+=L.bonus?-dt:dt;if(MSG){MSG.t-=dt;if(MSG.t<=0)MSG=null}if(P.inv>0)P.inv-=dt;
   const inp=(IN.r?1:0)-(IN.l?1:0);
-  if(P.st==="floor"){const r=stepActor(P,dt,inp,150);if(r==="fall")SFXP.fall()}
-  else{if(!tryExit(P,inp)){const r=stepActor(P,dt,0,0);if(r==="bounce"){SFXP.boing(P.bounces);TR[P.shaft]=P.bounces}else if(r==="break"){TR[P.shaft]=5;die("O trampolim rebentou!");return}}else{SFXP.step()}}
+  if(P.st==="floor"){P.want=0;if(P.hop>0)P.hop-=dt;const r=stepActor(P,dt,inp,150);if(r==="fall"){SFXP.fall();P.want=0;P.nrel=inp?1:0}}
+  else{if(!inp)P.nrel=0;if(inp&&!P.nrel)P.want=inp;if(!tryExit(P,P.want||0)){const r=stepActor(P,dt,0,0);if(r==="bounce"){SFXP.boing(P.bounces);TR[P.shaft]=P.bounces}else if(r==="break"){TR[P.shaft]=5;die("O trampolim rebentou!");return}}else{SFXP.step()}}
   if(IN.d&&!IN.dd)toggleDoor();IN.dd=IN.d;
   for(const d of L.doors)if(d.swing>0)d.swing=Math.max(0,d.swing-dt*3);
   /* ondas das portas mágicas */for(const w of WAVES){w.t+=dt;w.x+=w.dir*420*dt;for(const g of DOGS){if(g.cap||g.st!=="floor"||g.f!==w.f)continue;if(Math.abs(g.x-w.x)<20){g.cap=4;g.st="cap";w.n++;add(200*Math.pow(2,w.n-1),g.x,g.y-40);SFXP.catch()}}}WAVES=WAVES.filter(w=>w.x>T&&w.x<WW-T&&w.t<3);
@@ -955,7 +956,7 @@ function stepGame(dt){if(STATE!=="play"){if(STATE==="dead"){DEADT-=dt;if(DEADT<=
   /* apanhar coisas */for(const it of L.items){if(it.got)continue;const ok=it.air?(P.st==="air"&&Math.abs(P.x-it.x)<20&&Math.abs(P.y-22-it.y)<26):(P.st==="floor"&&P.f===it.f&&Math.abs(P.x-it.x)<20);
     if(ok){it.got=1;if(it.air){add(100,it.x,it.y-20)}else{if(it.k===LASTK){PAIRX=Math.min(8,PAIRX*2);add(100*PAIRX,it.x,it.y-30,`PAR! +${100*PAIRX}`)}else{PAIRX=1;add(100,it.x,it.y-30)}LASTK=it.k}SFXP.item()}}
   if(L.items.every(i=>i.got)||(L.bonus&&TIME<=0)){if(L.bonus&&L.items.every(i=>i.got))add(3000,WW/2,TOP+40,"TUDO! +3000");STATE="clear";SFXP.clear();setTimeout(()=>{LVL++;if(LVL>SAVE.lvl){SAVE.lvl=LVL;saveS()}startLevel()},1800);return}
-  /* apanhado por um cão (no trampolim estás seguro) */if(P.st==="floor"&&P.inv<=0)for(const g of DOGS){if(g.cap||g.st!=="floor"||g.stun>0||g.f!==P.f)continue;if(Math.abs(g.x-P.x)<20){die("Apanhado!");return}}}
+  /* apanhado por um guaxinim (no trampolim estás seguro) */if(P.st==="floor"&&P.inv<=0)for(const g of DOGS){if(g.cap||g.st!=="floor"||g.stun>0||g.f!==P.f)continue;if(Math.abs(g.x-P.x)<20){die("Apanhado!");return}}}
 function die(txt){STATE="dead";DEADT=2;LIVES--;MSG={t:2,txt};SFXP.die()}
 function startLevelKeep(){/* depois de perder uma vida, o nível continua com as coisas que já apanhaste */const items=L.items;const lv=L;startLevel();L.items=items;L.doors=lv.doors;MSG={t:1.5,txt:"Vidas: "+LIVES}}
 function gameOver(){STATE="over";if(SCORE>SAVE.best){SAVE.best=SCORE;saveS()}SFXP.over();showOv(`<div class="panel"><h2>Fim de jogo</h2><p class="big">${SCORE} pontos</p><p class="note">Chegaste ao nível ${LVL} · recorde: ${SAVE.best}</p><button class="btn" type="button" data-a="play">Jogar outra vez ▶</button><button class="btn ghost" type="button" data-a="menu">Menu</button></div>`)}
@@ -980,8 +981,10 @@ function render(t){const g=ctx;g.save();g.fillStyle="#2b2238";g.fillRect(0,0,CW,
     else{g.fillStyle=col;g.strokeStyle="#151515";g.lineWidth=2.5;g.fillRect(x-5,y-60,10,52);g.strokeRect(x-5,y-60,10,52);g.fillStyle="#ffd23f";g.beginPath();g.arc(x+2,y-32,2,0,6.3);g.fill();if(d.magic){g.font="12px system-ui";g.fillText("✨",x,y-66)}}}
   /* coisas */for(const it of L.items)if(!it.got)drawItem(g,it.k,it.x,it.y,t);
   /* ondas */for(const w of WAVES){const y=floorY(L,w.f);g.fillStyle="rgba(255,93,143,.45)";g.beginPath();g.ellipse(w.x,y-30,18,30,0,0,6.3);g.fill();g.strokeStyle="#ff5d8f";g.lineWidth=3;for(let k=1;k<4;k++){g.globalAlpha=.6-k*.15;g.beginPath();g.arc(w.x-w.dir*k*14,y-30,26,-1.2,1.2);g.stroke()}g.globalAlpha=1}
-  for(const d of DOGS){if(d.st==="wait"||d.cap)continue;drawDog(g,d.x,d.y,d.face,t,d.boss,d.stun>0,d.st==="air")}
-  if(P&&!(STATE==="dead"&&Math.floor(t*10)%2)&&!(P.inv>0&&Math.floor(t*12)%2))drawFloki(g,P.x,P.y,P.face,t,P.st==="air"?"air":(IN.l||IN.r)?"walk":"idle");
+  for(const d of DOGS){if(d.cap){if(d.cap<1.5){const sx=(d.rsh+.5)*T;g.globalAlpha=.5+Math.sin(t*20)*.4;g.font="900 18px system-ui";g.textAlign="center";g.fillStyle="#ff5d5d";g.fillText("⚠",sx,TOP-28);g.globalAlpha=1;drawDog(g,sx,TOP-4,1,t,d.boss,false,true,.7)}continue}
+    if(d.st==="wait"){drawDog(g,d.x,d.y,d.face,0,d.boss,false,true,.55);g.font="900 13px system-ui";g.textAlign="center";g.fillStyle="#fff";g.fillText(d.wait<1.2?"!":"z z",d.x+6,d.y-44-Math.sin(t*3)*3);continue}
+    drawDog(g,d.x,d.y,d.face,t,d.boss,d.stun>0,d.st==="air")}
+  if(P&&!(STATE==="dead"&&Math.floor(t*10)%2)&&!(P.inv>0&&Math.floor(t*12)%2))drawFloki(g,P.x,P.y-(P.hop>0?Math.sin(P.hop/.18*Math.PI)*14:0),P.face,t,P.st==="air"?"air":(IN.l||IN.r)?"walk":"idle");
   for(const q of POPS){q.t-=1/60;q.y-=.6;g.globalAlpha=Math.max(0,Math.min(1,q.t));g.font="900 16px system-ui,sans-serif";g.textAlign="center";g.lineWidth=4;g.strokeStyle="#151515";g.strokeText(q.txt,q.x,q.y);g.fillStyle="#ffd23f";g.fillText(q.txt,q.x,q.y);g.globalAlpha=1}for(let i=POPS.length-1;i>=0;i--)if(POPS[i].t<=0)POPS.splice(i,1);
   g.restore();
   /* painel */g.fillStyle="rgba(10,10,20,.75)";g.fillRect(0,0,CW,34);g.font="900 15px system-ui,sans-serif";g.textBaseline="middle";g.fillStyle="#fff";g.textAlign="left";g.fillText(`${SCORE}`,12,17);g.fillStyle="#ffd23f";g.fillText(`Recorde ${Math.max(SAVE.best,SCORE)}`,Math.min(110,CW*.25),17);
@@ -1003,8 +1006,8 @@ let last=0,acc=0;function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t
 /* ---------- menus ---------- */
 const ov=$("ov");function showOv(h){ov.innerHTML=h;ov.hidden=false}
 function menu(){STATE="menu";L=makeLevel(1);P=null;DOGS=[];$("hud").hidden=true;$("touch").hidden=true;layout();
-  showOv(`<div class="panel"><div class="flokihero"></div><h2>Floki Patrulha!</h2><p>Os cães ladrões roubaram as coisas da casa. Ajuda o <b>Floki</b> a recuperar tudo!</p>
-   <div class="rulesmini"><div>🟢 Cai nos <b>poços</b> e salta nos <b>trampolins</b>; carrega ◀ ▶ quando passares por um andar para saíres. Lá em cima estás a salvo, mas à 5.ª vez seguida o trampolim rebenta!</div><div>🚪 <b>Portas</b> (espaço/↑ ou botão PORTA): abrir de repente atordoa os cães. As portas <b>mágicas</b> ✨ soltam uma onda que os apanha.</div><div>🎁 Apanha tudo para passar de nível. Dois iguais seguidos valem o dobro!</div></div>
+  showOv(`<div class="panel"><div class="flokihero"></div><h2>Floki Patrulha!</h2><p>Os guaxinins ladrões roubaram as coisas da casa. Ajuda o <b>Floki</b> a recuperar tudo!</p>
+   <div class="rulesmini"><div>🟢 Cai nos <b>poços</b> e salta nos <b>trampolins</b>; carrega ◀ ▶ quando passares por um andar para saíres. Lá em cima estás a salvo, mas à 5.ª vez seguida o trampolim rebenta!</div><div>🚪 <b>Portas</b> (espaço/↑ ou botão PORTA): abrir de repente atordoa os guaxinins. As portas <b>mágicas</b> ✨ soltam uma onda que os apanha.</div><div>🎁 Apanha tudo para passar de nível. Dois iguais seguidos valem o dobro!</div></div>
    <button class="btn rotm ghost" type="button" data-a="rot">🔄 Rodar ecrã</button><button class="btn" type="button" data-a="play">Jogar ▶</button>${SAVE.lvl>1?`<button class="btn ghost" type="button" data-a="cont">Começar no nível ${SAVE.lvl}</button>`:""}<p class="note">Recorde: ${SAVE.best}</p></div>`);$("ov").querySelector(".flokihero").innerHTML=FLOKI_SVG}
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;e.stopPropagation();unlockAudio();const a=b.dataset.a;if(a==="play")startGame(1);else if(a==="cont")startGame(SAVE.lvl);else if(a==="menu")menu();else if(a==="resume"){ov.hidden=true;STATE="play"}else if(a==="rot")toggleRot()});
 $("menuBtn").addEventListener("click",()=>{if(STATE==="play"){STATE="pause";showOv(`<div class="panel"><h2>Pausa</h2><button class="btn" type="button" data-a="resume">Continuar ▶</button><button class="btn ghost" type="button" data-a="menu">Sair para o menu</button></div>`)}});
@@ -1013,7 +1016,7 @@ function toggleRot(){if(document.body.classList.contains("rot90"))setRot(false);
 $("rotBtn").addEventListener("click",e=>{e.stopPropagation();toggleRot()});addEventListener("resize",()=>{if(document.body.classList.contains("rot90")&&innerWidth>innerHeight)setRot(false)});
 /* ---------- sala (só para jogar sozinho) ---------- */
 ROOM.game={id:"patrulha",title:"Floki Patrulha!",maxp:1,minp:1,maxBots:0,botNames:[],start(){},msg(){},client(){},stop(){},hostLost(){},drop(){},onScreen(n){if(n==="game"){$("exitBtn").hidden=true;$("reactBtn").hidden=true;$("hubLink").hidden=false;setTimeout(layout,30)}}};
-initUI({rules:`<ul><li>Os <b>cães ladrões</b> roubaram as coisas da casa: novelos, peixes, latas de atum, almofadas e sinos. Apanha-as todas para passar de nível.</li><li>Anda com <b>◀ ▶</b> (setas ou A/D). Ao chegares a um <b>poço</b>, cais para o <b>trampolim</b> e saltas. Quando passares à altura de um andar, carrega ◀ ou ▶ para saíres para esse lado.</li><li>No trampolim estás a salvo dos cães, mas ele muda de cor a cada salto (verde, azul, amarelo, laranja, vermelho) e <b>rebenta à 5.ª vez seguida</b>. Sai para um andar para ele recuperar.</li><li><b>Portas</b> (espaço, ↑, W ou o botão PORTA): abrem e fecham. Se abrires uma porta com um cão do outro lado, ele fica atordoado. Portas fechadas fazem os cães dar meia volta.</li><li><b>Portas mágicas ✨</b>: ao abrir, soltam uma onda que apanha todos os cães no caminho (200, 400, 800… pontos).</li><li>Apanhar <b>duas coisas iguais seguidas</b> dá o dobro (e vai dobrando). A cada 4 níveis há uma <b>ronda bónus</b>: apanha os peixes no ar antes de o tempo acabar.</li><li>O <b>chefe</b> (cão cinzento de chapéu) é mais rápido. Se demorares muito, os cães aceleram. Vida extra a cada 20000 pontos.</li></ul>`,privacy:privacyHTML(", o teu recorde e o nível a que chegaste")});
+initUI({rules:`<ul><li>Os <b>guaxinins ladrões</b> roubaram as coisas da casa: televisões, rádios, computadores, quadros e cofres. Apanha-as todas para passar de nível.</li><li>Anda com <b>◀ ▶</b> (setas ou A/D). Ao chegares a um <b>poço</b>, cais para o <b>trampolim</b> e saltas. Quando passares à altura de um andar, carrega ◀ ou ▶ para saíres para esse lado.</li><li>No trampolim estás a salvo dos guaxinins, mas ele muda de cor a cada salto (verde, azul, amarelo, laranja, vermelho) e <b>rebenta à 5.ª vez seguida</b>. Sai para um andar para ele recuperar.</li><li><b>Portas</b> (espaço, ↑, W ou o botão PORTA): abrem e fecham. Se abrires uma porta com um guaxinim do outro lado, ele fica atordoado. Portas fechadas fazem os guaxinins dar meia volta.</li><li><b>Portas mágicas ✨</b>: ao abrir, soltam uma onda que apanha todos os guaxinins no caminho (200, 400, 800… pontos).</li><li>Apanhar <b>duas coisas iguais seguidas</b> dá o dobro (e vai dobrando). A cada 4 níveis há uma <b>ronda bónus</b>: apanha os peixes no ar antes de o tempo acabar.</li><li>O <b>chefe</b> (guaxinim grande de chapéu) é mais rápido. Se demorares muito, os guaxinins aceleram. Vida extra a cada 20000 pontos.</li></ul>`,privacy:privacyHTML(", o teu recorde e o nível a que chegaste")});
 $("soloBtn")&&$("soloBtn").addEventListener("click",()=>{showScreen("game");menu()});
 addEventListener("resize",()=>{clearTimeout(window.__rz);window.__rz=setTimeout(layout,60)});try{new ResizeObserver(()=>layout()).observe(stage)}catch(e){}
 showScreen("game");menu();
