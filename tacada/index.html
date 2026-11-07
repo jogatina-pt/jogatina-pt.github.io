@@ -820,7 +820,7 @@ function initUI(o){
    ^ v < >  rampa que sobe para esse lado (de h a h+1)
    ~  água (cai-se, sem rebordo)      espaço: vazio (com rebordo à volta)
    Alturas (opcional): dígitos 0-9, cada um vale 0,5 m.                                         */
-const S=2,BR=.2,CUPR=.36,HU=.5,RAIL=.32,BLK=1.6,LOFT=28*Math.PI/180,VMAX=9.5,PDT=1/120;
+const S=2,BR=.2,CUPR=.36,HU=.5,RAIL=.32,BLK=1.6,LOFT=0,VMAX=9.5,PDT=1/120;
 const FR={".":2.1,T:2.1,O:2.1,o:2.1,"=":2.1,"^":2.1,v:2.1,"<":2.1,">":2.1,s:7.5,i:.55};
 const isFloor=c=>c!==" "&&c!=="~"&&c!=="#"&&c!==undefined;
 const COURSES=[
@@ -939,35 +939,35 @@ const COURSES=[
    "~~.......~~",
    "~~...O...~~",
    "~~.......~~",
-   "~~.......~~",
    "~~~~~~~~~~~",
    "~~~~~~~~~~~",
+   "~~.^^^^^.~~",
    "~~.......~~",
    "~~.o...o.~~",
    "~~.......~~",
    "~~~~~~~~~~~",
    "~~~~~~~~~~~",
-   "~~.......~~",
+   "~~.^^^^^.~~",
    "~~.......~~",
    "~~...T...~~",
    "~~.......~~",
    "~~~~~~~~~~~"],h:[
    "           ",
-   "  2222222  ",
-   "  2222222  ",
-   "  2222222  ",
-   "  2222222  ",
+   "  0000000  ",
+   "  0000000  ",
+   "  0000000  ",
    "           ",
    "           ",
    "  1111111  ",
    "  1111111  ",
    "  1111111  ",
+   "  1111111  ",
    "           ",
    "           ",
-   "  0000000  ",
-   "  0000000  ",
-   "  0000000  ",
-   "  0000000  ",
+   "  2222222  ",
+   "  2222222  ",
+   "  2222222  ",
+   "  2222222  ",
    "           "]}]},
  {name:"Praia",g:9.8,pf:1,theme:1,holes:[
   {name:"Areal",par:3,map:[
@@ -1234,8 +1234,9 @@ function compileHole(ci,hi){const CO=COURSES[ci],D=CO.holes[hi];if(D._c)return D
     if(T(r,c+1)===" ")H.rails.push({x0:x0+S-.08,x1:x0+S+.08,z0:z0-.08,z1:z0+S+.08,y:top})}
   for(const o of D.obs||[])H.obs.push(Object.assign({},o));
   /* distâncias até ao buraco (para os bonecos) */
+  /* água que se pode saltar: em frente às rampas */const jmp=H.t.map(row=>row.map(()=>0));for(let r=0;r<R;r++)for(let c=0;c<W;c++){const rp=rampOf(H.t[r][c]);if(!rp)continue;for(let k=1;k<=3;k++){const r2=r+rp[1]*k,c2=c+rp[0]*k;if(T(r2,c2)!=="~")break;jmp[r2][c2]=1}}
   const dist=H.t.map(row=>row.map(()=>1e9)),q=[[H.cup[2],H.cup[3]]];dist[H.cup[2]][H.cup[3]]=0;
-  while(q.length){const [r,c]=q.shift();for(const [dr,dc] of [[1,0],[-1,0],[0,1],[0,-1]]){const r2=r+dr,c2=c+dc;if(r2<0||c2<0||r2>=R||c2>=W)continue;const ch=H.t[r2][c2];if(dist[r2][c2]<1e9)continue;if(isFloor(ch)||ch==="~"){dist[r2][c2]=dist[r][c]+(ch==="~"?3:1);q.push([r2,c2])}}}
+  while(q.length){const [r,c]=q.shift();for(const [dr,dc] of [[1,0],[-1,0],[0,1],[0,-1]]){const r2=r+dr,c2=c+dc;if(r2<0||c2<0||r2>=R||c2>=W)continue;const ch=H.t[r2][c2];if(dist[r2][c2]<1e9)continue;if(isFloor(ch)||jmp[r2][c2]){dist[r2][c2]=dist[r][c]+1;q.push([r2,c2])}}}
   H.dist=dist;D._c=H;return H}
 function rampOf(ch){return ch==="^"?[0,-1]:ch==="v"?[0,1]:ch==="<"?[-1,0]:ch===">"?[1,0]:null}
 function tileMaxH(H,r,c){const ch=H.t[r][c];return H.h[r][c]+(rampOf(ch)?HU:0)}
@@ -1387,7 +1388,7 @@ function trnd(s){let a=s>>>0||1;return()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^
 const BM={};const BALLG=new THREE.SphereGeometry(BR,20,14);
 function nameTag(txt,col){const t=texC(256,64,(g,w,h)=>{g.font="900 34px system-ui,sans-serif";g.textAlign="center";g.textBaseline="middle";g.lineWidth=8;g.strokeStyle="rgba(0,0,0,.55)";g.strokeText(txt,w/2,h/2);g.fillStyle=col;g.fillText(txt,w/2,h/2)});const s=new THREE.Sprite(new THREE.SpriteMaterial({map:t,depthTest:false,transparent:true}));s.scale.set(1.6,.4,1);s.renderOrder=5;return s}
 function ballMesh(p){if(BM[p.i])return BM[p.i];const me=p.i===ME,m=new THREE.Mesh(BALLG,new THREE.MeshLambertMaterial({color:me?"#ffffff":p.col,transparent:!me,opacity:me?1:.62}));m.castShadow=me;const g=new THREE.Group();g.add(m);
-  if(me){const ring=new THREE.Mesh(new THREE.TorusGeometry(BR*1.02,.035,6,20),L(p.col));ring.rotation.x=Math.PI/2;m.add(ring)}else{const tag=nameTag(p.name,p.col);tag.position.y=.55;g.add(tag)}
+  if(!me){const tag=nameTag(p.name,p.col);tag.position.y=.55;g.add(tag)}
   scene.add(g);BM[p.i]={g,m};return BM[p.i]}
 function clearBalls(){for(const k in BM){scene.remove(BM[k].g);delete BM[k]}}
 /* mira: pontos da trajetória, seta e anel de força */
@@ -1398,7 +1399,7 @@ const READY=new THREE.Mesh(new THREE.RingGeometry(.3,.36,32),new THREE.MeshBasic
 const ARROW=new THREE.Group();ARROW.visible=false;scene.add(ARROW);const ARM=new THREE.MeshBasicMaterial({color:"#ffffff",transparent:true,opacity:.95,depthTest:false});
 const ARS=new THREE.Mesh(new THREE.PlaneGeometry(.16,1),ARM);ARS.rotation.x=-Math.PI/2;ARS.renderOrder=6;ARROW.add(ARS);
 const ahg=new THREE.BufferGeometry();ahg.setAttribute("position",new THREE.Float32BufferAttribute([-.22,0,0,.22,0,0,0,0,-.36],3));const ARH=new THREE.Mesh(ahg,ARM);ARH.renderOrder=6;ARROW.add(ARH);
-const ARO=new THREE.Mesh(new THREE.RingGeometry(.3,.38,32),ARM);ARO.rotation.x=-Math.PI/2;ARO.renderOrder=6;ARROW.add(ARO);
+
 /* ---------- jogadores ---------- */
 function mkPlayers(names,humans,cols){clearBalls();PL=names.map((n,i)=>({i,name:n,col:cols[i]||PCOLS[i%6],bot:i>=humans,pts:0,str:0,ball:null,x:0,y:0,z:0,strokes:0,holed:0,plan:null,wait:0,skill:.45+Math.random()*.4}))}
 function startHole(h){HI=h;HT=0;FIRST=null;FIN=[];H=compileHole(CI,HI);buildHole();
@@ -1458,7 +1459,7 @@ function render(dt){const now=performance.now()/1000;
     if(DYN.flag){const a=DYN.flag.m.geometry.attributes.position,b=DYN.flag.base;for(let i=0;i<a.count;i++){const x=b[i*3];a.array[i*3+2]=Math.sin(now*5+x*3)*.12*x}a.needsUpdate=true}
     for(const d of DYN.bump){d.k=Math.max(0,d.k-dt*4);d.g.scale.set(1+d.k*.2,1-d.k*.15,1+d.k*.2)}
     for(const p of PL){const bm=ballMesh(p);let x=p.x,y=p.y,z=p.z;if(p.i!==ME&&!p.ball){if(p.gx==null){p.gx=x;p.gy=y;p.gz=z}p.gx+=(x-p.gx)*.25;p.gy+=(y-p.gy)*.25;p.gz+=(z-p.gz)*.25;x=p.gx;y=p.gy;z=p.gz}
-      bm.g.position.set(x,y,z);bm.g.visible=!(p.holed&&p.i!==ME);if(p.i!==ME&&bm.g.children[1]){const me2=PL[ME];bm.g.children[1].visible=!me2||Math.hypot(x-me2.x,z-me2.z)>1.3}if(p.ball&&p.ball.state==="move"){bm.m.rotation.x+=p.ball.vz*dt/BR;bm.m.rotation.z-=p.ball.vx*dt/BR}
+      bm.g.position.set(x,y,z);bm.g.visible=!(p.holed&&p.i!==ME);if(p.i!==ME&&bm.g.children[1]){const me2=PL[ME];const dme=me2?Math.hypot(x-me2.x,z-me2.z):9;bm.g.children[1].visible=dme>1.3;bm.m.visible=dme>.45}if(p.ball&&p.ball.state==="move"){bm.m.rotation.x+=p.ball.vz*dt/BR;bm.m.rotation.z-=p.ball.vx*dt/BR}
       for(const d of DYN.bump)if(Math.hypot(x-d.b.x,z-d.b.z)<d.b.r+BR+.05)d.k=1}
     /* câmara atrás da bola, a olhar para onde vais tacar */
     const me=PL[ME],B=BALL;if(me){if(CAM.spin)CAM.tyaw+=CAM.spin*dt*1.8;
@@ -1467,7 +1468,7 @@ function render(dt){const now=performance.now()/1000;
       if(CAM.top){const cx=H.ox+H.W*S/2,cz=H.oz+H.R*S/2,ext=Math.max(H.W,H.R)*S;tp=new THREE.Vector3(cx-fx*ext*.35,ext*.95,cz-fz*ext*.35);tl=new THREE.Vector3(cx,0,cz)}
       else{const by=me.holed?floorAt(H,H.cup[0],H.cup[1]):me.y;if(FX.drag&&FX.drag.mode==="aim"||(B&&B.state==="move"))CAM.ahead=Math.max(0,CAM.ahead-dt*30);const zz=CAM.zoom,ah=CAM.ahead,ax=me.x+fx*ah,az=me.z+fz*ah,ay=ah>0?Math.max(by,floorAt(H,ax,az)>-1e8?floorAt(H,ax,az):by):by;tp=new THREE.Vector3(ax-fx*6.2*zz,ay+3.6*zz+ah*.12,az-fz*6.2*zz);tl=new THREE.Vector3(ax+fx*3.5,ay+.2,az+fz*3.5)}
       if(!CAM.pos){CAM.pos=tp.clone();CAM.look.copy(tl)}CAM.pos.lerp(tp,Math.min(1,dt*(CAM.top?3:5)));CAM.look.lerp(tl,Math.min(1,dt*6));camera.position.copy(CAM.pos);camera.lookAt(CAM.look);
-      READY.visible=!!(B&&B.state==="rest"&&!me.holed&&STATE==="play"&&!(FX.drag&&FX.drag.mode==="aim"));if(READY.visible){READY.position.set(me.x,me.y-BR+.03,me.z);const s=1+Math.sin(now*5)*.12;READY.scale.set(s,s,s)}}
+      READY.visible=false;}
     for(const q of FX.conf){q.v.y-=9.8*dt;q.m.position.addScaledVector(q.v,dt);q.m.rotation.x+=dt*6;q.m.rotation.y+=dt*5;q.t+=dt}FX.conf=FX.conf.filter(q=>{if(q.t>3){scene.remove(q.m);return false}return true})}
   else{const a=now*.08;camera.position.set(Math.sin(a)*34,20,Math.cos(a)*34-18);camera.lookAt(0,0,-16)}
   SKY.position.copy(camera.position);renderer.render(scene,camera)}
@@ -1478,9 +1479,8 @@ function dragAim(d){const len=Math.hypot(d.dx,d.dy),DM=Math.max(100,Math.min(CW,
   const wx=fx*d.dy+rx*-d.dx,wz=fz*d.dy+rz*-d.dx;return[wx,0,wz,pw]}
 function updateAim(){const d=FX.drag;if(!d||d.mode!=="aim"||!BALL){DOTS.count=0;ARROW.visible=false;return}const a=dragAim(d);FX.aim=a;if(!a){DOTS.count=0;ARROW.visible=false;return}
   const pw=a[3],ang=Math.atan2(a[0],-a[2]),len=.45+pw*2.1;ARROW.visible=true;ARROW.position.set(BALL.x,BALL.y-BR+.03,BALL.z);ARROW.rotation.y=-ang;
-  ARS.scale.y=len;ARS.position.set(0,0,-(.38+len/2));ARH.position.set(0,0,-(.38+len));ARM.color.set(pw<.45?"#ffffff":pw<.8?"#ffd23f":"#ff5d5d");
-  /* só um bocadinho do arco, como pista */const v=shotVel(a[0],a[2],pw,H.pf),path=[];simShot(H,BALL.x,BALL.z,v,HT,1.2,path);const mtx=new THREE.Matrix4();let n=0;const nmax=Math.round(3+pw*7);
-  for(let i=2;i<path.length&&n<nmax;i+=1){const p=path[i];if(p[1]-BR<=floorAt(H,p[0],p[2])+.05)break;mtx.makeTranslation(p[0],p[1],p[2]);DOTS.setMatrixAt(n++,mtx)}DOTS.count=n;DOTS.instanceMatrix.needsUpdate=true;
+  ARS.scale.y=len;ARS.position.set(0,0,-(.28+len/2));ARH.position.set(0,0,-(.28+len));ARM.color.set(pw<.45?"#ffffff":pw<.8?"#ffd23f":"#ff5d5d");
+  DOTS.count=0;
   $("pow").hidden=false;$("powf").style.height=Math.round(pw*100)+"%";$("powf").style.background=pw<.45?"#06d6a0":pw<.8?"#ffbe0b":"#e63946"}
 function endAim(){DOTS.count=0;ARROW.visible=false;FX.aim=null;$("pow").hidden=true}
 /* tocar perto da bola = mirar; noutro sítio = mexer a câmara (rodar e olhar para a frente); dois dedos = zoom */
@@ -1549,7 +1549,7 @@ ROOM.game={id:"tacada",title:"Tacada!",maxp:6,minp:2,maxBots:0,botNames:[],clean
   stop(){STATE="menu";MODE=null},hostLost(){},
   drop(seat){const i=ROOM.seats.indexOf(seat);if(i>0){if(PL[i])PL[i].gone=1;ROOM.seats.forEach(s=>ROOM.sendTo(s,{t:"gone",i}))}},
   onScreen(n){if(n==="game"){if(!ROOM.code){$("exitBtn").hidden=true;$("reactBtn").hidden=true;$("hubLink").hidden=false;if(!MODE)menu()}setTimeout(layout,30)}}};
-initUI({rules:`<ul><li><b>Todos jogam ao mesmo tempo:</b> não há vez! Assim que a tua bola parar, podes tacar outra vez.</li><li><b>Puxa para trás</b> a partir da bola e <b>larga</b> para tacar, como uma fisga.</li><li>Para mirar, <b>toca perto da tua bola</b> e puxa para trás: a seta mostra a direção e a força. Toca <b>noutro sítio</b> e arrasta para mexer a câmara (para os lados roda, para cima/baixo olha mais à frente); dois dedos ou a roda do rato fazem zoom. <b>👁</b> mostra o buraco todo.</li><li>Cair na <b>água</b> ou para fora vale +1 tacada e voltas ao sítio de onde tacaste. A <b>areia</b> trava a bola, o <b>gelo</b> escorrega e os pilaretes cor-de-rosa fazem-na saltar. Cuidado com moinhos, rotores e caranguejos!</li><li><b>Pontos por buraco</b> pela ordem de chegada: 1.º 5, 2.º 3, 3.º 2, outros 1. Buraco à primeira dá +3! Quando alguém mete, os outros têm 25 segundos.</li><li>Três campos de 6 buracos: Prado, Praia e Lua (com gravidade baixa).</li></ul>`,privacy:privacyHTML(", as tuas vitórias")});
+initUI({rules:`<ul><li><b>Todos jogam ao mesmo tempo:</b> não há vez! Assim que a tua bola parar, podes tacar outra vez.</li><li><b>Puxa para trás</b> a partir da bola e <b>larga</b> para tacar, como uma fisga.</li><li>Para mirar, <b>toca perto da tua bola</b> e puxa para trás: a seta mostra a direção e a força. Toca <b>noutro sítio</b> e arrasta para mexer a câmara (para os lados roda, para cima/baixo olha mais à frente); dois dedos ou a roda do rato fazem zoom. <b>👁</b> mostra o buraco todo.</li><li>Cair na <b>água</b> ou para fora vale +1 tacada e voltas ao sítio de onde tacaste. A bola rola pelo chão e só salta nas <b>rampas</b>. A <b>areia</b> trava a bola, o <b>gelo</b> escorrega e os pilaretes cor-de-rosa fazem-na saltar. Cuidado com moinhos, rotores e caranguejos!</li><li><b>Pontos por buraco</b> pela ordem de chegada: 1.º 5, 2.º 3, 3.º 2, outros 1. Buraco à primeira dá +3! Quando alguém mete, os outros têm 25 segundos.</li><li>Três campos de 6 buracos: Prado, Praia e Lua (com gravidade baixa).</li></ul>`,privacy:privacyHTML(", as tuas vitórias")});
 $("addBot").hidden=true;
 $("soloBtn").addEventListener("click",()=>{if(ROOM.code)leaveRoom();showScreen("game");menu()});
 layout();addEventListener("resize",()=>{clearTimeout(window.__rz);window.__rz=setTimeout(layout,60)});
