@@ -198,6 +198,13 @@ header.top{flex:none}
 .rotb{position:absolute;right:58px;top:10px;z-index:6;display:none;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.62);font:900 17px system-ui;align-items:center;justify-content:center;cursor:pointer}.rotm{display:none}
 @media (pointer:coarse){.rotb,.rotm{display:inline-flex}}
 body.rot90 .top,body.rot90 .gfoot{display:none!important}
+.pad{position:absolute;inset:0;z-index:20;background:linear-gradient(#1f3f7a,#0d1b3d);display:flex;flex-direction:column;padding:12px;gap:10px;color:#fff;touch-action:none;user-select:none;-webkit-user-select:none}.pad[hidden]{display:none}
+.padtop{display:flex;align-items:center;gap:10px}.padtop canvas{width:90px;height:52px}.padtop b{display:block;font:900 18px system-ui,sans-serif}.padtop small{display:block;font:700 12px system-ui,sans-serif;opacity:.85}.padsc{margin-left:auto;font:900 30px system-ui,sans-serif;color:#ffd23f}
+.padbar{height:12px;border-radius:99px;background:rgba(255,255,255,.2);overflow:hidden}.padbar i{display:block;height:100%;width:0;background:#7ad7ff;transition:width .2s}.padmsg{margin:0;text-align:center;font:900 18px system-ui,sans-serif;min-height:22px}
+.padbtns{flex:1;display:flex;justify-content:space-between;align-items:center;gap:16px}.padbtns .lr,.padbtns .jp{display:flex;gap:min(3vw,14px);align-items:center}.padbtns{gap:8px!important}
+.padbtns button{width:min(20vw,24vh,130px);height:min(20vw,24vh,130px);border-radius:50%;border:4px solid #151515;background:#fff;font:900 40px system-ui,sans-serif;color:#151515;box-shadow:4px 4px 0 #151515;touch-action:none}
+.padbtns button.down{transform:translate(3px,3px);box-shadow:1px 1px 0 #151515}.padbtns .jump{background:#ffd23f;width:min(23vw,28vh,150px);height:min(23vw,28vh,150px)}.padbtns .pw{background:#9fb4c9}.padbtns .pw.ready{background:#7ad7ff;animation:padblink .5s infinite alternate}@keyframes padblink{to{box-shadow:0 0 0 6px #fff,4px 4px 0 #151515}}
+body.padmode .top,body.padmode .gfoot{display:none!important}body.padmode .stage.gg{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;border-radius:0!important;margin:0!important;z-index:50}
 body.rot90 .stage.gg{position:fixed!important;top:0!important;left:100vw!important;width:100vh!important;height:100vw!important;max-width:none!important;max-height:none!important;margin:0!important;border-radius:0!important;transform-origin:0 0;transform:rotate(90deg);z-index:60}
 @supports (height:100dvh){body.rot90 .stage.gg{width:100dvh!important}}
 .stage.gg{background:#0d1b3d}.stage.gg::before,.stage.gg::after{display:none}
@@ -399,6 +406,11 @@ body.touch .ctl{display:flex}
     <canvas id="cv" class="ggcv"></canvas>
     <button class="rb rotb" id="rotBtn" type="button" aria-label="Rodar o ecrã" title="Rodar o ecrã">🔄</button><div class="rhud" id="hud" hidden><span class="sp"></span><button class="rb" id="menuBtn" type="button" aria-label="Pausa">❚❚</button></div>
     <div class="touch" id="touch" hidden><button type="button" id="tL" aria-label="Esquerda">◀</button><button type="button" id="tR" aria-label="Direita">▶</button><span class="sp"></span><button type="button" id="tP" class="powb" aria-label="Poder">⚡</button><button type="button" id="tJ" class="jump" aria-label="Saltar">⤒</button></div>
+    <div class="pad" id="pad" hidden>
+      <div class="padtop"><canvas id="padAv" width="120" height="70"></canvas><div><b id="padName"></b><small id="padSide"></small><small id="padPow"></small></div><div class="padsc" id="padScore">0 - 0</div></div>
+      <div class="padbar"><i id="padBar"></i></div><p class="padmsg" id="padMsg"></p>
+      <div class="padbtns"><div class="lr"><button type="button" id="tL2" aria-label="Esquerda">◀</button><button type="button" id="tR2" aria-label="Direita">▶</button></div><div class="jp"><button type="button" id="tP2" class="pw" aria-label="Poder">⚡</button><button type="button" id="tJ2" class="jump" aria-label="Saltar">⤒</button></div></div>
+    </div>
     <div class="ov" id="ov"></div>
   </main>
   <p class="foot gfoot">Setas ou WASD para andar, ↑/W/espaço para saltar. A dois: WASD contra setas.</p>
@@ -870,7 +882,7 @@ const CHARS=[
 const POW=["Super salto","Remate de fogo","Turbo","Gigante","Relâmpago","Íman","Encolhe o outro","Sombra","Congela a bola","Muralha"];
 const POWD=["Saltas muito mais alto durante 5 s","O próximo toque dispara a bola em chamas para a baliza","Corres muito mais depressa durante 5 s","Ficas enorme durante 6 s","O outro fica parado 1,5 s","A bola é puxada para ti durante 2,5 s","O outro fica pequenino durante 6 s","Teletransportas-te para debaixo da bola","A bola para no ar e cai a direito","Pões um muro na tua baliza durante 5 s"];
 const SAVE=(()=>{try{return JSON.parse(store.get("gotas")||"{}")}catch(e){return{}}})();SAVE.ch=SAVE.ch??0;SAVE.ch2=SAVE.ch2??1;SAVE.wins=SAVE.wins||0;SAVE.goals=SAVE.goals||0;const saveS=()=>store.set("gotas",JSON.stringify(SAVE));
-let _ctx=null,MODE=null,STATE="menu",ME=0,DIFF=1,RULE=0,G=null,CHOOSING=0;
+let TV=0,_ctx=null,MODE=null,STATE="menu",ME=0,DIFF=1,RULE=0,G=null,CHOOSING=0;
 /* ---------- estado do jogo ---------- */
 function newGame(c0,c1,names){return{p:[mkP(0,c0,names[0]),mkP(1,c1,names[1])],b:{x:W*.25,y:200,vx:0,vy:0,sp:0},sc:[0,0],t:RULE===1?120:0,ph:"kick",pt:1.4,msg:"",last:-1,camp:[0,0],tick:0}}
 function mkP(i,c,name){const C=CHARS[c];return{i,c,name,x:i?W*.75:W*.25,y:GY,vx:0,vy:0,R:48*C.sz,R0:48*C.sz,in:{l:0,r:0,j:0,k:0},look:i?-1:1,pw:0,e:{}}}
@@ -996,9 +1008,11 @@ const SFXS={kick:()=>tone(240,.06,{type:"triangle",v:.07,f2:420}),goal:()=>[523,
 /* ---------- ciclo ---------- */
 let acc=0,last=0,NET={st:null,prev:null,at:0},netAcc=0,lastEv=0,lastHit=-1;
 const VIEW=()=>MODE==="online"&&ROOM.role!=="host"?NET.view:G;
-function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(STATE==="play"&&dt>0){FPS.a=FPS.a*.95+dt*.05;if(!FPS.low&&FPS.a>1/40&&++FPS.n>120){FPS.low=1;layout()}}if(STATE==="play"){readIn();
-    if(MODE!=="online"||ROOM.role==="host"){acc+=dt;while(acc>=TICK){if(MODE==="solo")G.p[1].in=botIn(G,G.p[1]);else if(MODE==="local"){G.p[0].in=IN[0];G.p[1].in=IN[1]}else{G.p[0].in=IN[0]}
+function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(STATE==="play"&&dt>0){FPS.a=FPS.a*.95+dt*.05;if(!FPS.low&&FPS.a>1/40&&++FPS.n>120){FPS.low=1;layout()}}if(MODE==="pad"){padLoop(dt);requestAnimationFrame(loop);return}
+  if(STATE==="play"){if(MODE!=="tv")readIn();
+    if(MODE!=="online"||ROOM.role==="host"){acc+=dt;while(acc>=TICK){if(MODE==="solo")G.p[1].in=botIn(G,G.p[1]);else if(MODE==="local"){G.p[0].in=IN[0];G.p[1].in=IN[1]}else if(MODE!=="tv"){G.p[0].in=IN[0]}
         if(MODE==="solo")G.p[0].in=IN[0];stepGame(G,TICK);acc-=TICK}
+      if(MODE==="tv"){netAcc+=dt;if(netAcc>=.2){netAcc=0;const m={t:"pad",sc:G.sc,pw:G.p.map(p=>+p.pw.toFixed(2)),ph:G.ph,tm:+G.t.toFixed(0),gold:G.gold?1:0};ROOM.seats.forEach((s,k)=>{if(k>0)ROOM.sendTo(s,m)})}}
       if(MODE==="online"){netAcc+=dt;if(netAcc>=1/20){netAcc=0;const m=packG(G);ROOM.seats.forEach((s,k)=>{if(k>0)ROOM.sendTo(s,m)})}}
       sounds(G);if(G.ph==="end")endMatch()}
     else{/* cliente: envia teclas e mostra o estado do anfitrião (com interpolação) */const k=IN[ME],key=k.l+""+k.r+k.j+k.k;if(key!==NET.lk){NET.lk=key;ROOM.send({t:"in",l:k.l,r:k.r,j:k.j,k:k.k})}clientSim(dt);NET.pa=(NET.pa||0)+dt;if(NET.view&&NET.view.ph==="play"&&NET.pa>=1/20){NET.pa=0;const me=NET.view.p[ME];ROOM.send({t:"pos",x:Math.round(me.x),y:Math.round(me.y),vx:Math.round(me.vx),vy:Math.round(me.vy)})}if(NET.view)sounds(NET.view)}}
@@ -1032,6 +1046,15 @@ function myHit(v){const b=v.b,p=v.p[ME];const dx=b.x-p.x,dy=b.y-p.y,d=Math.hypot
   else{b.x=p.x+nx*R;b.y=p.y+ny*R;const rvx=b.vx-p.vx,rvy=b.vy-p.vy,vn=rvx*nx+rvy*ny;if(vn<0){b.vx-=1.7*vn*nx;b.vy-=1.7*vn*ny}b.vx+=p.vx*.18;b.vy+=Math.min(0,p.vy)*.22}
   const sp=Math.hypot(b.vx,b.vy);if(sp>820){b.vx*=820/sp;b.vy*=820/sp}return true}
 function sendHit(v){const b=v.b;NET.hn=(NET.hn||0)+1;ROOM.send({t:"hit",n:NET.hn,x:Math.round(b.x),y:Math.round(b.y),vx:Math.round(b.vx),vy:Math.round(b.vy)});NET.lb=DELAY+.35;NET.lacc=0;SFXS.kick()}
+/* ---------- comando (telemóvel em modo TV) ---------- */
+const PAD={in:{l:0,r:0,j:0,k:0},key:"",names:[],c:[0,0],sc:[0,0],pw:[0,0],ph:"kick"};
+function padStart(names,c0,c1){MODE="pad";STATE="pad";PAD.names=names;PAD.c=[c0,c1];PAD.sc=[0,0];PAD.pw=[0,0];document.body.classList.add("padmode");ov.hidden=true;$("hud").hidden=true;$("touch").hidden=true;
+  const me=ME,C=CHARS[PAD.c[me]];$("pad").hidden=false;$("padName").textContent=PAD.names[me]+" · "+C.name;$("padPow").textContent="⚡ "+POW[PAD.c[me]];$("padSide").textContent=me===0?"Jogas do lado ESQUERDO":"Jogas do lado DIREITO";
+  const c=$("padAv"),g=c.getContext("2d");g.clearRect(0,0,c.width,c.height);withCtx(g,()=>drawSlime({i:0,c:PAD.c[me],x:c.width/2,y:c.height-4,R:c.height*.62,vy:0,look:me===0?1:-1},me===0?c.width:0,0));padState({sc:[0,0],pw:[0,0],ph:"kick"});unlockAudio()}
+function padState(d){PAD.sc=d.sc||PAD.sc;PAD.pw=d.pw||PAD.pw;PAD.ph=d.ph;$("padScore").textContent=`${PAD.sc[0]} - ${PAD.sc[1]}`;const f=PAD.pw[ME]||0;$("padBar").style.width=Math.round(f*100)+"%";$("tP2").classList.toggle("ready",f>=1);
+  if(d.ph==="end"){$("padMsg").textContent=(PAD.sc[ME]>PAD.sc[1-ME]?"Ganhaste! 🏆":"Perdeste… revanche?")+" Olha para a TV.";try{navigator.vibrate&&navigator.vibrate([60,60,60])}catch(e){}}else $("padMsg").textContent=d.ph==="goal"?"GOLO!":""}
+function padLoop(){const k=PAD.in,a={l:KEYS.ArrowLeft||KEYS.KeyA,r:KEYS.ArrowRight||KEYS.KeyD,j:KEYS.ArrowUp||KEYS.KeyW||KEYS.Space,k:KEYS.ArrowDown||KEYS.KeyS};const s={l:(k.l||a.l)?1:0,r:(k.r||a.r)?1:0,j:(k.j||a.j)?1:0,k:(k.k||a.k)?1:0};const key=""+s.l+s.r+s.j+s.k;if(key!==PAD.key){PAD.key=key;ROOM.send(Object.assign({t:"in"},s))}}
+for(const [id,k] of [["tL2","l"],["tR2","r"],["tJ2","j"],["tP2","k"]]){const b=$(id);const on=e=>{e.preventDefault();PAD.in[k]=1;b.classList.add("down");try{navigator.vibrate&&navigator.vibrate(12)}catch(x){}},off=e=>{e.preventDefault();PAD.in[k]=0;b.classList.remove("down")};b.addEventListener("pointerdown",on);b.addEventListener("pointerup",off);b.addEventListener("pointerleave",off);b.addEventListener("pointercancel",off)}
 function onState(m){if(!NET.view)return;const v=NET.view;m._fresh=1;
   {const B=NET.buf||(NET.buf=[]);const tt=+m.ht||0;if(B.length&&tt<B[B.length-1].t-1){B.length=0;NET.rt=null}if(!B.length||tt>B[B.length-1].t){B.push({t:tt,b:m.b,o:m.p[1-ME],me:m.p[ME]});if(B.length>40)B.shift()}
    m.p.forEach((z,i)=>{const p=v.p[i];p.pw=z[4]||0;p.R=z[5]||p.R;p.e={};for(const k of (z[6]||"").split(","))if(k)p.e[k]=1});v.b.fire=m.bf&&m.bf[0];v.b.ice=m.bf&&m.bf[1];v.pev=m.pev;v.plast=m.plast}
@@ -1048,7 +1071,7 @@ function menu(){stage.classList.remove("playing");document.body.classList.remove
    <div class="seg" role="group">${["Fácil","Normal","Difícil"].map((n,i)=>`<button type="button" class="${DIFF===i?"on":""}" data-a="d${i}">${n}</button>`).join("")}</div>
    <div class="seg" role="group"><button type="button" class="${RULE===0?"on":""}" data-a="r0">Primeiro a 5</button><button type="button" class="${RULE===1?"on":""}" data-a="r1">2 minutos</button></div>
    <button class="btn ghost rotm" type="button" data-a="rot">🔄 Rodar ecrã</button>
-   <button class="btn" type="button" data-a="solo">Contra o computador ▶</button><button class="btn ghost" type="button" data-a="local">⌨️ 2 jogadores neste ecrã</button><button class="btn ghost" type="button" data-a="mp">👥 Jogar online com um amigo</button>
+   <button class="btn" type="button" data-a="solo">Contra o computador ▶</button><button class="btn ghost" type="button" data-a="tvm">📺 Jogar na TV/PC (telemóveis como comando)</button><button class="btn ghost" type="button" data-a="local">⌨️ 2 jogadores neste ecrã</button><button class="btn ghost" type="button" data-a="mp">👥 Jogar online com um amigo</button>
    <p class="note">Vitórias: ${SAVE.wins} · golos marcados: ${SAVE.goals}</p></div>`);paintAll()}
 function pick2(){showOv(`<div class="panel wide"><h2>Jogador 2</h2><p class="note">Jogador 1: <b>WASD</b> · Jogador 2: <b>setas</b></p>${charGrid(SAVE.ch2,"k")}<p class="note">⚡ <b>${POW[SAVE.ch2]}</b>: ${POWD[SAVE.ch2]}</p><button class="btn" type="button" data-a="go2">Começar ▶</button><button class="btn ghost" type="button" data-a="menu">Voltar</button></div>`);paintAll()}
 function paintAll(){paintIn(ov)}
@@ -1061,27 +1084,32 @@ addEventListener("resize",()=>{if(document.body.classList.contains("rot90")&&inn
 function tryLand(){return;if(!matchMedia("(pointer:coarse)").matches)return;try{const el=document.documentElement;const p=document.fullscreenElement?Promise.resolve():(el.requestFullscreen?el.requestFullscreen({navigationUI:"hide"}):Promise.reject());p.then(()=>screen.orientation&&screen.orientation.lock&&screen.orientation.lock("landscape")).then(()=>setTimeout(layout,300)).catch(()=>{})}catch(e){}}
 function start(mode,names,c0,c1){HITN=0;stage.classList.add("playing");document.body.classList.add("ingame");tryLand();MODE=mode;G=newGame(c0,c1,names);STATE="play";ov.hidden=true;$("hud").hidden=false;$("touch").hidden=!(matchMedia("(pointer:coarse)").matches)||mode==="local";lastEv=0;layout();SFXS.whistle();unlockAudio()}
 function endMatch(){if(STATE!=="play")return;STATE="end";const g=VIEW();const sc=g.sc;let win;
-  if(MODE==="local")win=sc[0]>sc[1]?0:1;else win=sc[ME]>sc[1-ME]?ME:1-ME;if(MODE==="solo"&&win===0){SAVE.wins++}saveS();SFXS.whistle();
-  const n=g.p[win].name;const ctl=MODE==="online"?(ROOM.role==="host"?`<button class="btn" type="button" data-a="again">Revanche ▶</button><button class="btn ghost" type="button" data-a="lobby">Voltar à sala</button>`:`<p class="note">À espera de quem criou a sala…</p><button class="btn ghost" type="button" data-a="leave">Sair da sala</button>`):`<button class="btn" type="button" data-a="${MODE==="local"?"go2":"solo"}">Revanche ▶</button><button class="btn ghost" type="button" data-a="menu">Menu</button>`;
-  setTimeout(()=>{showOv(`<div class="panel"><h2>${MODE!=="local"&&win===ME?"Ganhaste!":esc(n)+" ganhou!"}</h2><p class="big">${sc[0]} - ${sc[1]}</p>${ctl}</div>`)},900)}
+  if(MODE==="tv"){const m={t:"pad",sc:G.sc,pw:[0,0],ph:"end"};ROOM.seats.forEach((s,k)=>{if(k>0)ROOM.sendTo(s,m)})}
+  if(MODE==="local"||MODE==="tv")win=sc[0]>sc[1]?0:1;else win=sc[ME]>sc[1-ME]?ME:1-ME;if(MODE==="solo"&&win===0){SAVE.wins++}saveS();SFXS.whistle();
+  const n=g.p[win].name;const ctl=(MODE==="online"||MODE==="tv")?(ROOM.role==="host"?`<button class="btn" type="button" data-a="again">Revanche ▶</button><button class="btn ghost" type="button" data-a="lobby">Voltar à sala</button>`:`<p class="note">À espera de quem criou a sala…</p><button class="btn ghost" type="button" data-a="leave">Sair da sala</button>`):`<button class="btn" type="button" data-a="${MODE==="local"?"go2":"solo"}">Revanche ▶</button><button class="btn ghost" type="button" data-a="menu">Menu</button>`;
+  setTimeout(()=>{showOv(`<div class="panel"><h2>${MODE!=="local"&&MODE!=="tv"&&win===ME?"Ganhaste!":esc(n)+" ganhou!"}</h2><p class="big">${sc[0]} - ${sc[1]}</p>${ctl}</div>`)},900)}
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;e.stopPropagation();unlockAudio();const a=b.dataset.a;
   if(/^c\d+$/.test(a)){SAVE.ch=+a.slice(1);saveS();menu()}else if(/^k\d+$/.test(a)){SAVE.ch2=+a.slice(1);saveS();pick2()}else if(/^d\d$/.test(a)){DIFF=+a[1];menu()}else if(/^r\d$/.test(a)){RULE=+a[1];menu()}
   else if(a==="solo"){let o;do{o=Math.floor(Math.random()*CHARS.length)}while(o===SAVE.ch);ME=0;start("solo",["Tu",CHARS[o].name],SAVE.ch,o)}
   else if(a==="rot")toggleRot();else if(a==="local")pick2();else if(a==="go2"){ME=0;start("local",["Jogador 1","Jogador 2"],SAVE.ch,SAVE.ch2)}
-  else if(a==="mp")showScreen("setup");else if(a==="menu")menu();else if(a==="resume"){ov.hidden=true;STATE="play"}
+  else if(a==="mp"){ROOM.opts=cleanOpts({r:RULE,tv:0});showScreen("setup")}else if(a==="tvm"){ROOM.opts=cleanOpts({r:RULE,tv:1});TV=1;showScreen("setup");if(!$("myName").value)$("myName").value="TV";setTimeout(()=>$("hostBtn").click(),60)}else if(a==="menu")menu();else if(a==="resume"){ov.hidden=true;STATE="play"}
   else if(a==="again"){if(ROOM.role==="host")beginHost(ROOM.seats)}else if(a==="lobby"){ROOM.seats.forEach((s,k)=>{if(k>0)ROOM.sendTo(s,{t:"lobby"})});STATE="menu";MODE=null;ROOM.backToLobby()}else if(a==="leave")leaveRoom()});
 $("rotBtn").addEventListener("click",e=>{e.stopPropagation();toggleRot()});
 $("menuBtn").addEventListener("click",()=>{if(MODE==="solo"||MODE==="local"){STATE="pause";showOv(`<div class="panel"><h2>Pausa</h2><button class="btn" type="button" data-a="resume">Continuar ▶</button><button class="btn ghost" type="button" data-a="menu">Sair para o menu</button></div>`)}});
 /* ---------- online (1 contra 1, sem bonecos) ---------- */
-function cleanOpts(o){o=o||{};return{r:+o.r===1?1:0}}
-function renderOpts(el,o,host){o=cleanOpts(o);el.innerHTML=`<div class="optrow"><span class="eyebrow">Jogo</span><div class="seg" role="group"><button type="button" class="${o.r===0?"on":""}" data-k="r" data-v="0" ${host?"":"disabled"}>Primeiro a 5</button><button type="button" class="${o.r===1?"on":""}" data-k="r" data-v="1" ${host?"":"disabled"}>2 minutos</button></div></div><p class="eyebrow">A tua gota</p>${charGrid(SAVE.ch,"c")}<p class="note">⚡ <b>${POW[SAVE.ch]}</b>: ${POWD[SAVE.ch]}</p><p class="note">1 contra 1. Cada um escolhe a sua gota aqui.</p>`;paintIn(el);el.querySelectorAll(".ch").forEach(b=>b.onclick=e=>{e.preventDefault();SAVE.ch=+b.dataset.a.slice(1);saveS();renderOpts(el,ROOM.opts,host)});
-  if(host)el.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{ROOM.opts=cleanOpts({r:b.dataset.v});lobbyBroadcast()})}
+function cleanOpts(o){o=o||{};return{r:+o.r===1?1:0,tv:+o.tv===1?1:0}}
+function renderOpts(el,o,host){o=cleanOpts(o);if(o.tv&&host){el.innerHTML=`<div class="optrow"><span class="eyebrow">Jogo</span><div class="seg" role="group"><button type="button" class="${o.r===0?"on":""}" data-k="r" data-v="0">Primeiro a 5</button><button type="button" class="${o.r===1?"on":""}" data-k="r" data-v="1">2 minutos</button></div></div><p class="note">📺 <b>Modo TV</b>: este ecrã mostra o jogo. Os dois jogadores entram com o telemóvel (lê o QR code ou usa o código) e escolhem a gota lá. Quando estiverem os dois, carrega em Começar.</p>`;el.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{ROOM.opts=cleanOpts({r:b.dataset.v,tv:1});lobbyBroadcast()});return}
+  el.innerHTML=`${o.tv?'<p class="note">📺 <b>Modo TV</b>: o jogo aparece na TV/PC e este telemóvel é o teu comando.</p>':''}<div class="optrow"><span class="eyebrow">Jogo</span><div class="seg" role="group"><button type="button" class="${o.r===0?"on":""}" data-k="r" data-v="0" ${host?"":"disabled"}>Primeiro a 5</button><button type="button" class="${o.r===1?"on":""}" data-k="r" data-v="1" ${host?"":"disabled"}>2 minutos</button></div></div><p class="eyebrow">A tua gota</p>${charGrid(SAVE.ch,"c")}<p class="note">⚡ <b>${POW[SAVE.ch]}</b>: ${POWD[SAVE.ch]}</p><p class="note">1 contra 1. Cada um escolhe a sua gota aqui.</p>`;paintIn(el);el.querySelectorAll(".ch").forEach(b=>b.onclick=e=>{e.preventDefault();SAVE.ch=+b.dataset.a.slice(1);saveS();renderOpts(el,ROOM.opts,host)});
+  if(host)el.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{ROOM.opts=cleanOpts({r:b.dataset.v,tv:o.tv});lobbyBroadcast()})}
 let PEND=null;
-function beginHost(seats){if(seats.length<2)return;RULE=cleanOpts(ROOM.opts).r;PEND={names:seats.slice(0,2).map(s=>cleanName(s.name)||"Jogador"),c:[SAVE.ch,null]};ROOM.sendTo(seats[1],{t:"askch"})}
-function hostGo(){const P=PEND;if(!P||P.c[1]==null)return;let c1=P.c[1];if(c1===P.c[0])c1=(c1+1)%CHARS.length;const m={t:"go",names:P.names,c:[P.c[0],c1],r:RULE};ROOM.seats.forEach((s,k)=>ROOM.sendTo(s,Object.assign({me:k},m)));PEND=null}
-ROOM.game={id:"gotas",title:"Gota-Gol!",maxp:2,minp:2,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"Precisas de mais uma pessoa. Envia o link a um amigo.",
+function beginHost(seats){const O=cleanOpts(ROOM.opts);RULE=O.r;
+  if(O.tv){if(seats.length<3){flash("Faltam jogadores: entram dois telemóveis.");return}PEND={tv:1,names:seats.slice(1,3).map(s=>cleanName(s.name)||"Jogador"),c:[null,null]};ROOM.sendTo(seats[1],{t:"askch"});ROOM.sendTo(seats[2],{t:"askch"});return}
+  if(seats.length<2)return;if(seats.length>2)flash("Só jogam os dois primeiros.");PEND={names:seats.slice(0,2).map(s=>cleanName(s.name)||"Jogador"),c:[SAVE.ch,null]};ROOM.sendTo(seats[1],{t:"askch"})}
+function hostGo(){const P=PEND;if(!P||P.c[1]==null||P.c[0]==null)return;if(P.tv){let c0=P.c[0],c1=P.c[1];if(c1===c0)c1=(c1+1)%CHARS.length;const m={t:"go",names:P.names,c:[c0,c1],r:RULE,tv:1};ROOM.seats.forEach((s,k)=>ROOM.sendTo(s,Object.assign({me:k-1},m)));PEND=null;return}let c1=P.c[1];if(c1===P.c[0])c1=(c1+1)%CHARS.length;const m={t:"go",names:P.names,c:[P.c[0],c1],r:RULE};ROOM.seats.forEach((s,k)=>ROOM.sendTo(s,Object.assign({me:k},m)));PEND=null}
+ROOM.game={id:"gotas",title:"Gota-Gol!",maxp:3,minp:2,maxBots:0,botNames:[],cleanOpts,renderOpts,lobbyHelpFew:"Precisas de mais uma pessoa. Envia o link a um amigo.",
   start(seats){beginHost(seats)},
   msg(seat,d){if(!d)return;const i=ROOM.seats.indexOf(seat);if(i<0)return;
+    if(TV&&i>0){const pi=i-1;if(d.t==="in"&&G&&G.p[pi]){G.p[pi].in={l:d.l?1:0,r:d.r?1:0,j:d.j?1:0,k:d.k?1:0};return}if(d.t==="ch"&&PEND&&PEND.tv){PEND.c[pi]=Math.max(0,Math.min(CHARS.length-1,d.c|0));hostGo();return}}
     if(d.t==="in"&&i===1&&G){G.p[1].in={l:d.l?1:0,r:d.r?1:0,j:d.j?1:0,k:d.k?1:0};return}
     if(d.t==="hit"&&i===1&&G&&G.ph==="play"&&(d.n|0)>HITN){HITN=d.n|0;const b=G.b,p=G.p[1];b.x=+d.x;b.y=Math.min(GY-BR,+d.y);b.vx=+d.vx;b.vy=+d.vy;G.hit=1;p.pw=Math.min(1,p.pw+.04);
       if(p.e.fire){delete p.e.fire;const dx=GW*.5-b.x;b.vx=Math.sign(dx)*900;b.vy=-Math.min(420,Math.abs(dx)*.45);b.fire=1.2}return}
@@ -1091,13 +1119,16 @@ ROOM.game={id:"gotas",title:"Gota-Gol!",maxp:2,minp:2,maxBots:0,botNames:[],clea
     if(d.t==="react")relayReact(ROOM.seats,seat,d)},
   client(d){if(!d)return;if(d.t==="react"){bubble(d.from,d.r);return}
     if(d.t==="askch"){ROOM.send({t:"ch",c:SAVE.ch});return}
+    if(d.t==="go"&&d.tv){RULE=d.r?1:0;showScreen("game");const names=(d.names||[]).map(cleanName);if(ROOM.role==="host"){TV=1;ME=-1;start("tv",names,d.c[0]|0,d.c[1]|0);$("touch").hidden=true}else{ME=d.me|0;padStart(names,d.c[0]|0,d.c[1]|0)}return}
+    if(d.t==="pad"&&MODE==="pad"){padState(d);return}
     if(d.t==="go"){ME=d.me|0;RULE=d.r?1:0;showScreen("game");const names=(d.names||[]).map(cleanName);if(ROOM.role==="host"){start("online",names,d.c[0],d.c[1])}else{MODE="online";NET.view=newGame(d.c[0]|0,d.c[1]|0,names);NET.tgt=null;NET.lk="";STATE="play";stage.classList.add("playing");document.body.classList.add("ingame");tryLand();ov.hidden=true;$("hud").hidden=false;$("touch").hidden=!matchMedia("(pointer:coarse)").matches;lastEv=0;layout();SFXS.whistle()}return}
     if(MODE!=="online"||ROOM.role==="host")return;
     if(d.t==="st")onState(d);else if(d.t==="lobby"){STATE="menu";MODE=null}},
-  stop(){STATE="menu";MODE=null},hostLost(){},
-  drop(seat){if(STATE==="play"&&MODE==="online"){STATE="end";showOv(`<div class="panel"><h2>O outro jogador saiu</h2><button class="btn ghost" type="button" data-a="lobby">Voltar à sala</button></div>`)}},
-  onScreen(n){if(n==="game"){if(!ROOM.code){$("exitBtn").hidden=true;$("reactBtn").hidden=true;$("hubLink").hidden=false;if(!MODE)menu()}setTimeout(layout,30)}}};
-initUI({rules:`<ul><li>Cada jogador é uma <b>gota</b>. Anda para os lados e salta; a bola ressalta na tua cabeça.</li><li>Marca na <b>baliza do outro</b>: tu defendes a do teu lado.</li><li>As gotas não podem entrar dentro da baliza: defende à frente dela.</li><li>Joga-se até alguém marcar <b>5 golos</b>, ou durante <b>2 minutos</b> (se empatar, o próximo golo ganha).</li><li><b>Teclas:</b> setas ou WASD (salto: ↑, W ou espaço). A dois no mesmo ecrã: jogador 1 com WASD, jogador 2 com as setas. No telemóvel há botões no ecrã.</li><li><b>Poderes:</b> cada gota tem um poder. A barra por cima dela enche com o tempo e quando tocas na bola; quando piscar, usa-o com <b>↓</b>, <b>S</b> ou <b>Shift</b> (no telemóvel, o botão ⚡). A dois: S para o jogador 1 e ↓ para o jogador 2.<ul>${CHARS.map((c,i)=>`<li><b>${c.name}</b> — ${POW[i]}: ${POWD[i]}.</li>`).join("")}</ul></li><li>Online é 1 contra 1, sem bonecos.</li></ul>`,privacy:privacyHTML(", as tuas vitórias e a gota escolhida")});
+  _padOff(){},
+  stop(){STATE="menu";MODE=null;TV=0;$("pad").hidden=true;document.body.classList.remove("padmode")},hostLost(){},
+  drop(seat){if(STATE==="play"&&(MODE==="online"||MODE==="tv")){STATE="end";showOv(`<div class="panel"><h2>O outro jogador saiu</h2><button class="btn ghost" type="button" data-a="lobby">Voltar à sala</button></div>`)}},
+  onScreen(n){if(n!=="game"&&MODE==="pad"){MODE=null;STATE="menu";$("pad").hidden=true;document.body.classList.remove("padmode")}if(n==="game"){if(!ROOM.code){$("exitBtn").hidden=true;$("reactBtn").hidden=true;$("hubLink").hidden=false;if(!MODE)menu()}setTimeout(layout,30)}}};
+initUI({rules:`<ul><li>Cada jogador é uma <b>gota</b>. Anda para os lados e salta; a bola ressalta na tua cabeça.</li><li>Marca na <b>baliza do outro</b>: tu defendes a do teu lado.</li><li>As gotas não podem entrar dentro da baliza: defende à frente dela.</li><li>Joga-se até alguém marcar <b>5 golos</b>, ou durante <b>2 minutos</b> (se empatar, o próximo golo ganha).</li><li><b>Teclas:</b> setas ou WASD (salto: ↑, W ou espaço). A dois no mesmo ecrã: jogador 1 com WASD, jogador 2 com as setas. No telemóvel há botões no ecrã.</li><li><b>Poderes:</b> cada gota tem um poder. A barra por cima dela enche com o tempo e quando tocas na bola; quando piscar, usa-o com <b>↓</b>, <b>S</b> ou <b>Shift</b> (no telemóvel, o botão ⚡). A dois: S para o jogador 1 e ↓ para o jogador 2.<ul>${CHARS.map((c,i)=>`<li><b>${c.name}</b> — ${POW[i]}: ${POWD[i]}.</li>`).join("")}</ul></li><li>Online é 1 contra 1, sem bonecos.</li><li><b>📺 Modo TV/PC:</b> abre o jogo no PC (ou TV) e escolhe "Jogar na TV/PC". Os dois jogadores entram com o telemóvel pelo QR code ou pelo código, escolhem a gota e o telemóvel fica a ser o comando; o jogo aparece no ecrã grande.</li></ul>`,privacy:privacyHTML(", as tuas vitórias e a gota escolhida")});
 $("addBot").hidden=true;
 $("soloBtn").addEventListener("click",()=>{if(ROOM.code)leaveRoom();showScreen("game");menu()});
 addEventListener("resize",()=>{clearTimeout(window.__rz);window.__rz=setTimeout(layout,60)});try{new ResizeObserver(()=>layout()).observe(stage)}catch(e){}addEventListener("orientationchange",()=>{for(const ms of [50,250,600])setTimeout(layout,ms)});layout();
