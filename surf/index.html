@@ -273,7 +273,7 @@ import * as THREE from "../lib/three.module.min.js";
 const $=id=>document.getElementById(id);
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const TOUCH=matchMedia("(pointer: coarse)").matches||"ontouchstart" in window;
-const SET=Object.assign({assist:TOUCH,sens:.3,msens:2,fov:100,music:true},(()=>{try{return JSON.parse(store.get("surf-set")||"{}")}catch(e){return{}}})());
+const SET=Object.assign({assist:TOUCH,sens:.3,msens:2,fov:100,music:true,vm:true},(()=>{try{return JSON.parse(store.get("surf-set")||"{}")}catch(e){return{}}})());
 const saveSet=()=>store.set("surf-set",JSON.stringify(SET));
 /* ---------- física ---------- */
 const TICK=1/100,GRAV=800,AIRACC=150,ACC=10,FRIC=4,STOPSPD=75,MAXSPD=250,AIRCAP=30,MAXVEL=3500,JUMPV=Math.sqrt(2*800*57);
@@ -561,7 +561,7 @@ function newGame(mode){/* mode: "run" = todos os stages; número = só esse stag
   STAGES=MAPS[MI].stages;applyTheme(MAPS[MI].theme);const si=mode==="run"?0:mode;G={mode,si,state:"play",running:false,time:0,stT:0,splits:[],falls:0,acc:0,
     P:{p:[0,0,0],v:[0,0,0],yaw:0,lyaw:0,pitch:0,ground:false,ticks:0,rampT:-99,rampN:[0,0,1],side:0,prev:[0,0,0]}};
   spawn(true);msg(STAGES[si].name.toUpperCase(),1.6);showStage(si)}
-function spawn(reset){const P=G.P,s=STAGES[G.si];P.p=[s.spawn[0]+s.ox,s.spawn[1],s.spawn[2]];P.prev=P.p.slice();P.v=[0,0,0];P.yaw=P.lyaw=s.yaw;P.pitch=.12;P.ground=false;P.rampT=-99;G.reach=-1;G.stT=0;G.stRun=false;if(reset){G.running=false;G.time=0}}
+function spawn(reset){const P=G.P,s=STAGES[G.si];P.p=[s.spawn[0]+s.ox,s.spawn[1],s.spawn[2]];P.prev=P.p.slice();P.v=[0,0,0];P.yaw=P.lyaw=s.yaw;P.pitch=.12;VM.draw=1;VM.ly=P.yaw;VM.lp=P.pitch;P.ground=false;P.rampT=-99;G.reach=-1;G.stT=0;G.stRun=false;if(reset){G.running=false;G.time=0}}
 function zones(){
   const P=G.P,s=STAGES[G.si];
   if(!G.stRun&&!inZone(P.p,s.start)){G.stRun=true;if(!G.running){G.running=true;G.time=0}}
@@ -686,6 +686,36 @@ let GSI=0;for(const MP of MAPS)MP.stages.forEach((s,si)=>{const T=THEMES[MP.them
   else{const M2=T.decor==="shards"?new THREE.MeshLambertMaterial({color:0xe8fbff,transparent:true,opacity:.85}):new THREE.MeshLambertMaterial({color:0x2a1410});
     for(let i=0;i<N;i++){const [px,py,pz]=pick(),side=rng()<.5?-1:1,x=px+side*(2200+rng()*3800),y=py+(rng()-.5)*3000,z=pz-1400+rng()*1800,k=4+rng()*12;if(near(x,y))continue;const g=T.decor==="shards"?new THREE.OctahedronGeometry(k,0):new THREE.DodecahedronGeometry(k,0);const m=new THREE.Mesh(g,M2);if(T.decor==="shards")m.scale.y=2.2;m.position.copy(V3(x,y,z));m.rotation.set(rng()*3,rng()*3,rng()*3);scene.add(m);edgeLines(m,T.decor==="shards"?0x8fe8ff:0xff7a1f)}}
 });
+/* ---------- mãos e faca na primeira pessoa (como no surf do CS) ----------
+   Uma cena à parte, desenhada por cima com o seu próprio campo de visão, para as mãos não entrarem nas paredes. */
+const VM={scene:new THREE.Scene(),cam:new THREE.PerspectiveCamera(58,1,.01,10),root:new THREE.Group(),t:0,sw:0,ins:0,draw:1,ly:0,lp:0,ox:0,oy:0,last:performance.now(),idle:0};
+{VM.scene.add(new THREE.HemisphereLight(0xfff2f8,0x4a2a66,1.7));const d=new THREE.DirectionalLight(0xffffff,1.5);d.position.set(1.5,2.5,1);VM.scene.add(d);VM.scene.add(VM.root);
+  const Lm=c=>new THREE.MeshLambertMaterial({color:c}),SLV=Lm("#2b2f45"),CUFF=Lm("#1b1d2b"),GLV=Lm("#24242b"),SKIN=Lm("#d9a27a"),BLADE=new THREE.MeshPhongMaterial({color:"#cfd6df",specular:"#ffffff",shininess:90}),EDGE=Lm("#f4f7fb"),HND=Lm("#151519"),GOLD=Lm("#c9a24a");
+  const cyl=(r1,r2,h,m,seg)=>new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,seg||10),m),bx=(w,h,d,m)=>new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);
+  function arm(right){const g=new THREE.Group();const fa=cyl(.05,.042,.42,SLV);fa.rotation.x=Math.PI/2;fa.position.z=.21;g.add(fa);const cf=cyl(.052,.052,.05,CUFF);cf.rotation.x=Math.PI/2;cf.position.z=.02;g.add(cf);
+    const wr=cyl(.036,.036,.04,SKIN);wr.rotation.x=Math.PI/2;wr.position.z=-.015;g.add(wr);const hand=new THREE.Group();hand.position.z=-.07;g.add(hand);const palm=bx(.085,.05,.09,GLV);hand.add(palm);
+    for(let i=0;i<4;i++){const f=bx(.018,.03,.05,GLV);f.position.set(-.03+i*.02,-.012,-.06);f.rotation.x=right?.9:.4;hand.add(f)}const th=bx(.02,.022,.05,GLV);th.position.set(right?-.05:.05,.01,-.03);th.rotation.y=right?.6:-.6;hand.add(th);g.userData.hand=hand;return g}
+  const RA=arm(true),LA=arm(false);VM.root.add(RA,LA);VM.RA=RA;VM.LA=LA;
+  /* faca: cabo, guarda e lâmina com fio */
+  const K=new THREE.Group();const hd=cyl(.017,.019,.12,HND,8);K.add(hd);for(let i=0;i<4;i++){const r=cyl(.0195,.0195,.006,GOLD,8);r.position.y=-.045+i*.03;K.add(r)}const gd=bx(.06,.012,.026,GOLD);gd.position.y=.065;K.add(gd);
+  const sh=new THREE.Shape();sh.moveTo(-.016,0);sh.lineTo(.016,0);sh.lineTo(.016,.15);sh.quadraticCurveTo(.012,.2,-.012,.235);sh.lineTo(-.016,.17);sh.closePath();const bl=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:.006,bevelEnabled:true,bevelThickness:.002,bevelSize:.002,bevelSegments:1}),BLADE);bl.position.set(0,.07,-.003);K.add(bl);
+  const ed=bx(.003,.15,.008,EDGE);ed.position.set(-.017,.15,0);ed.rotation.z=-.06;K.add(ed);K.position.set(0,-.005,-.075);K.rotation.set(-Math.PI/2+.25,0,.15);RA.userData.hand.add(K);VM.K=K}
+function vmSwing(){if(!G||G.state!=="play"||SET.vm===false)return;if(VM.sw<=0&&VM.ins<=0){VM.sw=1;try{tone(900,.06,{type:"triangle",v:.025,f2:420})}catch(e){}}}
+function vmInspect(){if(!G||SET.vm===false)return;if(VM.ins<=0&&VM.sw<=0)VM.ins=1}
+function drawVM(){if(!G||SET.vm===false||G.state==="over")return;const now=performance.now(),dt=Math.min(.05,(now-VM.last)/1000);VM.last=now;const P=G.P,sp=Math.hypot(P.v[0],P.v[1]),asp=camera.aspect;
+  VM.cam.aspect=asp;VM.cam.updateProjectionMatrix();
+  /* balançar ao andar, respirar parado, e atraso ao rodar a câmara */
+  const walk=P.ground&&sp>40;VM.t+=dt*(walk?Math.min(11,4+sp/40):1.6);const bob=walk?Math.min(1,sp/250):.25;
+  let dy=P.yaw-VM.ly;dy=Math.atan2(Math.sin(dy),Math.cos(dy));const dp=P.pitch-VM.lp;VM.ly=P.yaw;VM.lp=P.pitch;VM.ox+=(Math.max(-.08,Math.min(.08,dy*1.6))-VM.ox)*Math.min(1,dt*10);VM.oy+=(Math.max(-.06,Math.min(.06,-dp*1.4))-VM.oy)*Math.min(1,dt*10);VM.ox*=Math.pow(.02,dt);VM.oy*=Math.pow(.02,dt);
+  if(VM.draw>0)VM.draw=Math.max(0,VM.draw-dt*2.2);if(VM.sw>0)VM.sw=Math.max(0,VM.sw-dt/.38);if(VM.ins>0)VM.ins=Math.max(0,VM.ins-dt/2.4);
+  if(sp<20&&P.ground&&G.state==="play"){VM.idle+=dt;if(VM.idle>9){VM.idle=0;vmInspect()}}else VM.idle=0;
+  const port=asp<.9,w=port?.045:Math.min(.25,.15*asp+.06);VM.root.position.set(VM.ox*.6+Math.sin(VM.t)*.008*bob,-VM.draw*.35+VM.oy*.5-Math.abs(Math.cos(VM.t))*.012*bob,0);VM.root.rotation.set(VM.oy*.6,VM.ox*1.2,0);VM.root.scale.setScalar(port?.78:1);
+  /* braço direito: faca; ataque em arco; "inspecionar" roda a faca na mão */
+  const RA=VM.RA,s=VM.sw>0?Math.sin((1-VM.sw)*Math.PI):0,ip=VM.ins>0?1-VM.ins:0,iw=VM.ins>0?Math.sin(ip*Math.PI):0;
+  const ry=port?-.07:-.2;RA.position.set(w-s*.12,ry+s*.06+iw*.03,-.4-s*.08);RA.rotation.set(.32+s*.5+iw*.1,-.2+s*.9-iw*.5,-.15-s*.6+iw*1.1);
+  VM.K.rotation.set(-Math.PI/2+.25+(VM.ins>0?Math.sin(ip*Math.PI*2)*.8:0),VM.ins>0&&ip>.35&&ip<.75?(ip-.35)/.4*Math.PI*2:0,.15);
+  VM.LA.visible=!port;VM.LA.position.set(-w-.02,-.27,-.42);VM.LA.rotation.set(.18,.22,.3);
+  renderer.autoClear=false;renderer.clearDepth();renderer.render(VM.scene,VM.cam);renderer.autoClear=true}
 /* ---------- desenhar ---------- */
 let W=0,H=0;
 function layout(){const r=stageEl.getBoundingClientRect();W=Math.max(200,r.width);H=Math.max(200,r.height);renderer.setPixelRatio(Math.min(1.75,window.devicePixelRatio||1));renderer.setSize(W,H,false);camera.aspect=W/H;
@@ -700,7 +730,7 @@ function draw(alpha){
     const vf=2*Math.atan(Math.tan(hf*Math.PI/360)/camera.aspect)*180/Math.PI;const nf=Math.min(camera.aspect<1?118:105,Math.max(55,vf));if(Math.abs(camera.fov-nf)>.05){camera.fov+=(nf-camera.fov)*.15;camera.updateProjectionMatrix()}
     window.__sky.position.copy(camera.position);}
   const t=performance.now()/1000;ZONEM.forEach((m,i)=>m.material.opacity=.08+.05*Math.sin(t*3+i));
-  if(!window.__norender)renderer.render(scene,camera)}
+  if(!window.__norender){renderer.render(scene,camera);drawVM()}}
 /* ---------- HUD ---------- */
 const HC={};const setT=(id,v)=>{if(HC[id]!==v){HC[id]=v;$(id).textContent=v}};
 function hud(){if(!G)return;const P=G.P,sp=Math.round(Math.hypot(P.v[0],P.v[1]));setT("hSpd",String(sp));
@@ -724,9 +754,10 @@ function menu(){G=null;document.body.classList.remove("playing");$("hud").hidden
     <p>${TOUCH?"Com a <b>ajuda de strafe</b> ligada, o ◀/▶ é carregado sozinho: só tens de rodar o dedo.":"A <b>ajuda de strafe</b> carrega o A/D por ti (é útil no telemóvel)."}</p></details>
    <div class="sets"><label><input type="checkbox" id="sMus" ${SET.music!==false?"checked":""}> Música chill</label>
    <label><input type="checkbox" id="sAssist" ${SET.assist?"checked":""}> Ajuda de strafe</label>
+   <label><input type="checkbox" id="sVm" ${SET.vm!==false?"checked":""}> Mãos e faca</label>
     <label>Sensibilidade <input type="range" id="sSens" min="${TOUCH?.1:.5}" max="${TOUCH?.7:5}" step="${TOUCH?.02:.1}" value="${TOUCH?SET.sens:SET.msens}"></label></div>
    <a class="home2" href="../">← mais jogos</a></div>`);
-  $("sMus").onchange=e=>{SET.music=e.target.checked;saveSet()};$("sAssist").onchange=e=>{SET.assist=e.target.checked;saveSet()};$("sSens").oninput=e=>{if(TOUCH)SET.sens=+e.target.value;else SET.msens=+e.target.value;saveSet()}}
+  $("sMus").onchange=e=>{SET.music=e.target.checked;saveSet()};$("sVm").onchange=e=>{SET.vm=e.target.checked;saveSet()};$("sAssist").onchange=e=>{SET.assist=e.target.checked;saveSet()};$("sSens").oninput=e=>{if(TOUCH)SET.sens=+e.target.value;else SET.msens=+e.target.value;saveSet()}}
 function start(mode){unlock();ov.hidden=true;newGame(mode);$("hud").hidden=false;document.body.classList.add("playing");keepAwake(true);setTimeout(layout,30);
   if(TOUCH){try{if(window.JFS&&JFS.can&&!JFS.isFs())JFS.enter()}catch(e){}}else lockMouse()}
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a;
@@ -736,12 +767,13 @@ function pause(){if(!G||G.state!=="play")return;G.state="pause";IN.w=IN.s=IN.a=I
   showOv(`<div class="panel"><h2>Pausa</h2><p>${fmt(G.mode==="run"?G.time:G.stT)}</p><button class="btn" type="button" data-a="resume">Continuar</button><button class="btn ghost" type="button" data-a="again">Recomeçar</button><button class="btn ghost" type="button" data-a="menu">Menu</button></div>`)}
 function resume(){if(!G)return;ov.hidden=true;G.state="play";document.body.classList.add("playing");setTimeout(layout,30);if(!TOUCH)lockMouse()}
 /* ---------- comandos ---------- */
+document.addEventListener("mousedown",e=>{if(document.pointerLockElement===cv&&e.button===0)vmSwing()});
 function lockMouse(){try{const r=cv.requestPointerLock&&cv.requestPointerLock();if(r&&r.catch)r.catch(()=>{})}catch(e){}}
 document.addEventListener("pointerlockchange",()=>{if(!document.pointerLockElement&&G&&G.state==="play"&&!TOUCH)pause()});
 document.addEventListener("mousemove",e=>{if(!G||G.state!=="play"||document.pointerLockElement!==cv)return;const k=.022*SET.msens*Math.PI/180;G.P.yaw-=e.movementX*k;G.P.pitch=Math.max(-1.55,Math.min(1.55,G.P.pitch+e.movementY*k))});
 cv.addEventListener("click",()=>{if(!TOUCH&&G&&G.state==="play"&&!document.pointerLockElement)lockMouse()});
 const KEYS={KeyW:"w",ArrowUp:"w",KeyS:"s",ArrowDown:"s",KeyA:"a",ArrowLeft:"a",KeyD:"d",ArrowRight:"d",Space:"j"};
-document.addEventListener("keydown",e=>{if(!G)return;const k=KEYS[e.code];if(k){IN[k]=1;e.preventDefault()}if(e.code==="KeyR"&&G.state==="play"){spawn(false);msg("Início do stage",1)}if(e.code==="KeyP")pause();});
+document.addEventListener("keydown",e=>{if(!G)return;const k=KEYS[e.code];if(k){IN[k]=1;e.preventDefault()}if(e.code==="KeyR"&&G.state==="play"){spawn(false);msg("Início do stage",1)}if(e.code==="KeyP")pause();if(e.code==="KeyF")vmInspect();});
 document.addEventListener("keyup",e=>{const k=KEYS[e.code];if(k)IN[k]=0});
 /* ecrã tátil: botões à esquerda, arrastar para rodar */
 const looks=new Map();
