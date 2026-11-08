@@ -1511,7 +1511,7 @@ const CARO=new Map();
 function carKey(c){if(c.amb)return"ambulance";if(c.m===4)return"police";if(c.m===2)return"taxi";if(c.m===3)return"race";if(c.m===1)return c.mis?"delivery":"van";const k=Math.floor((c.id||.3)*1000)%4;return["sedan","hatchback-sports","suv","sedan-sports"][k]}
 /* mota feita em código (os packs não trazem motas): rodas, quadro, depósito, guiador e um motard de capacete */
 /* motard: o mesmo boneco animado, sentado (pernas dobradas, braços no guiador) */
-function mkRider(base,col){const g=mkPerson(base,col);scene.remove(g);g.children[1].visible=false;if(g.userData.gun)g.userData.gun.visible=false;const o=g.userData.o;g.userData.ar.setEffectiveWeight(0);g.userData.mx.update(.1);
+function mkRider(base,col){const g=mkPerson(base,col);scene.remove(g);g.children[1].visible=false;const o=g.userData.o;g.userData.ar.setEffectiveWeight(0);g.userData.mx.update(.1);
   const P_={LeftUpLeg:-1.5,RightUpLeg:-1.5,LeftLeg:1.5,RightLeg:1.5,LeftArm:1,RightArm:-1,Spine:.25};for(const k in P_){const bn=o.getObjectByName(k);if(bn)bn.rotation.x+=P_[k]}g.position.set(0,.02,-.06);return g}
 function mkMotoObj(c){const g=new T3.Group(),b=new T3.Group();g.add(b);const L=(col)=>new T3.MeshLambertMaterial({color:col}),blk=L("#1d1d22"),body=L(c.col||"#e63946"),chr=L("#c9ccd4");
   const box=(w,h,d,m,x,y,z,p)=>{const o=new T3.Mesh(new T3.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=HQ;(p||b).add(o);return o};
@@ -1540,13 +1540,23 @@ function skinTex(base,col){const key=base+"|"+(col||"");if(SKINTEX[key])return S
 function mkPerson(base,col,extra){const o=SKU.clone(CHR);const s=.82/CHR.userData.h;o.scale.setScalar(s);const tx=skinTex(base,col);const mat=new T3.MeshLambertMaterial({map:tx});o.traverse(m=>{if(m.isMesh||m.isSkinnedMesh){m.material=mat;m.frustumCulled=false;m.castShadow=HQ}});
   const g=new T3.Group();g.add(o);const sh=new T3.Mesh(new T3.PlaneGeometry(.7,.7),new T3.MeshBasicMaterial({map:SHADTEX,transparent:true,depthWrite:false}));sh.rotation.x=-Math.PI/2;sh.position.y=.02;g.add(sh);
   const mx=new T3.AnimationMixer(o);const ai=mx.clipAction(clipIdle),ar=mx.clipAction(clipRun);ai.play();ar.play();ar.setEffectiveWeight(0);g.userData={o,mx,ai,ar,lx:null,ly:null,sp:0};
-  if(extra==="gun"||extra==="player"){const gun=new T3.Mesh(new T3.BoxGeometry(.06,.06,.26),new T3.MeshLambertMaterial({color:"#2a2a30"}));gun.position.set(.18,.42,.2);g.add(gun);g.userData.gun=gun}
+  {const o2=g.userData.o;g.userData.rh=o2.getObjectByName("RightHand");g.userData.ra=o2.getObjectByName("RightArm")}
   if(extra==="cop"){const cap=new T3.Mesh(new T3.CylinderGeometry(.13,.14,.07,12),new T3.MeshLambertMaterial({color:"#1b2c5a"}));cap.position.set(0,.86,0);g.add(cap)}
   scene.add(g);return g}
 const PEDB=["skaterMaleA","skaterFemaleA","cyborgFemaleA","criminalMaleA"];
+/* armas na mão: modelo pequeno feito em código, colado à mão direita e sempre a apontar para a frente do boneco */
+const WMOD={};function wpnModel(k){const g=new T3.Group(),M=c=>WMOD[c]||(WMOD[c]=new T3.MeshLambertMaterial({color:c}));const bx=(w,h,d,c,x,y,z)=>{const m=new T3.Mesh(new T3.BoxGeometry(w,h,d),M(c));m.position.set(x,y,z);m.castShadow=true;g.add(m);return m};
+  if(k==="pistola"){bx(.028,.04,.13,"#26262c",0,.02,.045);bx(.024,.06,.03,"#3a2a20",0,-.02,0)}
+  else if(k==="smg"){bx(.034,.05,.22,"#222228",0,.02,.07);bx(.024,.08,.03,"#222228",0,-.04,.07);bx(.024,.055,.028,"#3a2a20",0,-.02,0);bx(.026,.035,.08,"#222228",0,.015,-.06)}
+  else if(k==="cacadeira"){const b=new T3.Mesh(new T3.CylinderGeometry(.013,.013,.34,8),M("#2a2a30"));b.rotation.x=Math.PI/2;b.position.set(0,.03,.17);g.add(b);bx(.032,.04,.13,"#6b4a2b",0,.01,.05);bx(.03,.06,.15,"#6b4a2b",0,-.015,-.09)}
+  else if(k==="bastao"){const b=new T3.Mesh(new T3.CylinderGeometry(.026,.013,.46,8),M("#b5834a"));b.position.set(0,.2,0);b.castShadow=true;g.add(b)}
+  return g}
+let _v=null;
+function armWeapon(g){const u=g.userData;const k=u.wk&&u.wk!=="punho"?u.wk:null;if(u.wcur!==k){if(u.wm){g.remove(u.wm);u.wm=null}u.wcur=k;if(k){u.wm=wpnModel(k);g.add(u.wm)}}if(!u.wm||!u.rh)return;if(!_v)_v=new T3.Vector3();
+  if(u.aim&&u.ra){u.ra.rotation.x+=-1.5;u.ra.rotation.z+=1.3}g.updateMatrixWorld(true);u.rh.getWorldPosition(_v);g.worldToLocal(_v);u.wm.position.copy(_v);u.wm.rotation.set(k==="bastao"?.5:0,0,0)}
 function syncPerson(g,x,y,a,down,dt){const u=g.userData;const wx=W_(x),wz=W_(y);const sp=u.lx==null?0:Math.hypot(wx-u.lx,wz-u.ly)/Math.max(dt,1e-3);u.lx=wx;u.ly=wz;u.sp+=(sp-u.sp)*Math.min(1,dt*8);
   g.position.set(wx,0,wz);const tr=Math.PI/2-a;let d=tr-g.rotation.y;d=Math.atan2(Math.sin(d),Math.cos(d));g.rotation.y+=d*Math.min(1,dt*12);
-  if(down){u.o.rotation.x=-Math.PI/2;u.o.position.y=.12;u.mx.timeScale=0;return}u.o.rotation.x=0;u.o.position.y=0;const run=Math.min(1,u.sp/1.2);u.ar.setEffectiveWeight(run);u.ai.setEffectiveWeight(1-run);u.mx.timeScale=.6+Math.min(1.4,u.sp/3);u.mx.update(dt)}
+  if(down){u.o.rotation.x=-Math.PI/2;u.o.position.y=.12;u.mx.timeScale=0;if(u.wm)u.wm.visible=false;return}if(u.wm)u.wm.visible=true;u.o.rotation.x=0;u.o.position.y=0;const run=Math.min(1,u.sp/1.2);u.ar.setEffectiveWeight(run);u.ai.setEffectiveWeight(1-run);u.mx.timeScale=.6+Math.min(1.4,u.sp/3);u.mx.update(dt);if(u.wk)armWeapon(g)}
 /* ---------- desenhar uma imagem ---------- */
 const V3=()=>new T3.Vector3();let VTMP=null;
 function proj(x,y,h){VTMP.set(W_(x),h||0,W_(y)).project(camera);return{x:(VTMP.x+1)/2*CW,y:(1-VTMP.y)/2*CHh,ok:VTMP.z<1}}
@@ -1577,8 +1587,8 @@ R3.frame=function(){const now=performance.now(),dt=Math.min(.05,(now-lastT)/1000
   /* pessoas */const pseen=new Set();
   const person=(key,obj,base,col,x,y,a,down,extra)=>{pseen.add(key);let g=PPL.get(key);if(!near(x,y,30)){if(g)g.visible=false;return null}if(!g||g.userData.col!==col){if(g)scene.remove(g);g=mkPerson(base,col,extra);g.userData.col=col;PPL.set(key,g)}g.visible=true;syncPerson(g,x,y,a,down,dt);return g};
   for(const p of PEDS){const b=PEDB[Math.floor((p.sp||30)*7)%4];person(p,p,b,b==="criminalMaleA"||b==="cyborgFemaleA"?null:p.col,p.x,p.y,DIRS[p.dir]?Math.atan2(DIRS[p.dir][1],DIRS[p.dir][0]):0,p.down>0)}
-  for(const o of COPF)person(o,o,"skaterMaleA","#1d3fa3",o.x,o.y,o.a,o.down>0,"cop");
-  {const g=!P.car?person("P",P,"skaterMaleA",SAVE.shirt,P.x,P.y,P.a,false,"player"):null;if(g&&g.userData.gun)g.userData.gun.visible=!WPN[SAVE.cw].melee}
+  for(const o of COPF){const pg=PPL.get(o);if(pg){pg.userData.wk="pistola";pg.userData.aim=STARS>=2&&!(o.down>0)}person(o,o,"skaterMaleA","#1d3fa3",o.x,o.y,o.a,o.down>0,"cop")}
+  {const pg=PPL.get("P");if(pg){pg.userData.wk=SAVE.cw;pg.userData.aim=!!(WPN[SAVE.cw]&&!WPN[SAVE.cw].melee)}if(!P.car)person("P",P,"skaterMaleA",SAVE.shirt,P.x,P.y,P.a,false,"player")}
   for(const [k,g] of PPL)if(!pseen.has(k)){scene.remove(g);PPL.delete(k)}
   /* marcadores */const mk=R3.mk,pulse=1+Math.sin(T*4)*.08;for(const k in mk)mk[k].visible=false;const put=(k,p)=>{const g=mk[k];g.visible=true;g.position.set(W_(p.x),0,W_(p.y));g.scale.set(pulse,1,pulse)};
   if(!MISSION&&SAVE.mis<MIS.length)put("chefe",SPOTS.chefe);if(MISSION&&MISSION.tgt)put(MISSION.M.kind==="race"?"race":"mis",MISSION.tgt);if(SPOTS.oficina)put("ofi",SPOTS.oficina);if(SPOTS.pinta)put("pinta",SPOTS.pinta);
@@ -1632,7 +1642,7 @@ function buildInt(k){const S=SCENE,sc=new T3.Scene();sc.background=new T3.Color(
 R3.frameInt=function(){const now=performance.now(),dt=Math.min(.05,(now-lastT)/1000);lastT=now;if(!VTMP)VTMP=new T3.Vector3();const S=SCENE;const I=ISC[S.k]||buildInt(S.k);
   if(!IPL){IPL=mkPerson("skaterMaleA",SAVE.shirt,"player");scene.remove(IPL);IPL.scale.setScalar(IK);IPL.userData.col=SAVE.shirt}
   if(IPL.userData.col!==SAVE.shirt){IPL.parent&&IPL.parent.remove(IPL);IPL=mkPerson("skaterMaleA",SAVE.shirt,"player");scene.remove(IPL);IPL.scale.setScalar(IK);IPL.userData.col=SAVE.shirt}
-  if(IPL.parent!==I.sc)I.sc.add(IPL);if(IPL.userData.gun)IPL.userData.gun.visible=false;syncPerson(IPL,P.x,P.y,P.a,false,dt);
+  if(IPL.parent!==I.sc)I.sc.add(IPL);IPL.userData.wk=null;syncPerson(IPL,P.x,P.y,P.a,false,dt);
   for(const g of I.npcs){g.userData.mx.update(dt)}I.rings.forEach((r,i)=>{const on=NEAR===S.spots[i];r.scale.setScalar(on?1.25+Math.sin(T*6)*.08:1);r.material.color.set(on?"#2fbf71":"#ffd23f")});
   const W=S.w,H=S.h,px=P.x/TS,pz=P.y/TS;
   if(R3.chase){if(R3.camA==null||R3.inK!==S.k){R3.camA=P.a;R3.inK=S.k}const mv=Math.hypot(P.x-(R3.lpx??P.x),P.y-(R3.lpy??P.y))/Math.max(dt,1e-3);R3.lpx=P.x;R3.lpy=P.y;if(mv>15){const da=Math.atan2(Math.sin(P.a-R3.camA),Math.cos(P.a-R3.camA));R3.camA+=da*Math.min(1,dt*2.4)}
