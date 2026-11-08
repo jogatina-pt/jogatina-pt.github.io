@@ -700,6 +700,15 @@ const VM={scene:new THREE.Scene(),cam:new THREE.PerspectiveCamera(58,1,.01,10),r
   const K=new THREE.Group();const hd=cyl(.017,.019,.12,HND,8);K.add(hd);for(let i=0;i<4;i++){const r=cyl(.0195,.0195,.006,GOLD,8);r.position.y=-.045+i*.03;K.add(r)}const gd=bx(.06,.012,.026,GOLD);gd.position.y=.065;K.add(gd);
   const sh=new THREE.Shape();sh.moveTo(-.016,0);sh.lineTo(.016,0);sh.lineTo(.016,.15);sh.quadraticCurveTo(.012,.2,-.012,.235);sh.lineTo(-.016,.17);sh.closePath();const bl=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:.006,bevelEnabled:true,bevelThickness:.002,bevelSize:.002,bevelSegments:1}),BLADE);bl.position.set(0,.07,-.003);K.add(bl);
   const ed=bx(.003,.15,.008,EDGE);ed.position.set(-.017,.15,0);ed.rotation.z=-.06;K.add(ed);K.position.set(0,-.005,-.075);K.rotation.set(-Math.PI/2+.25,0,.15);RA.userData.hand.add(K);VM.K=K}
+/* braços do boneco novo (Kenney) com as animações (Quaternius): substituem as mãos simples quando carregam */
+(async()=>{try{const {FBXLoader}=await import("../lib/FBXLoader.js");const [base,aj,img]=await Promise.all([new FBXLoader().loadAsync("../turbo/m/chr/characterMedium.fbx"),fetch("../turbo/m/chr/anims.json").then(r=>r.json()),new Promise((ok,ko)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=ko;im.src="../turbo/m/chr/skaterMaleA.jpg"})]);
+  const tx=new THREE.Texture(img);tx.colorSpace=THREE.SRGBColorSpace;tx.flipY=true;tx.needsUpdate=true;renderer.localClippingEnabled=true;const mat=new THREE.MeshLambertMaterial({map:tx,clippingPlanes:[new THREE.Plane(new THREE.Vector3(0,0,-1),-.06)]});VM.clip=mat.clippingPlanes[0];base.traverse(m=>{if(m.isSkinnedMesh){m.material=mat;m.frustumCulled=false}else if(m.isMesh)m.visible=false});
+  const bb=new THREE.Box3().setFromObject(base),h=bb.max.y-bb.min.y,sc=1.7/h;base.scale.setScalar(sc);const g=new THREE.Group();g.add(base);base.rotation.y=Math.PI;VM.scene.add(g);
+  const head=base.getObjectByName("Head");if(head)head.scale.setScalar(.001);
+  const clip=k=>{const c=aj[k];return new THREE.AnimationClip(k,c.d,c.t.map(t=>new THREE.QuaternionKeyframeTrack(t.n+".quaternion",t.ti,t.v)))};
+  const mx=new THREE.AnimationMixer(base);const A={};for(const k of ["pidle","jab","interact"])if(aj[k])A[k]=mx.clipAction(clip(k));A.pidle.play();for(const k of ["jab","interact"])if(A[k]){A[k].setLoop(THREE.LoopOnce);A[k].clampWhenFinished=false}
+  const rh=base.getObjectByName("RightHand");VM.chr={g,base,mx,A,rh,sc};VM.RA.visible=false;VM.LA.visible=false;
+  rh.add(VM.K);base.updateMatrixWorld(true);const ws=rh.getWorldScale(new THREE.Vector3()).x;VM.K.scale.setScalar(1/ws);VM.chr.ws=ws;VM.chr.ls=base.getObjectByName("LeftShoulder");window.__vmchr=VM.chr}catch(e){console.warn("braços",e)}})();
 function vmSwing(){if(!G||G.state!=="play"||SET.vm===false)return;if(VM.sw<=0&&VM.ins<=0){VM.sw=1;try{tone(900,.06,{type:"triangle",v:.025,f2:420})}catch(e){}}}
 function vmInspect(){if(!G||SET.vm===false)return;if(VM.ins<=0&&VM.sw<=0)VM.ins=1}
 function drawVM(){if(!G||SET.vm===false||G.state==="over")return;const now=performance.now(),dt=Math.min(.05,(now-VM.last)/1000);VM.last=now;const P=G.P,sp=Math.hypot(P.v[0],P.v[1]),asp=camera.aspect;
@@ -715,6 +724,9 @@ function drawVM(){if(!G||SET.vm===false||G.state==="over")return;const now=perfo
   const ry=port?-.07:-.2;RA.position.set(w-s*.12,ry+s*.06+iw*.03,-.4-s*.08);RA.rotation.set(.32+s*.5+iw*.1,-.2+s*.9-iw*.5,-.15-s*.6+iw*1.1);
   VM.K.rotation.set(-Math.PI/2+.25+(VM.ins>0?Math.sin(ip*Math.PI*2)*.8:0),VM.ins>0&&ip>.35&&ip<.75?(ip-.35)/.4*Math.PI*2:0,.15);
   VM.LA.visible=!port;VM.LA.position.set(-w-.02,-.27,-.42);VM.LA.rotation.set(.18,.22,.3);
+  if(VM.chr){const C=VM.chr;if(!C.junk){C.junk=[];const kk=new Set();VM.K.traverse(o=>kk.add(o));C.base.traverse(o=>{if(o.isMesh&&!o.isSkinnedMesh&&!kk.has(o))C.junk.push(o)})}for(const o of C.junk)o.visible=false;VM.RA.visible=VM.LA.visible=false;C.mx.update(dt);if(VM.sw>.98&&C.A.jab){C.A.jab.reset().setEffectiveWeight(1).fadeIn(.05).play();C.A.pidle.fadeOut(.08)}if(VM.sw<=0&&VM.ins<=0&&C.A.pidle.getEffectiveWeight()<1){C.A.pidle.reset().fadeIn(.15).play()}
+    const V=window.__vmo||{x:port?-.035:.09,y:port?-.76:-1.22,z:port?-.02:.1,rx:0,kx:1.57,ky:0,kz:0,kpx:-.08,kpy:.06,kpz:0,ks:.6,c:-.2};C.g.position.set(V.x+VM.root.position.x,V.y+VM.root.position.y,V.z);C.g.rotation.set(VM.root.rotation.x+V.rx,VM.root.rotation.y,0);C.g.scale.setScalar(port?.62:1);if(VM.clip)VM.clip.constant=V.c??-.2;if(C.ls)C.ls.scale.setScalar(V.la?1:.001);
+    VM.K.rotation.set(V.kx+(VM.ins>0?Math.sin(ip*Math.PI*2)*.8:0),V.ky+(VM.ins>0&&ip>.35&&ip<.75?(ip-.35)/.4*Math.PI*2:0),V.kz);VM.K.position.set(V.kpx/C.ws,V.kpy/C.ws,V.kpz/C.ws);VM.K.scale.setScalar((V.ks||1)/C.ws)}
   renderer.autoClear=false;renderer.clearDepth();renderer.render(VM.scene,VM.cam);renderer.autoClear=true}
 /* ---------- desenhar ---------- */
 let W=0,H=0;
