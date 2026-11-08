@@ -1118,7 +1118,7 @@ function draw3D(){const H=VH();
   if(S){cx.setTransform(DPR*SC,0,0,DPR*SC,DPR*OX,0);drawSky(H)}cx=save;
   /* câmara */
   const cam=G3.camera,camY=S?S.cam:-60,yc=camY+H*.5,fov=40,D=(H/2)/Math.tan(fov*Math.PI/360);cam.fov=fov;cam.aspect=CW/CH;cam.updateProjectionMatrix();
-  const shk=S&&S.shake>0?S.shake:0;cam.position.set(D*.26+(Math.random()-.5)*shk*2,yc+D*.12+(Math.random()-.5)*shk*2,D*.97);cam.lookAt(0,yc,0);
+  const shk=S&&S.shake>0?S.shake:0;cam.position.set((Math.random()-.5)*shk*2,yc+D*.1+(Math.random()-.5)*shk*2,D);cam.lookAt(0,yc,0);
   G3.scene.fog.color.set(s2);G3.scene.fog.near=D*1.1;G3.scene.fog.far=D*1.1+2600;const n=S?NIGHT():0;G3.hemi.intensity=1.9*(1-.55*n);G3.sun.intensity=1.7*(1-.8*n);G3.sun.position.set(500,yc+900,700);G3.sun.target.position.set(0,yc-400,0);G3.sun.target.updateMatrixWorld();
   /* andares */
   for(const m of G3.meshes.values())m.visible=false;
