@@ -380,7 +380,7 @@ body.rot90 .stage.gg{position:fixed!important;top:0!important;left:100vw!importa
 body.rot90 .tctl{height:62%}body.rot90 .joy{width:min(30vw,130px)}body.rot90 .shopl{max-height:46vw}
 .fireb{position:absolute;right:116px;bottom:22px;width:78px;height:78px;border-radius:50%;border:3px solid #151515;background:#e63946;color:#fff;font:900 28px system-ui;box-shadow:3px 3px 0 #151515;pointer-events:auto;touch-action:none}
 .wpb{position:absolute;right:128px;bottom:112px;width:54px;height:44px;border-radius:14px;border:3px solid #151515;background:rgba(255,255,255,.88);font:900 19px system-ui;box-shadow:2px 2px 0 #151515;pointer-events:auto;touch-action:none}
-.hsb{right:186px;bottom:112px}.camb{right:16px;bottom:172px}
+.hsb{right:186px;bottom:112px}.jmpb{position:absolute;right:204px;bottom:26px;width:66px;height:66px;border-radius:50%;border:3px solid #151515;background:#7ad7ff;color:#151515;font:900 12px system-ui;box-shadow:3px 3px 0 #151515;pointer-events:auto;touch-action:none}.jmpb[hidden]{display:none}.camb{right:16px;bottom:172px}
 .dbtn{display:none;position:absolute;bottom:20px;border:3px solid #151515;border-radius:18px;background:rgba(255,255,255,.85);font:900 26px system-ui;color:#151515;box-shadow:3px 3px 0 #151515;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none}
 .dbtn.dn{transform:translate(2px,2px);box-shadow:1px 1px 0 #151515;filter:brightness(.9)}
 #stL{left:14px;width:76px;height:76px}#stR{left:100px;width:76px;height:76px}
@@ -432,7 +432,7 @@ body.rot90 #stL,body.rot90 #stR{width:64px;height:64px}body.rot90 #stR{left:86px
   <main class="stage gg" id="stage" aria-label="Jogo Gamanço!">
     <canvas id="cv" class="ggcv"></canvas>
     <div class="rhud" id="hud" hidden><span class="sp"></span><button class="rb" id="mapB" type="button" aria-label="Mapa">🗺️</button><button class="rb rotb" id="rotBtn" type="button" aria-label="Rodar o ecrã" title="Rodar o ecrã">🔄</button><button class="rb" id="menuBtn" type="button" aria-label="Pausa">❚❚</button></div>
-    <div class="tctl" id="touch" hidden><div class="joy" id="joy"><i id="joyK"></i></div><div class="tbtns"><button type="button" id="hbB">TRAVÃO</button><button type="button" id="actB" class="act">ENTRAR</button></div><button type="button" id="fireB" class="fireb" aria-label="Disparar">💥</button><button type="button" id="wpB" class="wpb" aria-label="Mudar de arma">🔁</button><button type="button" id="hsB" class="wpb hsb" aria-label="Guardar a arma">✋</button><button type="button" id="camB" class="wpb camb" aria-label="Mudar a câmara" hidden>🎥</button><button type="button" id="stL" class="dbtn" aria-label="Virar à esquerda">◀</button><button type="button" id="stR" class="dbtn" aria-label="Virar à direita">▶</button><button type="button" id="gasB" class="dbtn gas" aria-label="Acelerar">ACELERA</button><button type="button" id="brkB" class="dbtn brk" aria-label="Travar ou marcha-atrás">TRAVA</button></div>
+    <div class="tctl" id="touch" hidden><div class="joy" id="joy"><i id="joyK"></i></div><div class="tbtns"><button type="button" id="hbB">TRAVÃO</button><button type="button" id="actB" class="act">ENTRAR</button></div><button type="button" id="fireB" class="fireb" aria-label="Disparar">💥</button><button type="button" id="jmpB" class="jmpb" aria-label="Saltar">SALTA</button><button type="button" id="wpB" class="wpb" aria-label="Mudar de arma">🔁</button><button type="button" id="hsB" class="wpb hsb" aria-label="Guardar a arma">✋</button><button type="button" id="camB" class="wpb camb" aria-label="Mudar a câmara" hidden>🎥</button><button type="button" id="stL" class="dbtn" aria-label="Virar à esquerda">◀</button><button type="button" id="stR" class="dbtn" aria-label="Virar à direita">▶</button><button type="button" id="gasB" class="dbtn gas" aria-label="Acelerar">ACELERA</button><button type="button" id="brkB" class="dbtn brk" aria-label="Travar ou marcha-atrás">TRAVA</button></div>
     <div class="ov" id="ov"></div>
   </main>
   <p class="foot gfoot">WASD/setas: andar e conduzir · E: entrar/sair (carros e portas) · Espaço: travão no carro, disparar a pé · Shift: correr · Q: mudar de arma · H: guardar a arma · C: câmara · M: mapa.</p>
@@ -891,22 +891,48 @@ function initUI(o){
    Tudo original: cidade gerada, personagens e carros desenhados em código. Violência em estilo desenho animado
    (as pessoas saltam para o lado ou caem e levantam-se). */
 const cv=$("cv"),ctx=cv.getContext("2d"),stage=$("stage");
-const TS=32,PITCH=14,MW=186,MH=198,DOCK=186,SEA=190,WPX=MW*TS,HPX=MH*TS,TICK=1/60;
+const TS=32,PITCH=14,CWD=186,SERRA=64,MW=226,MH=198,DOCK=186,SEA=190,WPX=MW*TS,HPX=MH*TS,TICK=1/60;
 const SAVE=(()=>{try{return JSON.parse(store.get("turbo")||"{}")}catch(e){return{}}})();SAVE.money=SAVE.money??200;SAVE.mis=SAVE.mis||0;SAVE.env=SAVE.env||[];SAVE.best=SAVE.best||{};const saveS=()=>store.set("turbo",JSON.stringify(SAVE));
 /* ---------- cidade ---------- */
 const R0=(s=>()=>{s=(s+0x6D2B79F5)|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296})(20261107);
 /* tipos: 0 estrada, 1 passeio, 2 prédio, 3 relva, 4 água, 5 árvore, 6 asfalto (parque/beco/praça), 7 cais */
 const TL=new Uint8Array(MW*MH);const tget=(x,y)=>x<0||y<0||x>=MW||y>=MH?2:TL[y*MW+x];const tset=(x,y,v)=>{TL[y*MW+x]=v};
-const BANDS=[];for(let b=0;b<MW;b+=PITCH)BANDS.push(b);
+const BANDS=[];for(let b=0;b<CWD;b+=PITCH)BANDS.push(b);
 const inBand=v=>{const b=Math.floor(v/PITCH)*PITCH;return v-b<4?v-b:-1};
 const BUILD=[],PARKED=[],TREES=[],SPOTS={};
 const BCOL=["#c9b79c","#d9a48f","#9fb4c9","#c6c9a0","#b8a6c9","#e0c48a","#a9c9b8","#d1b0b0","#bfbfbf","#e8d7b5"];
 const DOORS=[],DECOR=[],FIELDS=[],LANDM=[];
+/* ---------- a leste da cidade: autoestrada, Serra Alta e Praia do Sol ---------- */
+const HWY={sl:[187.5,188.5],nl:[190.5,191.5],jn:[14,42,84,140]};
+const SROAD=[[192,15.5],[198,15.5],[203,22],[199,30],[207,37],[215,30],[219,20],[214,9],[209,5]],SROAD2=[[192,43.5],[201,43.5],[207,37]];
+const MTN=[[205,9,4.5,14],[221,11,5,20],[212,22,5.5,22],[200,53,5,15],[219,47,6,24],[209,58,3.5,9],[223,31,4,13],[196,27,2.6,7],[214,41,3.6,11],[224,58,4,12],[202,4,3,8]];
+function segD(x,y,L){let b=1e9;for(let i=0;i<L.length-1;i++){const [ax,ay]=L[i],[bx,by]=L[i+1],vx=bx-ax,vy=by-ay,t=Math.max(0,Math.min(1,((x-ax)*vx+(y-ay)*vy)/(vx*vx+vy*vy)));b=Math.min(b,Math.hypot(x-ax-vx*t,y-ay-vy*t))}return b}
+const roadD=(x,y)=>Math.min(segD(x,y,SROAD),segD(x,y,SROAD2),Math.hypot(x-209,y-5)-1.5);
+/* altura da serra (em quadrados), contínua: serve para as rochas e para o relevo 3D */
+function serraH(x,y){if(x<194||y>SERRA+2)return 0;let h=0;for(const [mx,my,s,a] of MTN){const d2=(x-mx)**2+(y-my)**2;h+=a*Math.exp(-d2/(2*s*s))}
+  const n=Math.sin(x*1.7+y*.9)*Math.cos(y*1.3-x*.4);h*=1+.12*n;const rd=roadD(x,y);h*=Math.max(0,Math.min(1,(rd-1.8)/3.5));h*=Math.max(0,Math.min(1,(x-194.5)/3));h*=Math.max(0,Math.min(1,(SERRA+1-y)/3));return h}
+function genEast(){const fill=(x0,y0,w,h,t)=>{for(let y=y0;y<y0+h;y++)for(let x=x0;x<x0+w;x++)tset(x,y,t)};
+  for(let y=0;y<DOCK;y++){tset(186,y,6);tset(187,y,0);tset(188,y,0);tset(189,y,9);tset(190,y,0);tset(191,y,0);tset(192,y,6);tset(193,y,1);for(let x=194;x<MW;x++)tset(x,y,y<SERRA?3:x>=212?4:8)}
+  for(const b of HWY.jn)for(const y of [b+1,b+2]){tset(189,y,0);tset(192,y,0);tset(193,y,0)}
+  for(let y=6;y<DOCK-2;y+=12)LAMPS0.push([189.5*TS,y*TS]);
+  /* serra: estrada às curvas até ao miradouro, rochas onde é alto, pinheiros */
+  for(let y=0;y<SERRA;y++)for(let x=194;x<MW;x++){const rd=roadD(x+.5,y+.5);if(rd<1.05){tset(x,y,0);continue}if(Math.hypot(x+.5-209,y+.5-5)<3.2){tset(x,y,6);continue}const h=serraH(x+.5,y+.5);if(h>1.1)tset(x,y,10);else{const r=(x*928371+y*12377)%100;if(r<16&&rd>2.2){tset(x,y,5);TREES.push([x,y,1])}}}
+  DECOR.push({k:"sign",x:209*TS,y:2.6*TS,t:"MIRADOURO"},{k:"bench",x:207.5*TS,y:3.4*TS},{k:"bench",x:210.5*TS,y:3.4*TS});SPOTS.miradouro={x:209*TS,y:5*TS};
+  /* praia: estacionamentos, bares, nadadores-salvadores, toalhas com gente */
+  for(const b of [84,140]){fill(194,b-2,4,8,6);for(let v=-1;v<6;v+=2.2)PARKED.push({x:196.6*TS,y:(b+v)*TS,a:Math.PI})}
+  for(let y=SERRA+1;y<DOCK-1;y+=4)DECOR.push({k:"palm",x:193.5*TS,y:(y+.5)*TS});
+  BUILD.push({x:194*TS,y:110*TS,w:4*TS,h:3*TS,ht:12,c:"#f4d58d",label:"BAR DA PRAIA",awn:"#2fbf71",kiosk:1});fill(194,110,4,3,2);
+  BUILD.push({x:194*TS,y:160*TS,w:3*TS,h:2*TS,ht:10,c:"#ffd6e0",label:"GELADOS",awn:"#e86fa8",kiosk:1});fill(194,160,3,2,2);
+  for(const y of [78,122,168])DECOR.push({k:"lifeguard",x:207*TS,y:y*TS});DECOR.push({k:"volley",x:202.5*TS,y:100*TS},{k:"volley",x:202.5*TS,y:150*TS});
+  const TC=["#e63946","#3a86ff","#ffd23f","#2fbf71","#ff8c1a","#9b5de5","#ffffff","#7ad7ff"];
+  for(let y=SERRA+3;y<DOCK-2;y+=3)for(let x=197;x<210;x+=3){const h=(x*7919+y*104729)%100;if(h>=48)continue;if(Math.abs(y-100)<3||Math.abs(y-150)<3)continue;const tx=(x+.5+(h%3)*.3)*TS,ty=(y+.5)*TS;
+    DECOR.push({k:"towel",x:tx,y:ty,col:TC[h%TC.length],p:h%5===0?0:1+h%2,sh:TC[(h*3)%TC.length],a:(h%4)*.3-.45});if(h%3!==1)DECOR.push({k:"umbrella",x:tx+.9*TS,y:ty-.5*TS})}}
+const LAMPS0=[];
 (function gen(){
   for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){
-    if(y>=SEA){tset(x,y,4);continue}if(y>=DOCK){tset(x,y,7);continue}
+    if(y>=SEA){tset(x,y,4);continue}if(y>=DOCK){tset(x,y,7);continue}if(x>=CWD){tset(x,y,3);continue}
     const lx=inBand(x),ly=inBand(y);if(lx>=0||ly>=0){const road=(lx===1||lx===2)||(ly===1||ly===2);tset(x,y,road?0:1)}else tset(x,y,2)}
-  /* quarteirões */const blocks=[];for(const by of BANDS)for(const bx of BANDS){const x0=bx+4,y0=by+4;if(x0+10>MW||y0+10>DOCK)continue;blocks.push([x0,y0])}
+  /* quarteirões */const blocks=[];for(const by of BANDS)for(const bx of BANDS){const x0=bx+4,y0=by+4;if(x0+10>CWD||y0+10>DOCK)continue;blocks.push([x0,y0])}
   const special={chefe:[1,1],esquadra:[2,1],armeiro:[3,1],campo:[5,0],casa:[0,1],hospital:[0,4],oficina:[1,3],mercearia:[2,3],parque:[3,3],praca:[2,2],pinta:[4,2],roupa:[4,4],bomba:[3,5],garagem:[5,5],motas:[6,5],estadio:[8,3],parque2:[7,8],praca2:[3,7],bomba2:[8,7],hospital2:[9,1],feira:[11,4],predio:[4,3],bombeiros:[10,8],torre:[6,10],mercado:[2,9],parque3:[12,11],bomba3:[4,12],estadio2:[11,1]};
   const isSp=(bx,by)=>{for(const k in special){const [i,j]=special[k];if(bx===4+i*PITCH&&by===4+j*PITCH)return k}return null};
   const fill=(x0,y0,w,h,t)=>{for(let y=y0;y<y0+h;y++)for(let x=x0;x<x0+w;x++)tset(x,y,t)};
@@ -916,12 +942,12 @@ const DOORS=[],DECOR=[],FIELDS=[],LANDM=[];
   for(const [x0,y0] of blocks){const sp=isSp(x0,y0),r=R0(),bi=(x0-4)/PITCH,bj=(y0-4)/PITCH;
     if(sp==="casa"){/* a tua casa: moradia com jardim, piscina e entrada para o carro */fill(x0,y0,10,10,3);fill(x0+1,y0+1,6,4,2);BUILD.push({x:(x0+1)*TS,y:(y0+1)*TS,w:6*TS,h:4*TS,ht:20,c:"#f4ead6",roof:"house",label:"CASA",door:(x0+4)*TS,shop:"casa"});
       fill(x0+3,y0+5,2,5,6);fill(x0+7,y0+1,2,9,6);fill(x0+1,y0+7,2,2,4);DECOR.push({k:"pool",x:(x0+1)*TS,y:(y0+7)*TS,w:2*TS,h:2*TS});for(const [u,v] of [[5,8],[9,0],[0,5],[0,0],[6,6]])tree(x0+u,y0+v);
-      DOORS.push({k:"casa",x:(x0+4)*TS,y:(y0+5.45)*TS});SPOTS.casa={x:(x0+4)*TS,y:(y0+6.3)*TS};SPOTS.myCar={x:(x0+8)*TS,y:(y0+4)*TS};continue}
+      DOORS.push({k:"casa",x:(x0+4)*TS,y:(y0+5.45)*TS});SPOTS.casa={x:(x0+4)*TS,y:(y0+6.3)*TS};SPOTS.myCar={x:(x0+8)*TS,y:(y0+4)*TS};SPOTS.gar={x0:(x0+7)*TS,y0:(y0+1)*TS,x1:(x0+9)*TS,y1:(y0+8.7)*TS,sl:[2.2,4.7,7.2].map(v=>({x:(x0+8)*TS,y:(y0+v)*TS}))};DECOR.push({k:"carport",x:(x0+7)*TS,y:(y0+1)*TS,w:2*TS,h:7.7*TS});continue}
     if(SHOP[sp]){const [lab,col,k]=SHOP[sp];fill(x0,y0,10,6,2);fill(x0,y0+6,10,4,k==="cafe"?1:6);BUILD.push({x:x0*TS,y:y0*TS,w:10*TS,h:6*TS,ht:k==="cafe"?22:26,c:col,label:lab,door:(x0+5)*TS,shop:k,awn:col});
       DOORS.push({k,x:(x0+5)*TS,y:(y0+6.45)*TS});SPOTS[sp]={x:(x0+5)*TS,y:(y0+7.2)*TS};if(k==="cafe")for(const u of [1.5,3.2,6.8,8.5])DECOR.push({k:"umbrella",x:(x0+u)*TS,y:(y0+8.2)*TS});else for(let u=1;u<10;u+=2.2)PARKED.push({x:(x0+u)*TS,y:(y0+8.6)*TS,a:-Math.PI/2});continue}
     if(sp==="hospital"){fill(x0,y0,10,7,2);fill(x0,y0+7,10,3,6);BUILD.push({x:x0*TS,y:y0*TS,w:10*TS,h:7*TS,ht:50,c:"#e9eef2",label:"HOSPITAL",roof:"heli"});SPOTS.hospital={x:(x0+5)*TS,y:(y0+8)*TS};PARKED.push({x:(x0+2)*TS,y:(y0+8.5)*TS,a:0,m:1,col:"#ffffff",amb:1});continue}
     if(sp==="feira"){/* feira popular: roda gigante, carrosséis e barracas */fill(x0,y0,10,10,6);LANDM.push({k:"wheel",x:(x0+5)*TS,y:(y0+4)*TS});LANDM.push({k:"carousel",x:(x0+2.2)*TS,y:(y0+7.5)*TS});LANDM.push({k:"carousel",x:(x0+7.8)*TS,y:(y0+7.5)*TS});for(const u of [1,3,7,9])DECOR.push({k:"umbrella",x:(x0+u)*TS,y:(y0+1)*TS});SPOTS.feira={x:(x0+5)*TS,y:(y0+8.6)*TS};for(const [u,v] of [[4,4],[5,4],[4,3],[5,3],[2,7],[3,7],[2,8],[3,8],[7,7],[8,7],[7,8],[8,8]])tset(x0+u,y0+v,2);continue}
-    if(sp==="predio"){/* prédio clássico (Downtown City MegaKit, Quaternius) */fill(x0,y0,10,10,6);fill(x0,y0,10,8,2);BUILD.push({x:x0*TS,y:y0*TS,w:10*TS,h:8*TS,ht:60,c:"#b9806a",dt:"Building_Large_2"});continue}
+    if(sp==="predio"){/* prédio clássico (Downtown City MegaKit, Quaternius) */fill(x0,y0,10,10,6);fill(x0,y0,10,8,2);BUILD.push({x:x0*TS,y:y0*TS,w:10*TS,h:8*TS,ht:70,c:"#b9806a"});continue}
     if(sp==="torre"){/* torre de televisão: dá para ver de longe */fill(x0,y0,10,10,3);fill(x0+4,y0+4,2,2,2);LANDM.push({k:"tower",x:(x0+5)*TS,y:(y0+5)*TS});for(let k=0;k<10;k++)tree(x0+Math.floor(R0()*10),y0+Math.floor(R0()*10));continue}
     if(sp==="bombeiros"){fill(x0,y0,10,5,2);fill(x0,y0+5,10,5,6);BUILD.push({x:x0*TS,y:y0*TS,w:10*TS,h:5*TS,ht:26,c:"#c0392b",label:"BOMBEIROS",awn:"#ffffff"});SPOTS.bombeiros={x:(x0+5)*TS,y:(y0+7)*TS};for(const u of [2,5,8])PARKED.push({x:(x0+u)*TS,y:(y0+6.6)*TS,a:Math.PI/2,m:6,k:"firetruck",col:"#d63031"});continue}
     if(sp==="mercado"){fill(x0,y0,10,10,6);BUILD.push({x:(x0+1)*TS,y:(y0+1)*TS,w:8*TS,h:5*TS,ht:16,c:"#e8c07d",label:"MERCADO",awn:"#2fbf71"});fill(x0+1,y0+1,8,5,2);for(let u=1;u<10;u+=2)DECOR.push({k:"umbrella",x:(x0+u)*TS,y:(y0+7.5)*TS});for(let u=1.5;u<9;u+=2)DECOR.push({k:"crate",x:(x0+u)*TS,y:(y0+8.8)*TS});continue}
@@ -954,11 +980,11 @@ const DOORS=[],DECOR=[],FIELDS=[],LANDM=[];
     for(let y=0;y<DOCK;y++){if(inBand(y)>=0)continue;furn(b,y,0,1);furn(b+3,y,0,-1)}}
   /* cais: alguns pontões */for(let x=6;x<MW-6;x+=11)for(let y=SEA;y<SEA+3;y++){tset(x,y,7);tset(x+1,y,7)}
   for(let x=4;x<MW-4;x+=7)DECOR.push({k:"container",x:(x+.5)*TS,y:(DOCK+1.5)*TS,a:0,v:x%2,st:x%3===0});
-  /* gruas no cais e farol na praia */for(let x=20;x<MW-10;x+=38)LANDM.push({k:"crane",x:(x+.5)*TS,y:(DOCK+2.2)*TS});LANDM.push({k:"light",x:(MW+1)*TS,y:(DOCK-8)*TS});
+  /* gruas no cais e farol na praia */for(let x=20;x<MW-10;x+=38)LANDM.push({k:"crane",x:(x+.5)*TS,y:(DOCK+2.2)*TS});LANDM.push({k:"light",x:(MW-13.5)*TS,y:(SERRA-1)*TS});genEast();
 })();
-const solid=t=>t===2||t===4||t===5;
+const solid=t=>t===2||t===4||t===5||t===9||t===10;
 const solidAt=(px,py)=>solid(tget(Math.floor(px/TS),Math.floor(py/TS)));
-/* minimapa (1 píxel por quadrado) */const MINI=(()=>{const c=document.createElement("canvas");c.width=MW;c.height=MH;const g=c.getContext("2d");const col=["#55565e","#9a9aa2","#d8cdb8","#5aa35e","#2f7fc1","#3d7a42","#6b6c74","#a08a6a"];for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){g.fillStyle=col[TL[y*MW+x]];g.fillRect(x,y,1,1)}return c})();
+/* minimapa (1 píxel por quadrado) */const MINI=(()=>{const c=document.createElement("canvas");c.width=MW;c.height=MH;const g=c.getContext("2d");const col=["#55565e","#9a9aa2","#d8cdb8","#5aa35e","#2f7fc1","#3d7a42","#6b6c74","#a08a6a","#e6d29a","#c9c9c9","#8a7d6c"];for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){g.fillStyle=col[TL[y*MW+x]];g.fillRect(x,y,1,1)}return c})();
 /* ---------- carros ---------- */
 const MODELS=[{n:"Popó",l:34,w:18,acc:300,max:330,grip:7},{n:"Carrinha",l:44,w:22,acc:220,max:280,grip:6},{n:"Táxi",l:38,w:19,acc:300,max:360,grip:7},{n:"Raio",l:38,w:19,acc:460,max:520,grip:8},{n:"Polícia",l:40,w:20,acc:400,max:450,grip:8},{n:"Mota",l:24,w:9,acc:560,max:540,grip:9,moto:1},{n:"Camião",l:58,w:24,acc:150,max:240,grip:5}];
 const CARCOLS=["#e63946","#3a86ff","#2fbf71","#ffbe0b","#9b5de5","#f1f1f1","#3d3d4a","#ff8c1a","#7ad7ff","#8d5a34"];
@@ -971,8 +997,8 @@ let BIG=null;function drawBig(g){if(!BIG)return;BIG.t-=1/60;if(BIG.t<=0){BIG=nul
 let P={x:0,y:0,a:0,car:null,run:0,ws:0},STARS=0,STARV=0,SEEN=0,BUST=0,MSG=null,MISSION=null,CAM={x:0,y:0,z:1},T=0,STATE="menu",FADE=0;
 function spawnPlayer(){const s=SPOTS.casa;P={x:s.x,y:s.y,a:Math.PI/2,car:null,run:0,ws:0,hp:100,arm:SAVE.arm||0,cd:0};CAM.x=P.x;CAM.y=P.y}
 spawnPlayer();
-function myCar(){if(CARS.some(c=>c.mine))return;const s=SPOTS.myCar;CARS.push(Object.assign(mkCar(0,s.x,s.y,Math.PI/2,SAVE.carCol||"#2a62c4"),{ai:"park",mine:1}))}myCar();
-/* envelopes de dinheiro escondidos */const ENV=[];{const r=(s=>()=>{s=(s*16807)%2147483647;return s/2147483647})(99);while(ENV.length<50){const x=Math.floor(r()*MW),y=Math.floor(r()*DOCK+3);const t=tget(x,y);if(t===6||t===3||t===7)ENV.push({i:ENV.length,x:(x+.5)*TS,y:(y+.5)*TS})}}
+function myCar(){if(!SPOTS.gar||!Array.isArray(SAVE.gar))return;SAVE.gar.forEach((v,i)=>{if(!v||CARS.some(c=>c.gid===i))return;const s=SPOTS.gar.sl[i];if(CARS.some(c=>c!==P.car&&Math.hypot(c.x-s.x,c.y-s.y)<30))return;const c=Object.assign(mkCar(v.m,s.x,s.y,Math.PI/2,v.col),{ai:"park",mine:1,gid:i});if(v.k)c.k=v.k;CARS.push(c)})}
+/* envelopes de dinheiro escondidos */if(!Array.isArray(SAVE.gar))SAVE.gar=[{m:0,col:SAVE.carCol||"#2a62c4"},null,null];myCar();const ENV=[];{const r=(s=>()=>{s=(s*16807)%2147483647;return s/2147483647})(99);while(ENV.length<50){const x=Math.floor(r()*MW),y=Math.floor(r()*DOCK+3);const t=tget(x,y);if(t===6||t===3||t===7)ENV.push({i:ENV.length,x:(x+.5)*TS,y:(y+.5)*TS})}}
 /* ---------- missões ---------- */
 const MIS=[
  {name:"Primeira entrega",who:"Rui",intro:"Leva esta encomenda ao Bairro Alto Verde antes que esfrie!",kind:"deliver",to:[70,30],time:70,pay:300},
@@ -1009,7 +1035,7 @@ function missionTick(dt){const m=MISSION;if(!m)return;const M=m.M,pc=P.car;
   if(m.tgt&&dist(P,m.tgt)<55&&(!pc||speedOf(pc)<120)){if(M.kind==="steal"&&pc!==m.needCar)return;winMission()}}
 /* ---------- utilidades ---------- */
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);const speedOf=c=>Math.hypot(c.vx,c.vy);
-function randomSidewalk(x,y,dmin,dmax){for(let k=0;k<300;k++){const a=Math.random()*6.283,d=dmin+Math.random()*(dmax-dmin),tx=Math.floor((x+Math.cos(a)*d)/TS),ty=Math.floor((y+Math.sin(a)*d)/TS);if(tget(tx,ty)===1)return{x:(tx+.5)*TS,y:(ty+.5)*TS}}return{x:SPOTS.chefe.x,y:SPOTS.chefe.y}}
+function randomSidewalk(x,y,dmin,dmax,tt){tt=tt||1;for(let k=0;k<300;k++){const a=Math.random()*6.283,d=dmin+Math.random()*(dmax-dmin),tx=Math.floor((x+Math.cos(a)*d)/TS),ty=Math.floor((y+Math.sin(a)*d)/TS);if(tget(tx,ty)===tt)return{x:(tx+.5)*TS,y:(ty+.5)*TS}}return{x:SPOTS.chefe.x,y:SPOTS.chefe.y}}
 function say(t,s){MSG={t:s||2.5,txt:t}}
 function addStar(n,silent){const old=STARS;STARS=Math.min(5,STARS+n);STARV=0;if(STARS>old&&!silent)SFXT.siren()}
 /* ---------- física dos carros ---------- */
@@ -1017,7 +1043,7 @@ function carCorners(c){const M=MODELS[c.m],ca=Math.cos(c.a),sa=Math.sin(c.a),hl=
 function stepCar(c,dt){const M=MODELS[c.m],ca=Math.cos(c.a),sa=Math.sin(c.a);let fwd=c.vx*ca+c.vy*sa,lat=-c.vx*sa+c.vy*ca;
   const broken=c.hp<=0;const thr=broken?0:c.thr;
   if(thr>0)fwd+=M.acc*thr*dt*(fwd<0?2.2:1);else if(thr<0)fwd+=(fwd>20?-M.acc*2.2:-M.acc*.6)*(-thr)*dt;else fwd*=Math.pow(.35,dt);
-  fwd=Math.max(-M.max*.4,Math.min(M.max*(tget(Math.floor(c.x/TS),Math.floor(c.y/TS))===3?.5:1),fwd));
+  {const tt=tget(Math.floor(c.x/TS),Math.floor(c.y/TS));fwd=Math.max(-M.max*.4,Math.min(M.max*(tt===3?.5:tt===8?.42:1),fwd))}
   const pl=c===P.car,g=c.hb?1.2:M.grip*(pl?2:1);lat*=Math.exp(-g*dt);if(c.hb)fwd*=Math.pow(.6,dt);
   if(pl&&c.want!=null){/* o carro roda suavemente para onde aponta o joystick */let da=((c.want-c.a+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI;const rate=(c.hb?4.4:3.3)*Math.min(1,.35+Math.abs(fwd)/110)*(c.m===5?.6:1);c.a+=Math.max(-rate*dt,Math.min(rate*dt,da))}
   else{const steerAmt=c.str*Math.min(1,Math.abs(fwd)/90)*(fwd<0?-1:1)*(c.hb?3.4:(pl?3:2.6))*(c.m===5?.62:1);c.a+=steerAmt*dt}
@@ -1037,13 +1063,15 @@ function spawnTraffic(){const horiz=Math.random()<.5,band=BANDS[Math.floor(Math.
   const along=(horiz?CAM.x:CAM.y)+(Math.random()<.5?-1:1)*(520+Math.random()*500);let x,y;if(horiz){x=along;y=laneCoord(dir,band)}else{y=Math.min((DOCK-1)*TS,along);x=laneCoord(dir,band)}
   if(x<TS||y<TS||x>WPX-TS||y>(DOCK-1)*TS||Math.hypot(x-CAM.x,y-CAM.y)<480)return;if(CARS.some(c=>Math.hypot(c.x-x,c.y-y)<60))return;
   const m=Math.random()<.06?6:Math.random()<.1?5:Math.random()<.12?2:Math.random()<.15?1:0;const c=mkCar(m,x,y,dir*Math.PI/2);if(m===6)c.k=Math.random()<.5?"truck":"garbage-truck";c.lane={dir,band,dec:null};c.ai="traffic";c.drv=1;c.sp=110+Math.random()*60;CARS.push(c)}
-function stepTraffic(c,dt){const L=c.lane,[dx,dy]=DIRS[L.dir];
+function spawnHwy(){const dir=Math.random()<.5?1:3,ln=dir===1?HWY.sl:HWY.nl,x=ln[Math.floor(Math.random()*2)]*TS;const y=CAM.y+(dir===1?-1:1)*(560+Math.random()*400)*(Math.random()<.75?1:-1);if(y<3*TS||y>(DOCK-3)*TS||Math.hypot(x-CAM.x,y-CAM.y)<480)return;if(CARS.some(c=>Math.hypot(c.x-x,c.y-y)<90))return;
+  const m=Math.random()<.14?6:Math.random()<.12?5:Math.random()<.1?3:Math.random()<.15?1:0;const c=mkCar(m,x,y,dir*Math.PI/2);if(m===6)c.k=Math.random()<.5?"truck":"garbage-truck";c.lane={dir,band:-1,dec:null,hw:1};c.ai="traffic";c.hw=1;c.drv=1;c.sp=m===6?190:230+Math.random()*90;CARS.push(c)}
+function stepTraffic(c,dt){const L=c.lane,[dx,dy]=DIRS[L.dir];if(L.hw&&(c.y<2*TS||c.y>(DOCK-2)*TS)){c.rm=1;return}
   /* parar se houver alguém à frente */let block=false;for(const o of CARS){if(o===c)continue;const rx=o.x-c.x,ry=o.y-c.y,f=rx*dx+ry*dy,s=Math.abs(-rx*dy+ry*dx);if(f>0&&f<58&&s<18){block=true;break}}
   if(!block&&P.car==null){const rx=P.x-c.x,ry=P.y-c.y,f=rx*dx+ry*dy,s=Math.abs(-rx*dy+ry*dx);if(f>0&&f<50&&s<16)block=true}
   for(const p of PEDS){if(p.down)continue;const rx=p.x-c.x,ry=p.y-c.y,f=rx*dx+ry*dy,s=Math.abs(-rx*dy+ry*dx);if(f>0&&f<44&&s<14){block=true;break}}
   const sp=block?0:c.sp;c.cur=(c.cur||0)+(sp-(c.cur||0))*Math.min(1,dt*4);c.x+=dx*c.cur*dt;c.y+=dy*c.cur*dt;c.vx=dx*c.cur;c.vy=dy*c.cur;
   /* cruzamentos */const tx=Math.floor(c.x/TS),ty=Math.floor(c.y/TS),ix=inBand(tx),iy=inBand(ty);
-  if(ix>=0&&iy>=0){const key=(tx-ix)+","+(ty-iy);if(L.dec!==key){L.dec=key;L.bx=tx-ix;L.by=ty-iy;const opts=[];for(const nd of [0,1,2,3]){if(nd===(L.dir+2)%4)continue;const nx=L.bx+DIRS[nd][0]*PITCH,ny=L.by+DIRS[nd][1]*PITCH;if(nx<0||ny<0||nx>MW-4||ny>DOCK-4)continue;opts.push(nd)}
+  if(ix>=0&&iy>=0){const key=(tx-ix)+","+(ty-iy);if(L.dec!==key){L.dec=key;L.bx=tx-ix;L.by=ty-iy;const opts=[];for(const nd of [0,1,2,3]){if(nd===(L.dir+2)%4)continue;const nx=L.bx+DIRS[nd][0]*PITCH,ny=L.by+DIRS[nd][1]*PITCH;if(nx<0||ny<0||nx>CWD-4||ny>DOCK-4)continue;opts.push(nd)}
       L.nd=opts.length?opts[Math.floor(Math.random()*opts.length)]:(L.dir+2)%4;if(opts.includes(L.dir)&&Math.random()<.5)L.nd=L.dir}
     if(L.nd!==L.dir){const horizNew=L.nd===0||L.nd===2;const tgt=horizNew?laneCoord(L.nd,L.by):laneCoord(L.nd,L.bx);const cur=horizNew?c.y:c.x,mv=horizNew?dy:dx;if((tgt-cur)*mv<=0){if(horizNew)c.y=tgt;else c.x=tgt;L.dir=L.nd;c.a=L.dir*Math.PI/2}}}
   c.a=L.dir*Math.PI/2}
@@ -1060,20 +1088,30 @@ function stepCop(c,dt){const tgt=P.car||P;let goal;
   /* encravado: recua um bocado */if(speedOf(c)<20&&c.thr>0){c.stuck=(c.stuck||0)+dt;if(c.stuck>1){c.rev=.8;c.stuck=0}}if(c.rev>0){c.rev-=dt;c.thr=-1;c.str=-c.str}
   stepCar(c,dt)}
 /* ---------- peões ---------- */
-function spawnPed(){const s=randomSidewalk(CAM.x,CAM.y,450,800);if(Math.hypot(s.x-CAM.x,s.y-CAM.y)<420)return;PEDS.push({x:s.x,y:s.y,dir:Math.floor(Math.random()*4),sp:28+Math.random()*22,col:CARCOLS[Math.floor(Math.random()*CARCOLS.length)],hair:["#151515","#6b4a2b","#e0c48a","#a33"][Math.floor(Math.random()*4)],down:0,run:0})}
+function spawnPed(){const s=randomSidewalk(CAM.x,CAM.y,450,800,CAM.x>194*TS&&CAM.y>SERRA*TS&&Math.random()<.6?8:1);if(Math.hypot(s.x-CAM.x,s.y-CAM.y)<420)return;PEDS.push({x:s.x,y:s.y,dir:Math.floor(Math.random()*4),sp:28+Math.random()*22,col:CARCOLS[Math.floor(Math.random()*CARCOLS.length)],hair:["#151515","#6b4a2b","#e0c48a","#a33"][Math.floor(Math.random()*4)],down:0,run:0})}
 function stepPed(p,dt){if(p.down>0){p.down-=dt;if(p.down<=0){p.run=3;p.say="Ai! Cuidado!";p.sayT=1.5}return}if(p.sayT>0)p.sayT-=dt;
   const sp=p.sp*(p.run>0?3:1);if(p.run>0)p.run-=dt;
-  /* fugir de carros a alta velocidade */const pc=P.car;if(pc&&speedOf(pc)>90){const rx=p.x-pc.x,ry=p.y-pc.y,d=Math.hypot(rx,ry);if(d<90){const f=(rx*pc.vx+ry*pc.vy)/speedOf(pc);if(f>-10){const side=-rx*pc.vy+ry*pc.vx>0?1:-1;const nx=-pc.vy/speedOf(pc)*side,ny=pc.vx/speedOf(pc)*side;const tx=p.x+nx*5,ty=p.y+ny*5;if(!solidAt(tx,ty)){p.x=tx;p.y=ty}if(!p.say){p.say="Eiii!";p.sayT=1}}}}
+  /* fugir de carros a alta velocidade */const pc=P.car;if(pc&&speedOf(pc)>90){const rx=p.x-pc.x,ry=p.y-pc.y,d=Math.hypot(rx,ry);const sv=speedOf(pc),f=(rx*pc.vx+ry*pc.vy)/sv,lt=Math.abs(-rx*pc.vy+ry*pc.vx)/sv;if(d<130&&f>4&&f<40+sv*.25&&lt<22){{const side=-rx*pc.vy+ry*pc.vx>0?1:-1;const nx=-pc.vy/speedOf(pc)*side,ny=pc.vx/speedOf(pc)*side;const tx=p.x+nx*5,ty=p.y+ny*5;if(!solidAt(tx,ty)){p.x=tx;p.y=ty}if(!p.say){p.say="Eiii!";p.sayT=1}}}}
   const [dx,dy]=DIRS[p.dir];const nx=p.x+dx*sp*dt,ny=p.y+dy*sp*dt;const t=tget(Math.floor((nx+dx*8)/TS),Math.floor((ny+dy*8)/TS));
-  if(t===1||t===6||t===7||(t===3&&Math.random()<.3)){p.x=nx;p.y=ny}else{const o=[0,1,2,3].filter(d=>{const tt=tget(Math.floor((p.x+DIRS[d][0]*20)/TS),Math.floor((p.y+DIRS[d][1]*20)/TS));return tt===1||tt===6||tt===7});p.dir=o.length?o[Math.floor(Math.random()*o.length)]:(p.dir+2)%4}
+  if(t===1||t===6||t===7||t===8||(t===3&&Math.random()<.3)){p.x=nx;p.y=ny}else{const o=[0,1,2,3].filter(d=>{const tt=tget(Math.floor((p.x+DIRS[d][0]*20)/TS),Math.floor((p.y+DIRS[d][1]*20)/TS));return tt===1||tt===6||tt===7||tt===8});p.dir=o.length?o[Math.floor(Math.random()*o.length)]:(p.dir+2)%4}
   if(Math.random()<.003)p.dir=(p.dir+(Math.random()<.5?1:3))%4}
 /* ---------- interiores: casa, café, mercearia, armeiro e loja de roupa ---------- */
 let SCENE=null,NEAR=null;
+/* não atravessar carros: empurra para fora do retângulo do carro */
+function pushOutCars(o,r){for(const c of CARS){if(c===P.car)continue;const dx=o.x-c.x,dy=o.y-c.y;if(Math.abs(dx)>48||Math.abs(dy)>48)continue;const M=MODELS[c.m],ca=Math.cos(c.a),sa=Math.sin(c.a);let lx=dx*ca+dy*sa,ly=-dx*sa+dy*ca;const hx=M.l/2+r,hy=M.w/2+r;
+  if(Math.abs(lx)<hx&&Math.abs(ly)<hy){if(hx-Math.abs(lx)<hy-Math.abs(ly))lx=(lx<0?-1:1)*hx;else ly=(ly<0?-1:1)*hy;const nx=c.x+lx*ca-ly*sa,ny=c.y+lx*sa+ly*ca;if(!solidAt(nx,ny)){o.x=nx;o.y=ny}}}}
+/* garagem de casa: deixa lá um carro ou mota parado e fica guardado (e o jogo gravado) */
+const inGar=c=>{const g=SPOTS.gar;return c.x>g.x0-4&&c.x<g.x1+4&&c.y>g.y0-4&&c.y<g.y1+4};
+function saveGame(msg){SAVE.clk=Math.round(CLK);saveS();say(msg||"Jogo gravado! 💾",2.6);BIG={txt:"JOGO GRAVADO",col:"#2fbf71",t:1.6};SFXT.coin()}
+function tickGarage(dt){const pc=P.car;for(const c of CARS)if(c.gid!=null&&(c.hp<=0||!inGar(c))){SAVE.gar[c.gid]=null;c.gid=null;c.mine=0;saveS()}
+  if(pc&&pc.hp>0&&pc.gid==null&&!pc.mis&&inGar(pc)&&speedOf(pc)<25){pc.gT=(pc.gT||0)+dt;if(pc.gT>.7){pc.gT=-99;const i=SAVE.gar.findIndex(v=>!v);if(i<0){say("A garagem está cheia (3 lugares). Tira um primeiro.",2.5)}else{SAVE.gar[i]={m:pc.m,col:pc.col,k:pc.k||null};pc.gid=i;pc.mine=1;saveGame((pc.m===5?"Mota":"Carro")+" guardado na garagem. Jogo gravado! 💾")}}}else if(pc&&pc.gT>0)pc.gT=0}
+/* gente deitada ou sentada nas toalhas: se um carro vier, levanta-se e foge */
+function tickBeach(){const pc=P.car;if(!pc||speedOf(pc)<50||pc.x<195*TS||pc.y<SERRA*TS)return;for(const d of DECOR){if(d.k!=="towel"||!d.p)continue;if(Math.abs(d.x-pc.x)>60||Math.abs(d.y-pc.y)>60)continue;if(Math.hypot(d.x-pc.x,d.y-pc.y)<44){d.p=0;PEDS.push({x:d.x,y:d.y+10,dir:Math.floor(Math.random()*4),sp:30,col:d.sh,hair:"#151515",down:0,run:3,say:"Olha o carro!",sayT:1.5})}}}
 const INT={
  casa:{n:"A tua casa",w:11,h:8,floor:"wood",wall:"#e8dcc4",items:[
   {t:"bed",x:.5,y:.5,w:2.4,h:3,s:1},{t:"night",x:3,y:.5,w:.7,h:.7,s:1},{t:"wardrobe",x:4.4,y:.15,w:2.4,h:.85,s:1},{t:"kitchen",x:7.3,y:.15,w:3.55,h:.85,s:1},{t:"table",x:8.1,y:3,w:1.9,h:1.2,s:1},
-  {t:"rug",x:4.1,y:3.3,w:3,h:2},{t:"tv",x:.8,y:4.55,w:2.4,h:.3,s:1},{t:"sofa",x:.5,y:6.3,w:3,h:1.05,s:1},{t:"plant",x:10.1,y:6.9,w:.6,h:.6,s:1},{t:"plant",x:.5,y:3.7,w:.55,h:.55,s:1}],
-  spots:[{x:3.5,y:2.2,lab:"DORMIR",a:"sleep"},{x:5.6,y:1.6,lab:"ROUPA",a:"closet"}],npc:[]},
+  {t:"rug",x:4.1,y:3.3,w:3,h:2},{t:"tv",x:.8,y:4.55,w:2.4,h:.3,s:1},{t:"sofa",x:.5,y:6.3,w:3,h:1.05,s:1},{t:"plant",x:10.1,y:6.9,w:.6,h:.6,s:1},{t:"plant",x:.5,y:3.7,w:.55,h:.55,s:1},{t:"desk",x:7.7,y:7.15,w:1.45,h:.75,s:1}],
+  spots:[{x:3.5,y:2.2,lab:"DORMIR",a:"sleep"},{x:5.6,y:1.6,lab:"ROUPA",a:"closet"},{x:8.42,y:6.35,lab:"GRAVAR",a:"save"}],npc:[]},
  cafe:{n:"Café do Rui",w:12,h:8,floor:"check",wall:"#6b4a35",items:[
   {t:"bottles",x:.4,y:.1,w:6.4,h:.35},{t:"counter",x:.4,y:1.4,w:6.4,h:.9,s:1,cm:1},{t:"rtable",x:8.4,y:1.6,w:.9,h:.9,s:1},{t:"rtable",x:10.4,y:1.6,w:.9,h:.9,s:1},{t:"rtable",x:8.4,y:4.4,w:.9,h:.9,s:1},{t:"rtable",x:10.4,y:4.4,w:.9,h:.9,s:1},
   {t:"rtable",x:2.4,y:5.4,w:.9,h:.9,s:1},{t:"plant",x:11.2,y:7.2,w:.55,h:.55,s:1},{t:"plant",x:.4,y:7.2,w:.55,h:.55,s:1},{t:"tvwall",x:8.8,y:.12,w:2,h:.3}],
@@ -1106,7 +1144,7 @@ function tickInterior(dt){const S=SCENE;if(IN.act&&!IN.actd){if(NEAR)doSpot(NEAR
   NEAR=null;for(const s of S.spots){if(Math.hypot(P.x-s.x*TS,P.y-s.y*TS)<36){NEAR=s;break}}
   if(STARS){STARV+=dt;if(STARV>8){STARS--;STARV=0;say(STARS?"Lá fora estão a perder-te o rasto…":"A polícia desistiu de ti!",1.8)}}
   if(MSG){MSG.t-=dt;if(MSG.t<=0)MSG=null}if(HURT>0)HURT-=dt}
-function doSpot(a){if(a==="rui")return ruiTalk();if(a==="sleep")return sleepHome();if(a==="closet")return closet();if(a.startsWith("shop:"))return openShop(a.slice(5))}
+function doSpot(a){if(a==="rui")return ruiTalk();if(a==="sleep")return sleepHome();if(a==="save")return saveGame("Jogo gravado! 💾 Dinheiro, missões, envelopes e a garagem ficam guardados.");if(a==="closet")return closet();if(a.startsWith("shop:"))return openShop(a.slice(5))}
 function panel(h){STATE="shop";showOv(`<div class="panel wide shop">${h}<button class="btn ghost" type="button" data-a="resume">Sair ✕</button></div>`)}
 function money(){return`<p class="note">Tens <b>${SAVE.money} €</b> · ❤️ ${Math.round(P.hp)} · 🦺 ${Math.round(P.arm)}</p>`}
 function openShop(k){const S=SHOPS[k];panel(`<h2>${S.t}</h2>${money()}<div class="shopl">${S.items.map((it,i)=>{let got="";if(it.w&&SAVE.wp.includes(it.w))got=it.am?" (já tens: só balas)":" ✔";if(it.cl&&SAVE.clothes.includes(it.cl))got=" ✔";const dis=(it.w==="bastao"&&SAVE.wp.includes("bastao"))||(it.cl&&SAVE.clothes.includes(it.cl))||(it.aw&&!SAVE.wp.includes(it.aw));
@@ -1117,7 +1155,7 @@ function buy(k,i){const it=SHOPS[k].items[i];if(!it)return;if(SAVE.money<it.p){s
   if(it.cl){SAVE.clothes.push(it.cl);SAVE.shirt=it.cl;if(STARS&&STARS<=2){STARS=0;say("Roupa nova: a polícia já não te reconhece!",2)}}
   SAVE.arm=P.arm;saveS();SFXT.coin();openShop(k)}
 function closet(){panel(`<h2>Roupeiro</h2><p class="note">Escolhe o que vestes. Compras mais roupa na <b>Moda Lusa</b>.</p><div class="shopl">${SAVE.clothes.map(c=>{const o=OUTFITS.find(x=>x.c===c)||{n:"Roupa"};return`<button class="btn ${SAVE.shirt===c?"":"ghost"}" type="button" data-a="wear" data-c="${c}"><span class="sw" style="background:${c}"></span>${o.n}${SAVE.shirt===c?" ✔":""}</button>`}).join("")}</div>`)}
-function sleepHome(){P.hp=100;STARS=0;STARV=0;const mc=CARS.find(c=>c.mine);if(mc&&(mc.hp<=0||dist(mc,SPOTS.myCar)>3000))CARS=CARS.filter(c=>c!==mc);myCar();saveS();FADE=1.4;say("Dormiste bem: vida cheia, estrelas a zero e jogo guardado.",3);SFXT.win()}
+function sleepHome(){P.hp=100;STARS=0;STARV=0;myCar();SAVE.clk=Math.round(CLK);saveS();FADE=1.4;say("Dormiste bem: vida cheia, estrelas a zero e jogo guardado.",3);SFXT.win()}
 const RUIL=["Isto hoje está parado… Queres trabalho?","Uma bica e um trabalhinho, que tal?","Cuidado com a polícia, que anda por aí."];
 function ruiTalk(){if(MISSION)return panel(`<h2>Rui</h2><p>Já tens um trabalho: <b>${MISSION.M.name}</b>. Vai lá fora e segue a seta verde!</p>`);const M=MIS[SAVE.mis];
   if(!M)return panel(`<h2>Rui</h2><p>Já fizeste tudo o que eu tinha! Agora a cidade é tua. Ainda há envelopes escondidos por aí.</p>`);
@@ -1169,7 +1207,7 @@ function enterExit(){if(!P.car){const d=nearDoor();if(d){if(CARS.some(c=>c.ai===
     if(CARS.some(c=>c.ai==="cop"&&dist(c,best)<450)||Math.random()<.25)addStar(1)}
   if(best.m===4&&!best.mine)addStar(2);best.lane=null;best.ai="player";P.car=best;SFXT.door();if(best.m===2&&!MISSION&&SAVE.mis>=4)say("Táxi! Faz a missão do Rui para ganhar com clientes.",2)}
 const AREA={n:"",t:0,cur:"",chk:0};
-function districtAt(px,py){const tx=px/TS,ty=py/TS;if(ty>=DOCK)return"Cais";const bi=Math.floor(tx/PITCH),bj=Math.floor(ty/PITCH);
+function districtAt(px,py){const tx=px/TS,ty=py/TS;if(ty>=DOCK)return"Cais";if(tx>=185.5&&tx<193)return"Autoestrada";if(tx>=193)return ty<SERRA?"Serra Alta":"Praia do Sol";const bi=Math.floor(tx/PITCH),bj=Math.floor(ty/PITCH);
   if(bi>=6&&bi<=10&&bj>=9)return"Zona Industrial";if(bi>=11&&bj>=9)return"Vale Verde";if(bi>=10&&bj>=3&&bj<=5)return"Feira Popular";if(bi>=9&&bj<=2)return"Alto da Clínica";if(bi>=10)return"Vila Nova";if(bi>=5&&bj<=4)return"Torres";if(bi>=6&&bj>=6)return"Centro Novo";if(bj>=11)return"Bairro da Torre";if(bj>=7)return"Bairro Alto";if(bi>=2&&bi<=4&&bj>=1&&bj<=3)return"Baixa";if(bi<=1&&bj<=2)return"Quinta das Moradias";if(bj===0)return"Encosta";return"Avenidas"}
 function tickGame(dt){T+=dt;CLK=(CLK+dt)%1440;if(Math.floor(T)%10===0&&Math.floor(T-dt)%10!==0)SAVE.clk=Math.round(CLK);if(AREA.t>0)AREA.t-=dt;if((AREA.chk-=dt)<0&&!SCENE){AREA.chk=.5;const n=districtAt(P.x,P.y);if(n!==AREA.cur){AREA.cur=n;AREA.n=n;AREA.t=4}}TRC=TRC.filter(t=>(t.t-=dt)>0);FX=FX.filter(f=>(f.t-=dt)>0);if(SCENE)return tickInterior(dt);if(HURT>0)HURT-=dt;if(MSG){MSG.t-=dt;if(MSG.t<=0)MSG=null}if(SHK>0)SHK=Math.max(0,SHK-dt*3);
   if(IN.act&&!IN.actd)enterExit();IN.actd=IN.act;const HB=IN.hb||(P.car?(KEYS.Space?1:0):(KEYS.ShiftLeft||KEYS.ShiftRight?1:0)),FIRE=IN.fire||(!P.car&&(KEYS.Space||KEYS.KeyJ)?1:0);
@@ -1178,18 +1216,20 @@ function tickGame(dt){T+=dt;CLK=(CLK+dt)%1440;if(Math.floor(T)%10===0&&Math.floo
   else if(pc){const mag=Math.min(1,Math.hypot(IN.x,IN.y));const CH=!!(window.R3&&R3.on&&R3.ready&&R3.chase&&R3.camA!=null);if(IN.joy&&mag>.15){/* joystick: aponta para onde queres ir (com a câmara atrás do carro, "cima" é sempre em frente) */const want=Math.atan2(IN.y,IN.x)+(CH?R3.camA+Math.PI/2:0);if(CH&&Math.abs(((want-pc.a+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI)>2.3){pc.want=null;pc.str=0;pc.thr=-mag}else{let da=((want-pc.a+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI;const back=Math.abs(da)>2.3&&speedOf(pc)<90;pc.str=0;if(back){pc.want=want+Math.PI;pc.thr=-mag}else{pc.want=want;const ad=Math.abs(da);pc.thr=mag*(ad>1.3?.3:ad>.7?.65:1)}}}
     else if(!IN.joy){pc.want=null;pc.thr=-IN.y;pc.str=IN.x}else{pc.want=null;pc.thr=0;pc.str=0}pc.hb=HB;stepCar(pc,dt);P.x=pc.x;P.y=pc.y;P.a=pc.a}
   else{const mag=Math.min(1,Math.hypot(IN.x,IN.y));if(mag>.1){const [ix,iy]=relIN();const sp=(HB?150:95);const nx=P.x+ix/Math.max(1,mag)*sp*dt*Math.min(1,mag*1.4),ny=P.y+iy/Math.max(1,mag)*sp*dt*Math.min(1,mag*1.4);if(!solidAt(nx,P.y))P.x=nx;if(!solidAt(P.x,ny))P.y=ny;P.a=Math.atan2(iy,ix);P.ws+=dt*8}
-    for(const c of CARS){const d=dist(P,c);if(d<20&&speedOf(c)>40){/* atropelado: cai e levanta-se */P.x+=(P.x-c.x)/d*16;P.y+=(P.y-c.y)/d*16;if(speedOf(c)>130&&T-(P.hitT||-9)>.7){P.hitT=T;hurt(speedOf(c)*.045)}}}}
+    /* saltar */const JP=IN.jump||KEYS.KeyX;if(JP&&!P.jumpd&&!(P.jz>0)&&!P.ko){P.jv=6.4;P.jz=.001}P.jumpd=JP;if(P.jz>0){P.jz+=P.jv*dt;P.jv-=19*dt;if(P.jz<=0){P.jz=0;P.jv=0}}
+    if(!(P.jz>.9))pushOutCars(P,6);
+    for(const c of CARS){const d=dist(P,c);if(d<20&&speedOf(c)>40&&!(P.jz>.5)){/* atropelado: cai e levanta-se */P.x+=(P.x-c.x)/d*16;P.y+=(P.y-c.y)/d*16;if(speedOf(c)>130&&T-(P.hitT||-9)>.7){P.hitT=T;hurt(speedOf(c)*.045)}}}}
   P.cd=(P.cd||0)-dt;if(P.shotT>0)P.shotT-=dt;if(!P.car&&FIRE&&P.cd<=0&&!P.ko)fire();
   /* trânsito, polícia, peões */
-  const want=Math.min(26,14+Math.floor(CAM.z<1?8:0));if(CARS.filter(c=>c.ai==="traffic").length<want&&Math.random()<.2)spawnTraffic();
+  const want=Math.min(26,14+Math.floor(CAM.z<1?8:0));if(CARS.filter(c=>c.ai==="traffic"&&!c.hw).length<want&&Math.random()<.2)spawnTraffic();if(CAM.x>168*TS&&CAM.x<200*TS&&CARS.filter(c=>c.hw&&c.ai==="traffic").length<9&&Math.random()<.12)spawnHwy();
   if(PEDS.length<28&&Math.random()<.15)spawnPed();
   const cops=CARS.filter(c=>c.ai==="cop").length,wc=STARS?Math.min(6,STARS+1):0;if(cops<wc&&Math.random()<.03)spawnCop();
   for(const c of CARS){if(c===pc)continue;if(c.ai==="traffic")stepTraffic(c,dt);else if(c.ai==="cop"){if(!STARS){c.thr=0;c.str=0;c.ai="copOff"}stepCop(c,dt)}else{c.thr=0;c.str=0;c.hb=1;stepCar(c,dt)}}
   for(let i=0;i<CARS.length;i++)for(let j=i+1;j<CARS.length;j++){const a=CARS[i],b=CARS[j];if(Math.abs(a.x-b.x)<60&&Math.abs(a.y-b.y)<60)carCollide(a,b)}
-  for(const p of PEDS){stepPed(p,dt);if(pc&&!p.down){const d=Math.hypot(p.x-pc.x,p.y-pc.y);if(d<16&&speedOf(pc)>60){p.down=2.2;p.x+=(p.x-pc.x)/d*14;p.y+=(p.y-pc.y)/d*14;SFXT.bump();if(CARS.some(c=>c.ai==="cop"&&dist(c,p)<500)||Math.random()<.5)addStar(1)}}}
+  tickGarage(dt);tickBeach();for(const p of PEDS){stepPed(p,dt);if(!p.down)pushOutCars(p,5);if(pc&&!p.down){const d=Math.hypot(p.x-pc.x,p.y-pc.y);if(d<16&&speedOf(pc)>60){p.down=2.2;p.x+=(p.x-pc.x)/d*14;p.y+=(p.y-pc.y)/d*14;SFXT.bump();if(CARS.some(c=>c.ai==="cop"&&dist(c,p)<500)||Math.random()<.5)addStar(1)}}}
   for(const c of CARS){if(c.ai==="cop"&&STARS&&!pc&&!c.out&&COPF.length<6){const dd=dist(c,P);c.nearT=dd<430?(c.nearT||0)+dt:0;if(!(dd<160||c.nearT>1.4))continue;c.out=1;c.ai="copPark";for(let k=0;k<(STARS>=3?2:1);k++){const sd=k?1:-1,ca=Math.cos(c.a+sd*Math.PI/2),sa=Math.sin(c.a+sd*Math.PI/2);let ox=c.x+ca*22,oy=c.y+sa*22;if(solidAt(ox,oy)){ox=c.x;oy=c.y}COPF.push({x:ox,y:oy,a:c.a,cd:.8+k*.4,down:0,cop:1})}}}
   for(const o of COPF)stepCopF(o,dt);COPF=COPF.filter(o=>dist(o,CAM)<950&&!(o.idle>6));
-  /* limpar o que está longe */CARS=CARS.filter(c=>c===pc||c.mis||c.mine||c.ai==="park"&&!c.drv&&dist(c,CAM)<2200||((c.ai==="traffic"||c.ai==="loose"||c.ai==="copOff"||c.ai==="copPark")?dist(c,CAM)<1300:true));PEDS=PEDS.filter(p=>dist(p,CAM)<1100);
+  /* limpar o que está longe */CARS=CARS.filter(c=>c===pc||!c.rm&&(c.mis||c.mine||c.ai==="park"&&!c.drv&&dist(c,CAM)<2200||((c.ai==="traffic"||c.ai==="loose"||c.ai==="copOff"||c.ai==="copPark")?dist(c,CAM)<1300:true)));PEDS=PEDS.filter(p=>dist(p,CAM)<1100);
   /* estrelas: somem se ninguém te vir durante um tempo */if(STARS){const seen=CARS.some(c=>c.ai==="cop"&&dist(c,P)<420&&los(c,P))||COPF.some(o=>!(o.down>0)&&dist(o,P)<380&&los(o,P));if(seen)STARV=0;else{STARV+=dt;if(STARV>10){STARS--;STARV=0;say(STARS?"Estão a perder-te o rasto…":"Despistaste a polícia!",1.8)}}
     /* apanhado */const close=CARS.some(c=>c.ai==="cop"&&dist(c,P)<(pc?44:34))||(!pc&&COPF.some(o=>!(o.down>0)&&dist(o,P)<24));const slow=pc?speedOf(pc)<45:true;if(close&&slow){BUST+=dt;if(BUST>(pc?1.6:.8))busted()}else BUST=Math.max(0,BUST-dt)}
   /* oficina e pinta já */if(pc&&SPOTS.oficina&&dist(P,SPOTS.oficina)<60&&speedOf(pc)<40&&pc.hp<100){if(SAVE.money>=100){SAVE.money-=100;pc.hp=100;pc.smoke=0;say("Carro arranjado! −100 €",2);SFXT.coin();saveS()}else say("A oficina custa 100 €",1)}
@@ -1215,12 +1255,14 @@ const PAT={
 PAT.sand=texP(64,64,(g,w,h)=>{g.fillStyle="#e6d29a";g.fillRect(0,0,w,h);for(let i=0;i<260;i++){g.fillStyle=rnd()<.5?"rgba(180,150,90,.35)":"rgba(255,245,210,.5)";g.fillRect(rnd()*w,rnd()*h,2,2)}});
 PAT.forest=texP(96,96,(g,w,h)=>{g.fillStyle="#3f8a45";g.fillRect(0,0,w,h);for(let i=0;i<600;i++){g.fillStyle=rnd()<.5?"rgba(25,80,35,.55)":"rgba(120,180,90,.3)";g.fillRect(rnd()*w,rnd()*h,2,3)}});
 /* o que está fora do mapa (só para ver): 0 floresta, 1 areia, 2 mar */
-function outK(x,y){if(y>=SEA)return 2;if(x>=MW)return x>=MW+2?2:1;if(y>=DOCK)return x<-2?2:1;return 0}
+function outK(x,y){if(y>=SEA)return 2;if(x>=MW)return 2;if(y>=DOCK)return x<-2?2:1;return 0}
 const outH=(x,y)=>{let h=(x*374761393+y*668265263)|0;h=(h^(h>>>13))*1274126177;return((h^(h>>>16))>>>0)%100};
-const TPAT=[PAT.road,PAT.walk,null,PAT.grass,PAT.water,PAT.grass,PAT.lot,PAT.dock];
-/* candeeiros nos passeios junto aos cruzamentos */const LAMPS=[];for(const by of BANDS)for(const bx of BANDS){if(by>DOCK-5)continue;LAMPS.push([(bx-.3)*TS,(by-.3)*TS],[(bx+4.3)*TS,(by+4.3)*TS])}
+/* marcas da autoestrada (2D e chão 3D) */
+function hwyMarks(g,y0,y1){g.fillStyle="#f0f0f0";for(let y=Math.max(0,y0);y<=Math.min(DOCK-1,y1);y++){const jn=HWY.jn.some(b=>y===b+1||y===b+2);for(const lx of [188,191])if(!jn)g.fillRect(lx*TS-1,y*TS+4,2,TS-14);g.fillStyle="#ffd23f";if(!jn){g.fillRect(187*TS+2,y*TS,2,TS);g.fillRect(189*TS-4,y*TS,2,TS);g.fillRect(190*TS+2,y*TS,2,TS);g.fillRect(192*TS-4,y*TS,2,TS)}g.fillStyle="#f0f0f0"}}
+const TPAT=[PAT.road,PAT.walk,null,PAT.grass,PAT.water,PAT.grass,PAT.lot,PAT.dock,PAT.sand,null,PAT.grass];
+/* candeeiros nos passeios junto aos cruzamentos */const LAMPS=[];for(const by of BANDS)for(const bx of BANDS){if(by>DOCK-5)continue;LAMPS.push([(bx-.3)*TS,(by-.3)*TS],[(bx+4.3)*TS,(by+4.3)*TS])}LAMPS.push(...LAMPS0);
 /* detalhes de telhado (fixos por prédio) */for(const b of BUILD){const r=()=>rnd();b.props=[];if(b.roof)continue;const n=1+Math.floor(r()*4);for(let i=0;i<n;i++)b.props.push({k:Math.floor(r()*4),u:.15+r()*.6,v:.15+r()*.6});b.roof=b.ht>58&&!b.label?"glass":r()<.3?"tar":r()<.5?"tile":"flat"}
-const TOUCHUI=matchMedia("(pointer:coarse)").matches;const TCOL=["#55565e","#a7a7ae","#d8cdb8","#62b066","#2f7fc1","#3d7a42","#6b6c74","#a08a6a"];
+const TOUCHUI=matchMedia("(pointer:coarse)").matches;const TCOL=["#55565e","#a7a7ae","#d8cdb8","#62b066","#2f7fc1","#3d7a42","#6b6c74","#a08a6a","#e6d29a","#c9c9c9","#8a7d6c"];
 /* ---------- desenho: pessoas, carros, decoração, interiores ---------- */
 function drawPerson(g,x,y,a,col,hair,down,walk,o){o=o||{};g.save();g.translate(x,y);
   if(down){g.fillStyle="rgba(0,0,0,.22)";g.beginPath();g.ellipse(2,2,13,7,.3,0,6.3);g.fill();g.rotate(1.2);g.fillStyle="#3d3d4a";g.fillRect(-14,-5,9,4);g.fillRect(-14,1,9,4);g.fillStyle=col;g.strokeStyle="#151515";g.lineWidth=1.2;g.beginPath();g.roundRect(-7,-7,14,14,5);g.fill();g.stroke();g.fillStyle="#f1c9a0";g.beginPath();g.arc(11,0,5,0,6.3);g.fill();g.stroke();g.fillStyle=hair;g.beginPath();g.arc(12.5,0,4.2,-1.6,1.6);g.fill();g.restore();return}
@@ -1258,6 +1300,12 @@ function drawCar(g,c){if(c.m===5)return drawMoto(g,c);const M=MODELS[c.m];g.save
   g.restore();if(c.hp<40){for(let k=0;k<3;k++){const a=T*3+k*2,v=c.hp<=0?55:125;g.fillStyle=`rgba(${v},${v},${v},.38)`;g.beginPath();g.arc(c.x+Math.cos(a)*6,c.y-8-((T*30+k*10)%24),6+k*2,0,6.3);g.fill()}}}
 function drawLandm(g){for(const l of LANDM){g.save();g.translate(l.x,l.y);g.strokeStyle="#151515";g.lineWidth=2;if(l.k==="wheel"){g.fillStyle="#ffffff";g.beginPath();g.arc(0,0,40,0,6.3);g.stroke();g.fillRect(-40,-3,80,6)}else if(l.k==="carousel"){g.fillStyle="#ff5d8f";g.beginPath();g.arc(0,0,26,0,6.3);g.fill();g.stroke()}else if(l.k==="tower"){g.fillStyle="#c9ccd4";g.beginPath();g.arc(0,0,22,0,6.3);g.fill();g.stroke();g.fillStyle="#e63946";g.beginPath();g.arc(0,0,8,0,6.3);g.fill()}else if(l.k==="crane"){g.fillStyle="#ffbe0b";g.fillRect(-8,-60,16,90);g.strokeRect(-8,-60,16,90)}else if(l.k==="light"){g.fillStyle="#fff";g.beginPath();g.arc(0,0,14,0,6.3);g.fill();g.stroke();g.fillStyle="#e63946";g.beginPath();g.arc(0,0,7,0,6.3);g.fill()}g.restore()}}
 function drawDecor(g,d,top){const x=d.x,y=d.y;
+  if(d.k==="towel"){if(top)return;g.save();g.translate(x,y);g.rotate(d.a||0);g.fillStyle=d.col;g.fillRect(-11,-20,22,40);g.fillStyle="rgba(255,255,255,.45)";g.fillRect(-11,-12,22,4);g.fillRect(-11,8,22,4);if(d.p){g.fillStyle=d.sh;g.strokeStyle="#151515";g.lineWidth=1.4;g.beginPath();g.roundRect(-6,-8,12,d.p===1?22:12,4);g.fill();g.stroke();g.fillStyle="#e0b48a";g.beginPath();g.arc(0,-12,5,0,6.3);g.fill();g.stroke()}g.restore();return}
+  if(d.k==="palm"){if(top)return;g.fillStyle="#2f8f3e";for(let k=0;k<6;k++){g.beginPath();g.ellipse(x+Math.cos(k)*9,y+Math.sin(k)*9,10,4,k,0,6.3);g.fill()}g.fillStyle="#7a5a32";g.beginPath();g.arc(x,y,4,0,6.3);g.fill();return}
+  if(d.k==="lifeguard"){if(top)return;g.fillStyle="#e63946";g.fillRect(x-14,y-14,28,28);g.fillStyle="#fff";g.fillRect(x-14,y-4,28,8);g.strokeStyle="#151515";g.lineWidth=2;g.strokeRect(x-14,y-14,28,28);return}
+  if(d.k==="volley"){if(top)return;g.strokeStyle="#151515";g.lineWidth=2;g.beginPath();g.moveTo(x-64,y);g.lineTo(x+64,y);g.stroke();g.fillStyle="#fff";g.fillRect(x-66,y-3,5,6);g.fillRect(x+61,y-3,5,6);return}
+  if(d.k==="sign"){if(top)return;g.fillStyle="#6b3f22";g.fillRect(x-40,y-10,80,20);g.fillStyle="#fff";g.font="bold 11px system-ui";g.textAlign="center";g.fillText(d.t,x,y+4);return}
+  if(d.k==="carport"){if(top)return;g.strokeStyle="#ffd23f";g.lineWidth=3;g.setLineDash([10,8]);g.strokeRect(x+3,y+3,d.w-6,d.h-6);g.setLineDash([]);g.fillStyle="rgba(255,210,63,.9)";g.font="bold 11px system-ui";g.textAlign="center";g.fillText("GARAGEM",x+d.w/2,y+16);return}
   if(!top){if(d.k==="pool"){g.fillStyle="#e9eef2";g.fillRect(x-3,y-3,d.w+6,d.h+6);const gr=g.createLinearGradient(x,y,x+d.w,y+d.h);gr.addColorStop(0,"#5fd0f0");gr.addColorStop(1,"#1f9ad0");g.fillStyle=gr;g.fillRect(x,y,d.w,d.h);g.strokeStyle="rgba(255,255,255,.55)";g.lineWidth=1.5;for(let k=0;k<3;k++){g.beginPath();g.moveTo(x+6,y+10+k*18+Math.sin(T*2+k)*2);g.quadraticCurveTo(x+d.w/2,y+4+k*18,x+d.w-6,y+10+k*18);g.stroke()}return}
     if(d.k==="fountain"){g.fillStyle="#cfd6dc";g.beginPath();g.arc(x,y,40,0,6.3);g.fill();g.fillStyle="#3aa7de";g.beginPath();g.arc(x,y,33,0,6.3);g.fill();g.fillStyle="#cfd6dc";g.beginPath();g.arc(x,y,9,0,6.3);g.fill();g.fillStyle="rgba(255,255,255,.7)";for(let k=0;k<8;k++){const a=k*.785+T,r=12+((T*20+k*5)%18);g.beginPath();g.arc(x+Math.cos(a)*r,y+Math.sin(a)*r,2,0,6.3);g.fill()}return}
     if(d.k==="bench"||d.k==="bench2"){g.fillStyle="rgba(0,0,0,.2)";g.fillRect(x-13,y-3,28,10);g.fillStyle="#8d5a34";g.fillRect(x-14,y-5,28,4);g.fillRect(x-14,y,28,4);g.fillStyle="#3d3d4a";g.fillRect(x-12,y-6,2,11);g.fillRect(x+10,y-6,2,11);return}
@@ -1283,6 +1331,7 @@ function drawItem(g,it){const x=it.x*TS,y=it.y*TS,w=it.w*TS,h=it.h*TS;g.lineWidt
   const box=(c,r)=>{g.fillStyle="rgba(0,0,0,.18)";g.fillRect(x+4,y+4,w,h);g.fillStyle=c;g.beginPath();g.roundRect(x,y,w,h,r||3);g.fill();g.stroke()};
   switch(it.t){
   case"bed":box("#8d5a34");g.fillStyle="#f4f4f8";g.fillRect(x+4,y+4,w-8,h-8);g.fillStyle="#3a86ff";g.fillRect(x+4,y+h*.35,w-8,h*.65-4);g.fillStyle="#fff";g.beginPath();g.roundRect(x+8,y+7,w/2-12,16,5);g.roundRect(x+w/2+4,y+7,w/2-12,16,5);g.fill();g.stroke();break;
+  case"desk":box("#a0703f");g.fillStyle="#22252b";g.fillRect(x+w*.3,y+h*.55,w*.4,h*.25);break;
   case"night":box("#a0703f");g.fillStyle="#ffe9a0";g.beginPath();g.arc(x+w/2,y+h/2,6,0,6.3);g.fill();break;
   case"wardrobe":box("#7a4f2c");g.beginPath();g.moveTo(x+w/2,y+2);g.lineTo(x+w/2,y+h-2);g.stroke();g.fillStyle="#ffd23f";g.fillRect(x+w/2-6,y+h/2-2,3,4);g.fillRect(x+w/2+3,y+h/2-2,3,4);break;
   case"kitchen":box("#e8e8ee");for(let k=0;k<2;k++){g.strokeStyle="#151515";g.beginPath();g.arc(x+20+k*22,y+h/2,7,0,6.3);g.stroke()}g.fillStyle="#9fb4c9";g.fillRect(x+w*.55,y+5,w*.2,h-10);g.fillStyle="#f4f6ff";g.fillRect(x+w-26,y,26,h);g.strokeRect(x+w-26,y,26,h);break;
@@ -1326,6 +1375,7 @@ function render(){if(SCENE){if(R3&&R3.on&&R3.ready&&R3.frameInt){R3.frameInt();r
     if(t===0&&(x*7+y*13)%37===0){g.fillStyle="#3a3c43";g.beginPath();g.arc(x*TS+16,y*TS+16,6,0,6.3);g.fill();g.strokeStyle="#2a2b30";g.lineWidth=1;g.stroke()}
     if(t===4&&tget(x,y-1)!==4){g.fillStyle="rgba(255,255,255,.35)";g.fillRect(x*TS,y*TS+2+Math.sin(T*2+x)*2,TS,3)}
     if(t===7){g.fillStyle="rgba(0,0,0,.08)";g.fillRect(x*TS,y*TS+TS-2,TS,2)}}
+  if(x1>=186&&x0<=193)hwyMarks(g,y0,y1);
   /* passadeiras junto aos cruzamentos */for(const by of BANDS)for(const bx of BANDS){if(by>DOCK-4)continue;const px=bx*TS,py=by*TS;if(px+4*TS<x0*TS||px>x1*TS+TS||py+4*TS<y0*TS||py>y1*TS+TS)continue;g.fillStyle="rgba(255,255,255,.7)";for(let k=0;k<5;k++){g.fillRect(px+TS+4+k*11,py-6,6,10);g.fillRect(px+TS+4+k*11,py+4*TS-4,6,10);g.fillRect(px-6,py+TS+4+k*11,10,6);g.fillRect(px+4*TS-4,py+TS+4+k*11,10,6)}}
   for(const b of BUILD){if(b.x>CAM.x+CW/z||b.x+b.w<CAM.x-CW/z-120||b.y>CAM.y+CHh/z||b.y+b.h<CAM.y-CHh/z-120)continue;const s=b.ht*.9;g.fillStyle="rgba(10,15,30,.28)";g.beginPath();g.moveTo(b.x+b.w,b.y);g.lineTo(b.x+b.w+s*.6,b.y+s*.5);g.lineTo(b.x+b.w+s*.6,b.y+b.h+s*.5);g.lineTo(b.x+s*.6,b.y+b.h+s*.5);g.lineTo(b.x,b.y+b.h);g.closePath();g.fill()}
   drawFields(g);drawLandm(g);for(const d of DECOR){if(Math.abs(d.x-CAM.x)>CW/z+90||Math.abs(d.y-CAM.y)>CHh/z+90)continue;drawDecor(g,d,false)}
@@ -1391,7 +1441,7 @@ function hud(g,inside){/* dinheiro e estrelas */g.font="900 22px system-ui,sans-
   if(MSG){g.font="900 17px system-ui";g.textAlign="center";const words=MSG.txt.split(" ");let line="",lines=[];for(const w of words){if(g.measureText(line+w).width>Math.min(560,CW-40)){lines.push(line);line=""}line+=w+" "}lines.push(line);
     lines.forEach((l,i)=>{const y=CHh*.22+i*22;g.lineWidth=5;g.strokeStyle="#151515";g.strokeText(l.trim(),CW/2,y);g.fillStyle="#fff";g.fillText(l.trim(),CW/2,y)})}
   if(BUST>.2){g.font="900 26px system-ui";g.textAlign="center";g.fillStyle="#e63946";g.fillText("A POLÍCIA ESTÁ A APANHAR-TE!",CW/2,CHh*.4)}
-  {const lb=SCENE?(NEAR?NEAR.lab:"—"):P.car?"SAIR":"ENTRAR";const ab=$("actB");if(ab.textContent!==lb)ab.textContent=lb;const h=!!(P.car||SCENE);for(const id of ["fireB","wpB","hsB"]){const e=$(id);if(e&&e.hidden!==h)e.hidden=h}{const e=$("camB"),ch=!(window.R3&&R3.on&&R3.ready);if(e&&e.hidden!==ch)e.hidden=ch;const dv=!!(P.car&&!SCENE&&TOUCHUI);if(!!DB.on!==dv){DB.on=dv?1:0;DB.l=DB.r=DB.g=DB.b=DB.h=0;$("touch").classList.toggle("drv",dv)}}const hb=$("hbB"),hl=P.car?"DERRAPA":"CORRER";if(hb.textContent!==hl)hb.textContent=hl}}
+  {const lb=SCENE?(NEAR?NEAR.lab:"—"):P.car?"SAIR":"ENTRAR";const ab=$("actB");if(ab.textContent!==lb)ab.textContent=lb;const h=!!(P.car||SCENE);for(const id of ["fireB","wpB","hsB","jmpB"]){const e=$(id);if(e&&e.hidden!==h)e.hidden=h}{const e=$("camB"),ch=!(window.R3&&R3.on&&R3.ready);if(e&&e.hidden!==ch)e.hidden=ch;const dv=!!(P.car&&!SCENE&&TOUCHUI);if(!!DB.on!==dv){DB.on=dv?1:0;DB.l=DB.r=DB.g=DB.b=DB.h=0;$("touch").classList.toggle("drv",dv)}}const hb=$("hbB"),hl=P.car?"DERRAPA":"CORRER";if(hb.textContent!==hl)hb.textContent=hl}}
 /* ---------- entrada ---------- */
 const KEYS={};addEventListener("keydown",e=>{KEYS[e.code]=1;if(STATE==="play"&&["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Space"].includes(e.code))e.preventDefault();if(e.code==="KeyM"&&STATE==="play")toggleMap();if(e.code==="KeyQ"&&STATE==="play"&&!e.repeat&&!SCENE)nextWeapon();if(e.code==="KeyH"&&STATE==="play"&&!e.repeat&&!SCENE)holster();if(e.code==="KeyC"&&!e.repeat)toggleCam();readK()});addEventListener("keyup",e=>{KEYS[e.code]=0;readK()});
 function readK(){if(JOY.on)return;IN.joy=0;IN.x=(KEYS.ArrowRight||KEYS.KeyD?1:0)-(KEYS.ArrowLeft||KEYS.KeyA?1:0);IN.y=(KEYS.ArrowDown||KEYS.KeyS?1:0)-(KEYS.ArrowUp||KEYS.KeyW?1:0);IN.act=(KEYS.KeyE||KEYS.Enter||KEYS.KeyF)?1:0}
@@ -1399,7 +1449,7 @@ const JOY={on:0,id:null,cx:0,cy:0};const jz=$("joy"),jk=$("joyK");
 jz.addEventListener("pointerdown",e=>{e.preventDefault();unlockAudio();JOY.on=1;JOY.id=e.pointerId;const r=jz.getBoundingClientRect();JOY.cx=r.left+r.width/2;JOY.cy=r.top+r.height/2;jz.setPointerCapture(e.pointerId);jmove(e)});
 jz.addEventListener("pointermove",e=>{if(JOY.on&&e.pointerId===JOY.id)jmove(e)});const jend=e=>{if(e.pointerId!==JOY.id)return;JOY.on=0;IN.x=IN.y=0;IN.joy=1;jk.style.transform="translate(-50%,-50%)"};jz.addEventListener("pointerup",jend);jz.addEventListener("pointercancel",jend);
 function jmove(e){const r=jz.getBoundingClientRect().width/2;let dx=(e.clientX-JOY.cx)/r,dy=(e.clientY-JOY.cy)/r;if(document.body.classList.contains("rot90")){const t=dx;dx=dy;dy=-t}const m=Math.hypot(dx,dy);if(m>1){dx/=m;dy/=m}IN.joy=1;IN.x=dx;IN.y=dy;jk.style.transform=`translate(calc(-50% + ${dx*r*.6}px),calc(-50% + ${dy*r*.6}px))`}
-for(const [id,k] of [["actB","act"],["hbB","hb"],["fireB","fire"]]){const b=$(id);b.addEventListener("pointerdown",e=>{e.preventDefault();IN[k]=1});const off=e=>{e.preventDefault();IN[k]=0};b.addEventListener("pointerup",off);b.addEventListener("pointerleave",off);b.addEventListener("pointercancel",off)}
+for(const [id,k] of [["actB","act"],["hbB","hb"],["fireB","fire"],["jmpB","jump"]]){const b=$(id);b.addEventListener("pointerdown",e=>{e.preventDefault();IN[k]=1});const off=e=>{e.preventDefault();IN[k]=0};b.addEventListener("pointerup",off);b.addEventListener("pointerleave",off);b.addEventListener("pointercancel",off)}
 $("mapB").addEventListener("click",e=>{e.stopPropagation();toggleMap()});$("wpB").addEventListener("click",e=>{e.stopPropagation();if(STATE==="play"&&!SCENE)nextWeapon()});$("hsB").addEventListener("click",e=>{e.stopPropagation();if(STATE==="play"&&!SCENE)holster()});for(const [id,k] of [["stL","l"],["stR","r"],["gasB","g"],["brkB","b"]]){const el=$(id);const on=e=>{e.preventDefault();e.stopPropagation();DB[k]=1;el.classList.add("dn");try{el.setPointerCapture(e.pointerId)}catch(x){}};const off=e=>{DB[k]=0;el.classList.remove("dn")};el.addEventListener("pointerdown",on);el.addEventListener("pointerup",off);el.addEventListener("pointercancel",off);el.addEventListener("lostpointercapture",off)}
 $("camB").addEventListener("click",e=>{e.stopPropagation();toggleCam()});
 function toggleCam(){if(!(window.R3&&R3.on))return;R3.chase=!R3.chase;SAVE.cc=R3.chase?1:0;saveS();say(R3.chase?"Câmara por trás":"Câmara de cima",1.2)}
@@ -1427,10 +1477,10 @@ ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)retur
 function confirmReset(){return true}
 $("menuBtn").addEventListener("click",()=>{if(STATE==="play"){STATE="pause";showOv(`<div class="panel"><h2>Pausa</h2><p class="note">${SAVE.money} € · missões ${Math.min(SAVE.mis,MIS.length)}/${MIS.length} · envelopes ${SAVE.env.length}/20</p><button class="btn" type="button" data-a="resume">Continuar ▶</button><button class="btn ghost" type="button" data-a="menu">Menu</button></div>`)}});
 ROOM.game={id:"turbo",title:"Gamanço!",maxp:1,minp:1,maxBots:0,botNames:[],start(){},msg(){},client(){},stop(){},hostLost(){},drop(){},onScreen(n){if(n==="game"){$("exitBtn").hidden=true;$("reactBtn").hidden=true;$("hubLink").hidden=false;setTimeout(layout,30)}}};
-initUI({rules:`<ul><li><b>Andar e conduzir:</b> setas ou WASD. Ao pé de um carro carrega <b>E</b> (ou o botão ENTRAR) para entrar; outra vez para sair. Espaço é o travão de mão (para derrapar). No telemóvel, a pé, o joystick aponta para onde queres ir; dentro do carro aparecem botões: ◀ ▶ para virar, <b>ACELERA</b>, <b>TRAVA</b> (parado, faz marcha-atrás) e <b>DERRAPA</b>. O botão 🎥 (ou C) muda a câmara: por trás (como no GTA) ou vista de cima.</li><li><b>Motas:</b> há motas estacionadas pela cidade e no stand MOTAS — são rápidas e passam entre os carros, mas numa batida forte cais (e levantas-te logo).</li><li><b>Cidade:</b> é grande e tem bairros (Baixa, Torres, Vila Nova, Feira Popular, Zona Industrial, Vale Verde…), uma roda gigante, a Torre de TV, gruas no porto, um farol na praia, bombeiros, mercado, dois estádios e um relógio com dia e noite. Há 50 envelopes escondidos. O radar redondo mostra o que está à tua volta; M abre o mapa todo.</li><li><b>Casa e lojas:</b> começas em casa. Nas portas com ícone carrega <b>E</b> (ou ENTRAR) para entrar. Em casa podes <b>dormir</b> (vida cheia, estrelas a zero e jogo guardado) e mudar de roupa. Café e Mercearia: comida para a vida e colete. Armeiro: armas e balas. Moda Lusa: roupa nova (com 1 ou 2 estrelas a polícia deixa de te reconhecer).</li><li><b>Armas:</b> a pé, Espaço (ou o botão vermelho) dispara e mira sozinho no alvo mais próximo à tua frente; Q (ou 🔁) muda de arma; H (ou ✋) guarda a arma; C (ou 🎥) muda a câmara (por trás ou de cima); Shift (ou CORRER) corre. É tudo em desenho animado: quem leva um tiro cai tonto e levanta-se. Disparar ou bater em pessoas dá estrelas; na polícia, mais ainda. A partir de 2 estrelas, os polícias a pé também disparam: se ficares sem vida, acordas no hospital e pagas a conta.</li><li><b>Missões:</b> fala com o <b>Rui</b> dentro do café (o "!" amarelo). Entregas, corridas, um carro para roubar, táxi e fugas. Cada missão paga em euros.</li><li><b>Polícia:</b> tirar carros com gente lá dentro, atropelar pessoas (elas caem e levantam-se) ou bater na polícia dá ⭐. Com estrelas, a polícia persegue-te: se te encostarem e estiveres parado, és apanhado e pagas multa. Se ninguém te vir durante uns segundos, perdes uma estrela. A <b>Pinta Já</b> 🎨 (150 €) apaga-as todas.</li><li><b>Oficina</b> 🔧 (100 €) arranja o carro. Se o carro avariar (fumo preto), arranja outro.</li><li><b>Mapa:</b> tecla M ou o botão 🗺️. Há <b>20 envelopes</b> com 100 € escondidos pela cidade.</li><li>O jogo guarda o teu dinheiro e as missões feitas neste aparelho.</li><li><b>Gráficos:</b> por defeito a cidade é em 3D; se o teu telemóvel ficar lento, muda para 2D no menu. Modelos 3D de Kenney (kenney.nl), de uso livre (CC0).</li></ul>`,privacy:privacyHTML(", o teu dinheiro e as missões feitas")});
+initUI({rules:`<ul><li><b>Andar e conduzir:</b> setas ou WASD. Ao pé de um carro carrega <b>E</b> (ou o botão ENTRAR) para entrar; outra vez para sair. Espaço é o travão de mão (para derrapar). No telemóvel, a pé, o joystick aponta para onde queres ir; dentro do carro aparecem botões: ◀ ▶ para virar, <b>ACELERA</b>, <b>TRAVA</b> (parado, faz marcha-atrás) e <b>DERRAPA</b>. O botão 🎥 (ou C) muda a câmara: por trás (como no GTA) ou vista de cima.</li><li><b>Motas:</b> há motas estacionadas pela cidade e no stand MOTAS — são rápidas e passam entre os carros, mas numa batida forte cais (e levantas-te logo).</li><li><b>Cidade:</b> é grande e tem bairros (Baixa, Torres, Vila Nova, Feira Popular, Zona Industrial, Vale Verde…), uma roda gigante, a Torre de TV, gruas no porto, a autoestrada a leste, a Serra Alta com estrada às curvas até ao miradouro, a Praia do Sol com gente nas toalhas, um farol, bombeiros, mercado, dois estádios e um relógio com dia e noite. Há 50 envelopes escondidos. O radar redondo mostra o que está à tua volta; M abre o mapa todo.</li><li><b>Casa e lojas:</b> começas em casa. Nas portas com ícone carrega <b>E</b> (ou ENTRAR) para entrar. Em casa podes <b>dormir</b> (vida cheia, estrelas a zero e jogo guardado), <b>gravar</b> no computador e mudar de roupa. Na <b>garagem</b> ao lado da casa cabem 3 carros ou motas: pára lá um e fica guardado (e o jogo é gravado). Se o tirares de lá, sai da garagem. Café e Mercearia: comida para a vida e colete. Armeiro: armas e balas. Moda Lusa: roupa nova (com 1 ou 2 estrelas a polícia deixa de te reconhecer).</li><li><b>Armas:</b> a pé, X (ou o botão SALTA) salta; Espaço (ou o botão vermelho) dispara e mira sozinho no alvo mais próximo à tua frente; Q (ou 🔁) muda de arma; H (ou ✋) guarda a arma; C (ou 🎥) muda a câmara (por trás ou de cima); Shift (ou CORRER) corre. É tudo em desenho animado: quem leva um tiro cai tonto e levanta-se. Disparar ou bater em pessoas dá estrelas; na polícia, mais ainda. A partir de 2 estrelas, os polícias a pé também disparam: se ficares sem vida, acordas no hospital e pagas a conta.</li><li><b>Missões:</b> fala com o <b>Rui</b> dentro do café (o "!" amarelo). Entregas, corridas, um carro para roubar, táxi e fugas. Cada missão paga em euros.</li><li><b>Polícia:</b> tirar carros com gente lá dentro, atropelar pessoas (elas caem e levantam-se) ou bater na polícia dá ⭐. Com estrelas, a polícia persegue-te: se te encostarem e estiveres parado, és apanhado e pagas multa. Se ninguém te vir durante uns segundos, perdes uma estrela. A <b>Pinta Já</b> 🎨 (150 €) apaga-as todas.</li><li><b>Oficina</b> 🔧 (100 €) arranja o carro. Se o carro avariar (fumo preto), arranja outro.</li><li><b>Mapa:</b> tecla M ou o botão 🗺️. Há <b>20 envelopes</b> com 100 € escondidos pela cidade.</li><li>O jogo guarda o teu dinheiro e as missões feitas neste aparelho.</li><li><b>Gráficos:</b> por defeito a cidade é em 3D; se o teu telemóvel ficar lento, muda para 2D no menu. Modelos 3D de Kenney (kenney.nl), de uso livre (CC0).</li></ul>`,privacy:privacyHTML(", o teu dinheiro e as missões feitas")});
 addEventListener("resize",()=>{clearTimeout(window.__rz);window.__rz=setTimeout(layout,60)});try{new ResizeObserver(()=>layout()).observe(stage)}catch(e){}
 showScreen("game");layout();menu();
-window.TB={set CLK(v){CLK=v},get CLK(){return CLK},busted:()=>busted(),get SCENE(){return SCENE},get MSG(){return MSG},get NEAR(){return NEAR},goInside,goOutside,get COPF(){return COPF},fire,nextWeapon,WPN,DOORS,DECOR,get P(){return P},get CARS(){return CARS},get STARS(){return STARS},set STARS(v){STARS=v},get MISSION(){return MISSION},SPOTS,IN,tickGame,startMission,get STATE(){return STATE},SAVE,enterExit,TL,MW};
+window.TB={set CLK(v){CLK=v},get CLK(){return CLK},busted:()=>busted(),get SCENE(){return SCENE},get MSG(){return MSG},get NEAR(){return NEAR},goInside,goOutside,get COPF(){return COPF},fire,nextWeapon,WPN,DOORS,DECOR,get P(){return P},get CARS(){return CARS},get STARS(){return STARS},set STARS(v){STARS=v},get MISSION(){return MISSION},SPOTS,IN,tickGame,startMission,get STATE(){return STATE},SAVE,enterExit,TL,MW,MODELS,get PEDS(){return PEDS}};
 requestAnimationFrame(t=>{last=t;loop(t)});
 
 /* ================= Gamanço! em 3D — desenha a mesma simulação com modelos 3D (Kenney, licença CC0) =================
@@ -1460,7 +1510,7 @@ R3.load=async function(){if(R3.loading||R3.ready)return;R3.loading=true;R3.prog=
     await Promise.all([["pistola","Pistol_1"],["smg","SubmachineGun_1"],["cacadeira","Shotgun_1"]].map(async([k,f])=>{const g=await fl.loadAsync("m/gun/"+f+".fbx");g.traverse(o=>{if(o.isMesh){o.castShadow=true;const ms=Array.isArray(o.material)?o.material:[o.material];o.material=ms.map(m=>{const c=m.color?m.color.clone():new T3.Color("#222");c.lerp(new T3.Color("#4a4a52"),.35);return new T3.MeshLambertMaterial({color:c})});if(o.material.length===1)o.material=o.material[0]}});GUNM[k]=g;tick()}));
     CHR=base;{const b=new T3.Box3().setFromObject(base);CHR.userData.h=b.max.y-b.min.y}
     await Promise.all(["skaterMaleA","skaterFemaleA","cyborgFemaleA","criminalMaleA"].map(n=>new Promise((ok,ko)=>{const im=new Image();im.onload=()=>{SKINIMG[n]=im;tick();ok()};im.onerror=ko;im.src="m/chr/"+n+".jpg"})));
-    buildWorld();R3.ready=true;loadFurn();loadDT()}catch(e){console.warn(e);R3.err=String(e&&e.message||e);R3.on=false;if(cv3)cv3.style.display="none"}
+    buildWorld();R3.ready=true;loadFurn()}catch(e){console.warn(e);R3.err=String(e&&e.message||e);R3.on=false;if(cv3)cv3.style.display="none"}
   R3.loading=false;status()};
 function initRenderer(){cv3=document.createElement("canvas");cv3.id="cv3";cv3.className="ggcv";cv3.style.pointerEvents="none";stage.insertBefore(cv3,cv);
   HQ=true;renderer=new T3.WebGLRenderer({canvas:cv3,antialias:HQ,powerPreference:"high-performance"});renderer.setPixelRatio(Math.min(HQ?(TOUCHUI?1.6:2):1.1,devicePixelRatio||1));renderer.outputColorSpace=T3.SRGBColorSpace;renderer.toneMapping=T3.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;if(HQ){renderer.shadowMap.enabled=true;renderer.shadowMap.type=T3.PCFSoftShadowMap}
@@ -1474,25 +1524,28 @@ const PL={};const addP=(k,m)=>(PL[k]=PL[k]||[]).push(m);
 /* cada modelo é desenhado por blocos de 16x16 quadrados: o que está fora do ecrã nem chega à placa gráfica */
 function flushInstances(){for(const k in PL){const root=BAS[k];root.updateMatrixWorld(true);const ch={};for(const m of PL[k]){const key=Math.floor(m.elements[12]/16)+","+Math.floor(m.elements[14]/16);(ch[key]=ch[key]||[]).push(m)}
   const t=new T3.Matrix4();for(const key in ch){const mats=ch[key];root.traverse(o=>{if(!o.isMesh)return;const im=new T3.InstancedMesh(o.geometry,o.material,mats.length);mats.forEach((m,i)=>{t.multiplyMatrices(m,o.matrixWorld);im.setMatrixAt(i,t)});im.instanceMatrix.needsUpdate=true;im.computeBoundingSphere();im.castShadow=HQ;im.receiveShadow=HQ;scene.add(im)})}}}
-function bakeGround(){const S=18,c=document.createElement("canvas");c.width=MW*S;c.height=MH*S;const g=c.getContext("2d");g.scale(S/TS,S/TS);
-  const pat=p=>p&&p.src?g.createPattern(p.src,"repeat"):null;const TP=[pat(PAT.road),pat(PAT.walk),"#6b6d73",pat(PAT.grass),pat(PAT.water),pat(PAT.grass),pat(PAT.lot),pat(PAT.dock)];
+function bakeGround(){const S=16,c=document.createElement("canvas");c.width=MW*S;c.height=MH*S;const g=c.getContext("2d");g.scale(S/TS,S/TS);
+  const pat=p=>p&&p.src?g.createPattern(p.src,"repeat"):null;const TP=[pat(PAT.road),pat(PAT.walk),"#6b6d73",pat(PAT.grass),pat(PAT.water),pat(PAT.grass),pat(PAT.lot),pat(PAT.dock),pat(PAT.sand),"#bdbdbd",pat(PAT.grass)];
   for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){const t=TL[y*MW+x];g.fillStyle=TP[t]||TCOL[t];g.fillRect(x*TS,y*TS,TS+.5,TS+.5);
     if(t===1){const ax=inBand(x),ay=inBand(y);g.fillStyle="#d8d5cf";if(ax===0)g.fillRect(x*TS+TS-3,y*TS,3,TS);if(ax===3)g.fillRect(x*TS,y*TS,3,TS);if(ay===0)g.fillRect(x*TS,y*TS+TS-3,TS,3);if(ay===3)g.fillRect(x*TS,y*TS,TS,3)}
     if(t===0){const lx=inBand(x),ly=inBand(y);if(!(lx>=0&&ly>=0)){g.fillStyle="#e8e8e8";if(lx===1){if(y%2)g.fillRect(x*TS+TS-1,y*TS+6,2,TS-12)}else if(ly===1){if(x%2)g.fillRect(x*TS+6,y*TS+TS-1,TS-12,2)}}}
     if(t===0&&(x*7+y*13)%37===0){g.fillStyle="#3a3c43";g.beginPath();g.arc(x*TS+16,y*TS+16,6,0,6.3);g.fill()}}
   for(const by of BANDS)for(const bx of BANDS){if(by>DOCK-4)continue;const px=bx*TS,py=by*TS;g.fillStyle="rgba(255,255,255,.75)";for(let k=0;k<5;k++){g.fillRect(px+TS+4+k*11,py-6,6,10);g.fillRect(px+TS+4+k*11,py+4*TS-4,6,10);g.fillRect(px-6,py+TS+4+k*11,10,6);g.fillRect(px+4*TS-4,py+TS+4+k*11,10,6)}}
-  drawFields(g);for(const d of DECOR)if(d.k==="pool"||d.k==="fountain")drawDecor(g,d,false);
+  hwyMarks(g,0,DOCK);drawFields(g);for(const d of DECOR)if(d.k==="pool"||d.k==="fountain"||d.k==="carport"||d.k==="towel"||d.k==="volley")drawDecor(g,d.k==="towel"?Object.assign({},d,{p:0}):d,false);
   for(const b of BUILD){if(b.awn){for(let xx=b.x+10,i=0;xx<b.x+b.w-14;xx+=12,i++){g.fillStyle=i%2?"#fff":b.awn;g.fillRect(xx,b.y+b.h,12,10)}}if(b.door){g.fillStyle="#6b3f22";g.fillRect(b.door-13,b.y+b.h,26,8)}}
   /* sombras cozidas só no modo leve (no alto há sombras a sério) */g.fillStyle="rgba(10,15,30,.22)";if(!HQ)for(const b of BUILD){const s=Math.min(70,(b.roof==="house"?18:b.ht)*1.1);g.beginPath();g.moveTo(b.x+b.w,b.y);g.lineTo(b.x+b.w+s*.5,b.y+s*.35);g.lineTo(b.x+b.w+s*.5,b.y+b.h+s*.35);g.lineTo(b.x+s*.5,b.y+b.h+s*.35);g.lineTo(b.x,b.y+b.h);g.closePath();g.fill()}
   const tx=new T3.CanvasTexture(c);tx.colorSpace=T3.SRGBColorSpace;tx.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
   const m=new T3.Mesh(new T3.PlaneGeometry(MW,MH),new T3.MeshLambertMaterial({map:tx}));m.rotation.x=-Math.PI/2;m.position.set(MW/2,0,MH/2);m.receiveShadow=HQ;scene.add(m)}
 function buildWorld(){/* chão e arredores: floresta, praia e mar */
   const flat=(w,h,x,z,y,col,op)=>{const m=new T3.Mesh(new T3.PlaneGeometry(w,h),new T3.MeshLambertMaterial({color:col,transparent:!!op,opacity:op||1}));m.rotation.x=-Math.PI/2;m.position.set(x,y,z);scene.add(m);return m};
-  flat(MW+240,MH+240,MW/2,MH/2,-.05,"#3f8a45");flat(3,SEA+120,MW+1.5,(SEA-120)/2,-.03,"#e6d29a");R3.sea=[flat(140,MH+240,MW+3+70,MH/2,-.02,"#2a86c9"),flat(MW+240,130,MW/2,SEA+65,-.025,"#2a86c9")];
+  flat(MW+240,MH+240,MW/2,MH/2,-.05,"#3f8a45");R3.sea=[flat(140,MH+240,MW+70,MH/2,-.02,"#2a86c9"),flat(MW+240,130,MW/2,SEA+65,-.025,"#2a86c9")];
   bakeGround();
   /* prédios */const SCL=new Set();
   for(const b of BUILD){const bx=W_(b.x),bz=W_(b.y),bw=W_(b.w),bh=W_(b.h),hk=hsh(b.x,b.y);
-    if(b.dt){(R3.dtl=R3.dtl||[]).push(b);continue}
+    if(b.kiosk){const g=new T3.Group(),L=c=>new T3.MeshLambertMaterial({color:c}),Bx=(w,h,d,c,x,y,z)=>{const m=new T3.Mesh(new T3.BoxGeometry(w,h,d),L(c));m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;g.add(m);return m};
+      Bx(bw-.4,2.2,bh-.6,b.c,0,1.1,-.2);Bx(bw-.2,1.05,.35,"#8d5a34",0,.52,bh/2-.25);Bx(bw-.2,.08,.6,"#d9b382",0,1.08,bh/2-.2);for(let i=0;i<4;i++)Bx(.12,1.3,.12,"#8d5a34",-bw/2+.3+i*(bw-.6)/3,1.75,bh/2-.15);
+      const r=new T3.Mesh(new T3.ConeGeometry(Math.hypot(bw,bh)/2+.3,1.3,4),L("#c9a15a"));r.rotation.y=Math.PI/4;r.scale.set(1,1,bh/bw);r.position.set(0,3.05,0);r.castShadow=true;g.add(r);
+      for(let i=0;i<Math.floor(bw/.5);i++)Bx(.5,.35,.08,i%2?"#ffffff":b.awn,-bw/2+.25+i*.5,2.3,bh/2+.05);g.position.set(bx+bw/2,0,bz+bh/2);scene.add(g);labelSprite(b.label,bx+bw/2,bz+bh,"#151515");continue}
     if(b.ind){const k="i-"+INDB[hk%INDB.length],S=SZ[k];const ry=bw>=bh?0:Math.PI/2;const fw=ry?bh:bw,fd=ry?bw:bh;const s=Math.min(fw/S.x,fd/S.z)*.95;addP(k,place(k,bx+bw/2,bz+bh/2,ry,s,Math.min(s,4.5/S.y)));continue}
     if(b.roof==="house"){const k=SUBK[hk%SUBK.length],S=SZ[k];const s=Math.min(bw/S.x,bh/S.z)*.97;addP(k,place(k,bx+bw/2,bz+bh/2,0,s));continue}
     const nx=Math.max(1,Math.round(bw/3.2)),nz=Math.max(1,Math.round(bh/3.2)),cw=bw/nx,ch=bh/nz;const tall=b.ht>58&&!b.label;
@@ -1500,10 +1553,10 @@ function buildWorld(){/* chão e arredores: floresta, praia e mar */
       const ry=j===nz-1?0:j===0?Math.PI:i===0?-Math.PI/2:Math.PI/2;const sw=(ry===0||ry===Math.PI)?[cw,ch]:[ch,cw];const s=Math.min(sw[0]/S.x,sw[1]/S.z)*.96;const sy=b.label?Math.min(s,3.4/S.y):Math.min(s*(tall?1:.9+(h2%5)*.08),8.5/S.y);addP(k,place(k,cx,cz,ry,s,sy))}
     if(b.label)labelSprite(b.label,bx+bw/2,bz+bh,b.roof==="heli"?"#e63946":"#151515")}
   /* árvores, candeeiros, semáforos, chapéus de sol */
-  const TR=["tree_oak","tree_default","tree_fat","tree_detailed","tree-large"];for(const [tx,tz] of TREES){const h=hsh(tx,tz),k=TR[h%TR.length];addP(k,place(k,tx+.5,tz+.5,h%6,k==="tree-large"?2.4+(h%5)*.2:2.2+(h%5)*.2))}
+  const TR=["tree_oak","tree_default","tree_fat","tree_detailed","tree-large"],TP2=["tree_pineRoundA","tree_pineTallA","tree_pineRoundA"];for(const [tx,tz,pn] of TREES){const h=hsh(tx,tz),k=pn?TP2[h%3]:TR[h%TR.length];addP(k,place(k,tx+.5,tz+.5,h%6,k==="tree-large"?2.4+(h%5)*.2:2.2+(h%5)*.2))}
   /* arbustos, flores e rochas na relva */for(let y=0;y<DOCK;y++)for(let x=0;x<MW;x++){if(TL[y*MW+x]!==3)continue;const h=hsh(x*3+1,y*5+2)%100;const k=h<6?"plant_bushLarge":h<10?"plant_bush":h<13?"flower_redA":h<16?"flower_yellowA":h<18?"flower_purpleA":null;if(k)addP(k,place(k,x+.3+(h%7)*.06,y+.3+(h%5)*.08,h%6,k.startsWith("flower")?3:2.6))}
-  /* palmeiras na praia */for(let y=2;y<DOCK-2;y+=3){const h=hsh(y,77),k=h%2?"tree_palmTall":"tree_palmBend";addP(k,place(k,MW+1.1+(h%3)*.2,y+.5,h%6,1.7+(h%3)*.2))}
-  for(const d of DECOR){if(d.k==="container"){const k=d.v?"shipping-container-b":"shipping-container-a";addP(k,place(k,W_(d.x),W_(d.y),d.a||0,2.4));if(d.st)addP(k==="shipping-container-a"?"shipping-container-b":"shipping-container-a",place(k,W_(d.x),W_(d.y),(d.a||0)+.08,2.4,2.4,0,.84))}else if(d.k==="indp")addP(d.m,place(d.m,W_(d.x),W_(d.y),0,d.m==="water-tower"?2.2:1.6));else if(d.k==="stree")addP("tree-small",place("tree-small",W_(d.x),W_(d.y),hsh(d.x,d.y)%6,2.2));else if(d.k==="umbrella")addP("parasol",place("parasol",W_(d.x),W_(d.y),0,1.2/Math.max(SZ.parasol.x,SZ.parasol.z)));else if(d.k==="bin")addP("dumpster",place("dumpster",W_(d.x),W_(d.y),0,.9))}
+  /* palmeiras na praia */for(const d of DECOR){if(d.k!=="palm")continue;const h=hsh(d.x,d.y),k=h%2?"tree_palmTall":"tree_palmBend";addP(k,place(k,W_(d.x),W_(d.y),h%6,1.7+(h%3)*.2))}for(let y=SERRA+3;y<DOCK-2;y+=7){const h=hsh(y,91),k=h%2?"tree_palmTall":"tree_palmBend";addP(k,place(k,210.5+(h%3)*.4,y+.5,h%6,1.6+(h%3)*.2))}
+  for(const d of DECOR){if(d.k==="container"){const k=d.v?"shipping-container-b":"shipping-container-a";addP(k,place(k,W_(d.x),W_(d.y),d.a||0,2.4));if(d.st)addP(k==="shipping-container-a"?"shipping-container-b":"shipping-container-a",place(k,W_(d.x),W_(d.y),(d.a||0)+.08,2.4,2.4,0,.84))}else if(d.k==="indp")addP(d.m,place(d.m,W_(d.x),W_(d.y),0,d.m==="water-tower"?2.2:1.6));else if(d.k==="stree")addP("tree-small",place("tree-small",W_(d.x),W_(d.y),hsh(d.x,d.y)%6,2.2));else if(d.k==="umbrella"&&d.x>194*TS&&d.y>SERRA*TS)(R3.bum=R3.bum||[]).push(d);else if(d.k==="umbrella")addP("parasol",place("parasol",W_(d.x),W_(d.y),0,1.2/Math.max(SZ.parasol.x,SZ.parasol.z)));else if(d.k==="bin")addP("dumpster",place("dumpster",W_(d.x),W_(d.y),0,.9))}
   for(const [lx,ly] of LAMPS)addP("lamp",place("lamp",W_(lx),W_(ly),Math.PI/4,2.4));
   {/* luz dos candeeiros à noite */const gc=document.createElement("canvas");gc.width=gc.height=64;const gg=gc.getContext("2d"),gr=gg.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,"rgba(255,240,190,1)");gr.addColorStop(.35,"rgba(255,210,120,.55)");gr.addColorStop(1,"rgba(255,200,100,0)");gg.fillStyle=gr;gg.fillRect(0,0,64,64);
    const pos=[];for(const [lx,ly] of LAMPS)pos.push(W_(lx),2.3,W_(ly),W_(lx),.03,W_(ly));const bg=new T3.BufferGeometry();bg.setAttribute("position",new T3.Float32BufferAttribute(pos,3));
@@ -1519,6 +1572,7 @@ function buildWorld(){/* chão e arredores: floresta, praia e mar */
     else if(d.k==="bus"){L.glass.push(at(x,.55,z,d.a?.2:1.3,1.1,d.a?1.3:.2));L.canopy.push(at(x,1.12,z,d.a?.5:1.4,.06,d.a?1.4:.5))}else if(d.k==="canopy"){L.canopy.push(at(x+W_(d.w)/2,1.6,z+W_(d.h)/2,W_(d.w),.18,W_(d.h)));for(const [u,v] of [[0,0],[1,0],[0,1],[1,1]])L.pole.push(at(x+.3+u*(W_(d.w)-.6),.8,z+.3+v*(W_(d.h)-.6),.12,1.6,.12))}}
   simple(box,"#8d5a34",L.bench);simple(cyl,"#e63946",L.hyd);simple(box,"#2fbf71",L.pump);simple(box,"#b5844f",L.crate);simple(box,"#f2f4f6",L.canopy);simple(box,"#9aa0a8",L.pole);
   {const im=new T3.InstancedMesh(box,new T3.MeshLambertMaterial({color:"#aad7ff",transparent:true,opacity:.45}),Math.max(1,L.glass.length));L.glass.forEach((m,i)=>im.setMatrixAt(i,m));im.count=L.glass.length;im.frustumCulled=false;scene.add(im)}
+  buildEast();
   /* marcos da cidade: roda gigante, carrosséis, torre de TV, gruas e farol */R3.lm=[];{const L=c=>new T3.MeshLambertMaterial({color:c}),B=(par,w,h,d,c,x,y,z)=>{const m=new T3.Mesh(new T3.BoxGeometry(w,h,d),L(c));m.position.set(x,y,z);m.castShadow=true;par.add(m);return m},C=(par,r1,r2,h,c,x,y,z,seg)=>{const m=new T3.Mesh(new T3.CylinderGeometry(r1,r2,h,seg||12),L(c));m.position.set(x,y,z);m.castShadow=true;par.add(m);return m};
    for(const l of LANDM){const g=new T3.Group();g.position.set(W_(l.x),0,W_(l.y));scene.add(g);
     if(l.k==="wheel"){const R_=4.6,hub=R_+1.2;for(const sx of [-.9,.9]){const a=B(g,.25,hub+.6,.25,"#dfe3ea",sx,hub/2,-1.2);a.rotation.x=.25;const b=B(g,.25,hub+.6,.25,"#dfe3ea",sx,hub/2,1.2);b.rotation.x=-.25}
@@ -1538,6 +1592,21 @@ function buildWorld(){/* chão e arredores: floresta, praia e mar */
   R3.trail=new T3.LineSegments(new T3.BufferGeometry(),new T3.LineBasicMaterial({color:"#fff3a0",transparent:true,opacity:.9}));R3.trail.frustumCulled=false;scene.add(R3.trail)}
 function canvasTex(w,h,f){const c=document.createElement("canvas");c.width=w;c.height=h;f(c.getContext("2d"),w,h);const t=new T3.CanvasTexture(c);t.colorSpace=T3.SRGBColorSpace;return t}
 function iconSprite(ic){const t=canvasTex(64,64,(g)=>{g.fillStyle="#fff";g.strokeStyle="#151515";g.lineWidth=4;g.beginPath();g.arc(32,32,27,0,6.3);g.fill();g.stroke();g.font="34px system-ui";g.textAlign="center";g.textBaseline="middle";g.fillText(ic,32,35)});return new T3.Sprite(new T3.SpriteMaterial({map:t,depthTest:true}))}
+/* a leste: relevo da Serra Alta, separador da autoestrada, praia e garagem de casa */
+function buildEast(){const L=c=>new T3.MeshLambertMaterial({color:c}),Bx=(w,h,d,c,x,y,z,ry)=>{const m=new T3.Mesh(new T3.BoxGeometry(w,h,d),L(c));m.position.set(x,y,z);if(ry)m.rotation.y=ry;m.castShadow=m.receiveShadow=true;scene.add(m);return m};
+  {const x0=193,x1=MW+1,y0=-2,y1=SERRA+3;let geo=new T3.PlaneGeometry(x1-x0,y1-y0,x1-x0,y1-y0);geo.rotateX(-Math.PI/2);geo.translate((x0+x1)/2,0,(y0+y1)/2);const pa=geo.attributes.position;
+   for(let i=0;i<pa.count;i++){const h=serraH(pa.getX(i),pa.getZ(i));pa.setY(i,h-.85)}geo=geo.toNonIndexed();geo.computeVertexNormals();const P2=geo.attributes.position,cols=[],cc=new T3.Color();
+   for(let i=0;i<P2.count;i+=3){const h=(P2.getY(i)+P2.getY(i+1)+P2.getY(i+2))/3+.85,ny=Math.abs(geo.attributes.normal.getY(i)),v=((i*7919)%13)/13*.06;const c=h>15?"#f4f6fa":h>9?(ny>.75?"#eef0f4":"#8b8b8b"):h>3.5?(ny>.8?"#5f8a42":"#7a6a55"):"#4f8a3c";cc.set(c).offsetHSL(0,0,v-.03);for(let k=0;k<3;k++)cols.push(cc.r,cc.g,cc.b)}
+   geo.setAttribute("color",new T3.Float32BufferAttribute(cols,3));const m=new T3.Mesh(geo,new T3.MeshLambertMaterial({vertexColors:true,flatShading:true}));m.receiveShadow=true;m.castShadow=true;scene.add(m)}
+  /* separador central e rails da autoestrada */{let y=0;while(y<DOCK){if(TL[y*MW+189]!==9){y++;continue}let e=y;while(e<DOCK&&TL[e*MW+189]===9)e++;Bx(.4,.6,e-y,"#d9d9d9",189.5,.3,(y+e)/2);Bx(.12,.12,e-y,"#9aa0a8",186.15,.55,(y+e)/2);Bx(.12,.12,e-y,"#9aa0a8",192.85,.55,(y+e)/2);y=e}}
+  for(const d of DECOR){const x=W_(d.x),z=W_(d.y);
+    if(d.k==="lifeguard"){for(const [u,v] of [[-.5,-.5],[.5,-.5],[-.5,.5],[.5,.5]])Bx(.1,1.8,.1,"#f4f4f4",x+u,.9,z+v);Bx(1.3,.9,1.3,"#e63946",x,2.2,z);Bx(1.32,.25,1.32,"#ffffff",x,2.2,z);Bx(1.6,.1,1.6,"#f4f4f4",x,2.72,z)}
+    else if(d.k==="volley"){Bx(.1,1.7,.1,"#f4f4f4",x-2,.85,z);Bx(.1,1.7,.1,"#f4f4f4",x+2,.85,z);const n=Bx(4,.6,.03,"#ffffff",x,1.35,z);n.material.transparent=true;n.material.opacity=.55;n.castShadow=false}
+    else if(d.k==="sign")labelSprite(d.t,x,z-1.6,"#6b3f22");
+    else if(d.k==="carport"){const w=W_(d.w),h=W_(d.h);for(const v of [.15,h/2,h-.15])for(const u of [.1,w-.1])Bx(.14,2.6,.14,"#8d5a34",x+u,1.3,z+v);Bx(.16,.16,h,"#8d5a34",x+.1,2.6,z+h/2);Bx(.16,.16,h,"#8d5a34",x+w-.1,2.6,z+h/2);for(let v=.4;v<h;v+=.7)Bx(w,.08,.14,"#a0703f",x+w/2,2.72,z+v);labelSprite("GARAGEM",x+w/2,z+h+.6,"#151515")}}
+  /* chapéus de sol da praia (riscas) */if(R3.bum){const n=R3.bum.length,pole=new T3.InstancedMesh(new T3.CylinderGeometry(.04,.04,2,6),L("#f4f4f4"),n),top=new T3.InstancedMesh(new T3.ConeGeometry(.95,.45,10),new T3.MeshLambertMaterial({color:"#ffffff"}),n);const UC=["#e63946","#3a86ff","#ffd23f","#2fbf71","#ff8c1a","#9b5de5"],m4=new T3.Matrix4(),cc=new T3.Color();
+   R3.bum.forEach((d,i)=>{const x=W_(d.x),z=W_(d.y),h=hsh(d.x,d.y),tl=((h%5)-2)*.06;m4.makeRotationZ(tl);m4.setPosition(x,1,z);pole.setMatrixAt(i,m4);m4.makeRotationZ(tl);m4.setPosition(x+Math.sin(-tl)*1,1.95,z);top.setMatrixAt(i,m4);top.setColorAt(i,cc.set(UC[h%UC.length]))});pole.castShadow=top.castShadow=true;scene.add(pole,top)}
+  R3.sunb=DECOR.filter(d=>d.k==="towel")}
 function labelSprite(txt,x,z,col){const w=Math.max(128,txt.length*26+40);const t=canvasTex(w,64,(g)=>{g.fillStyle="#fff";g.strokeStyle=col;g.lineWidth=6;g.beginPath();g.roundRect(4,6,w-8,52,14);g.fill();g.stroke();g.fillStyle=col;g.font="900 34px system-ui";g.textAlign="center";g.textBaseline="middle";g.fillText(txt,w/2,33)});const s=new T3.Sprite(new T3.SpriteMaterial({map:t}));s.scale.set(w/64*1.1,1.1,1);s.position.set(x,4.6,z+.2);scene.add(s)}
 /* ---------- carros ---------- */
 const CARO=new Map();
@@ -1586,7 +1655,7 @@ const WMOD={};function wpnModel(k){if(GUNM[k]){const g=new T3.Group(),m=GUNM[k].
 let _v=null;
 function armWeapon(g){const u=g.userData;const k=u.wk&&u.wk!=="punho"?u.wk:null;if(u.wcur!==k){if(u.wm){g.remove(u.wm);u.wm=null}u.wcur=k;if(k){u.wm=wpnModel(k);g.add(u.wm)}}if(!u.wm||!u.rh)return;if(!_v)_v=new T3.Vector3();
   g.updateMatrixWorld(true);u.rh.getWorldPosition(_v);g.worldToLocal(_v);u.wm.position.copy(_v);u.wm.rotation.set(k==="bastao"?.5:0,0,0)}
-const ONCE={pshoot:1,jab:1,cross:1,hit:1,death:1,interact:1,roll:1};
+const ONCE={jump:1,pshoot:1,jab:1,cross:1,hit:1,death:1,interact:1,roll:1};
 function anim(g,k,fade){const u=g.userData;if(!ANIM[k])k="idle";if(u.cur===k)return u.A[k];let a=u.A[k];if(!a){a=u.A[k]=u.mx.clipAction(ANIM[k]);if(ONCE[k]){a.setLoop(T3.LoopOnce,1);a.clampWhenFinished=true}}a.reset();a.timeScale=1;a.setEffectiveWeight(1);a.play();const b=u.A[u.cur];if(b&&fade!==0)a.crossFadeFrom(b,fade??.18,false);else if(b)b.stop();u.cur=k;return a}
 function syncPerson(g,x,y,a,down,dt){const u=g.userData;const wx=W_(x),wz=W_(y);const sp=u.lx==null?0:Math.hypot(wx-u.lx,wz-u.ly)/Math.max(dt,1e-3);u.lx=wx;u.ly=wz;u.sp+=(sp-u.sp)*Math.min(1,dt*8);
   g.position.set(wx,0,wz);const tr=Math.PI/2-a;let d=tr-g.rotation.y;d=Math.atan2(Math.sin(d),Math.cos(d));g.rotation.y+=d*Math.min(1,dt*12);
@@ -1626,7 +1695,8 @@ R3.frame=function(){const now=performance.now(),dt=Math.min(.05,(now-lastT)/1000
   const person=(key,obj,base,col,x,y,a,down,extra)=>{pseen.add(key);let g=PPL.get(key);if(!near(x,y,30)){if(g)g.visible=false;return null}if(!g||g.userData.col!==col){if(g)scene.remove(g);g=mkPerson(base,col,extra);g.userData.col=col;PPL.set(key,g)}g.visible=true;syncPerson(g,x,y,a,down,dt);return g};
   for(const p of PEDS){const b=PEDB[Math.floor((p.sp||30)*7)%4];person(p,p,b,b==="criminalMaleA"||b==="cyborgFemaleA"?null:p.col,p.x,p.y,DIRS[p.dir]?Math.atan2(DIRS[p.dir][1],DIRS[p.dir][0]):0,p.down>0)}
   for(const o of COPF){const pg=PPL.get(o);if(pg){pg.userData.wk="pistola";pg.userData.aim=STARS>=2&&!(o.down>0)}person(o,o,"skaterMaleA","#1d3fa3",o.x,o.y,o.a,o.down>0,"cop")}
-  {const pg=PPL.get("P");if(pg){const u=pg.userData;u.wk=SAVE.cw;if(P.shotT>.1&&!(u.os&&u.os.t>0)){const W=WPN[SAVE.cw];u.os={k:W&&W.melee?(Math.random()<.5?"jab":"cross"):"pshoot",t:W&&W.melee?.35:.22};if(u.A[u.os.k]&&u.cur===u.os.k)u.A[u.os.k].reset()}}if(!P.car)person("P",P,"skaterMaleA",SAVE.shirt,P.x,P.y,P.a,false,"player")}
+  if(R3.sunb)for(const d of R3.sunb){if(!d.p)continue;if(Math.abs(W_(d.x)-W_(P.x))>26||Math.abs(W_(d.y)-W_(P.y))>26)continue;const b=PEDB[hsh(d.x,d.y)%2],sg=PPL.get(d);if(sg){sg.userData.pose=d.p===2?"sit":null;sg.userData.wk=null}const g2=person(d,d,b,d.sh,d.x,d.y,(d.a||0)-Math.PI/2,d.p===1);if(g2&&d.p===2)g2.position.y=-.32}
+  {const pg=PPL.get("P");if(pg){const u=pg.userData;u.wk=SAVE.cw;u.pose=P.jz>0&&!P.car?"jump":null;if(P.shotT>.1&&!(u.os&&u.os.t>0)){const W=WPN[SAVE.cw];u.os={k:W&&W.melee?(Math.random()<.5?"jab":"cross"):"pshoot",t:W&&W.melee?.35:.22};if(u.A[u.os.k]&&u.cur===u.os.k)u.A[u.os.k].reset()}}if(!P.car){const pg2=person("P",P,"skaterMaleA",SAVE.shirt,P.x,P.y,P.a,false,"player");if(pg2)pg2.position.y=P.jz||0}}
   for(const [k,g] of PPL)if(!pseen.has(k)){scene.remove(g);PPL.delete(k)}
   /* marcadores */const mk=R3.mk,pulse=1+Math.sin(T*4)*.08;for(const k in mk)mk[k].visible=false;const put=(k,p)=>{const g=mk[k];g.visible=true;g.position.set(W_(p.x),0,W_(p.y));g.scale.set(pulse,1,pulse)};
   if(!MISSION&&SAVE.mis<MIS.length)put("chefe",SPOTS.chefe);if(MISSION&&MISSION.tgt)put(MISSION.M.kind==="race"?"race":"mis",MISSION.tgt);if(SPOTS.oficina)put("ofi",SPOTS.oficina);if(SPOTS.pinta)put("pinta",SPOTS.pinta);
@@ -1638,14 +1708,11 @@ R3.frame=function(){const now=performance.now(),dt=Math.min(.05,(now-lastT)/1000
 /* ---------- interiores em 3D (a partir das mesmas plantas do 2D) ---------- */
 const ISC={},IK=1.55;let IPL=null;
 /* mobília (Furniture Kit, Kenney, CC0) — carregada à parte; até chegar, os interiores usam a versão simples */
-const FURN={ok:0},FN=["bedDouble","sideTableDrawers","lampRoundTable","bookcaseClosedDoors","kitchenCabinetDrawer","kitchenStove","kitchenSink","kitchenFridge","table","chairCushion","rugRectangle","cabinetTelevision","televisionModern","loungeSofa","pottedPlant","kitchenBar","kitchenCoffeeMachine","tableRound","chairRounded","kitchenFridgeLarge","cardboardBoxClosed","stoolBar","coatRackStanding","rugRound"],FS=1.9;
+const FURN={ok:0},FN=["bedDouble","sideTableDrawers","lampRoundTable","bookcaseClosedDoors","kitchenCabinetDrawer","kitchenStove","kitchenSink","kitchenFridge","table","chairCushion","rugRectangle","cabinetTelevision","televisionModern","loungeSofa","pottedPlant","kitchenBar","kitchenCoffeeMachine","tableRound","chairRounded","kitchenFridgeLarge","cardboardBoxClosed","stoolBar","coatRackStanding","rugRound","desk","computerScreen","chairDesk"],FS=1.9;
 async function loadFurn(){try{const {GLTFLoader}=await import("../lib/GLTFLoader.js");const gl=new GLTFLoader();const MC={};
   await Promise.all(FN.map(async n=>{const g=(await gl.loadAsync("m/furn/"+n+".glb")).scene;g.traverse(o=>{if(o.isMesh){const c=o.material.color?"#"+o.material.color.getHexString():"#cccccc";o.material=MC[c]||(MC[c]=new T3.MeshLambertMaterial({color:c}));o.castShadow=o.receiveShadow=true}});
     const b=new T3.Box3().setFromObject(g),w=new T3.Group();g.position.set(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2);w.add(g);w.userData.sz=b.getSize(new T3.Vector3());FURN[n]=w}));
   FURN.ok=1;for(const k in ISC)if(ISC[k].proc)ISC[k].stale=1}catch(e){console.warn("mobília",e)}}
-/* prédios clássicos (Downtown City MegaKit, Quaternius, CC0) — carregados à parte, porque pesam mais */
-async function loadDT(){if(!R3.dtl)return;try{const {GLTFLoader}=await import("../lib/GLTFLoader.js");const gl=new GLTFLoader();for(const b of R3.dtl){const g=(await gl.loadAsync("m/dt/"+b.dt+".glb")).scene;g.traverse(o=>{if(o.isMesh){o.castShadow=o.receiveShadow=true;const ms=Array.isArray(o.material)?o.material:[o.material];for(const m of ms){m.metalness=0}}});
-  const bb=new T3.Box3().setFromObject(g),sz=bb.getSize(new T3.Vector3()),bw=W_(b.w),bh=W_(b.h);const s=Math.min(bw/sz.x,bh/sz.z)*.98;g.scale.setScalar(s);g.position.set(W_(b.x)+bw/2-(bb.min.x+bb.max.x)/2*s,0,W_(b.y)+bh-bb.max.z*s);scene.add(g)}}catch(e){console.warn("prédio",e)}}
 function pF(G,n,x,z,ang,y,sc){const m=FURN[n].clone();const s=sc||FS;m.scale.setScalar(s);m.rotation.y=ang||0;m.position.set(x,y||0,z);G.add(m);return m}
 function fItem(G,it,ang){const w=it.w,d=it.h,x=it.x+w/2,z=it.y+d/2,X0=it.x,Z0=it.y;const hz=Math.abs(Math.sin(ang))<.5;/* comprimento ao longo de x? */const L=hz?w:d;
   const row=(names,unit)=>{const n=Math.max(1,Math.floor(L/(unit*FS)+.01)),st=L/n;for(let i=0;i<n;i++){const t=-L/2+st*(i+.5);pF(G,names[i%names.length],hz?x+t:x,hz?z:z+t,ang)}};
@@ -1663,6 +1730,7 @@ function fItem(G,it,ang){const w=it.w,d=it.h,x=it.x+w/2,z=it.y+d/2,X0=it.x,Z0=it
     if(!it.reg&&hz)for(let i=0;i<Math.floor(w/.9);i++)pF(G,"stoolBar",X0+.45+i*.9,Z0+d+.35,Math.PI);return 1;
   case"rtable":pF(G,"tableRound",x,z,0,0,w/.75);for(const a of [0,Math.PI])pF(G,"chairRounded",x+Math.cos(a)*(w/2+.3),z,a>0?Math.PI/2:-Math.PI/2);return 1;
   case"fridge":row(["kitchenFridgeLarge"],.52);return 1;
+  case"desk":{const s=w/.734,fx=Math.sin(ang),fz=Math.cos(ang);pF(G,"desk",x,z,ang,0,s);pF(G,"computerScreen",x-fx*.12,z-fz*.12,ang,.384*s,s*.85);pF(G,"chairDesk",x+fx*(d/2+.38),z+fz*(d/2+.38),ang+Math.PI,0,1.75);return 1}
   case"crates":for(let i=0;i<3;i++)pF(G,"cardboardBoxClosed",X0+.3+i*.42,z+(i%2)*.15,i*.4,0,1.9);return 1;
   case"rack":pF(G,"coatRackStanding",x,z,0,0,1.8);for(let k=0;k<4;k++){const m=new T3.Mesh(new T3.BoxGeometry(.12,.7,.45),new T3.MeshLambertMaterial({color:["#e63946","#3a86ff","#2fbf71","#ffd23f"][k]}));m.position.set(x+Math.cos(k*1.57)*.35,.9,z+Math.sin(k*1.57)*.35);m.rotation.y=k*1.57;G.add(m)}return 1}
   return 0}
@@ -1672,6 +1740,7 @@ function iSph(par,r,col,x,y,z){const m=new T3.Mesh(new T3.SphereGeometry(r,12,10
 function iItem(G,it){const w=it.w,d=it.h,x=it.x+w/2,z=it.y+d/2,X0=it.x,Z0=it.y;const C=["#e63946","#ffd23f","#2fbf71","#3a86ff","#ff9f1c","#9b5de5","#f1f1f1"];
   switch(it.t){
   case"bed":iBox(G,w,.45,d,"#8d6e4a",x,.225,z);iBox(G,w-.1,.2,d-.1,"#f4f4f4",x,.55,z);iBox(G,w*.7,.16,.5,"#ffffff",x,.73,Z0+.45);iBox(G,w-.04,.1,d*.62,"#3a86ff",x,.68,Z0+d*.66);iBox(G,w,.9,.12,"#6b4a2b",x,.45,Z0+.06);break;
+  case"desk":iBox(G,w,.72,d,"#a0703f",x,.36,z);iBox(G,.7,.5,.06,"#22252b",x,1,z+d*.2);break;
   case"night":iBox(G,w,.6,d,"#8d6e4a",x,.3,z);iSph(G,.14,"#ffe9a0",x,.78,z);break;
   case"wardrobe":iBox(G,w,2.1,d,"#7a5236",x,1.05,z);iBox(G,.03,1.9,.02,"#3d2a1a",x,1.05,Z0+d+.01);break;
   case"kitchen":iBox(G,w,.95,d,"#eceff3",x,.475,z);iBox(G,w,.06,d,"#4a4d55",x,.98,z);for(let k=0;k<2;k++)iBox(G,.45,.02,.45,"#151515",X0+.5+k*.6,1.02,z);iBox(G,w,.7,.35,"#dfe3ea",x,1.85,Z0+.18);break;
