@@ -857,7 +857,35 @@ const PAIRS=[
 ["fila","trânsito"],["rotunda","semáforo"],["passadeira","ponte"],["elevador","escadas"],["garagem","arrecadação"],
 ["selfie","fotografia"],["áudio","mensagem"],["videochamada","chamada"],["email","carta"],["emoji","sticker"],
 ["dieta","jejum"],["ginástica","caminhada"],["tatuagem","piercing"],["barba","bigode"],["peruca","extensões"],
-["beijo","abraço"],["piscadela","aceno"],["rir","sorrir"],["chorar","bocejar"],["espirrar","tossir"]
+["beijo","abraço"],["piscadela","aceno"],["rir","sorrir"],["chorar","bocejar"],["espirrar","tossir"],
+/* mais pares */
+["café", "chá"],["vinho tinto", "vinho branco"],["sumo", "refrigerante"],["água com gás", "água tónica"],["manteiga", "margarina"],["chouriço", "morcela"],
+["arroz", "massa"],["batata frita", "batata assada"],["sopa", "caldo"],["canja", "caldo verde"],["bitoque", "prego no prato"],["rissol", "croquete"],
+["pastel de nata", "queijada"],["bola de Berlim", "donut"],["chocolate", "bombom"],["pipocas", "batatas fritas de pacote"],["sushi", "sashimi"],["limão", "lima"],
+["pêssego", "alperce"],["abóbora", "courgette"],["sal", "açúcar"],["azeite", "óleo"],["gato", "lince"],["galinha", "peru"],
+["pato", "ganso"],["águia", "falcão"],["coruja", "mocho"],["crocodilo", "jacaré"],["borboleta", "traça"],["formiga", "térmita"],
+["leão", "tigre"],["camelo", "dromedário"],["foca", "leão-marinho"],["macaco", "gorila"],["rio", "ribeiro"],["lago", "lagoa"],
+["montanha", "serra"],["floresta", "bosque"],["deserto", "duna"],["ilha", "península"],["cidade", "capital"],["rua", "avenida"],
+["ponte", "viaduto"],["túnel", "gruta"],["castelo", "palácio"],["hospital", "centro de saúde"],["farmácia", "drogaria"],["estádio", "campo de treinos"],
+["aeroporto", "estação de comboios"],["mota", "scooter"],["barco", "navio"],["garagem", "parque de estacionamento"],["sofá", "poltrona"],["almofada", "travesseiro"],
+["cobertor", "edredão"],["cadeira", "banco"],["mesa", "secretária"],["armário", "cómoda"],["candeeiro", "lanterna"],["vela", "isqueiro"],
+["televisão", "monitor"],["teclado", "piano"],["rádio", "podcast"],["máquina de lavar", "máquina de secar"],["frigorífico", "arca congeladora"],["panela", "tacho"],
+["copo", "caneca"],["aspirador", "soprador"],["martelo", "maço"],["chave de fendas", "berbequim"],["tesoura", "x-ato"],["caderno", "agenda"],
+["cachecol", "gola"],["luvas", "meias"],["casaco", "sobretudo"],["camisa", "t-shirt"],["calças", "calções"],["vestido", "saia"],
+["sapatos", "sapatilhas"],["chinelos", "sandálias"],["óculos", "lentes de contacto"],["anel", "aliança"],["guarda-chuva", "chapéu de sol"],["dentista", "veterinário"],
+["polícia", "segurança"],["cozinheiro", "pasteleiro"],["empregado de mesa", "barman"],["pedreiro", "carpinteiro"],["jornalista", "escritor"],["ator", "apresentador"],
+["cantor", "músico"],["pintor", "escultor"],["fotógrafo", "realizador"],["piloto", "motorista"],["agricultor", "pastor"],["pescador", "marinheiro"],
+["cabeleireiro", "barbeiro"],["árbitro", "treinador"],["voleibol", "voleibol de praia"],["natação", "polo aquático"],["esqui", "snowboard"],["corrida", "caminhada"],
+["ciclismo", "BTT"],["boxe", "karaté"],["judo", "luta livre"],["póquer", "sueca"],["dominó", "bingo"],["dardos", "setas"],
+["dança", "ginástica"],["Natal", "Passagem de Ano"],["Páscoa", "Pentecostes"],["aniversário", "festa surpresa"],["férias", "fim de semana"],["santos populares", "festa da aldeia"],
+["concerto", "festival"],["piquenique", "churrasco"],["jantar de família", "jantar de empresa"],["funeral", "velório"],["mudança de casa", "obras em casa"],["exame", "entrevista de emprego"],
+["primeiro encontro", "pedido de casamento"],["greve", "feriado"],["chuva", "granizo"],["neve", "geada"],["vento", "furacão"],["trovão", "relâmpago"],
+["nevoeiro", "fumo"],["outono", "inverno"],["tarde", "noite"],["norte", "sul"],["fogo", "lava"],["gelo", "vidro"],
+["ouro", "prata"],["ferro", "aço"],["madeira", "cortiça"],["areia", "terra"],["pedra", "tijolo"],["amor", "paixão"],
+["amizade", "namoro"],["medo", "susto"],["sorte", "destino"],["sonho", "pesadelo"],["riso", "sorriso"],["choro", "grito"],
+["segredo", "mentira"],["sono", "preguiça"],["fome", "sede"],["dor de cabeça", "dor de dentes"],["febre", "calor"],["espirro", "tosse"],
+["selfie", "retrato"],["mensagem", "e-mail"],["palavra-passe", "PIN"],["multa", "imposto"],["salário", "mesada"],["prenda", "lembrança"],
+["anedota", "adivinha"],["fado", "cante alentejano"],["guitarra", "cavaquinho"],["violino", "violoncelo"],["flauta", "clarinete"],["bateria", "bombo"]
 ];
 
 /* ================= SENHOR BRANCO =================
@@ -1149,7 +1177,7 @@ function drawOver(v){
   const r=v.result,me=v.players[v.me].name;
   const title=r.winner==="civ"?"Os civis ganharam!":r.winner==="sb"?"O Senhor Branco adivinhou!":"Os impostores ganharam!";
   const won=r.delta[v.me]>0;
-  $("panel").innerHTML=`<div class="win"><div class="eyebrow">Fim da ronda</div><h2>${title}</h2></div>
+  $("panel").innerHTML=`<div class="win fxpop"><div class="eyebrow">Fim da ronda</div><h2>${title}</h2></div>
     ${v.guess&&v.guess.ok?`<p class="lead">Adivinhou «${esc(v.guess.text)}».</p>`:""}
     <div class="words"><p><span>Palavra dos civis</span><b>${esc(r.words.civ)}</b></p>${v.c&&v.c.inf===0?"":`<p><span>Palavra dos infiltrados</span><b>${esc(r.words.inf)}</b></p>`}</div>
     <ul class="roles">${r.roles.map((x,j)=>`<li class="${x.name===me?"me":""}"><span class="cn">${esc(x.name)}</span>${roleTag(x.role)}${r.delta[j]?`<b>+${r.delta[j]}</b>`:""}</li>`).join("")}</ul>

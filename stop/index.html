@@ -775,7 +775,7 @@ function initUI(o){
    Sai uma letra; cada um escreve uma palavra por categoria. Quem acabar carrega em STOP: os outros têm 3 s.
    Depois todos veem as respostas e podem votar «não vale». 10 pontos (única), 5 (repetida), 20 (só tu respondeste). */
 const LETRAS="ABCDEFGHIJLMNOPRSTUVZ".split("");
-const CATS=["Nome","Animal","Cidade, vila ou país","Fruta ou legume","Marca","Profissão","Comida ou bebida","Objeto","Cor","Filme ou série","Desporto","Parte do corpo","Coisa que há na cozinha","Algo que se leva para a praia","Peça de roupa","Instrumento ou banda"];
+const CATS=["Nome","Animal","Cidade, vila ou país","Fruta ou legume","Marca","Profissão","Comida ou bebida","Objeto","Cor","Filme ou série","Desporto","Parte do corpo","Coisa que há na cozinha","Algo que se leva para a praia","Peça de roupa","Instrumento ou banda","Coisa que há na casa de banho","Coisa que se encontra na rua","Prato ou petisco português","Doce ou sobremesa","Flor, árvore ou planta","Personagem de desenhos animados","Verbo","Adjetivo para um amigo","Coisa que se leva de férias","Motivo para chegar atrasado","Coisa que há numa escola","Meio de transporte","Jogo ou brinquedo","Coisa redonda","Alcunha","Terra portuguesa"];
 const CLASSIC=["Nome","Animal","Cidade, vila ou país","Fruta ou legume","Marca","Profissão"];
 const T_GRACE=3500,T_REVIEW=60000;
 let G=null;
@@ -870,7 +870,7 @@ function render(v){
   if(writing){
     if(newRound||!$("form").children.length||$("form").dataset.key!==key){$("form").dataset.key=key;
       $("form").innerHTML=v.cats.map((c,k)=>`<label class="row"><span>${esc(c)}</span><input data-k="${k}" maxlength="40" autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false" placeholder="${v.letter}…"></label>`).join("");
-      if(newRound){playSfx("round");try{navigator.vibrate&&navigator.vibrate(80)}catch(e){}}
+      if(newRound){playSfx("round");fxPop($("letter"));try{navigator.vibrate&&navigator.vibrate(80)}catch(e){}}
       const f=$("form").querySelector("input");if(f&&matchMedia("(pointer:fine)").matches)f.focus()}
     $("form").querySelectorAll("input").forEach(inp=>{inp.disabled=v.phase==="stopping"&&false;inp.classList.toggle("ok",startsOk(inp.value,v.letter));inp.classList.toggle("bad",!!inp.value.trim()&&!startsOk(inp.value,v.letter))});
     const all=UI.my.every(a=>startsOk(a,v.letter));$("stopBtn").disabled=!all||v.phase!=="write";
