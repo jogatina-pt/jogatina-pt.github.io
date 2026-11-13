@@ -145,6 +145,24 @@ input:focus,input:focus-visible{outline:none;border-color:var(--steam);box-shado
 .awards span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){.rstep,.rverdict b,.win h2,.blank.fill{animation:none}}
 
+/* barra do tempo, faixa de tarefa e quem já respondeu */
+.gtime{height:8px;border-radius:999px;background:color-mix(in srgb,var(--ink) 12%,transparent);overflow:hidden;margin-top:-6px}
+.gtime[hidden]{display:none}
+.gtime i{display:block;height:100%;width:100%;background:var(--accent);border-radius:999px;transform-origin:left center;transition:transform .2s linear,background .3s}
+.gtime.low i{background:var(--danger)}
+.gtime.crit{animation:gtp .5s ease-in-out infinite}
+@keyframes gtp{50%{opacity:.45}}
+.gtask{margin:0;padding:9px 14px;border-radius:14px;font-weight:800;font-size:15px;line-height:1.25;border:2.5px solid var(--stroke,var(--ink))}
+.gtask[hidden]{display:none}
+.gtask.do{background:var(--accent);color:var(--accent-ink,#fff);box-shadow:3px 3px 0 var(--stroke,var(--ink))}
+.gtask.wait{background:transparent;color:var(--muted);border-style:dashed;border-color:var(--line);font-weight:700}
+.chips li.done{border-color:var(--good);background:color-mix(in srgb,var(--good) 20%,var(--surface))}
+.chips li .st{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:50%;font-size:12px;line-height:1}
+.chips li.done .st{background:var(--good);color:#fff}
+.chips li.turnnow{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.chips .think{width:16px;height:8px;border-radius:0;background:radial-gradient(circle,var(--muted) 2.2px,transparent 2.6px) 0 50%/5.3px 8px repeat-x}
+@media (prefers-reduced-motion:reduce){.gtime.crit{animation:none}}
+
 /* botões de opção: o escolhido tem de se ver bem */
 .seg{display:flex;flex-wrap:wrap;gap:6px}.seg button{background:var(--surface,#fff);color:var(--ink,#151515);border-radius:12px;padding:7px 12px;font-weight:800;cursor:pointer;transition:transform .08s}
 .seg button.on{background:var(--accent,#ffd23f);color:var(--accent-ink,#151515);transform:translate(2px,2px);box-shadow:0 0 0 var(--stroke)!important}.seg button.on::before{content:"✓ "}
@@ -694,6 +712,25 @@ function fxBuzz(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
 function fxPop(el){try{if(!el)return;el.classList.remove("fxpop");void el.offsetWidth;el.classList.add("fxpop")}catch(e){}}
 (function(){try{const s=document.createElement("style");s.textContent="@keyframes fxpop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}.fxpop{animation:fxpop .45s cubic-bezier(.2,1.4,.4,1) both}@keyframes fxin{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}.fxin{animation:fxin .35s ease-out both}@media (prefers-reduced-motion: reduce){.fxpop,.fxin{animation:none}}";document.head.appendChild(s)}catch(e){}})();
 
+/* ---- menu ☰: junta som, tema, ecrã inteiro e sair num só botão (as regras e as reações ficam à vista) ---- */
+(function(){try{
+  const tools=document.querySelector("header.top .tools");if(!tools||tools.dataset.tm)return;tools.dataset.tm="1";
+  const st=document.createElement("style");st.textContent="header.top .tools{position:relative;flex-wrap:nowrap!important}.tmenu{position:absolute;right:0;top:calc(100% + 8px);z-index:80;display:flex;flex-direction:column;gap:6px;padding:10px;background:var(--surface,#fffaf1);border:3px solid var(--stroke,#151515);border-radius:16px;box-shadow:4px 4px 0 var(--stroke,#151515);min-width:190px}.tmenu[hidden]{display:none!important}.tmenu>*{width:100%!important;display:flex!important;justify-content:flex-start!important;align-items:center;gap:10px;box-sizing:border-box;margin:0!important;text-align:left}.tmenu>[hidden]{display:none!important}.tmenu>[data-ml]::after{content:attr(data-ml);font:800 14px Figtree,system-ui,sans-serif;letter-spacing:0;text-transform:none}#menuBtn{font-size:18px;line-height:1}";document.head.appendChild(st);
+  const KEEP=new Set(["reactBtn","rulesBtn","menuBtn","potBtn"]),LBL={mute:"Som",themeBtn:"Tema claro / escuro",fsBtn:"Ecrã inteiro",animBtn:"Animações",installBtn:""};
+  const menu=document.createElement("div");menu.className="tmenu";menu.id="tmenu";menu.hidden=true;
+  const mb=document.createElement("button");mb.type="button";mb.id="menuBtn";mb.className="btn ghost sm ico";mb.setAttribute("aria-label","Menu");mb.title="Menu";mb.setAttribute("aria-expanded","false");mb.textContent="☰";
+  const take=()=>{for(const el of [...tools.children]){if(el===menu||el===mb||KEEP.has(el.id)||el.tagName!=="BUTTON"&&el.tagName!=="A")continue;if(el.id in LBL){if(LBL[el.id])el.dataset.ml=LBL[el.id]}else if(el.classList.contains("ico")&&(el.title||el.getAttribute("aria-label")))el.dataset.ml=el.title||el.getAttribute("aria-label");menu.appendChild(el)}
+    const ex=menu.querySelector("#exitBtn");if(ex)menu.appendChild(ex)};
+  take();tools.appendChild(mb);tools.appendChild(menu);
+  const rb=document.getElementById("rulesBtn");if(rb&&rb.textContent.trim()==="?"){rb.textContent="Regras";rb.classList.remove("ico")}
+  const show=on=>{if(on)for(const el of menu.children){if(!el.dataset.ml&&LBL[el.id])el.dataset.ml=LBL[el.id]}menu.hidden=!on;mb.setAttribute("aria-expanded",String(on))};
+  mb.addEventListener("click",e=>{e.stopPropagation();show(menu.hidden)});
+  menu.addEventListener("click",e=>{const b=e.target.closest("button,a");if(b&&b.id!=="mute"&&b.id!=="themeBtn"&&b.id!=="animBtn")show(false)});
+  document.addEventListener("click",e=>{if(!menu.hidden&&!e.target.closest("#tmenu"))show(false)});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")show(false)});
+  try{new MutationObserver(()=>{if([...tools.children].some(el=>el!==menu&&el!==mb&&!KEEP.has(el.id)&&el.tagName==="BUTTON")){take();tools.appendChild(mb);tools.appendChild(menu)}}).observe(tools,{childList:true})}catch(e){}
+}catch(e){}})();
+
 /* ================= ECRÃ (comum aos jogos de rondas) =================
    som, tema, relógio, avisos, reações, regras e botão de sair.
    Cada jogo pode definir ROOM.game.onScreen(nome) para limpar o que é seu. */
@@ -703,15 +740,24 @@ const TT=ms=>window.__fast?Math.max(30,ms/25):ms;
 /* relógio da ronda */
 const TIMER={endAt:0,t:null};
 function startTick(ms){
-  TIMER.endAt=performance.now()+ms;
+  const ne=performance.now()+ms;
+  if(!TIMER.t||!TIMER.total||Math.abs(ne-TIMER.endAt)>1500)TIMER.total=Math.max(ms,1);
+  TIMER.endAt=ne;
+  let bar=$("gTime");if(!bar){const gb=document.querySelector("#game .gbar")||$("gTimer")&&$("gTimer").parentNode;if(gb){bar=document.createElement("div");bar.id="gTime";bar.className="gtime";bar.innerHTML="<i></i>";gb.insertAdjacentElement("afterend",bar)}}
+  if(bar){bar.hidden=false;tickBar()}
   if(TIMER.t)return;
   let last=null;
   TIMER.t=setInterval(()=>{
     const s=Math.max(0,Math.ceil((TIMER.endAt-performance.now())/1000));
-    if(s!==last){last=s;$("gTimer").textContent=s+" s";$("gTimer").classList.toggle("low",s<=10);if(s<=5&&s>0)playSfx("tick")}
+    if(s!==last){last=s;$("gTimer").textContent=s+" s";$("gTimer").classList.toggle("low",s<=10);if(s<=5&&s>0)playSfx("tick")}tickBar();
   },200);
 }
-function stopTick(){clearInterval(TIMER.t);TIMER.t=null;const t=$("gTimer");if(t)t.textContent=""}
+function tickBar(){const bar=$("gTime");if(!bar||bar.hidden)return;const left=Math.max(0,TIMER.endAt-performance.now()),f=Math.max(0,Math.min(1,left/(TIMER.total||1)));bar.firstChild.style.transform="scaleX("+f.toFixed(3)+")";bar.classList.toggle("low",left<=10000);bar.classList.toggle("crit",left<=5000&&left>0)}
+function stopTick(){clearInterval(TIMER.t);TIMER.t=null;TIMER.total=0;const t=$("gTimer");if(t)t.textContent="";const b=$("gTime");if(b)b.hidden=true}
+/* faixa por baixo dos jogadores: o que tens de fazer agora ("do") ou por quem se espera ("wait") */
+function setTask(t,kind){let el=$("gTask");if(!el){const c=$("chips");if(!c)return;el=document.createElement("p");el.id="gTask";el.setAttribute("role","status");c.insertAdjacentElement("afterend",el)}
+  if(!t){el.hidden=true;el.dataset.t="";return}el.hidden=false;const k="gtask "+(kind||"do");if(el.dataset.t===t&&el.dataset.k===k)return;el.dataset.t=t;el.dataset.k=k;el.textContent=t;el.className=k;fxPop(el)}
+function waitFor(names){names=names.filter(Boolean);if(!names.length)return"⏳ À espera…";return"⏳ À espera de "+(names.length>3?names.length+" jogadores":names.length===1?names[0]:names.slice(0,-1).join(", ")+" e "+names[names.length-1])}
 
 /* som (sintetizado, sem ficheiros) */
 let AC=null,muted=store.get("pp-mute")==="1";
@@ -1395,7 +1441,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   else{
     const tools=document.querySelector("header .tools");if(!tools)return;
     btn=document.createElement("button");btn.className="btn ghost sm ico";btn.id="fsBtn";btn.type="button";
-    const tb=document.getElementById("themeBtn");tools.insertBefore(btn,tb||null);
+    const tb=document.getElementById("themeBtn");if(tb&&tb.parentNode)tb.parentNode.insertBefore(btn,tb);else tools.appendChild(btn);
   }
   const st=document.createElement("style");
   st.textContent="#fsBtn{display:inline-grid;place-items:center}#fsBtn[hidden]{display:none}#fsBtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;display:block}";

@@ -637,7 +637,7 @@ menu();
   else{
     const tools=document.querySelector("header .tools");if(!tools)return;
     btn=document.createElement("button");btn.className="btn ghost sm ico";btn.id="fsBtn";btn.type="button";
-    const tb=document.getElementById("themeBtn");tools.insertBefore(btn,tb||null);
+    const tb=document.getElementById("themeBtn");if(tb&&tb.parentNode)tb.parentNode.insertBefore(btn,tb);else tools.appendChild(btn);
   }
   const st=document.createElement("style");
   st.textContent="#fsBtn{display:inline-grid;place-items:center}#fsBtn[hidden]{display:none}#fsBtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;display:block}";
