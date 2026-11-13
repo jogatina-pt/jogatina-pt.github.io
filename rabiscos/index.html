@@ -802,6 +802,25 @@ function initRoomUI(){
     if(h[0]&&h[1]===G.id&&reload)setTimeout(()=>hostRoom(cleanCode(h[0])),0);else if(h[0])sstore.set("ip-host","")}
 }
 
+/* ================= EFEITOS (comuns) ================= */
+function confetti(n){try{
+  if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  let c=document.getElementById("fxc");if(c)c.remove();
+  c=document.createElement("canvas");c.id="fxc";c.style.cssText="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999";
+  const W=c.width=innerWidth,H=c.height=innerHeight;document.body.appendChild(c);const g=c.getContext("2d");
+  const COL=["#e63946","#ffbe0b","#3a86ff","#2fbf71","#ff5d8f","#9b5de5","#ff8c1a"];
+  const P=[];for(let i=0;i<(n||110);i++){const side=i%2;P.push({x:side?W+10:-10,y:H*(.35+Math.random()*.35),vx:(side?-1:1)*(3+Math.random()*9)*W/400,vy:-(6+Math.random()*10),r:4+Math.random()*6,c:COL[i%COL.length],a:Math.random()*6,va:(Math.random()-.5)*.5,d:i*4})}
+  const t0=performance.now();let last=t0;
+  (function step(t){const dt=Math.min(40,t-last)/16.7;last=t;const el=t-t0;g.clearRect(0,0,W,H);
+    for(const p of P){if(el<p.d)continue;p.vy+=.32*dt;p.vx*=.99;p.x+=p.vx*dt;p.y+=p.vy*dt;p.a+=p.va*dt;
+      g.save();g.translate(p.x,p.y);g.rotate(p.a);g.globalAlpha=Math.max(0,Math.min(1,(3200-el)/600));g.fillStyle=p.c;g.fillRect(-p.r,-p.r*.45,p.r*2,p.r*.9);g.restore()}
+    if(el<3200&&c.isConnected)requestAnimationFrame(step);else c.remove()})(t0);
+}catch(e){}}
+function fxBuzz(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
+/* salto num elemento (ponto ganho, carta nova…) */
+function fxPop(el){try{if(!el)return;el.classList.remove("fxpop");void el.offsetWidth;el.classList.add("fxpop")}catch(e){}}
+(function(){try{const s=document.createElement("style");s.textContent="@keyframes fxpop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}.fxpop{animation:fxpop .45s cubic-bezier(.2,1.4,.4,1) both}@keyframes fxin{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}.fxin{animation:fxin .35s ease-out both}@media (prefers-reduced-motion: reduce){.fxpop,.fxin{animation:none}}";document.head.appendChild(s)}catch(e){}})();
+
 /* ================= ECRÃ (comum aos jogos de rondas) =================
    som, tema, relógio, avisos, reações, regras e botão de sair.
    Cada jogo pode definir ROOM.game.onScreen(nome) para limpar o que é seu. */
@@ -835,7 +854,7 @@ const SFX={
   win:()=>{[523,659,784,659,784,1047].forEach((f,i)=>tone(f,.22,{type:"triangle",v:.09,at:i*.12}))},
   end:()=>{[392,523,659].forEach((f,i)=>tone(f,.25,{type:"triangle",v:.08,at:i*.12}))}
 };
-function playSfx(k){try{SFX[k]&&SFX[k]()}catch(e){}}
+function playSfx(k){try{SFX[k]&&SFX[k]();if(k==="win"){confetti(120);fxBuzz([40,60,40,60,160])}}catch(e){}}
 function setMute(m){muted=m;store.set("pp-mute",m?"1":"0");$("mute").setAttribute("aria-pressed",String(!m));$("mute").textContent=m?"🔇":"🔊";$("mute").title=m?"Som desligado":"Som ligado"}
 
 /* manter o ecrã ligado na sala e durante a partida (se o telemóvel de quem criou a sala adormece, a sala para) */
@@ -876,7 +895,7 @@ function privacyHTML(extra){return `<ul>
   <li><b>As salas</b> usam o Firebase, da Google. Cada aparelho recebe um identificador anónimo, sem nome nem email. As jogadas passam pelos servidores da Google na Bélgica e apagam-se quando a sala fecha. Para o serviço funcionar, a Google trata o endereço de internet (IP) do aparelho.</li>
   <li><b>Contagem de partidas:</b> guardamos só quantas partidas se jogam por mês e com quantos jogadores, sem saber quem jogou.</li>
   <li><b>No teu aparelho</b> ficam guardadas as preferências (nome, tema, som)${extra||""}. Podes apagá-las limpando os dados do site no browser.</li>
-  <li><b>O site</b> está alojado na Netlify, que regista dados técnicos de acesso, como o IP, para o servir.</li>
+  <li><b>O site</b> está alojado no GitHub Pages, que regista dados técnicos de acesso, como o IP, para o servir.</li>
 </ul>`}
 function initUI(o){
   setTheme(document.documentElement.dataset.ppTheme==="light"?"light":"dark",false);
@@ -905,7 +924,7 @@ function initUI(o){
 
 /* ================= Rabiscos! — um desenha no telemóvel, aparece na TV, os outros adivinham ================= */
 const ov=$("ov"),tv=$("tv"),pad=$("pad");
-const WORDS=("casa gato cão árvore sol lua carro bicicleta avião barco peixe pássaro flor chapéu óculos guarda-chuva bola livro telemóvel televisão cadeira mesa cama relógio chave porta janela ponte castelo comboio foguetão robô fantasma bruxa dragão coroa espada pizza gelado bolo banana maçã uva cenoura ovo sardinha bacalhau francesinha galo vaca porco ovelha cavalo coelho rato elefante girafa leão cobra tartaruga polvo caracol abelha aranha borboleta nuvem chuva neve arco-íris vulcão montanha praia ilha farol tenda fogueira guitarra piano tambor microfone baliza piscina skate trotinete mota autocarro ambulância bombeiro médico palhaço pirata sereia extraterrestre esqueleto anjo coração estrela sorriso nariz olho mão pé dente bigode sanita banheira frigorífico aspirador lâmpada vela prenda balão pião boneco-de-neve abóbora morcego coruja pinguim baleia tubarão caranguejo âncora mapa tesouro bússola câmara computador teclado auscultadores sapato meia cachecol luvas mochila mala dinheiro elétrico azulejo moinho espantalho trator igreja escola hospital semáforo passadeira escada cadeado tesoura martelo serrote vassoura balde regador cogumelo cacto palmeira rosa girassol queijo pão salsicha hambúrguer batatas-fritas chávena garrafa copo garfo colher faca panela tacho fogão cão-salsicha unicórnio coelhinho rainha rei princesa cavaleiro ninja mergulhador astronauta paraquedas helicóptero submarino tanque trompete violino microscópio telescópio lupa íman pilha ficha tomada ventoinha ar-condicionado cortina almofada tapete sofá candeeiro espelho escova pente perfume batom anel colar relâmpago tornado onda castanhas manjerico sardinhada galo-de-barcelos guitarra-portuguesa").split(" ");
+const WORDS=("casa gato cão árvore sol lua carro bicicleta avião barco peixe pássaro flor chapéu óculos guarda-chuva bola livro telemóvel televisão cadeira mesa cama relógio chave porta janela ponte castelo comboio foguetão robô fantasma bruxa dragão coroa espada pizza gelado bolo banana maçã uva cenoura ovo sardinha bacalhau francesinha galo vaca porco ovelha cavalo coelho rato elefante girafa leão cobra tartaruga polvo caracol abelha aranha borboleta nuvem chuva neve arco-íris vulcão montanha praia ilha farol tenda fogueira guitarra piano tambor microfone baliza piscina skate trotinete mota autocarro ambulância bombeiro médico palhaço pirata sereia extraterrestre esqueleto anjo coração estrela sorriso nariz olho mão pé dente bigode sanita banheira frigorífico aspirador lâmpada vela prenda balão pião boneco-de-neve abóbora morcego coruja pinguim baleia tubarão caranguejo âncora mapa tesouro bússola câmara computador teclado auscultadores sapato meia cachecol luvas mochila mala dinheiro elétrico azulejo moinho espantalho trator igreja escola hospital semáforo passadeira escada cadeado tesoura martelo serrote vassoura balde regador cogumelo cacto palmeira rosa girassol queijo pão salsicha hambúrguer batatas-fritas chávena garrafa copo garfo colher faca panela tacho fogão cão-salsicha unicórnio coelhinho rainha rei princesa cavaleiro ninja mergulhador astronauta paraquedas helicóptero submarino tanque trompete violino microscópio telescópio lupa íman pilha ficha tomada ventoinha ar-condicionado cortina almofada tapete sofá candeeiro espelho escova pente perfume batom anel colar relâmpago tornado onda castanhas manjerico sardinhada galo-de-barcelos guitarra-portuguesa escorrega baloiço carrossel roda-gigante circo mágico cartola varinha caldeirão múmia vampiro zombie lobisomem duende gnomo fada gigante cavalo-marinho estrela-do-mar medusa golfinho foca lontra castor esquilo ouriço raposa lobo urso panda coala canguru zebra hipopótamo rinoceronte crocodilo camaleão papagaio tucano flamingo pavão cisne pato galinha pintainho peru cegonha andorinha gaivota mocho águia mosca mosquito joaninha formiga gafanhoto libélula minhoca lesma sapo rã burro cabra touro camelo dinossauro mamute ninho ovo-estrelado torrada sandes cachorro-quente taco esparguete sopa bifana pastel-de-nata rissol croquete chouriço presunto azeitona pipocas algodão-doce chupa-chupa rebuçado chocolate bolacha donut panqueca waffle iogurte leite sumo café chá vinho cerveja melancia ananás morango cereja laranja limão pera pêssego kiwi coco abacate tomate alface cebola alho batata milho pimento ervilha couve brócolos castanha noz amendoim sal pimenta saca-rolhas abre-latas torradeira micro-ondas batedeira liquidificador chaleira frigideira avental luva-de-forno rolo-da-massa tábua ralador coador funil balança termómetro seringa penso estetoscópio muletas cadeira-de-rodas óculos-de-sol binóculos lanterna pá ancinho carrinho-de-mão mangueira corta-relva escadote pincel rolo lata-de-tinta parafuso prego chave-inglesa berbequim alicate fita-métrica capacete colete cone grua escavadora camião carrinha táxi tuk-tuk caravana tenda-de-campismo saco-cama canoa remo prancha veleiro iate ferry balão-de-ar-quente planador foguete satélite planeta cometa ovni lua-cheia eclipse nascer-do-sol trovoada granizo nevoeiro vento furacão cascata rio lago poço gruta deserto oásis floresta selva pântano glaciar icebergue iglu cabana palácio pirâmide torre arranha-céus estádio teatro cinema museu biblioteca supermercado farmácia padaria talho peixaria quiosque multibanco paragem estação aeroporto portagem rotunda túnel viaduto linha-do-comboio passagem-de-nível bomba-de-gasolina lava-jato parque-infantil jardim fonte estátua banco-de-jardim candeeiro-de-rua caixote-do-lixo ecoponto marco-do-correio carta selo envelope jornal revista caderno lápis borracha afia régua compasso mochila-escolar quadro giz globo calculadora diploma medalha taça pódio apito cartão-vermelho raquete rede cesto taco-de-golfe luva-de-boxe halteres passadeira-de-corrida corda-de-saltar patins trenó esquis snowboard prancha-de-surf boia barbatanas snorkel toalha chapéu-de-sol protetor-solar castelo-de-areia concha búzio gelataria nadador-salvador bandeira vestido saia calças calções camisola casaco gabardina gravata laço cinto botas chinelos sapatilhas salto-alto boné gorro capuz pijama roupão fato-de-banho biquíni relógio-de-pulso pulseira brincos tatuagem barba trança rabo-de-cavalo careca sardas lágrima beijo abraço aperto-de-mão selfie espirro ressonar bocejo soluço cócegas sonho pesadelo sombra fantoche marioneta peluche boneca carrinho comboio-elétrico lego puzzle dominó dados xadrez damas baralho matraquilhos flippers consola comando tablet portátil rato-de-computador impressora pen router antena drone rádio gira-discos coluna megafone sino buzina sirene alarme despertador cuco ampulheta calendário agenda bilhete passaporte mala-de-viagem mapa-mundo postal lembrança máquina-fotográfica tripé holofote passadeira-vermelha óscar claquete palco cortina-de-teatro máscara bailarina maestro orquestra coro acordeão cavaquinho adufe gaita-de-foles harpa flauta saxofone bateria pandeireta castanholas marcha-popular santo-antónio martelinho alho-porro fogo-de-artifício arraial barraca-de-farturas fartura bola-de-berlim tremoços caracóis sardinha-no-pão caldo-verde broa vinho-do-porto lenço-dos-namorados filigrana coração-de-viana calçada-portuguesa caravela padrão torre-de-belém ponte-suspensa funicular elevador barco-rabelo moliceiro espigueiro pelourinho menir anta sobreiro oliveira vinha lagar pipa rolha burro-mirandês cão-da-serra lince").split(" ");
 let MODE=null,ST=null,ME=-1,TIMERS=[],MYNAME="",TVM=1,PTV=1;const OFF=()=>TVM?1:0;
 /* sem TV, quem cria a sala também joga: as mensagens para ele são tratadas aqui mesmo */
 function up(m){if(ROOM.role==="host")ROOM.game.msg(ROOM.seats[0],m);else ROOM.send(m)}
@@ -914,6 +933,9 @@ const norm=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase(
 function lev(a,b){const m=a.length,n=b.length;if(Math.abs(m-n)>2)return 9;const d=[];for(let i=0;i<=m;i++){d[i]=[i]}for(let j=0;j<=n;j++)d[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[m][n]}
 function bcast(m){ROOM.seats.forEach((s,k)=>{if(k>0)ROOM.sendTo(s,m)});if(!TVM&&ROOM.role==="host")ROOM.game.client(m)}
 const PCOL=["#ff5d8f","#3a86ff","#ffbe0b","#2fbf71","#9b5de5","#ff8c1a","#06d6a0","#e63946","#7ad7ff","#8d5a34","#bfe39a","#f15bb5"];
+/* palavras que já saíram em jogos anteriores neste aparelho: só voltam quando a lista estiver quase gasta */
+let SEENW=new Set();try{SEENW=new Set(JSON.parse(store.get("rab-seen")||"[]"))}catch(e){}
+function seeWord(w){SEENW.add(w);if(SEENW.size>WORDS.length-40)SEENW=new Set();try{store.set("rab-seen",JSON.stringify([...SEENW]))}catch(e){}}
 /* ---------- anfitrião ---------- */
 function cleanOpts(o){o=o||{};const r=+o.r,t=+o.t,tv=o.tv===0||o.tv==="0"?0:1;return{tv,r:[1,2,3].includes(r)?r:2,t:[60,80,100].includes(t)?t:80}}
 function renderOpts(el,o,host){o=cleanOpts(o);el.innerHTML=`<div class="optrow"><span class="eyebrow">Voltas</span><div class="seg">${[1,2,3].map(n=>`<button type="button" class="${o.r===n?"on":""}" data-k="r" data-v="${n}" ${host?"":"disabled"}>${n}</button>`).join("")}</div></div>
@@ -923,7 +945,7 @@ function beginGame(seats){const O=cleanOpts(ROOM.opts);TVM=O.tv;ROOM.game.minp=T
   const order=[];for(let r=0;r<O.r;r++)for(const p of pl)order.push(p.i);ST={pl,order,turn:-1,O,strokes:[],feed:[],used:new Set()};MODE="tv";showScreen("game");pad.hidden=true;tv.hidden=false;ov.hidden=true;
   pl.forEach(p=>sendTo(p.i,{t:"go",me:p.i,name:p.name,tv:TVM}));tvFrame();later(1500,nextTurn)}
 function nextTurn(){ST.turn++;while(ST.turn<ST.order.length&&ST.pl[ST.order[ST.turn]].gone)ST.turn++;if(ST.turn>=ST.order.length)return final();
-  const d=ST.pl[ST.order[ST.turn]];ST.drawer=d.i;ST.word=null;ST.strokes=[];ST.guessed={};ST.ph="choose";const opts=[];while(opts.length<3){const w=WORDS[Math.floor(Math.random()*WORDS.length)];if(!opts.includes(w)&&!ST.used.has(w))opts.push(w)}ST.opts=opts;
+  const d=ST.pl[ST.order[ST.turn]];ST.drawer=d.i;ST.word=null;ST.strokes=[];ST.guessed={};ST.ph="choose";if(ST.used.size>WORDS.length-6)ST.used.clear();const opts=[];while(opts.length<3){const w=WORDS[Math.floor(Math.random()*WORDS.length)];if(!opts.includes(w)&&!ST.used.has(w)&&!SEENW.has(w))opts.push(w)}opts.forEach(seeWord);ST.opts=opts;
   sendTo(d.i,{t:"choose",o:opts});bcast({t:"turn",drawer:d.i,name:d.name});ST.feed=[{s:`✏️ ${d.name} está a escolher a palavra…`}];tvFrame();later(15000,()=>{if(ST.ph==="choose")pickWord(opts[0])})}
 function sendTo(i,m){const k=i+OFF();if(k===0){ROOM.game.client(m);return}const s=ROOM.seats[k];if(s)ROOM.sendTo(s,m)}
 function pickWord(w){if(ST.ph!=="choose"||!ST.opts.includes(w))return;clearT();ST.word=w;ST.used.add(w);ST.ph="draw";ST.t0=performance.now();ST.hint=[...w].map(ch=>/[\s-]/.test(ch)?ch:"_");ST.feed=[{s:`✏️ ${ST.pl[ST.drawer].name} está a desenhar!`}];
@@ -935,9 +957,12 @@ function hostGuess(i,txt){if(ST.ph!=="draw"||i===ST.drawer||ST.guessed[i]!=null|
   if(g===w){const n=Object.keys(ST.guessed).length;const el=(performance.now()-ST.t0)/1000;const pts=Math.max(100,Math.round(500*(1-el/ST.O.t))+([150,100,50][n]||0));ST.guessed[i]=pts;p.sc+=pts;ST.pl[ST.drawer].sc+=80;
     ST.feed.push({s:`✅ ${p.name} acertou! +${pts}`,c:"#2fbf71"});sendTo(i,{t:"ok",w:ST.word,p:pts});SFXR.ok();tvFrame();if(Object.keys(ST.guessed).length>=ST.pl.filter(q=>!q.gone&&q.i!==ST.drawer).length){clearT();later(900,()=>endTurn("all"))}return}
   const close=lev(g,w)<=1&&w.length>3;ST.feed.push({s:`${p.name}: ${txt.slice(0,24)}`,c:p.col});if(ST.feed.length>9)ST.feed.shift();if(close)sendTo(i,{t:"close"});tvFrame()}
-function endTurn(why){if(ST.ph!=="draw")return;ST.ph="end";const d=ST.pl[ST.drawer];bcast({t:"turnEnd",w:ST.word});sendTo(ST.drawer,{t:"turnEnd",w:ST.word});
-  ST.feed.push({s:`A palavra era: ${ST.word.toUpperCase()}`,c:"#ffd23f"});tvFrame(true);SFXR.end();later(5000,nextTurn)}
-function final(){ST.ph="final";const o=ST.pl.slice().sort((a,b)=>b.sc-a.sc);if(TVM)tv.innerHTML=`<div class="tvc"><h2 class="qq">Resultado final</h2><ol class="board">${o.map((p,i)=>`<li class="${i===0?"win":""}"><span>${["🥇","🥈","🥉"][i]||(i+1)+"."} ${esc(p.name)}</span><b>${p.sc}</b></li>`).join("")}</ol></div>`;
+function endTurn(why){if(ST.ph!=="draw")return;ST.ph="end";const d=ST.pl[ST.drawer];
+  /* quem desenhava saiu antes de escolher a palavra: passa-se logo à frente */
+  if(!ST.word){ST.word="";ST.feed.push({s:`${d.name} saiu. Passa ao seguinte.`,c:"#ffd23f"});bcast({t:"skip",name:d.name});tvFrame();later(1800,nextTurn);return}
+  bcast({t:"turnEnd",w:ST.word,n:Object.keys(ST.guessed).length});sendTo(ST.drawer,{t:"turnEnd",w:ST.word,n:Object.keys(ST.guessed).length});
+  ST.feed.push({s:why==="gone"?`${d.name} saiu. A palavra era: ${ST.word.toUpperCase()}`:`A palavra era: ${ST.word.toUpperCase()}`,c:"#ffd23f"});tvFrame(true);SFXR.end();later(5000,nextTurn)}
+function final(){ST.ph="final";const o=ST.pl.slice().sort((a,b)=>b.sc-a.sc);if(TVM)confetti(160);if(TVM)tv.innerHTML=`<div class="tvc"><h2 class="qq">Resultado final</h2><ol class="board">${o.map((p,i)=>`<li class="${i===0?"win":""}"><span>${["🥇","🥈","🥉"][i]||(i+1)+"."} ${esc(p.name)}</span><b>${p.sc}</b></li>`).join("")}</ol></div>`;
   bcast({t:"end",o:o.map(p=>[p.name,p.sc])});SFXR.end();later(1500,()=>showOv(`<div class="panel"><h2>Fim!</h2><button class="btn" type="button" data-a="again">Jogar outra vez ▶</button><button class="btn ghost" type="button" data-a="lobby">Voltar à sala</button></div>`))}
 /* traços: o telemóvel de quem desenha envia pedaços; o anfitrião junta e reenvia aos outros */
 function hostStroke(i,d){if(i!==ST.drawer||ST.ph!=="draw")return;if(d.clear){ST.strokes=[]}else if(d.undo){ST.strokes.pop()}else{for(const s of d.s||[]){let st=ST.strokes.find(x=>x.id===s[0]);if(!st){st={id:s[0],c:s[1],w:s[2],p:[]};ST.strokes.push(st)}st.p.push(...s[3])}}
@@ -995,17 +1020,29 @@ ROOM.game={id:"rabiscos",title:"Rabiscos!",maxp:13,minp:3,maxBots:0,botNames:[],
     else if(d.t==="guessing"&&d.drawer!==ME)padGuess(d.len,d.time,pad.dataset.dn);
     else if(d.t==="hint"&&$("ph"))$("ph").textContent=d.h;
     else if(d.t==="st"&&$("gc")){const s=d.d;if(s.clear)VIEW=[];else if(s.undo)VIEW.pop();else for(const q of s.s||[]){let st=VIEW.find(x=>x.id===q[0]);if(!st){st={id:q[0],c:q[1],w:q[2],p:[]};VIEW.push(st)}st.p.push(...q[3])}paintStrokes($("gc"),VIEW)}
-    else if(d.t==="ok"){padShow(`<div class="pbig good">✅ Acertaste!<small>${esc(String(d.w).toUpperCase())} · +${d.p} pontos</small></div>`);try{navigator.vibrate&&navigator.vibrate(40)}catch(e){}}
+    else if(d.t==="ok"){playSfx("truth");padShow(`<div class="pbig good fxpop">✅ Acertaste!<small>${esc(String(d.w).toUpperCase())} · +${d.p} pontos</small></div>`);try{navigator.vibrate&&navigator.vibrate(40)}catch(e){}}
     else if(d.t==="close"&&$("gn")){$("gn").textContent="🔥 Quase! Estás muito perto.";$("gn").classList.add("hot")}
-    else if(d.t==="turnEnd"){DR=null;padShow(`<div class="pbig">A palavra era<small>${esc(String(d.w).toUpperCase())}</small></div>${!PTV&&LASTB?padBoard(LASTB):""}`)}
+    else if(d.t==="turnEnd"){DR=null;padShow(`<div class="pbig fxpop">A palavra era<small>${esc(String(d.w).toUpperCase())}${d.n!=null?`<br>${d.n===0?"Ninguém acertou 😅":d.n===1?"1 pessoa acertou":d.n+" pessoas acertaram"}`:""}</small></div>${!PTV&&LASTB?padBoard(LASTB):""}`);playSfx("end")}
+    else if(d.t==="skip"){DR=null;padShow(`<div class="pbig">${esc(d.name||"")} saiu<small>Passa ao jogador seguinte…</small></div>`)}
     else if(d.t==="feed"){LASTB=d.b;const f=$("pf");if(f)f.innerHTML=(d.f||[]).map(x=>`<li style="color:${x.c||"inherit"}">${esc(x.s)}</li>`).join("")}
-    else if(d.t==="end"){const o=d.o||[];const k=o.findIndex(x=>x[0]===MYNAME);padShow(`<div class="pbig">${k===0?"🏆 Ganhaste!":"Fim do jogo"}<small>${k>=0?(k+1)+".º lugar · "+o[k][1]+" pontos":""}</small></div>${PTV?"":padBoard(o.map(x=>[x[0],x[1]]))}`)}
+    else if(d.t==="end"){const o=d.o||[];const k=o.findIndex(x=>x[0]===MYNAME);padShow(`<div class="pbig fxpop">${k===0?"🏆 Ganhaste!":"Fim do jogo"}<small>${k>=0?(k+1)+".º lugar · "+o[k][1]+" pontos":""}</small></div>${PTV?"":padBoard(o.map(x=>[x[0],x[1]]))}`);playSfx(k===0?"win":"end")}
     else if(d.t==="lobby"){MODE=null;DR=null}},
-  stop(){clearT();MODE=null;DR=null},hostLost(){},drop(seat){const i=ROOM.seats.indexOf(seat)-OFF();if(ST&&ST.pl[i]){ST.pl[i].gone=1;if(ST.drawer===i&&ST.ph!=="end"){clearT();ST.ph="draw";endTurn("gone")}}},
+  stop(){clearT();MODE=null;DR=null},hostLost(){},
+  /* alguém voltou a ligar-se a meio: recebe o estado da vez que está a decorrer */
+  back(seat){const i=ROOM.seats.indexOf(seat)-OFF();if(!ST||i<0||!ST.pl[i])return;const p=ST.pl[i];p.gone=0;ROOM.sendTo(seat,{t:"start"});ROOM.sendTo(seat,{t:"go",me:p.i,name:p.name,tv:TVM});
+    const d=ST.drawer!=null?ST.pl[ST.drawer]:null;
+    if(ST.ph==="final")ROOM.sendTo(seat,{t:"end",o:ST.pl.slice().sort((a,b)=>b.sc-a.sc).map(p=>[p.name,p.sc])});
+    else if(d&&ST.ph==="choose"){if(i===d.i)ROOM.sendTo(seat,{t:"choose",o:ST.opts});else ROOM.sendTo(seat,{t:"turn",drawer:d.i,name:d.name})}
+    else if(d&&ST.ph==="draw"&&i!==d.i){ROOM.sendTo(seat,{t:"turn",drawer:d.i,name:d.name});
+      if(ST.guessed[i]!=null)ROOM.sendTo(seat,{t:"ok",w:ST.word,p:ST.guessed[i]});
+      else{ROOM.sendTo(seat,{t:"guessing",drawer:d.i,len:hintStr(),time:Math.max(1,Math.ceil(ST.O.t-(performance.now()-ST.t0)/1000))});ROOM.sendTo(seat,{t:"st",d:{s:ST.strokes.map(x=>[x.id,x.c,x.w,x.p])}})}}
+    tvFrame(ST.ph==="end")},
+  drop(seat){const i=ROOM.seats.indexOf(seat)-OFF();if(ST&&ST.pl[i]){ST.pl[i].gone=1;if(ST.drawer===i&&ST.ph!=="end"){clearT();ST.ph="draw";endTurn("gone")}}},
   onScreen(n){if(n==="game"&&!ROOM.code){$("exitBtn").hidden=true;$("reactBtn").hidden=true;$("hubLink").hidden=false;if(!MODE)menu()}}};
 initUI({rules:`<ul><li>Abre o jogo na <b>TV ou no PC</b> e carrega em "Criar sala neste ecrã". Os jogadores entram com o telemóvel (QR code ou código).</li><li>À vez, cada um escolhe uma de 3 palavras e <b>desenha-a no telemóvel</b>. O desenho aparece na TV enquanto é feito.</li><li>Os outros <b>escrevem palpites</b> no telemóvel. Não faz mal falhar acentos ou maiúsculas. Se estiveres quase, o jogo avisa.</li><li>Com o tempo vão aparecendo letras da palavra como pista.</li><li><b>Pontos:</b> quem adivinha ganha mais se for rápido (e os 3 primeiros têm bónus); quem desenha ganha 80 por cada pessoa que acerta.</li><li>Proibido escrever letras ou números no desenho! 😉</li></ul>`,privacy:privacyHTML("")});
 $("addBot").hidden=true;$("soloBtn").hidden=true;
 if(!/sala=/.test(location.hash)){showScreen("game");menu()}
+window.RB={get ST(){return ST},get VIEW(){return VIEW},WORDS};
 
 </script>
 <script>

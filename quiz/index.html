@@ -802,6 +802,25 @@ function initRoomUI(){
     if(h[0]&&h[1]===G.id&&reload)setTimeout(()=>hostRoom(cleanCode(h[0])),0);else if(h[0])sstore.set("ip-host","")}
 }
 
+/* ================= EFEITOS (comuns) ================= */
+function confetti(n){try{
+  if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  let c=document.getElementById("fxc");if(c)c.remove();
+  c=document.createElement("canvas");c.id="fxc";c.style.cssText="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999";
+  const W=c.width=innerWidth,H=c.height=innerHeight;document.body.appendChild(c);const g=c.getContext("2d");
+  const COL=["#e63946","#ffbe0b","#3a86ff","#2fbf71","#ff5d8f","#9b5de5","#ff8c1a"];
+  const P=[];for(let i=0;i<(n||110);i++){const side=i%2;P.push({x:side?W+10:-10,y:H*(.35+Math.random()*.35),vx:(side?-1:1)*(3+Math.random()*9)*W/400,vy:-(6+Math.random()*10),r:4+Math.random()*6,c:COL[i%COL.length],a:Math.random()*6,va:(Math.random()-.5)*.5,d:i*4})}
+  const t0=performance.now();let last=t0;
+  (function step(t){const dt=Math.min(40,t-last)/16.7;last=t;const el=t-t0;g.clearRect(0,0,W,H);
+    for(const p of P){if(el<p.d)continue;p.vy+=.32*dt;p.vx*=.99;p.x+=p.vx*dt;p.y+=p.vy*dt;p.a+=p.va*dt;
+      g.save();g.translate(p.x,p.y);g.rotate(p.a);g.globalAlpha=Math.max(0,Math.min(1,(3200-el)/600));g.fillStyle=p.c;g.fillRect(-p.r,-p.r*.45,p.r*2,p.r*.9);g.restore()}
+    if(el<3200&&c.isConnected)requestAnimationFrame(step);else c.remove()})(t0);
+}catch(e){}}
+function fxBuzz(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
+/* salto num elemento (ponto ganho, carta nova…) */
+function fxPop(el){try{if(!el)return;el.classList.remove("fxpop");void el.offsetWidth;el.classList.add("fxpop")}catch(e){}}
+(function(){try{const s=document.createElement("style");s.textContent="@keyframes fxpop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}.fxpop{animation:fxpop .45s cubic-bezier(.2,1.4,.4,1) both}@keyframes fxin{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}.fxin{animation:fxin .35s ease-out both}@media (prefers-reduced-motion: reduce){.fxpop,.fxin{animation:none}}";document.head.appendChild(s)}catch(e){}})();
+
 /* ================= ECRÃ (comum aos jogos de rondas) =================
    som, tema, relógio, avisos, reações, regras e botão de sair.
    Cada jogo pode definir ROOM.game.onScreen(nome) para limpar o que é seu. */
@@ -835,7 +854,7 @@ const SFX={
   win:()=>{[523,659,784,659,784,1047].forEach((f,i)=>tone(f,.22,{type:"triangle",v:.09,at:i*.12}))},
   end:()=>{[392,523,659].forEach((f,i)=>tone(f,.25,{type:"triangle",v:.08,at:i*.12}))}
 };
-function playSfx(k){try{SFX[k]&&SFX[k]()}catch(e){}}
+function playSfx(k){try{SFX[k]&&SFX[k]();if(k==="win"){confetti(120);fxBuzz([40,60,40,60,160])}}catch(e){}}
 function setMute(m){muted=m;store.set("pp-mute",m?"1":"0");$("mute").setAttribute("aria-pressed",String(!m));$("mute").textContent=m?"🔇":"🔊";$("mute").title=m?"Som desligado":"Som ligado"}
 
 /* manter o ecrã ligado na sala e durante a partida (se o telemóvel de quem criou a sala adormece, a sala para) */
@@ -876,7 +895,7 @@ function privacyHTML(extra){return `<ul>
   <li><b>As salas</b> usam o Firebase, da Google. Cada aparelho recebe um identificador anónimo, sem nome nem email. As jogadas passam pelos servidores da Google na Bélgica e apagam-se quando a sala fecha. Para o serviço funcionar, a Google trata o endereço de internet (IP) do aparelho.</li>
   <li><b>Contagem de partidas:</b> guardamos só quantas partidas se jogam por mês e com quantos jogadores, sem saber quem jogou.</li>
   <li><b>No teu aparelho</b> ficam guardadas as preferências (nome, tema, som)${extra||""}. Podes apagá-las limpando os dados do site no browser.</li>
-  <li><b>O site</b> está alojado na Netlify, que regista dados técnicos de acesso, como o IP, para o servir.</li>
+  <li><b>O site</b> está alojado no GitHub Pages, que regista dados técnicos de acesso, como o IP, para o servir.</li>
 </ul>`}
 function initUI(o){
   setTheme(document.documentElement.dataset.ppTheme==="light"?"light":"dark",false);
@@ -902,6 +921,283 @@ function initUI(o){
   initRoomUI();
   showScreen("setup");
 }
+
+/* ================= SABICHÃO: mais perguntas =================
+   [categoria, pergunta, certa, errada1, errada2, errada3] */
+const QS_MORE=[
+ /* ---- Portugal ---- */
+ ["pt","Qual é a maior cidade dos Açores?","Ponta Delgada","Angra do Heroísmo","Horta","Ribeira Grande"],
+ ["pt","Que rio desagua no Porto?","Douro","Tejo","Minho","Vouga"],
+ ["pt","Que rio faz fronteira com Espanha no norte de Portugal?","Minho","Sado","Mondego","Zêzere"],
+ ["pt","Qual é a serra mais alta de Portugal continental?","Serra da Estrela","Serra do Gerês","Serra de São Mamede","Serra da Arrábida"],
+ ["pt","Em que cidade fica a Torre dos Clérigos?","Porto","Lisboa","Coimbra","Viseu"],
+ ["pt","Em que cidade fica o Templo Romano conhecido como \"Templo de Diana\"?","Évora","Beja","Braga","Tomar"],
+ ["pt","Que cidade é conhecida como o \"berço da nação\"?","Guimarães","Braga","Porto","Viseu"],
+ ["pt","Qual é a maior ilha dos Açores?","São Miguel","Pico","Terceira","Faial"],
+ ["pt","Que cidade portuguesa é conhecida como a \"Veneza de Portugal\"?","Aveiro","Tavira","Setúbal","Viana do Castelo"],
+ ["pt","Como se chamam os barcos coloridos típicos da ria de Aveiro?","Moliceiros","Rabelos","Caravelas","Traineiras"],
+ ["pt","Como se chamam os barcos que transportavam o vinho do Porto pelo Douro?","Rabelos","Moliceiros","Saveiros","Faluas"],
+ ["pt","Em que cidade alentejana fica a Capela dos Ossos mais famosa?","Évora","Elvas","Portalegre","Serpa"],
+ ["pt","Que vila piscatória é famosa pelas ondas gigantes?","Nazaré","Ericeira","Sagres","Peniche"],
+ ["pt","Quantas regiões autónomas tem Portugal?","2","1","3","5"],
+ ["pt","Qual é a maior albufeira de Portugal?","Alqueva","Castelo de Bode","Aguieira","Alto Rabagão"],
+ ["pt","Em que cidade fica a Biblioteca Joanina?","Coimbra","Porto","Lisboa","Mafra"],
+ ["pt","Que arquipélago fica ao largo de Peniche?","Berlengas","Selvagens","Desertas","Formigas"],
+ ["pt","Que cidade algarvia tem o aeroporto internacional da região?","Faro","Portimão","Lagos","Albufeira"],
+ ["pt","Em que cidade fica o Convento de Cristo, dos Templários?","Tomar","Batalha","Alcobaça","Santarém"],
+ ["pt","Que cidade fica na foz do rio Sado?","Setúbal","Sines","Aveiro","Figueira da Foz"],
+ ["pt","Qual é a cidade mais alta de Portugal?","Guarda","Bragança","Covilhã","Vila Real"],
+ ["pt","Qual é o feriado nacional de 10 de junho?","Dia de Portugal","Dia da Liberdade","Dia da República","Restauração da Independência"],
+ ["pt","Que cores principais tem a bandeira de Portugal?","Verde e vermelho","Azul e branco","Verde e amarelo","Vermelho e branco"],
+ ["pt","Como se chama o hino nacional?","A Portuguesa","Grândola, Vila Morena","Heróis do Mar","Pátria Amada"],
+ ["pt","Qual era a moeda de Portugal antes do euro?","Escudo","Peseta","Real","Cruzeiro"],
+ ["pt","Em que cidade se realiza a Queima das Fitas mais antiga?","Coimbra","Porto","Braga","Lisboa"],
+ ["pt","Que região é conhecida pelas planícies e pelos sobreiros?","Alentejo","Minho","Beira Litoral","Trás-os-Montes"],
+ ["pt","De que árvore se tira a cortiça?","Sobreiro","Azinheira","Pinheiro","Oliveira"],
+ ["pt","Em que ilha fica a montanha do Pico?","Pico","Faial","São Jorge","Flores"],
+ ["pt","Que ponte liga o Porto a Vila Nova de Gaia com dois tabuleiros?","Ponte D. Luís I","Ponte da Arrábida","Ponte 25 de Abril","Ponte de São João"],
+ ["pt","Qual é o prefixo telefónico internacional de Portugal?","+351","+34","+44","+355"],
+ ["pt","Qual destas cidades é capital de distrito?","Viseu","Guimarães","Covilhã","Chaves"],
+ ["pt","Onde fica a Fortaleza de Sagres?","Algarve","Alentejo","Madeira","Minho"],
+ ["pt","Que vila medieval fica toda dentro de muralhas e é famosa pela ginjinha?","Óbidos","Monsaraz","Marvão","Sortelha"],
+ /* ---- História ---- */
+ ["hist","Em que ano foi assinado o Tratado de Zamora, ligado à independência de Portugal?","1143","1095","1249","1385"],
+ ["hist","Quem foi o último rei de Portugal?","D. Manuel II","D. Carlos I","D. Luís I","D. Pedro V"],
+ ["hist","Em que ano Portugal recuperou a independência de Espanha?","1640","1580","1668","1703"],
+ ["hist","Que rei ficou conhecido como \"o Lavrador\"?","D. Dinis","D. Sancho I","D. João II","D. Manuel I"],
+ ["hist","Que rei desapareceu na batalha de Alcácer Quibir?","D. Sebastião","D. João III","D. Afonso V","D. Henrique"],
+ ["hist","Que rainha é conhecida pelo \"milagre das rosas\"?","Rainha Santa Isabel","D. Leonor","D. Filipa de Lencastre","D. Maria II"],
+ ["hist","Com quem viveu D. Pedro I uma célebre história de amor?","Inês de Castro","Leonor Teles","Filipa de Lencastre","Isabel de Aragão"],
+ ["hist","Que estilo arquitetónico está ligado ao reinado de D. Manuel I?","Manuelino","Barroco","Românico","Neoclássico"],
+ ["hist","Que povo construiu a cidade de Conímbriga?","Romanos","Mouros","Visigodos","Fenícios"],
+ ["hist","Quem liderou os lusitanos contra os romanos?","Viriato","Sertório","Afonso Henriques","Nuno Álvares Pereira"],
+ ["hist","Em que ano começou a Primeira Guerra Mundial?","1914","1918","1939","1905"],
+ ["hist","Em que ano acabou a Segunda Guerra Mundial?","1945","1939","1918","1950"],
+ ["hist","Em que ano caiu o Muro de Berlim?","1989","1979","1991","1968"],
+ ["hist","Quem chegou à América em 1492?","Cristóvão Colombo","Vasco da Gama","Américo Vespúcio","Fernão de Magalhães"],
+ ["hist","Que civilização construiu Machu Picchu?","Incas","Maias","Astecas","Olmecas"],
+ ["hist","Em que país começou a Revolução Industrial?","Inglaterra","França","Alemanha","Estados Unidos"],
+ ["hist","Em que ano aconteceu a Revolução Francesa?","1789","1689","1815","1848"],
+ ["hist","Que território foi devolvido à China por Portugal em 1999?","Macau","Hong Kong","Goa","Timor"],
+ ["hist","Em que ano o Brasil declarou a independência?","1822","1500","1889","1807"],
+ ["hist","Que exposição mundial se realizou em Lisboa em 1998?","Expo 98","Lisboa Capital da Cultura","Mundial de Futebol","Jogos Olímpicos"],
+ ["hist","Que condestável comandou as tropas portuguesas em Aljubarrota?","Nuno Álvares Pereira","Afonso de Albuquerque","Vasco da Gama","Duarte Pacheco Pereira"],
+ ["hist","Para onde fugiu a corte portuguesa em 1807, por causa das invasões francesas?","Brasil","Inglaterra","Açores","Angola"],
+ ["hist","Que cabo dobrou Gil Eanes em 1434?","Cabo Bojador","Cabo da Boa Esperança","Cabo Verde","Cabo Horn"],
+ ["hist","Em que século foi fundada a Universidade de Coimbra (então em Lisboa)?","Século XIII","Século XI","Século XV","Século XVII"],
+ ["hist","Como ficou conhecido o período de 1926 a 1974 em Portugal?","Ditadura e Estado Novo","Primeira República","Monarquia Constitucional","Regeneração"],
+ ["hist","Que antigo império tinha Roma como capital?","Império Romano","Império Otomano","Império Persa","Império Bizantino"],
+ ["hist","Quem foi o primeiro presidente dos Estados Unidos?","George Washington","Abraham Lincoln","Thomas Jefferson","Benjamin Franklin"],
+ ["hist","Que navio \"inafundável\" se afundou em 1912?","Titanic","Lusitania","Britannic","Bismarck"],
+ ["hist","Em que país ficam as pirâmides de Gizé?","Egito","México","Sudão","Iraque"],
+ /* ---- Comida ---- */
+ ["comida","De que região é típico o cozido que se faz debaixo da terra, com o calor vulcânico?","Furnas, nos Açores","Madeira","Gerês","Serra da Estrela"],
+ ["comida","Que fruto dá o azeite?","Azeitona","Uva","Amêndoa","Noz"],
+ ["comida","De onde é o famoso leitão assado?","Bairrada","Algarve","Minho","Ribatejo"],
+ ["comida","Que doce conventual é típico de Tentúgal?","Pastel de Tentúgal","Pão de rala","Toucinho do céu","Queijada"],
+ ["comida","As queijadas mais famosas são de…","Sintra","Faro","Bragança","Guarda"],
+ ["comida","Com que fruto se faz a ginjinha?","Ginja","Amora","Medronho","Figo"],
+ ["comida","Com que fruto se faz a aguardente típica da serra algarvia?","Medronho","Laranja","Alfarroba","Romã"],
+ ["comida","Que peixe é o \"fiel amigo\" dos portugueses?","Bacalhau","Sardinha","Carapau","Dourada"],
+ ["comida","O que leva o bacalhau à Gomes de Sá, além do bacalhau?","Batata, cebola e ovo","Natas e queijo","Grão e espinafres","Arroz e tomate"],
+ ["comida","Qual é o ingrediente principal da açorda alentejana?","Pão","Arroz","Massa","Batata"],
+ ["comida","O arroz de cabidela leva tradicionalmente…","Sangue de galinha","Leite de coco","Tinta de choco","Vinho do Porto"],
+ ["comida","O que é um \"pingo\" num café do Porto?","Café com um pouco de leite","Café sem cafeína","Água com gás","Chá de limão"],
+ ["comida","Em Lisboa, como se costuma chamar um café expresso?","Bica","Cimbalino","Pingo","Garoto"],
+ ["comida","No Porto, que nome tradicional se dá ao café expresso?","Cimbalino","Bica","Galão","Meia de leite"],
+ ["comida","O que é um \"galão\"?","Café com leite em copo alto","Um sumo de laranja","Uma cerveja grande","Um chá gelado"],
+ ["comida","De que ilha é típica a espetada em pau de louro?","Madeira","São Miguel","Terceira","Porto Santo"],
+ ["comida","O que é o bolo do caco?","Um pão madeirense","Um bolo de chocolate","Um doce de ovos","Um queijo curado"],
+ ["comida","Que bebida madeirense leva aguardente de cana, mel e limão?","Poncha","Ginjinha","Licor Beirão","Amarguinha"],
+ ["comida","Na Terceira, que prato de carne é o mais famoso?","Alcatra","Posta mirandesa","Rojões","Chanfana"],
+ ["comida","De que animal é a carne da chanfana tradicional?","Cabra","Coelho","Pato","Javali"],
+ ["comida","O que se come tradicionalmente no magusto de São Martinho?","Castanhas assadas","Sardinhas assadas","Bolo-rei","Folar"],
+ ["comida","O folar é tradicional de que época?","Páscoa","Natal","Carnaval","São João"],
+ ["comida","Que queijo é típico de Azeitão?","Queijo de ovelha amanteigado","Queijo de vaca curado","Queijo fresco de cabra","Requeijão"],
+ ["comida","De que ilha é o queijo com denominação de origem mais famoso dos Açores?","São Jorge","Corvo","Santa Maria","Graciosa"],
+ ["comida","As tripas à moda do Porto levam tripas e…","Feijão branco","Grão-de-bico","Arroz","Couve-flor"],
+ ["comida","Que especiaria se polvilha por cima do arroz-doce?","Canela","Açafrão","Noz-moscada","Colorau"],
+ ["comida","O que é uma \"tosta mista\"?","Tosta de fiambre e queijo","Tosta de atum","Tosta de frango","Tosta de tomate"],
+ ["comida","Que marisco é a estrela do \"arroz de lingueirão\"?","Lingueirão","Camarão","Amêijoa","Percebe"],
+ ["comida","As amêijoas à Bulhão Pato levam alho, azeite, limão e…","Coentros","Hortelã","Orégãos","Manjericão"],
+ ["comida","De que país vem a pizza?","Itália","Grécia","Espanha","Estados Unidos"],
+ ["comida","De que país é típico o sushi?","Japão","China","Tailândia","Coreia do Sul"],
+ ["comida","Qual é o ingrediente principal do guacamole?","Abacate","Ervilha","Pepino","Lima"],
+ ["comida","De que é feito o húmus?","Grão-de-bico","Lentilhas","Fava","Beringela"],
+ ["comida","Que especiaria é a mais cara do mundo?","Açafrão","Baunilha","Canela","Cardamomo"],
+ /* ---- Desporto ---- */
+ ["desp","Como se chama o estádio do Sporting?","Estádio José Alvalade","Estádio da Luz","Estádio do Restelo","Estádio do Bessa"],
+ ["desp","Que clube joga no Estádio D. Afonso Henriques?","Vitória de Guimarães","SC Braga","Boavista","Gil Vicente"],
+ ["desp","De quantos em quantos anos se realiza o Mundial de futebol?","4","2","3","5"],
+ ["desp","Que país ganhou mais Mundiais de futebol masculino?","Brasil","Alemanha","Itália","Argentina"],
+ ["desp","Em que ano Portugal foi 3.º no Mundial, com Eusébio?","1966","1958","1970","1986"],
+ ["desp","Que clube português ganhou a Taça dos Campeões Europeus em 1961 e 1962?","Benfica","FC Porto","Sporting","Belenenses"],
+ ["desp","Em que anos o FC Porto ganhou a principal prova europeia de clubes?","1987 e 2004","1961 e 1962","1994 e 2003","2011 e 2021"],
+ ["desp","Quantos jogadores tem uma equipa de futsal em campo?","5","6","7","4"],
+ ["desp","Quantos jogadores tem uma equipa de basquetebol em campo?","5","6","7","11"],
+ ["desp","Quantos jogadores tem uma equipa de voleibol em campo?","6","5","7","9"],
+ ["desp","Quantos jogadores tem uma equipa de andebol em campo?","7","5","6","11"],
+ ["desp","Em que desporto Portugal já foi várias vezes campeão do mundo, com patins e stick?","Hóquei em patins","Hóquei no gelo","Patinagem artística","Polo aquático"],
+ ["desp","De que cor é a camisola do líder da Volta a França?","Amarela","Rosa","Verde","Vermelha"],
+ ["desp","Quantos anéis tem o símbolo olímpico?","5","4","6","7"],
+ ["desp","De quantos em quantos anos há Jogos Olímpicos de verão?","4","2","5","6"],
+ ["desp","Qual é a distância da maratona?","42,195 km","40 km","21,1 km","50 km"],
+ ["desp","Que desporto se joga em Wimbledon?","Ténis","Golfe","Críquete","Râguebi"],
+ ["desp","Em que desporto se faz um \"ippon\"?","Judo","Esgrima","Ténis de mesa","Boxe"],
+ ["desp","No ténis, como se chama o resultado 40-40?","Deuce (iguais)","Match point","Tie-break","Ace"],
+ ["desp","No basquetebol, quanto vale um cesto de trás da linha mais afastada?","3 pontos","2 pontos","4 pontos","1 ponto"],
+ ["desp","Em que desporto se usa um \"green\" e um \"putter\"?","Golfe","Críquete","Hóquei em campo","Basebol"],
+ ["desp","Onde se realizou o Mundial de futebol de 2014?","Brasil","África do Sul","Rússia","Alemanha"],
+ ["desp","Que seleção ganhou o Mundial de 2022, no Catar?","Argentina","França","Croácia","Brasil"],
+ ["desp","Que circuito português já recebeu a Fórmula 1 e o MotoGP no Algarve?","Portimão","Estoril","Vila Real","Braga"],
+ ["desp","Que piloto português já ganhou corridas na categoria rainha do MotoGP?","Miguel Oliveira","Tiago Monteiro","António Félix da Costa","Filipe Albuquerque"],
+ ["desp","Em que desporto se destacou Fernando Pimenta?","Canoagem","Remo","Vela","Natação"],
+ ["desp","Em que modalidade Patrícia Mamona ganhou a prata olímpica em Tóquio?","Triplo salto","Salto em comprimento","Salto em altura","Heptatlo"],
+ ["desp","Qual é a onda gigante portuguesa onde se batem recordes de surf?","Praia do Norte, Nazaré","Supertubos, Peniche","Ribeira d'Ilhas, Ericeira","Guincho, Cascais"],
+ ["desp","Quantos pontos vale uma vitória no campeonato de futebol?","3","2","1","4"],
+ ["desp","Quantos minutos dura cada parte de um jogo de futebol?","45","30","40","50"],
+ ["desp","De que cor é o cartão que expulsa um jogador de futebol?","Vermelho","Amarelo","Azul","Preto"],
+ ["desp","Em que desporto se pode fazer um \"strike\" com dez pinos?","Bowling","Bilhar","Dardos","Curling"],
+ /* ---- Cultura ---- */
+ ["cult","Quem escreveu \"Mensagem\"?","Fernando Pessoa","Luís de Camões","Almada Negreiros","Florbela Espanca"],
+ ["cult","Quem escreveu \"Ensaio sobre a Cegueira\"?","José Saramago","António Lobo Antunes","Eça de Queirós","Miguel Torga"],
+ ["cult","Quem escreveu o \"Auto da Barca do Inferno\"?","Gil Vicente","Almeida Garrett","Camilo Castelo Branco","Bocage"],
+ ["cult","Quem escreveu \"Amor de Perdição\"?","Camilo Castelo Branco","Júlio Dinis","Eça de Queirós","Alexandre Herculano"],
+ ["cult","Qual destes é um heterónimo de Fernando Pessoa?","Álvaro de Campos","Mário de Sá-Carneiro","Cesário Verde","Antero de Quental"],
+ ["cult","Em que cidade fica a Casa da Música?","Porto","Lisboa","Braga","Coimbra"],
+ ["cult","Em que cidade fica o Museu Calouste Gulbenkian?","Lisboa","Porto","Coimbra","Évora"],
+ ["cult","Em que cidade fica o Museu Nacional do Azulejo?","Lisboa","Aveiro","Porto","Ovar"],
+ ["cult","Que arquiteto portuense ganhou o Prémio Pritzker em 1992?","Álvaro Siza Vieira","Eduardo Souto de Moura","Fernando Távora","Tomás Taveira"],
+ ["cult","Que pintora portuguesa ficou famosa pelas obras inspiradas em contos e histórias?","Paula Rego","Vieira da Silva","Josefa de Óbidos","Graça Morais"],
+ ["cult","Que cante tradicional é Património Imaterial da UNESCO desde 2014?","Cante alentejano","Fado de Coimbra","Vira do Minho","Corridinho"],
+ ["cult","De que região são típicos os pauliteiros?","Miranda do Douro","Algarve","Ribatejo","Madeira"],
+ ["cult","Em que cidade se festeja o Santo António com marchas populares?","Lisboa","Porto","Braga","Faro"],
+ ["cult","Que planta se oferece nos Santos Populares com uma quadra?","Manjerico","Alecrim","Hortelã","Alfazema"],
+ ["cult","Em que cidade o Carnaval é famoso pelas \"matrafonas\"?","Torres Vedras","Ovar","Loulé","Podence"],
+ ["cult","Como se chamam os mascarados do Carnaval de Podence?","Caretos","Cabeçudos","Gigantones","Zés-Pereiras"],
+ ["cult","Quantos versos tem um soneto?","14","10","12","16"],
+ ["cult","Qual é a primeira palavra d'\"Os Lusíadas\"?","As","Cesse","Por","Ó"],
+ ["cult","Em que língua foi escrito \"Dom Quixote\"?","Castelhano","Português","Italiano","Francês"],
+ ["cult","Quem escreveu \"Romeu e Julieta\"?","William Shakespeare","Charles Dickens","Molière","Dante"],
+ ["cult","Quem pintou \"A Noite Estrelada\"?","Vincent van Gogh","Claude Monet","Pablo Picasso","Salvador Dalí"],
+ ["cult","Quem pintou \"Guernica\"?","Pablo Picasso","Joan Miró","Francisco de Goya","Diego Velázquez"],
+ ["cult","Em que cidade fica o Museu do Louvre?","Paris","Londres","Roma","Madrid"],
+ ["cult","Quem compôs a \"Nona Sinfonia\", com o \"Hino da Alegria\"?","Beethoven","Mozart","Bach","Chopin"],
+ ["cult","Quantas cordas tem uma guitarra clássica?","6","4","5","12"],
+ ["cult","Quantas cordas tem a guitarra portuguesa?","12","6","8","10"],
+ ["cult","Quantas notas musicais há na escala de dó a si?","7","5","6","8"],
+ ["cult","De que país é originário o flamenco?","Espanha","Portugal","Argentina","Cuba"],
+ ["cult","De que país é originário o tango?","Argentina","Brasil","México","Espanha"],
+ ["cult","Qual é a língua mais falada do mundo como língua materna?","Mandarim","Inglês","Espanhol","Hindi"],
+ ["cult","Quantas letras tem o alfabeto português atual?","26","23","24","28"],
+ ["cult","Que palavra portuguesa é famosa por ser difícil de traduzir?","Saudade","Janela","Obrigado","Mesa"],
+ /* ---- Ciência e natureza ---- */
+ ["cien","Qual é a fórmula química da água?","H2O","CO2","O2","NaCl"],
+ ["cien","Que planeta é conhecido como o \"planeta vermelho\"?","Marte","Vénus","Júpiter","Saturno"],
+ ["cien","Que planeta tem os anéis mais visíveis?","Saturno","Urano","Neptuno","Marte"],
+ ["cien","Quantos planetas tem o sistema solar?","8","7","9","10"],
+ ["cien","O que é o Sol?","Uma estrela","Um planeta","Um cometa","Um satélite"],
+ ["cien","Como se chama o satélite natural da Terra?","Lua","Titã","Europa","Fobos"],
+ ["cien","Quanto tempo demora a luz do Sol a chegar à Terra?","Cerca de 8 minutos","Cerca de 8 segundos","Cerca de 8 horas","Cerca de 1 dia"],
+ ["cien","Qual é o gás mais abundante no ar que respiramos?","Azoto","Oxigénio","Dióxido de carbono","Hidrogénio"],
+ ["cien","A que temperatura ferve a água ao nível do mar?","100 °C","90 °C","110 °C","120 °C"],
+ ["cien","A que temperatura congela a água?","0 °C","-10 °C","10 °C","4 °C"],
+ ["cien","Qual é o órgão que bombeia o sangue?","Coração","Pulmão","Fígado","Rim"],
+ ["cien","Qual é o maior órgão do corpo humano?","Pele","Fígado","Intestino","Pulmões"],
+ ["cien","Quantos dentes tem um adulto, com os dentes do siso?","32","28","30","36"],
+ ["cien","Quantas câmaras tem o coração humano?","4","2","3","5"],
+ ["cien","Qual é o osso mais comprido do corpo humano?","Fémur","Tíbia","Úmero","Coluna"],
+ ["cien","Que vitamina o corpo produz com a luz do sol?","Vitamina D","Vitamina C","Vitamina A","Vitamina B12"],
+ ["cien","Qual é o símbolo químico do ferro?","Fe","Fr","F","Ir"],
+ ["cien","Qual é o símbolo químico da prata?","Ag","Pt","Pr","Au"],
+ ["cien","Qual é o elemento químico mais leve?","Hidrogénio","Hélio","Lítio","Oxigénio"],
+ ["cien","Que cientista ficou ligado à lei da gravitação e à maçã?","Isaac Newton","Galileu Galilei","Charles Darwin","Nikola Tesla"],
+ ["cien","Quem propôs a teoria da evolução por seleção natural?","Charles Darwin","Gregor Mendel","Louis Pasteur","Isaac Newton"],
+ ["cien","Que cientista ganhou dois Prémios Nobel, de Física e de Química?","Marie Curie","Rosalind Franklin","Ada Lovelace","Lise Meitner"],
+ ["cien","Que médico português ganhou o Prémio Nobel da Medicina em 1949?","Egas Moniz","Ricardo Jorge","Abel Salazar","Sousa Martins"],
+ ["cien","Quantas patas tem uma aranha?","8","6","10","12"],
+ ["cien","Quantas patas tem um inseto?","6","4","8","10"],
+ ["cien","Quantos corações tem um polvo?","3","1","2","8"],
+ ["cien","Qual é o animal terrestre mais alto?","Girafa","Elefante","Avestruz","Camelo"],
+ ["cien","Qual é a maior ave do mundo?","Avestruz","Condor","Albatroz","Pinguim-imperador"],
+ ["cien","Qual é o único mamífero capaz de voar de verdade?","Morcego","Esquilo-voador","Pinguim","Ornitorrinco"],
+ ["cien","Que animal é o lince-ibérico?","Um felino","Um canídeo","Uma ave de rapina","Um roedor"],
+ ["cien","Como se chama a cria da ovelha?","Borrego","Vitelo","Cabrito","Potro"],
+ ["cien","Como se chama um animal que só come plantas?","Herbívoro","Carnívoro","Omnívoro","Insetívoro"],
+ ["cien","O que estuda a meteorologia?","O tempo e a atmosfera","Os meteoritos","As medidas","Os metais"],
+ ["cien","Qual é o metal mais usado nos fios elétricos?","Cobre","Ferro","Chumbo","Zinco"],
+ ["cien","Quantos graus tem um ângulo reto?","90","45","180","360"],
+ ["cien","Quanto é a soma dos ângulos internos de um triângulo?","180 graus","90 graus","270 graus","360 graus"],
+ ["cien","Quanto vale o número pi, aproximadamente?","3,14","2,71","1,61","4,13"],
+ ["cien","Quantos zeros tem um milhão?","6","5","7","9"],
+ ["cien","Qual é o número romano para 50?","L","C","V","D"],
+ ["cien","Que parte da planta faz a fotossíntese, sobretudo?","Folhas","Raízes","Flores","Sementes"],
+ /* ---- Mundo ---- */
+ ["mundo","Qual é a capital de Espanha?","Madrid","Barcelona","Sevilha","Valência"],
+ ["mundo","Qual é a capital de Itália?","Roma","Milão","Nápoles","Veneza"],
+ ["mundo","Qual é a capital da Alemanha?","Berlim","Munique","Frankfurt","Hamburgo"],
+ ["mundo","Qual é a capital da Suíça?","Berna","Zurique","Genebra","Basileia"],
+ ["mundo","Qual é a capital dos Estados Unidos?","Washington, D.C.","Nova Iorque","Los Angeles","Chicago"],
+ ["mundo","Qual é a capital da Turquia?","Ancara","Istambul","Esmirna","Antália"],
+ ["mundo","Qual é a capital do Japão?","Tóquio","Quioto","Osaca","Hiroxima"],
+ ["mundo","Qual é a capital de Marrocos?","Rabat","Casablanca","Marraquexe","Tânger"],
+ ["mundo","Qual é a capital da Guiné-Bissau?","Bissau","Bafatá","Conacri","Praia"],
+ ["mundo","Qual é a capital de Timor-Leste?","Díli","Baucau","Jacarta","Macau"],
+ ["mundo","Qual é a capital de São Tomé e Príncipe?","São Tomé","Santo António","Malabo","Libreville"],
+ ["mundo","Qual é a capital da Argentina?","Buenos Aires","Montevideu","Santiago","Córdova"],
+ ["mundo","Qual é o rio mais comprido da América do Sul?","Amazonas","Paraná","Orinoco","São Francisco"],
+ ["mundo","Qual é a montanha mais alta do mundo?","Evereste","K2","Monte Branco","Kilimanjaro"],
+ ["mundo","Qual é o maior deserto quente do mundo?","Sara","Gobi","Kalahari","Atacama"],
+ ["mundo","Qual é o país mais pequeno do mundo?","Vaticano","Mónaco","São Marino","Malta"],
+ ["mundo","Qual é o país com mais habitantes da União Europeia?","Alemanha","França","Itália","Espanha"],
+ ["mundo","Em que continente fica o Egito?","África","Ásia","Europa","Oceânia"],
+ ["mundo","Quantos continentes se costumam contar, incluindo a Antártida?","7","5","6","8"],
+ ["mundo","Em que país fica a Torre de Pisa?","Itália","França","Grécia","Espanha"],
+ ["mundo","Em que cidade fica a Sagrada Família?","Barcelona","Madrid","Roma","Paris"],
+ ["mundo","Em que cidade fica o Cristo Redentor?","Rio de Janeiro","São Paulo","Salvador","Lisboa"],
+ ["mundo","Em que país fica o Taj Mahal?","Índia","Paquistão","Irão","Nepal"],
+ ["mundo","Em que cidade fica o Big Ben?","Londres","Dublin","Edimburgo","Nova Iorque"],
+ ["mundo","Que país tem a forma de uma bota?","Itália","Grécia","Noruega","Chile"],
+ ["mundo","Qual é a língua oficial do Brasil?","Português","Espanhol","Brasileiro","Inglês"],
+ ["mundo","Que moeda se usa no Reino Unido?","Libra","Euro","Dólar","Coroa"],
+ ["mundo","Que moeda se usa no Japão?","Iene","Yuan","Won","Rupia"],
+ ["mundo","Que oceano fica entre a Europa e a América?","Atlântico","Pacífico","Índico","Ártico"],
+ ["mundo","Que mar banha o sul de França e a Itália?","Mediterrâneo","Negro","Báltico","Cáspio"],
+ ["mundo","Que canal liga o Atlântico ao Pacífico na América Central?","Canal do Panamá","Canal do Suez","Canal da Mancha","Canal de Corinto"],
+ ["mundo","Que país tem mais habitantes de língua portuguesa?","Brasil","Portugal","Angola","Moçambique"],
+ ["mundo","De que país são as ilhas Canárias?","Espanha","Portugal","Marrocos","Itália"],
+ ["mundo","Que país é famoso pelos cangurus?","Austrália","África do Sul","Nova Zelândia","Índia"],
+ ["mundo","Quantas estrelas tem a bandeira da União Europeia?","12","10","15","27"],
+ ["mundo","Qual é o único país que faz fronteira terrestre com Portugal?","Espanha","França","Marrocos","Andorra"],
+ /* ---- Cinema, TV e tecnologia ---- */
+ ["ecra","Em que saga de filmes aparece a frase \"Que a Força esteja contigo\"?","Guerra das Estrelas","Star Trek","O Senhor dos Anéis","Matrix"],
+ ["ecra","Em que filme um leão chamado Simba se torna rei?","O Rei Leão","Madagáscar","O Livro da Selva","Tarzan"],
+ ["ecra","Como se chama o feiticeiro que estuda em Hogwarts?","Harry Potter","Frodo Baggins","Percy Jackson","Merlin"],
+ ["ecra","Em que filme de animação os brinquedos ganham vida quando ninguém vê?","Toy Story","Shrek","Carros","Monstros e Companhia"],
+ ["ecra","Que peixe-palhaço é procurado pelo pai num filme de animação?","Nemo","Dory","Flounder","Óscar"],
+ ["ecra","Como se chama o ogre verde do pântano?","Shrek","Hulk","Grinch","Mike"],
+ ["ecra","Que prémio é a estatueta dourada do cinema americano?","Óscar","Globo de Ouro","Palma de Ouro","Urso de Ouro"],
+ ["ecra","Em que cidade francesa há um festival de cinema com a Palma de Ouro?","Cannes","Paris","Nice","Lyon"],
+ ["ecra","Em que cidade italiana Romeu e Julieta se apaixonam?","Verona","Veneza","Florença","Roma"],
+ ["ecra","Que agente secreto tem o número 007?","James Bond","Ethan Hunt","Jason Bourne","Jack Ryan"],
+ ["ecra","Que super-herói é o alter ego de Peter Parker?","Homem-Aranha","Batman","Super-Homem","Homem de Ferro"],
+ ["ecra","Em que cidade fictícia vive o Batman?","Gotham","Metrópolis","Springfield","Smallville"],
+ ["ecra","De que cor é a família Simpson?","Amarela","Azul","Verde","Cor de laranja"],
+ ["ecra","Em que jogo se apanham criaturas com \"Pokébolas\"?","Pokémon","Digimon","Minecraft","Zelda"],
+ ["ecra","Que canalizador de boné vermelho salta em cima de cogumelos nos videojogos?","Mario","Sonic","Kirby","Pac-Man"],
+ ["ecra","Em que jogo se constroem mundos com blocos cúbicos e se foge dos \"creepers\"?","Minecraft","Tetris","Fortnite","Pokémon"],
+ ["ecra","Que jogo clássico tem peças que caem e linhas que desaparecem?","Tetris","Pong","Snake","Pac-Man"],
+ ["ecra","O que significa \"www\" num endereço de internet?","World Wide Web","World Web Wireless","Wide World Window","Web Wide Work"],
+ ["ecra","O que significa a sigla \"PDF\"?","Portable Document Format","Print Document File","Public Data Folder","Personal Digital File"],
+ ["ecra","Quantos bits tem um byte?","8","4","10","16"],
+ ["ecra","Que tecla se usa com Ctrl para copiar?","C","V","X","Z"],
+ ["ecra","Que tecla se usa com Ctrl para anular a última ação?","Z","Y","A","D"],
+ ["ecra","O que é o \"Wi-Fi\"?","Rede sem fios","Um tipo de cabo","Um sistema operativo","Uma marca de telemóveis"],
+ ["ecra","Para que serve um \"router\"?","Distribuir a ligação à internet","Guardar fotografias","Imprimir documentos","Carregar o telemóvel"],
+ ["ecra","O que quer dizer \"GPS\"?","Sistema de posicionamento global","Guia portátil de sinais","Gestor pessoal de serviços","Grupo de pesquisa por satélite"],
+ ["ecra","Em informática, o que é um \"bug\"?","Um erro num programa","Um vírus biológico","Uma peça do computador","Um tipo de ecrã"],
+ ["ecra","Que símbolo se usa nos endereços de e-mail?","@ (arroba)","# (cardinal)","& (e comercial)","% (percentagem)"]
+];
 
 /* ================= Sabichão! — quiz em português: as perguntas na TV/PC, as respostas no telemóvel ================= */
 const ov=$("ov"),tv=$("tv"),pad=$("pad");
@@ -1007,7 +1303,8 @@ const QS=[
  ["mundo","Quantas cores tem tradicionalmente o arco-íris?","7","5","6","8"],
  ["mundo","Qual é o metal líquido à temperatura ambiente?","Mercúrio","Chumbo","Alumínio","Estanho"],
  ["mundo","Qual é o maior mamífero do mundo?","Baleia-azul","Elefante-africano","Girafa","Cachalote"]];
-const CATS={pt:"🇵🇹 Portugal",hist:"📜 História",comida:"🍲 Comida",desp:"⚽ Desporto",cult:"🎭 Cultura",mundo:"🌍 Mundo"};
+if(typeof QS_MORE!=="undefined")QS.push(...QS_MORE);
+const CATS={pt:"🇵🇹 Portugal",hist:"📜 História",comida:"🍲 Comida",desp:"⚽ Desporto",cult:"🎭 Cultura",cien:"🔬 Ciência",mundo:"🌍 Mundo",ecra:"🎬 Ecrãs"};
 let MODE=null,ST=null,ME=-1,TIMERS=[],TVM=1;
 const later=(ms,f)=>{const t=setTimeout(f,ms);TIMERS.push(t)};const clearT=()=>{TIMERS.forEach(clearTimeout);TIMERS=[]};
 function shuffleA(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
@@ -1020,7 +1317,11 @@ function renderOpts(el,o,host){o=cleanOpts(o);el.innerHTML=`<div class="optrow">
   <div class="optrow"><span class="eyebrow">Temas</span><div class="seg wrap">${Object.keys(CATS).map(c=>`<button type="button" class="${o.cats.includes(c)?"on":""}" data-c="${c}" ${host?"":"disabled"}>${CATS[c]}</button>`).join("")}</div></div><p class="note">${o.tv?"📺 Este ecrã mostra as perguntas; cada um responde no telemóvel.":"📱 Sem TV: a pergunta e as respostas aparecem no telemóvel de cada um."}</p>`;
   if(host){el.querySelectorAll("[data-n]").forEach(b=>b.onclick=()=>{ROOM.opts=cleanOpts({...o,n:b.dataset.n});lobbyBroadcast()});el.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{const c=b.dataset.c;let cs=o.cats.includes(c)?o.cats.filter(x=>x!==c):o.cats.concat(c);ROOM.opts=cleanOpts({...o,cats:cs});lobbyBroadcast()})}}
 function beginGame(seats){const O=cleanOpts(ROOM.opts);TVM=O.tv;const pl=seats.slice(OFF()).map((s,i)=>({i,name:cleanName(s.name)||"Jogador",sc:0,streak:0}));
-  const pool=shuffleA(QS.filter(q=>O.cats.includes(q[0]))).slice(0,O.n);ST={pl,qs:pool,qi:-1,ph:"intro",ans:{},t0:0};MODE="tv";showScreen("game");pad.hidden=true;tv.hidden=false;ov.hidden=true;
+  /* não repetir perguntas de jogos anteriores (guardado no aparelho de quem cria a sala) */
+  let seen=[];try{seen=JSON.parse(store.get("quiz-seen")||"[]")}catch(e){}
+  const all=QS.map((q,k)=>k).filter(k=>O.cats.includes(QS[k][0]));let fresh=all.filter(k=>!seen.includes(k));
+  if(fresh.length<O.n){seen=seen.filter(k=>!all.includes(k));fresh=all}
+  const pick=shuffleA(fresh).slice(0,O.n);store.set("quiz-seen",JSON.stringify(seen.concat(pick)));const pool=pick.map(k=>QS[k]);ST={pl,qs:pool,qi:-1,ph:"intro",ans:{},t0:0};MODE="tv";showScreen("game");pad.hidden=true;tv.hidden=false;ov.hidden=true;
   pl.forEach(p=>sendP(p.i,{t:"go",me:p.i,name:p.name,tv:TVM,n:pool.length}));if(TVM)drawIntro();later(3500,nextQ)}
 const QTIME=15;
 function nextQ(){ST.qi++;if(ST.qi>=ST.qs.length)return final();const q=ST.qs[ST.qi];const opts=shuffleA([0,1,2,3]);ST.cur={q,opts,correct:opts.indexOf(0)};ST.ans={};ST.ph="q";ST.t0=performance.now();
@@ -1030,7 +1331,7 @@ function reveal(){if(ST.ph!=="q")return;ST.ph="rev";const c=ST.cur.correct;const
   ST.gains=gains;if(TVM)drawReveal();SFXQ.rev();const ctx=ST.cur.q[2],fast=ST.pl.filter(p=>gains[p.i]>0).sort((a,b)=>ST.ans[a.i].dt-ST.ans[b.i].dt).map(p=>p.name);ST.pl.forEach(p=>sendP(p.i,{t:"r",ok:ST.ans[p.i]&&ST.ans[p.i].a===c?1:0,g:gains[p.i],sc:p.sc,pos:rankOf(p),c:ctx,fast:fast.slice(0,3)}));
   later(5200,()=>{if((ST.qi+1)%5===0&&ST.qi+1<ST.qs.length){if(TVM)drawBoard("Classificação");else bcast({t:"b",title:"Classificação",o:ST.pl.slice().sort((a,b)=>b.sc-a.sc).map(p=>[p.name,p.sc])});later(5000,nextQ)}else nextQ()})}
 function rankOf(p){return ST.pl.slice().sort((a,b)=>b.sc-a.sc).indexOf(p)+1}
-function final(){ST.ph="end";if(TVM)drawBoard("Resultado final",true);bcast({t:"end",o:ST.pl.slice().sort((a,b)=>b.sc-a.sc).map(p=>[p.name,p.sc])});SFXQ.end();
+function final(){ST.ph="end";if(TVM){drawBoard("Resultado final",true);confetti(160)}bcast({t:"end",o:ST.pl.slice().sort((a,b)=>b.sc-a.sc).map(p=>[p.name,p.sc])});SFXQ.end();
   later(1500,()=>{showOv(`<div class="panel"><h2>Fim!</h2><button class="btn" type="button" data-a="again">Jogar outra vez ▶</button><button class="btn ghost" type="button" data-a="lobby">Voltar à sala</button></div>`)})}
 /* ---------- desenho no ecrã grande ---------- */
 function drawIntro(){tv.innerHTML=`<div class="tvc intro"><h1>Sabichão!</h1><p>${ST.qs.length} perguntas · responde no telemóvel · mais rápido = mais pontos</p><div class="who">${ST.pl.map(p=>`<span>${esc(p.name)}</span>`).join("")}</div></div>`}
@@ -1056,7 +1357,7 @@ const SFXQ={q:()=>[523,659].forEach((f,i)=>tone(f,.1,{type:"triangle",v:.06,at:i
 /* ---------- menus ---------- */
 function showOv(h){ov.innerHTML=h;ov.hidden=false}
 function menu(){MODE=null;tv.hidden=true;pad.hidden=true;showOv(`<div class="panel"><h2>Sabichão!</h2><p>Quiz em português para a sala: as perguntas aparecem na <b>TV ou no PC</b> e cada um responde no seu <b>telemóvel</b>. Quem acerta mais depressa ganha mais pontos!</p>
-  <button class="btn" type="button" data-a="tv">📺 Criar sala neste ecrã (TV/PC)</button><button class="btn" type="button" data-a="notv">📱 Jogar sem TV (todos no telemóvel)</button><button class="btn ghost" type="button" data-a="pj">📱 Tenho um código: entrar como jogador</button><p class="note">Os jogadores entram com o telemóvel pelo QR code ou pelo código da sala. ${QS.length} perguntas sobre Portugal, história, comida, desporto, cultura e o mundo.</p></div>`)}
+  <button class="btn" type="button" data-a="tv">📺 Criar sala neste ecrã (TV/PC)</button><button class="btn" type="button" data-a="notv">📱 Jogar sem TV (todos no telemóvel)</button><button class="btn ghost" type="button" data-a="pj">📱 Tenho um código: entrar como jogador</button><p class="note">Os jogadores entram com o telemóvel pelo QR code ou pelo código da sala. ${QS.length} perguntas sobre Portugal, história, comida, desporto, cultura, ciência, o mundo e os ecrãs.</p></div>`)}
 ov.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;unlockAudio();const a=b.dataset.a;
   if(a==="pj"){showScreen("setup");if($("myName").value==="TV")$("myName").value="";setTimeout(()=>{const c=$("joinCode");c&&c.focus()},60);return}
   if(a==="notv"){TVM=0;ROOM.opts=cleanOpts({...(ROOM.opts||{}),tv:0});showScreen("setup");if($("myName").value==="TV")$("myName").value="";setTimeout(()=>{const c=$("myName");c&&c.focus()},60);return}
@@ -1068,13 +1369,19 @@ ROOM.game={id:"quiz",title:"Sabichão!",maxp:13,minp:2,maxBots:0,botNames:[],cle
   client(d){if(!d)return;if(d.t==="go"){ME=d.me|0;MYNAME=cleanName(d.name);PTV=d.tv===0?0:1;MODE="pad";showScreen("game");ov.hidden=true;padShow(PTV?`<div class="pbig">📺 Olha para a TV!<small>As perguntas vão aparecer lá; respondes aqui.</small></div>`:`<div class="pbig">🧠 Prepara-te!<small>${d.n||""} perguntas · quem acerta mais depressa ganha mais pontos</small></div>`);return}
     if(MODE!=="pad")return;
     if(d.t==="q"){padQ(d);try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}}
-    else if(d.t==="r"){padShow(`<div class="pbig ${d.ok?"good":"bad"}">${d.ok?"✅ Certo!":"❌ Errado"}<small>${!PTV&&d.c?`Resposta: <b>${esc(d.c)}</b><br>`:""}${d.ok?"+"+d.g+" pontos":""}<br>${d.sc} pontos · ${d.pos}.º lugar${!PTV&&d.fast&&d.fast.length?`<br>⚡ ${d.fast.map(esc).join(", ")}`:""}</small></div>`);try{navigator.vibrate&&navigator.vibrate(d.ok?[30]:[80,60,80])}catch(e){}}
-    else if(d.t==="end"){const o=d.o||[];const k=o.findIndex(x=>x[0]===MYNAME);padShow(`<div class="pbig">${k===0?"🏆 Ganhaste!":"Fim do jogo"}<small>${k>=0?(k+1)+".º lugar · "+o[k][1]+" pontos":""}</small></div>${PTV?"":padBoard(o)}`)}
+    else if(d.t==="r"){padShow(`<div class="pbig fxpop ${d.ok?"good":"bad"}">${d.ok?"✅ Certo!":"❌ Errado"}<small>${!PTV&&d.c?`Resposta: <b>${esc(d.c)}</b><br>`:""}${d.ok?"+"+d.g+" pontos":""}<br>${d.sc} pontos · ${d.pos}.º lugar${!PTV&&d.fast&&d.fast.length?`<br>⚡ ${d.fast.map(esc).join(", ")}`:""}</small></div>`);try{navigator.vibrate&&navigator.vibrate(d.ok?[30]:[80,60,80])}catch(e){}playSfx(d.ok?"truth":"lie")}
+    else if(d.t==="end"){const o=d.o||[];const k=o.findIndex(x=>x[0]===MYNAME);padShow(`<div class="pbig fxpop">${k===0?"🏆 Ganhaste!":"Fim do jogo"}<small>${k>=0?(k+1)+".º lugar · "+o[k][1]+" pontos":""}</small></div>${PTV?"":padBoard(o)}`);if(k===0)playSfx("win");else playSfx("end")}
     else if(d.t==="b"){padShow(`<div class="pbig" style="margin:0">${esc(d.title||"Classificação")}</div>${padBoard(d.o||[])}`)}
     else if(d.t==="lobby"){MODE=null}},
-  stop(){clearT();MODE=null},hostLost(){},drop(seat){const i=ROOM.seats.indexOf(seat)-OFF();if(ST&&ST.pl[i]){ST.pl[i].gone=1}},
+  stop(){clearT();MODE=null},hostLost(){},
+  /* alguém voltou a ligar-se a meio: recebe outra vez o comando e a pergunta que está a decorrer */
+  back(seat){const i=ROOM.seats.indexOf(seat)-OFF();if(!ST||i<0||!ST.pl[i])return;const p=ST.pl[i];p.gone=0;ROOM.sendTo(seat,{t:"start"});ROOM.sendTo(seat,{t:"go",me:p.i,name:p.name,tv:TVM,n:ST.qs.length});
+    if(ST.ph==="q"&&ST.ans[i]==null){const q=ST.cur.q,left=Math.max(1,Math.ceil(QTIME-(performance.now()-ST.t0)/1000));ROOM.sendTo(seat,{t:"q",n:ST.qi+1,of:ST.qs.length,txt:q[1],o:ST.cur.opts.map(k=>q[2+k]),cat:CATS[q[0]],tm:left})}
+    else if(ST.ph==="end")ROOM.sendTo(seat,{t:"end",o:ST.pl.slice().sort((a,b)=>b.sc-a.sc).map(p=>[p.name,p.sc])});
+    if(TVM&&ST.ph==="q")drawQ()},
+  drop(seat){const i=ROOM.seats.indexOf(seat)-OFF();if(ST&&ST.pl[i]){ST.pl[i].gone=1}},
   onScreen(n){if(n==="game"&&!ROOM.code){$("exitBtn").hidden=true;$("reactBtn").hidden=true;$("hubLink").hidden=false;if(!MODE)menu()}}};
-initUI({rules:`<ul><li>Abre o jogo na <b>TV ou no PC</b> e carrega em "Criar sala neste ecrã".</li><li>Cada jogador lê o <b>QR code</b> (ou escreve o código) no telemóvel e põe o nome.</li><li>A pergunta aparece no ecrã grande; no telemóvel aparecem 4 botões com as respostas.</li><li><b>Pontos:</b> 500 por acertar e até mais 500 conforme a rapidez. Três certas seguidas dão +100 🔥.</li><li>A cada 5 perguntas aparece a classificação. Ganha quem tiver mais pontos no fim.</li></ul>`,privacy:privacyHTML("")});
+initUI({rules:`<ul><li>Abre o jogo na <b>TV ou no PC</b> e carrega em "Criar sala neste ecrã".</li><li>Cada jogador lê o <b>QR code</b> (ou escreve o código) no telemóvel e põe o nome.</li><li>A pergunta aparece no ecrã grande; no telemóvel aparecem 4 botões com as respostas.</li><li><b>Pontos:</b> 500 por acertar e até mais 500 conforme a rapidez. Três certas seguidas dão +100 🔥.</li><li>A cada 5 perguntas aparece a classificação. Ganha quem tiver mais pontos no fim.</li><li><b>Sem TV?</b> Escolhe "Jogar sem TV": a pergunta aparece no telemóvel de cada um.</li><li>As perguntas não se repetem de um jogo para o outro, até esgotarem.</li></ul>`,privacy:privacyHTML("")});
 $("addBot").hidden=true;$("soloBtn").hidden=true;
 if(!/sala=/.test(location.hash)){showScreen("game");menu()}
 window.QZ={QS};

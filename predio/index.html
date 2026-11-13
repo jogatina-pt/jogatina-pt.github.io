@@ -687,6 +687,25 @@ function initRoomUI(){
     if(h[0]&&h[1]===G.id&&reload)setTimeout(()=>hostRoom(cleanCode(h[0])),0);else if(h[0])sstore.set("ip-host","")}
 }
 
+/* ================= EFEITOS (comuns) ================= */
+function confetti(n){try{
+  if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  let c=document.getElementById("fxc");if(c)c.remove();
+  c=document.createElement("canvas");c.id="fxc";c.style.cssText="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999";
+  const W=c.width=innerWidth,H=c.height=innerHeight;document.body.appendChild(c);const g=c.getContext("2d");
+  const COL=["#e63946","#ffbe0b","#3a86ff","#2fbf71","#ff5d8f","#9b5de5","#ff8c1a"];
+  const P=[];for(let i=0;i<(n||110);i++){const side=i%2;P.push({x:side?W+10:-10,y:H*(.35+Math.random()*.35),vx:(side?-1:1)*(3+Math.random()*9)*W/400,vy:-(6+Math.random()*10),r:4+Math.random()*6,c:COL[i%COL.length],a:Math.random()*6,va:(Math.random()-.5)*.5,d:i*4})}
+  const t0=performance.now();let last=t0;
+  (function step(t){const dt=Math.min(40,t-last)/16.7;last=t;const el=t-t0;g.clearRect(0,0,W,H);
+    for(const p of P){if(el<p.d)continue;p.vy+=.32*dt;p.vx*=.99;p.x+=p.vx*dt;p.y+=p.vy*dt;p.a+=p.va*dt;
+      g.save();g.translate(p.x,p.y);g.rotate(p.a);g.globalAlpha=Math.max(0,Math.min(1,(3200-el)/600));g.fillStyle=p.c;g.fillRect(-p.r,-p.r*.45,p.r*2,p.r*.9);g.restore()}
+    if(el<3200&&c.isConnected)requestAnimationFrame(step);else c.remove()})(t0);
+}catch(e){}}
+function fxBuzz(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
+/* salto num elemento (ponto ganho, carta nova…) */
+function fxPop(el){try{if(!el)return;el.classList.remove("fxpop");void el.offsetWidth;el.classList.add("fxpop")}catch(e){}}
+(function(){try{const s=document.createElement("style");s.textContent="@keyframes fxpop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}.fxpop{animation:fxpop .45s cubic-bezier(.2,1.4,.4,1) both}@keyframes fxin{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}.fxin{animation:fxin .35s ease-out both}@media (prefers-reduced-motion: reduce){.fxpop,.fxin{animation:none}}";document.head.appendChild(s)}catch(e){}})();
+
 /* ================= ECRÃ (comum aos jogos de rondas) =================
    som, tema, relógio, avisos, reações, regras e botão de sair.
    Cada jogo pode definir ROOM.game.onScreen(nome) para limpar o que é seu. */
@@ -720,7 +739,7 @@ const SFX={
   win:()=>{[523,659,784,659,784,1047].forEach((f,i)=>tone(f,.22,{type:"triangle",v:.09,at:i*.12}))},
   end:()=>{[392,523,659].forEach((f,i)=>tone(f,.25,{type:"triangle",v:.08,at:i*.12}))}
 };
-function playSfx(k){try{SFX[k]&&SFX[k]()}catch(e){}}
+function playSfx(k){try{SFX[k]&&SFX[k]();if(k==="win"){confetti(120);fxBuzz([40,60,40,60,160])}}catch(e){}}
 function setMute(m){muted=m;store.set("pp-mute",m?"1":"0");$("mute").setAttribute("aria-pressed",String(!m));$("mute").textContent=m?"🔇":"🔊";$("mute").title=m?"Som desligado":"Som ligado"}
 
 /* manter o ecrã ligado na sala e durante a partida (se o telemóvel de quem criou a sala adormece, a sala para) */
@@ -761,7 +780,7 @@ function privacyHTML(extra){return `<ul>
   <li><b>As salas</b> usam o Firebase, da Google. Cada aparelho recebe um identificador anónimo, sem nome nem email. As jogadas passam pelos servidores da Google na Bélgica e apagam-se quando a sala fecha. Para o serviço funcionar, a Google trata o endereço de internet (IP) do aparelho.</li>
   <li><b>Contagem de partidas:</b> guardamos só quantas partidas se jogam por mês e com quantos jogadores, sem saber quem jogou.</li>
   <li><b>No teu aparelho</b> ficam guardadas as preferências (nome, tema, som)${extra||""}. Podes apagá-las limpando os dados do site no browser.</li>
-  <li><b>O site</b> está alojado na Netlify, que regista dados técnicos de acesso, como o IP, para o servir.</li>
+  <li><b>O site</b> está alojado no GitHub Pages, que regista dados técnicos de acesso, como o IP, para o servir.</li>
 </ul>`}
 function initUI(o){
   setTheme(document.documentElement.dataset.ppTheme==="light"?"light":"dark",false);

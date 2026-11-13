@@ -257,6 +257,25 @@ input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
   <div id="hint"></div>
 </div>
 <script>
+/* ================= EFEITOS (comuns) ================= */
+function confetti(n){try{
+  if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  let c=document.getElementById("fxc");if(c)c.remove();
+  c=document.createElement("canvas");c.id="fxc";c.style.cssText="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999";
+  const W=c.width=innerWidth,H=c.height=innerHeight;document.body.appendChild(c);const g=c.getContext("2d");
+  const COL=["#e63946","#ffbe0b","#3a86ff","#2fbf71","#ff5d8f","#9b5de5","#ff8c1a"];
+  const P=[];for(let i=0;i<(n||110);i++){const side=i%2;P.push({x:side?W+10:-10,y:H*(.35+Math.random()*.35),vx:(side?-1:1)*(3+Math.random()*9)*W/400,vy:-(6+Math.random()*10),r:4+Math.random()*6,c:COL[i%COL.length],a:Math.random()*6,va:(Math.random()-.5)*.5,d:i*4})}
+  const t0=performance.now();let last=t0;
+  (function step(t){const dt=Math.min(40,t-last)/16.7;last=t;const el=t-t0;g.clearRect(0,0,W,H);
+    for(const p of P){if(el<p.d)continue;p.vy+=.32*dt;p.vx*=.99;p.x+=p.vx*dt;p.y+=p.vy*dt;p.a+=p.va*dt;
+      g.save();g.translate(p.x,p.y);g.rotate(p.a);g.globalAlpha=Math.max(0,Math.min(1,(3200-el)/600));g.fillStyle=p.c;g.fillRect(-p.r,-p.r*.45,p.r*2,p.r*.9);g.restore()}
+    if(el<3200&&c.isConnected)requestAnimationFrame(step);else c.remove()})(t0);
+}catch(e){}}
+function fxBuzz(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
+/* salto num elemento (ponto ganho, carta nova…) */
+function fxPop(el){try{if(!el)return;el.classList.remove("fxpop");void el.offsetWidth;el.classList.add("fxpop")}catch(e){}}
+(function(){try{const s=document.createElement("style");s.textContent="@keyframes fxpop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}.fxpop{animation:fxpop .45s cubic-bezier(.2,1.4,.4,1) both}@keyframes fxin{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}.fxin{animation:fxin .35s ease-out both}@media (prefers-reduced-motion: reduce){.fxpop,.fxin{animation:none}}";document.head.appendChild(s)}catch(e){}})();
+
 /* ================= BARALHOS DO ADIVINHA NA TESTA ================= */
 const DECKS=[
 {id:"animais",name:"Animais",emoji:"🐒",w:["Girafa","Macaco","Pinguim","Polvo","Galinha","Cavalo-marinho","Elefante","Canguru","Morcego","Tubarão","Caracol","Coruja","Flamingo","Golfinho","Javali","Sardinha","Pavão","Camaleão","Burro","Tartaruga","Lagosta","Hamster","Papagaio","Abelha","Vaca","Porco","Cegonha","Leão","Zebra","Crocodilo","Gaivota","Ouriço-cacheiro","Esquilo","Baleia","Rato","Cabra","Lobo","Raposa","Panda","Pombo","Mosquito","Formiga","Urso-polar","Lince-ibérico","Coelho"]},
