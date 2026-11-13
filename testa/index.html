@@ -191,6 +191,7 @@ input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
 .wl{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
 .wl li{border:3px solid var(--stroke);border-radius:12px;padding:5px 10px;font-weight:800;box-shadow:2px 2px 0 var(--stroke)}
 .wl li.ok{background:#b8f0cf;color:#151515}.wl li.pass{background:#ffd0cc;color:#151515;text-decoration:line-through}
+.history.sb li{display:flex;gap:8px;align-items:baseline;padding:8px 12px;border-radius:12px}.history li.turn{outline:2px dashed currentColor}.history li.lead b::after{content:" 👑"}.history li small{opacity:.65;margin-left:auto}.rec{font-weight:800;color:#c77d00;margin:4px 0 10px;text-align:center}#teams{flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -243,6 +244,7 @@ input{border:3px solid var(--stroke);box-shadow:3px 3px 0 var(--stroke)}
     <div class="eyebrow">Escolhe os baralhos</div>
     <div class="decks" id="decks"></div>
     <div class="row"><span class="eyebrow">Tempo</span><div class="seg" id="times"></div></div>
+    <div class="row"><span class="eyebrow">Quem joga</span><div class="seg" id="teams"></div></div>
     <div class="choices"><button class="btn" type="button" id="goBtn">Começar!</button></div>
     <ul class="history" id="history"></ul>
     <p class="foot">Joga-se num só telemóvel e funciona sem internet depois de aberto uma vez.</p>
@@ -286,7 +288,15 @@ const DECKS=[
 {id:"portugal",name:"Portugal",emoji:"🇵🇹",w:["Torre de Belém","Galo de Barcelos","Fado","Elétrico 28","Ponte 25 de Abril","Santos Populares","Algarve","Serra da Estrela","Douro","Nazaré","Sintra","Madeira","Açores","Cristo-Rei","Azulejo","Saudade","Vinho do Porto","Bacalhau","Guitarra portuguesa","Rancho folclórico","Bombos","Manjerico","Sardinha","Caravela","Descobrimentos","Vasco da Gama","Fátima","Coimbra","Bom Jesus","Mosteiro dos Jerónimos","Castelo de Guimarães","Lisboa","Porto","Évora","Alentejo","Cortiça","Cante alentejano","Pastel de Belém","Bica","Ginjinha"]},
 {id:"filmes",name:"Filmes e desenhos animados",emoji:"🎬",w:["O Rei Leão","Titanic","À Procura de Nemo","Toy Story","Shrek","Frozen","Harry Potter","O Senhor dos Anéis","Star Wars","Jurassic Park","Os Simpsons","Tubarão","Sozinho em Casa","Mamma Mia","O Padrinho","Regresso ao Futuro","Piratas das Caraíbas","Matrix","Rocky","E.T.","A Bela e o Monstro","Branca de Neve","Cinderela","Aladino","O Feiticeiro de Oz","Mary Poppins","King Kong","Ghostbusters","Indiana Jones","Batman","Super-Homem","Homem-Aranha","Os Smurfs","Pinóquio","Peter Pan","Mulan","Ratatui","Up","Monstros e Companhia","O Exterminador Implacável"]},
 {id:"desporto",name:"Desporto e jogos",emoji:"⚽",w:["Futebol","Golo","Penálti","Fora de jogo","Árbitro","Ténis","Padel","Surf","Natação","Ciclismo","Maratona","Basquetebol","Andebol","Voleibol","Xadrez","Sueca","Matraquilhos","Bowling","Karaté","Judo","Golfe","Esqui","Skate","Patins","Hóquei em patins","Boxe","Futsal","Corrida de sacos","Escondidas","Apanhada","Cabra-cega","Jogo do galo","Monopólio","Pião","Berlinde","Dardos","Bilhar","Ioga","Paraquedismo","Corrida de cavalos"]},
-{id:"festa",name:"Noite de festa",emoji:"🎉",w:["Ressaca","Karaoke","Despedida de solteiro","Discoteca","Imperial","Brinde","Selfie de grupo","Kizomba","DJ","Segurança","Fila da casa de banho","Shot","Bolo de anos","Velas","Prendas","Balões","Confettis","Fogo de artifício","Arraial","Bailarico","Sardinhada","Casamento","Lua de mel","Padrinho","Discurso","Dançar em cima da mesa","Táxi para casa","Kebab às 5 da manhã","Perder o telemóvel","Mensagem ao ex","Pista de dança","Lenta","Conga","Festival de verão","Pulseira VIP","Fotografia desfocada","Óculos de sol à noite","Festa de pijama","Fantasia de Carnaval","Mais uma!"]}
+{id:"festa",name:"Noite de festa",emoji:"🎉",w:["Ressaca","Karaoke","Despedida de solteiro","Discoteca","Imperial","Brinde","Selfie de grupo","Kizomba","DJ","Segurança","Fila da casa de banho","Shot","Bolo de anos","Velas","Prendas","Balões","Confettis","Fogo de artifício","Arraial","Bailarico","Sardinhada","Casamento","Lua de mel","Padrinho","Discurso","Dançar em cima da mesa","Táxi para casa","Kebab às 5 da manhã","Perder o telemóvel","Mensagem ao ex","Pista de dança","Lenta","Conga","Festival de verão","Pulseira VIP","Fotografia desfocada","Óculos de sol à noite","Festa de pijama","Fantasia de Carnaval","Mais uma!"]},
+{id:"sitios",name:"Sítios",emoji:"📍",w:["Praia","Aeroporto","Supermercado","Hospital","Biblioteca","Cinema","Discoteca","Igreja","Estádio de futebol","Feira","Jardim zoológico","Museu","Cabeleireiro","Ginásio","Bomba de gasolina","Estação de comboios","Farmácia","Padaria","Tasca","Parque de campismo","Piscina","Escola","Tribunal","Esquadra da polícia","Quartel dos bombeiros","Lavandaria","Dentista","Elevador","Casa de banho pública","Sala de espera","Repartição de finanças","Centro comercial","Parque infantil","Cemitério","Farol","Castelo","Adega","Mercado do peixe","Portagem","Rotunda","Miradouro","Metro em hora de ponta","Circo","Casino","Barbearia","Oficina de automóveis"]},
+{id:"acoes",name:"No dia a dia",emoji:"🚿",w:["Lavar os dentes","Estender a roupa","Passar a ferro","Fazer a cama","Tomar duche","Estacionar o carro","Perder o autocarro","Mudar uma lâmpada","Fazer as compras","Pagar a conta","Tirar uma selfie","Carregar o telemóvel","Procurar as chaves","Adormecer no sofá","Fazer um café","Cozer massa","Descascar batatas","Chorar a cortar cebola","Lavar a loiça","Pôr o lixo na rua","Passear o cão","Regar as plantas","Aspirar a casa","Abrir uma garrafa","Fazer a mala","Pedir um táxi","Esperar na fila","Atender uma chamada","Mandar um áudio","Ver uma série","Fazer a barba","Pintar as unhas","Secar o cabelo","Apertar os atacadores","Dobrar um lençol de elástico","Montar um móvel","Trocar um pneu","Matar um mosquito","Espirrar","Bocejar","Ressonar","Fazer uma sesta","Queimar o jantar","Entornar o café","Tropeçar no tapete"]},
+{id:"personagens",name:"Personagens",emoji:"🦸",w:["Pirata","Bruxa","Vampiro","Fantasma","Pai Natal","Fada dos dentes","Coelho da Páscoa","Princesa","Cavaleiro","Dragão","Sereia","Gigante","Duende","Lobisomem","Múmia","Zombie","Extraterrestre","Robô","Super-herói","Vilão","Detetive","Espião","Cowboy","Ninja","Astronauta","Mágico","Palhaço","Rei","Rainha","Bobo da corte","Feiticeiro","Génio da lâmpada","Capuchinho Vermelho","Lobo Mau","Os três porquinhos","Gato das Botas","Bela Adormecida","Patinho Feio","Pinóquio","Cinderela","Branca de Neve","Peter Pan","Robin dos Bosques","Rei Artur","Drácula","Frankenstein","Sherlock Holmes","Dom Quixote"]},
+{id:"expressoes",name:"Expressões portuguesas",emoji:"🗣️",w:["Ficar a ver navios","Meter a pata na poça","Estar com a pulga atrás da orelha","Chover a potes","Fazer uma tempestade num copo de água","Pôr as barbas de molho","Ter macaquinhos no sótão","Andar à nora","Dar com a língua nos dentes","Engolir sapos","Ir aos arames","Acordar com os pés de fora","Estar nas tintas","Ficar em águas de bacalhau","Ter a faca e o queijo na mão","Pôr a mão no fogo","Dar o braço a torcer","Tirar o cavalinho da chuva","Meter o Rossio na Betesga","Ir para o maneta","Ter lata","Fazer vista grossa","Lavar roupa suja","Estar feito ao bife","Pagar o pato","Rés-vés Campo de Ourique","Trocar alhos por bugalhos","Ir com os porcos","Queimar as pestanas","Chorar sobre leite derramado","Cair o Carmo e a Trindade","Pôr os pontos nos is","Andar com a cabeça na lua","Dormir como uma pedra","Ter mais olhos que barriga","Falar pelos cotovelos","Estar de trombas","Passar pelas brasas","Dar à sola","Fazer ouvidos de mercador","Custar os olhos da cara","Ser um zero à esquerda","À grande e à francesa","Muitos anos a virar frangos","Ter dor de cotovelo"]},
+{id:"verao",name:"Praia e verão",emoji:"🏖️",w:["Chapéu de sol","Protetor solar","Bola de Berlim","Castelo de areia","Nadador-salvador","Bandeira vermelha","Toalha de praia","Raquetes","Boia","Barbatanas","Prancha de surf","Mergulho","Onda","Alforreca","Caranguejo","Concha","Gaivota","Escaldão","Marca do biquíni","Chinelos","Geleira","Gelado","Melancia","Sardinhada","Arraial","Festival de verão","Campismo","Tenda","Mosquito","Ventoinha","Ar condicionado","Piscina","Escorrega aquático","Bomba na piscina","Barco a remos","Gaivota a pedais","Passeio de barco","Pôr do sol","Esplanada","Caracóis","Imperial","Sesta","Férias","Mala de viagem","Fila para a portagem","Engarrafamento para o Algarve"]},
+{id:"natal",name:"Natal e festas",emoji:"🎄",w:["Árvore de Natal","Pai Natal","Presépio","Rena","Trenó","Chaminé","Prenda","Laço","Papel de embrulho","Bolo-rei","Rabanadas","Bacalhau cozido","Peru","Sonhos","Filhoses","Missa do Galo","Estrela","Anjo","Boneco de neve","Luzes de Natal","Meia na lareira","Postal de Natal","Amigo secreto","Jantar de empresa","Passas à meia-noite","Fogo de artifício","Espumante","Contagem decrescente","Bolo de aniversário","Soprar as velas","Balões","Festa surpresa","Máscara de Carnaval","Serpentinas","Ovos da Páscoa","Folar","Amêndoas","Castanhas assadas","Magusto","Abóbora","Doçura ou travessura","Dia da Mãe","Dia dos Namorados","Ramo de flores","Brinde"]},
+{id:"miudos",name:"Para os miúdos",emoji:"🧸",w:["Bola","Boneca","Peluche","Bicicleta","Baloiço","Escorrega","Escondidas","Apanhada","Macaca","Saltar à corda","Berlinde","Pião","Papagaio de papel","Bolas de sabão","Plasticina","Lápis de cor","Mochila","Lancheira","Recreio","Professora","Trabalhos de casa","Desenhos animados","Gelado","Rebuçado","Chupa-chupa","Pipocas","Bolacha","Leite com chocolate","Cão","Gato","Coelho","Peixe","Dinossauro","Unicórnio","Princesa","Pirata","Super-herói","Robô","Foguetão","Comboio","Trator","Camião dos bombeiros","Banho","Pijama","História para dormir","Dente a abanar"]},
+{id:"trabalho",name:"Escola e trabalho",emoji:"💼",w:["Reunião","Segunda-feira","Chefe","Estagiário","Folha de cálculo","Impressora encravada","Máquina do café","Pausa para almoço","Marmita","Hora de ponta","Teletrabalho","Videochamada","Microfone desligado","Palavra-passe","Fotocopiadora","Agrafador","Clipe","Post-it","Entrevista de emprego","Currículo","Recibo de vencimento","Férias","Baixa médica","Horas extraordinárias","Reforma","Teste surpresa","Cábula","Quadro","Giz","Borracha","Régua","Mochila","Cantina","Toque de saída","Falta de material","Visita de estudo","Reunião de pais","Exame nacional","Praxe","Queima das Fitas","Tese","Explicações","Chamada ao quadro","Trabalho de grupo","Prazo de entrega"]}
 ];
 
 /* ================= ADIVINHA NA TESTA =================
@@ -298,6 +308,9 @@ const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},se
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const FAST=()=>window.__fast?20:1;
 let sel=new Set((store.get("testa-baralhos")||"animais,comida,portugal,mimica").split(",")),secs=+store.get("testa-tempo")||60,history=[];
+/* equipas: 0 = jogo livre (cada ronda conta para si); 2 a 4 = equipas à vez, com marcador */
+let nTeams=+store.get("testa-equipas")||0,turn=0,best=0;if(![0,2,3,4].includes(nTeams))nTeams=0;
+const TN=i=>"Equipa "+(i+1);const totals=()=>Array.from({length:nTeams},(_,t)=>history.filter(h=>h.t===t).reduce((a,h)=>a+h.s,0));
 sel=new Set([...sel].filter(id=>DECKS.some(d=>d.id===id)));if(!sel.size)sel=new Set(["animais","comida"]);
 if(![45,60,90].includes(secs))secs=60;
 /* som */
@@ -315,9 +328,13 @@ function renderSetup(){
   $("decks").innerHTML=DECKS.map(d=>`<button type="button" class="deck${sel.has(d.id)?" on":""}" data-id="${d.id}" aria-pressed="${sel.has(d.id)}"><span>${d.emoji}</span>${esc(d.name)}</button>`).join("");
   $("times").innerHTML=[45,60,90].map(t=>`<button type="button" class="${t===secs?"on":""}" data-t="${t}">${t} s</button>`).join("");
   $("goBtn").disabled=!sel.size;
-  $("history").innerHTML=history.map((h,i)=>`<li>Ronda ${i+1}: ${h} ${h===1?"ponto":"pontos"}</li>`).join("");
+  $("teams").innerHTML=[[0,"Livre"],[2,"2 equipas"],[3,"3 equipas"],[4,"4 equipas"]].map(([n,l])=>`<button type="button" class="${n===nTeams?"on":""}" data-n="${n}">${l}</button>`).join("");
+  $("goBtn").textContent=nTeams?`Começar: ${TN(turn)}`:"Começar!";
+  $("history").innerHTML=nTeams?scoreHTML():history.map((h,i)=>`<li>Ronda ${i+1}: ${h.s} ${h.s===1?"ponto":"pontos"}</li>`).join("");
 }
 $("decks").addEventListener("click",e=>{const b=e.target.closest(".deck");if(!b)return;const id=b.dataset.id;sel.has(id)?sel.delete(id):sel.add(id);store.set("testa-baralhos",[...sel].join(","));renderSetup()});
+function scoreHTML(){const T=totals(),mx=Math.max(...T);return T.map((v,t)=>`<li class="${t===turn?"turn":""}${history.length&&v===mx?" lead":""}"><b>${TN(t)}</b> ${v} ${v===1?"ponto":"pontos"} <small>(${history.filter(h=>h.t===t).length} ${history.filter(h=>h.t===t).length===1?"ronda":"rondas"})</small></li>`).join("")}
+$("teams").addEventListener("click",e=>{const b=e.target.closest("[data-n]");if(!b)return;const n=+b.dataset.n;if(n===nTeams)return;nTeams=n;turn=0;history=[];best=0;store.set("testa-equipas",String(n));renderSetup()});
 $("times").addEventListener("click",e=>{const b=e.target.closest("[data-t]");if(!b)return;secs=+b.dataset.t;store.set("testa-tempo",String(secs));renderSetup()});
 
 /* palavras: evita repetir as que já saíram neste aparelho */
@@ -395,13 +412,26 @@ function finish(){
   $("play").hidden=true;
   try{if(fsMine&&window.JFS&&!JFS.wanted())JFS.leave()}catch(e){}fsMine=false;
   try{if(window.JFS&&JFS.unlockOr)JFS.unlockOr();else screen.orientation&&screen.orientation.unlock&&screen.orientation.unlock()}catch(e){}
-  history.push(r.score);sfx("end");keepAwake(false);
+  const team=nTeams?turn:-1;history.push({s:r.score,t:team});keepAwake(false);
+  const rec=!nTeams&&history.length>1&&r.score>best;if(r.score>best)best=r.score;
+  if(nTeams)turn=(turn+1)%nTeams;
+  sfx("end");if(rec||r.score>=8){confetti(rec?140:70);fxBuzz([40,60,120])}
   $("setup").hidden=true;$("result").hidden=false;
-  $("result").innerHTML=`<div class="result"><div class="eyebrow">Fim da ronda</div><div class="big">${r.score} ${r.score===1?"ponto":"pontos"}</div>
+  $("result").innerHTML=`<div class="result"><div class="eyebrow">Fim da ronda${nTeams?" · "+TN(team):""}</div><div class="big fxpop">${r.score} ${r.score===1?"ponto":"pontos"}</div>${rec?'<p class="rec">★ Recorde da noite! ★</p>':""}
+    ${nTeams?`<ul class="history sb">${scoreHTML()}</ul>`:""}
     <ul class="wl">${r.done.map(d=>`<li class="${d.ok?"ok":"pass"}">${d.ok?"✓":"✗"} ${esc(d.w)}</li>`).join("")||"<li>Nenhuma palavra</li>"}</ul>
-    <div class="choices"><button class="btn" type="button" id="againBtn">Próximo jogador</button><button class="btn ghost" type="button" id="backBtn">Mudar baralhos</button></div></div>`;
+    <div class="choices"><button class="btn" type="button" id="againBtn">${nTeams?"Agora: "+TN(turn)+" ▶":"Próximo jogador ▶"}</button>${nTeams&&history.length>=nTeams?'<button class="btn ghost" type="button" id="endBtn">Acabar e ver quem ganhou 🏆</button>':""}<button class="btn ghost" type="button" id="backBtn">Mudar baralhos</button></div></div>`;
   $("againBtn").onclick=()=>{$("result").hidden=true;$("setup").hidden=false;renderSetup();start()};
   $("backBtn").onclick=()=>{$("result").hidden=true;$("setup").hidden=false;renderSetup()};
+  if($("endBtn"))$("endBtn").onclick=endMatch;
+}
+function endMatch(){
+  const T=totals(),mx=Math.max(...T),w=T.map((v,t)=>v===mx?t:-1).filter(t=>t>=0);
+  $("result").innerHTML=`<div class="result"><div class="eyebrow">Fim do jogo</div><div class="big fxpop">${w.length>1?"Empate!":"Ganhou a "+TN(w[0])+"! 🏆"}</div>
+    <ul class="history sb">${T.map((v,t)=>`<li class="${v===mx?"lead":""}"><b>${TN(t)}</b> ${v} ${v===1?"ponto":"pontos"}</li>`).join("")}</ul>
+    <div class="choices"><button class="btn" type="button" id="newBtn">Novo jogo</button></div></div>`;
+  sfx("end");confetti(160);fxBuzz([40,60,40,60,160]);
+  $("newBtn").onclick=()=>{history=[];turn=0;best=0;$("result").hidden=true;$("setup").hidden=false;renderSetup()};
 }
 $("goBtn").addEventListener("click",start);
 $("zOk").addEventListener("click",()=>act("ok"));
